@@ -10,9 +10,9 @@ import java.net.URI
 
 object UniNowUtil {
     private val USER_ID_REGEX = "id: \"([\\w-]{36})\"".toRegex()
-    private val FIRSTNAME_REGEX = "first_name: \"([.-]+)\"".toRegex()
-    private val LASTNAME_REGEX = "last_name: \"([.-]+)\"".toRegex()
-    private val EMAIL_REGEX = "email: \"([.-@]+)\"".toRegex()
+    private val FIRSTNAME_REGEX = "first_name: \"(.+)\"".toRegex()
+    private val LASTNAME_REGEX = "last_name: \"(.+)\"".toRegex()
+    private val EMAIL_REGEX = "email: \"(.+@.+\\..+)\"".toRegex()
 
 
     fun fetchUserDetails(url: URI, authentication: Authentication): UserDetails {

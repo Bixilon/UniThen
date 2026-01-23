@@ -10,8 +10,9 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
 
     override fun onCreate(database: SQLiteDatabase) {
-        val schema = SqlHelper::class.java.getResourceAsStream("/sql/schema.sql")!!.readAsString()
-        database.transaction { database.execSQL(schema) }
+        val schema = SqlHelper::class.java.getResourceAsStream("/sql/schema.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
+
+        database.transaction { schema.forEach { database.execSQL(it) } }
     }
 
     override fun onUpgrade(database: SQLiteDatabase, start: Int, end: Int) = database.transaction {

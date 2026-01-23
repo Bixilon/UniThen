@@ -1,4 +1,4 @@
-package de.bixilon.unithen
+package de.bixilon.unithen.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

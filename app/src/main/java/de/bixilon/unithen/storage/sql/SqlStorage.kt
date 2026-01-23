@@ -8,6 +8,7 @@ import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
+import org.intellij.lang.annotations.Language
 import java.net.URI
 import java.util.*
 
@@ -16,7 +17,7 @@ class SqlStorage(context: Context) : DataStorage {
     private val database = helper.writableDatabase
 
 
-    private fun <T> query(sql: String, vararg parameters: String, maper: (Cursor) -> T): List<T> {
+    private fun <T> query(@Language("SQL") sql: String, vararg parameters: String, maper: (Cursor) -> T): List<T> {
         val result = ArrayList<T>()
         database.rawQuery(sql, parameters).use {
             while (it.moveToNext()) {

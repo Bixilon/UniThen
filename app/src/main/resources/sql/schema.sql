@@ -9,8 +9,7 @@ CREATE TABLE sites (
 );
 
 -- TODO: Remove (or add all sites by default)
-INSERT INTO sites (url)
-VALUES ("kurse.zhs-muenchen.de");
+INSERT INTO sites (url) VALUES ('kurse.zhs-muenchen.de');
 
 CREATE TABLE accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -56,6 +55,6 @@ CREATE TABLE account_courses (
   course INTEGER,
 
   PRIMARY KEY (account, course),
-  FOREIGN KEY (account) REFERENCES accounts(id)
+  FOREIGN KEY (account) REFERENCES accounts(id),
   FOREIGN KEY (course) REFERENCES courses(id)
 );
