@@ -20,6 +20,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField("String", "VERSION", "\"" + (versionName ?: "unknown") + "\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -42,6 +44,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -65,6 +68,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
+    implementation("com.squareup.okhttp3:okhttp:5.3.2")
+    implementation("org.jsoup:jsoup:1.22.1")
+
 
     implementation("de.bixilon", "kutil", "1.30.2")
 

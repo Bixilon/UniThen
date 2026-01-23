@@ -1,8 +1,9 @@
 package de.bixilon.unithen.api.authentication
 
-import android.net.http.HttpEngine
+import okhttp3.Request
+
 
 interface Authentication {
 
-    fun authenticate(request: HttpEngine.Builder)
+    fun authenticate(request: Request.Builder)
 }

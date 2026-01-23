@@ -9,9 +9,9 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
 object Jackson {
-    val GRAPH_QL = JsonMapper.builder()
+    val MAPPER = JsonMapper.builder()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-        .disable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
+        .enable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
         .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
         .build()
         .registerModule(
@@ -25,5 +25,21 @@ object Jackson {
                 .build()
         )
         .registerModule(JavaTimeModule())
-        .setDefaultMergeable(true)
+
+    val GRAPH_QL = JsonMapper.builder()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .enable(JsonParser.Feature.AUTO_CLOSE_SOURCE)
+        .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+        .build()
+        .registerModule(
+            KotlinModule.Builder()
+                .withReflectionCacheSize(512)
+                .configure(KotlinFeature.NullToEmptyCollection, false)
+                .configure(KotlinFeature.NullToEmptyMap, false)
+                .configure(KotlinFeature.NullIsSameAsDefault, false)
+                .configure(KotlinFeature.SingletonSupport, false)
+                .configure(KotlinFeature.NewStrictNullChecks, false)
+                .build()
+        )
+        .registerModule(JavaTimeModule())
 }

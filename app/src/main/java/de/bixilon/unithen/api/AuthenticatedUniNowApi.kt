@@ -1,13 +1,21 @@
 package de.bixilon.unithen.api
 
 import de.bixilon.unithen.api.authentication.Authentication
-import java.net.URL
-import java.util.UUID
+import okhttp3.Request
+import java.net.URI
+import java.util.*
 
 open class AuthenticatedUniNowApi(
-    url: URL,
+    url: URI,
     val userId: UUID,
-    val authentication: Authentication?,
+    val authentication: Authentication,
 ) : UniNowApi(url) {
 
+    override fun buildRequest(endpoint: String): Request.Builder {
+        val request = super.buildRequest(endpoint)
+
+        authentication.authenticate(request)
+
+        return request
+    }
 }

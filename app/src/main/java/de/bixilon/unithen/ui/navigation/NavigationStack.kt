@@ -16,6 +16,5 @@ fun NavigationStack() {
     NavHost(navController = navigation, startDestination = MAIN_ROUTE) {
         composable(route = MAIN_ROUTE) { MainScreen(navigation) }
         composable(route = AUTHENTICATION_ROUTE) { AuthenticationScreen() }
-
     }
 }

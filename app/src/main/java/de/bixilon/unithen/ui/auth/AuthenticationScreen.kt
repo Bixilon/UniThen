@@ -1,5 +1,6 @@
 package de.bixilon.unithen.ui.auth
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -29,12 +30,13 @@ fun AuthenticationScreen(base: URI = "https://kurse.zhs-muenchen.de".toURI()) = 
 ) { innerPadding ->
     val modifier = Modifier.padding(innerPadding)
     var authentication: Authentication? by remember { mutableStateOf(null) }
-    var userId: UUID? by remember { mutableStateOf(null) }
 
     LaunchedEffect(authentication) {
         val authentication = authentication ?: return@LaunchedEffect
 
+        Log.v("Auth", "Fetching user id...")
         val userId = UniNowUtil.fetchUserId(base, authentication)
+        Log.v("Auth", "Found user id: $userId")
     }
 
     if (authentication == null) {

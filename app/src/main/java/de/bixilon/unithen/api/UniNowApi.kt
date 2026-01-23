@@ -1,34 +1,39 @@
 package de.bixilon.unithen.api
 
-import android.net.http.HttpEngine
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.http.GrapQlResponse
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import de.bixilon.unithen.util.Jackson
-import java.io.InputStream
-import java.net.URL
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.URI
 
 open class UniNowApi(
-    val url: URL,
+    val url: URI,
 ) {
 
-    protected open fun buildRequest(endpoint: String) {
-        TODO()
-    }
+    protected open fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
 
-    fun postJson(endpoint: String, payload: Any): InputStream {
-        /*
-        val request = ENGINE.newUrlRequestBuilder(url.toString() + endpoint)
+    fun postJson(endpoint: String, payload: Any?): String {
+        val body = payload?.let { Jackson.MAPPER.writeValueAsBytes(it).toRequestBody(HttpUtil.JSON) } ?: RequestBody.EMPTY
+        val request = buildRequest(endpoint)
+            .post(body)
             .build()
 
 
-        authentication?.authenticate(request)
-         */
+        val client = OkHttpClient().newBuilder()
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .build()
 
-        TODO()
+        val response = client.newCall(request).execute()
+
+        if (response.code != 200) throw IllegalStateException("Request is not OK")
+
+        return response.body.string()
     }
 
     inline fun <reified T> graphql(name: String, vararg variables: Pair<String, Any>) = graphql<T>(QueryLoader[name], *variables)
