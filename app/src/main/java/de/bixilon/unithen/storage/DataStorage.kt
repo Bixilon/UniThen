@@ -1,17 +1,14 @@
 package de.bixilon.unithen.storage
 
+import java.net.URI
+import java.util.*
+
 interface DataStorage {
 
-    fun getAccounts(): List<Account>
-    fun remove(account: Account)
-    fun add(account: Account)
+    fun getSite(url: URI): Site
+    fun getSites(): List<Site>
 
-    fun getCourses(): List<Course>
-    fun getCourses(account: Account): List<Course>
-    fun remove(course: Course)
-    fun add(account: Account, course: Course)
-
-    fun getAppointment(course: Course): List<Appointment>
-    fun remove(appointment: Appointment)
-    fun add(course: Course, appointment: Appointment)
+    fun getAccount(id: Int): Account?
+    fun getAccount(uuid: UUID): Account?
+    fun getAccounts(site: Site? = null): List<Account>
 }
