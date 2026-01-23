@@ -1,0 +1,59 @@
+query List_Postings($userID: ID!) {
+    user_pk(userID: $userID) {
+        id
+        postings {
+        id
+        product {
+            id
+            needs_approval
+            resource {
+                __typename
+                ... on Course {
+                    id
+                    name
+                    offer {
+                        name
+                    }
+                    event {
+                        id
+                        name
+                        start
+                        end
+                    }
+                    tutors {
+                        first_name
+                        last_name
+                    }
+                    appointments {
+                        id
+                        start
+                        end
+                        canceledAt
+                        tutors {
+                            first_name
+                            last_name
+                        }
+                        location {
+                            __typename
+                            ... on Area {
+                                name
+                            }
+                            ... on Location {
+                                name
+                            }
+                            ... on Room {
+                                name
+                                floor {
+                                    building {
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+}
