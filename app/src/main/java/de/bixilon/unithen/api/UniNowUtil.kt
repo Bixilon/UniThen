@@ -3,19 +3,19 @@ package de.bixilon.unithen.api
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.HttpUtil.authenticate
 import de.bixilon.unithen.api.authentication.Authentication
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import org.jsoup.Jsoup
 import java.net.URI
-import java.util.*
 
 
 object UniNowUtil {
-    private val USER_ID_REGEX = "id: \"([\\w-]*)\",".toRegex()
+    private val USER_ID_REGEX = "id: \"([\\w-]{36})\"".toRegex()
+    private val FIRSTNAME_REGEX = "first_name: \"([.-]+)\"".toRegex()
+    private val LASTNAME_REGEX = "last_name: \"([.-]+)\"".toRegex()
+    private val EMAIL_REGEX = "email: \"([.-@]+)\"".toRegex()
 
 
-    fun fetchUserId(url: URI, authentication: Authentication): UUID {
+    fun fetchUserDetails(url: URI, authentication: Authentication): UserDetails {
         val request = HttpUtil.create(url, "/")
             .authenticate(authentication)
             .get()
@@ -30,15 +30,20 @@ object UniNowUtil {
 
         if (response.code != 200) throw IllegalStateException("Request is not OK")
 
-        return extractUserId(response.body.string())
+        return extractUserDetails(response.body.string())
     }
 
-    fun extractUserId(html: String): UUID {
+    fun extractUserDetails(html: String): UserDetails {
         val content = Jsoup.parse(html).head()
             .getElementsByTag("script")
             .find { it.data().contains("window.UniNow = ") }!!
             .data()
 
-        return USER_ID_REGEX.find(content)!!.groupValues[1].toUUID()
+        val userId = USER_ID_REGEX.find(content)!!.groupValues[1].toUUID()
+        val firstname = FIRSTNAME_REGEX.find(content)!!.groupValues[1]
+        val lastname = LASTNAME_REGEX.find(content)!!.groupValues[1]
+        val email = EMAIL_REGEX.find(content)!!.groupValues[1]
+
+        return UserDetails(userId, firstname, lastname, email)
     }
 }

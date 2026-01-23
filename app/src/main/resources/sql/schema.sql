@@ -2,10 +2,15 @@ CREATE TABLE settings (
   version INTEGER
 );
 
+-- TODO: icon
 CREATE TABLE sites (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url VARCHAR(255) NOT NULL UNIQUE
 );
+
+-- TODO: Remove (or add all sites by default)
+INSERT INTO sites (url)
+VALUES ("kurse.zhs-muenchen.de");
 
 CREATE TABLE accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -15,6 +20,7 @@ CREATE TABLE accounts (
   firstname VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
 
+  session VARCHAR(1024),
 
   FOREIGN KEY (site) REFERENCES sites(id),
   UNIQUE (site, uuid)

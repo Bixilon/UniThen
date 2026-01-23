@@ -3,7 +3,8 @@ package de.bixilon.unithen.storage
 import java.util.*
 
 data class Course(
-    val id: Int,
+    override val id: Key,
+    val site: Key,
     val uuid: UUID,
     val name: String,
-)
+) : DbKeyed

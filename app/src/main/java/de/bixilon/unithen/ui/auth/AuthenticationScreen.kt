@@ -8,18 +8,17 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.UniNowUtil
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.storage.DataStorage
 import java.net.URI
-import java.util.*
 
 
 const val AUTHENTICATION_ROUTE = "/auth"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthenticationScreen(base: URI = "https://kurse.zhs-muenchen.de".toURI()) = Scaffold(
+fun AuthenticationScreen(base: URI) = Scaffold(
     topBar = {
         TopAppBar(
             title = {
@@ -34,9 +33,14 @@ fun AuthenticationScreen(base: URI = "https://kurse.zhs-muenchen.de".toURI()) = 
     LaunchedEffect(authentication) {
         val authentication = authentication ?: return@LaunchedEffect
 
-        Log.v("Auth", "Fetching user id...")
-        val userId = UniNowUtil.fetchUserId(base, authentication)
-        Log.v("Auth", "Found user id: $userId")
+        Log.v("Auth", "Fetching user details...")
+        val details = UniNowUtil.fetchUserDetails(base, authentication)
+        Log.v("Auth", "Found user details: $details")
+
+        DataStorage.STORAGE.transaction {
+            val site = it.createSite(base)
+            it.updateAccount(site, details, authentication)
+        }
     }
 
     if (authentication == null) {

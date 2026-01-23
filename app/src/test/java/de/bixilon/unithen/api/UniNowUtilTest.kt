@@ -11,18 +11,20 @@ import org.junit.Test
 class UniNowUtilTest {
 
     // @Test
-    fun `get user id`() {
+    fun `fetch user details`() {
         val authentication = CookieAuthentication("XXX")
 
 
-        val userId = UniNowUtil.fetchUserId( "https://kurse.zhs-muenchen.de".toURI(), authentication)
-        assertEquals(userId, "10000000-0003-0000-0000-000000000001".toUUID())
+        val userId = UniNowUtil.fetchUserDetails("https://kurse.zhs-muenchen.de".toURI(), authentication)
+        assertEquals(userId.uuid, "10000000-0003-0000-0000-000000000001".toUUID())
     }
-    @Test
-    fun `extract userid from frontpage`() {
-        val html = UniNowUtilTest::class.java.getResourceAsStream("/http/front_page.html")!!.readAsString()
 
-        val userId = UniNowUtil.extractUserId(html)
-        assertEquals(userId, "10000000-0003-0000-0000-000000000001".toUUID())
+    @Test
+    fun `extract user details from frontpage`() {
+        val html = UniNowUtilTest::class.java.getResourceAsStream("/http/front_page.html")!!.readAsString()
+        val expected = UserDetails("10000000-0003-0000-0000-000000000001".toUUID(), "Max", "Muster", "mail@server.de")
+
+        val details = UniNowUtil.extractUserDetails(html)
+        assertEquals(details, expected)
     }
 }
