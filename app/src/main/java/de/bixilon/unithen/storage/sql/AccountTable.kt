@@ -2,13 +2,14 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import de.bixilon.kutil.cast.CastUtil.cast
-import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.UserDetails
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Account
+import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import java.util.*
 
@@ -17,7 +18,7 @@ class AccountTable(
 ) : SqlTable<Account>(storage, "accounts") {
     override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key")
 
-    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getString(2).toUUID(), cursor.getString(3), cursor.getString(4), cursor.getString(5))
+    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
 
     operator fun get(id: Key) = single("id=?", id.toString())
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
@@ -39,4 +40,9 @@ class AccountTable(
 
         insert(site, details, authentication)
     }
+
+    fun getCourses(account: Account): List<Course> = TODO()
+    fun getAccounts(course: Course): List<Account> = TODO()
+
+    fun addToCourse(account: Account, course: Course): Nothing = TODO()
 }

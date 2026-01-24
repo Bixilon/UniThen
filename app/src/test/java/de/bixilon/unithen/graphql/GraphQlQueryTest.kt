@@ -10,6 +10,8 @@ import de.bixilon.unithen.util.Jackson
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.io.FileNotFoundException
+import java.time.LocalDateTime
+import java.time.Month
 
 class GraphQlQueryTest {
 
@@ -33,7 +35,7 @@ class GraphQlQueryTest {
         val appointment = course.appointments.first()
 
         assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUUID())
-        // TODO: test dates
+        assertEquals(appointment.start, LocalDateTime.of(2026, Month.MARCH, 11, 17, 30, 0))
     }
 
     @Test

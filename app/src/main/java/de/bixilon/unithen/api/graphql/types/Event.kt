@@ -1,11 +1,11 @@
 package de.bixilon.unithen.api.graphql.types
 
-import java.util.Date
-import java.util.UUID
+import java.time.LocalDateTime
+import java.util.*
 
 data class Event(
     override val id: UUID,
     val name: String,
-    val start: Date,
-    val end: Date,
+    val start: LocalDateTime,
+    val end: LocalDateTime,
 ) : Identified

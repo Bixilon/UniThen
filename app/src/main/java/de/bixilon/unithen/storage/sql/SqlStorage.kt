@@ -14,6 +14,7 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
     val sites = SiteTable(this)
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
+    val appointments = AppointmentTable(this)
 
     fun <T> query(@Language("SQL") sql: String, vararg parameters: String, runnable: (Cursor) -> T): T {
         return database.rawQuery(sql, parameters).use { runnable.invoke(it) }
