@@ -2,7 +2,7 @@ package de.bixilon.unithen.api.authentication
 
 import okhttp3.Request
 
-class CookieAuthentication(
+data class CookieAuthentication(
     val session: String,
 ) : Authentication {
 

@@ -17,6 +17,9 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
     fun <T> query(@Language("SQL") sql: String, vararg parameters: String, runnable: (Cursor) -> T): T {
         return database.rawQuery(sql, parameters).use { runnable.invoke(it) }
     }
+    fun execute(@Language("SQL") sql: String, vararg parameters: String) {
+        database.execSQL(sql, parameters)
+    }
 
 
     fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }

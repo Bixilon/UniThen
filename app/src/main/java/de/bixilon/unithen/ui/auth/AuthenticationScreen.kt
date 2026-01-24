@@ -60,7 +60,7 @@ fun AuthenticationScreen(base: URI) = Scaffold(
 
             DataStorage.STORAGE.transaction {
                 val site = it.sites[base]!!
-                it.accounts.update(site, details, authentication)
+                it.accounts.add(site, details, authentication)
             }
             state = AuthenticationState.DONE
         }
@@ -73,7 +73,7 @@ fun AuthenticationScreen(base: URI) = Scaffold(
 
     when (state) {
         // TODO: WebAuthenticationView
-        AuthenticationState.SHOW_LOGIN -> DummyAuthenticationView(modifier, base) { authentication = it; state = AuthenticationState.FETCH_USER_DETAILS }
+        AuthenticationState.SHOW_LOGIN -> WebAuthenticationView(modifier, base) { authentication = it; state = AuthenticationState.FETCH_USER_DETAILS }
         AuthenticationState.FETCH_USER_DETAILS -> Row(modifier = modifier) {
             CircularProgressIndicator(
                 modifier = Modifier.width(64.dp),

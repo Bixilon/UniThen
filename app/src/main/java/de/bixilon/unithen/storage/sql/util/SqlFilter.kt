@@ -6,8 +6,9 @@ data class SqlFilter(
 ) {
 
     companion object {
+        val EMPTY = SqlFilter("", emptyList())
 
-        fun and(vararg filters: Pair<String, Any?>): SqlFilter {
+        fun join(separator: String, vararg filters: Pair<String, Any?>): SqlFilter {
             val parameters = ArrayList<String>()
             val string = StringBuilder()
 
@@ -17,14 +18,19 @@ data class SqlFilter(
                 assert("'" !in argument)
 
                 if (string.isNotEmpty()) {
-                    string.append(" AND ")
+                    string.append(separator)
                 }
                 string.append(argument).append("=?")
 
                 parameters += value.toString()
             }
+            if (parameters.isEmpty()) return SqlFilter.EMPTY
 
-            return SqlFilter(string.toString(), parameters)
+            return SqlFilter("($string)", parameters)
         }
+
+        fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)
+        fun or(vararg filters: Pair<String, Any?>) = join(" OR ", *filters)
+        fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
     }
 }

@@ -1,6 +1,5 @@
 query List_Postings($userID: ID!) {
     user_pk(userID: $userID) {
-        id
         postings {
         id
         product {
@@ -8,6 +7,9 @@ query List_Postings($userID: ID!) {
             needs_approval
             resource {
                 __typename
+                ... on Fee {
+                    id
+                }
                 ... on Course {
                     id
                     name
