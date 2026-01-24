@@ -22,39 +22,44 @@ abstract class SqlTable<T>(
     fun update(id: Int): Nothing = Unreachable()
 
     protected fun update(id: Key, filter: SqlFilter) {
-        storage.execute("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id.toString()))
+        storage.execute("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
     }
 
 
-    private fun <X> select(filter: SqlFilter, runnable: (Cursor) -> X) = select(filter.where, arguments = filter.parameters.toTypedArray(), runnable)
-    private fun <X> select(where: String = "", vararg arguments: String, runnable: (Cursor) -> X): X {
+    private fun <X> select(where: String = "", arguments: Array<out Any>, runnable: (Cursor) -> X): X {
         val actualWhere = if (where.isBlank()) "" else "WHERE $where"
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table $actualWhere", *arguments, runnable = runnable)
     }
 
     protected fun single(filter: SqlFilter) = single(filter.where, arguments = filter.parameters.toTypedArray())
-    protected fun single(where: String = "", vararg arguments: String): T? {
-        return select(where, *arguments) {
+    protected fun single(where: String = "", vararg arguments: Any): T? {
+        return select(where, arguments = arguments) {
             when (it.count) {
                 0 -> null
-                1 -> map(it)
+                1 -> {
+                    it.moveToNext()
+                    map(it)
+                }
+
                 else -> throw IllegalStateException("More than one result found: $where")
             }
         }
     }
 
 
-    protected fun all(filter: SqlFilter) = all(filter.where, *filter.parameters.toTypedArray())
-    protected fun all(where: String = "", vararg arguments: String): List<T> {
-        return select(where, *arguments) {
-            val result = ArrayList<T>(it.count)
+    protected fun Cursor.collectAll(): List<T> {
+        val result = ArrayList<T>(count)
 
-            while (it.moveToNext()) {
-                result += map(it)
-            }
-
-            return@select result
+        while (moveToNext()) {
+            result += map(this)
         }
+
+        return result
+    }
+
+    protected fun all(filter: SqlFilter) = all(filter.where, *filter.parameters.toTypedArray())
+    protected fun all(where: String = "", vararg arguments: Any): List<T> {
+        return select(where, arguments = arguments, runnable = { it.collectAll() })
     }
 
     fun all(): List<T> = all("TRUE")

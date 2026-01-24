@@ -2,14 +2,14 @@ package de.bixilon.unithen.storage.sql.util
 
 data class SqlFilter(
     val where: String,
-    val parameters: List<String>,
+    val parameters: List<Any>,
 ) {
 
     companion object {
         val EMPTY = SqlFilter("", emptyList())
 
         fun join(separator: String, vararg filters: Pair<String, Any?>): SqlFilter {
-            val parameters = ArrayList<String>()
+            val parameters = ArrayList<Any>()
             val string = StringBuilder()
 
             for ((argument, value) in filters) {
@@ -22,7 +22,7 @@ data class SqlFilter(
                 }
                 string.append(argument).append("=?")
 
-                parameters += value.toString()
+                parameters += value
             }
             if (parameters.isEmpty()) return SqlFilter.EMPTY
 

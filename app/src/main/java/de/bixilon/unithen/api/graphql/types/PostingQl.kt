@@ -2,7 +2,7 @@ package de.bixilon.unithen.api.graphql.types
 
 import java.util.*
 
-data class Posting(
+data class PostingQl(
     override val id: UUID,
-    val product: Product,
-) : Identified
+    val product: ProductQl,
+) : IdentifiedQl

@@ -20,7 +20,7 @@ class AccountTable(
 
     override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
 
-    operator fun get(id: Key) = single("id=?", id.toString())
+    operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, uuid: UUID? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
@@ -32,7 +32,7 @@ class AccountTable(
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication) {
-        storage.execute("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id.toString(), details.uuid.toString(), details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+        storage.execute("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
     }
 
     fun add(site: Site, details: UserDetails, authentication: Authentication) {
@@ -41,8 +41,11 @@ class AccountTable(
         insert(site, details, authentication)
     }
 
-    fun getCourses(account: Account): List<Course> = TODO()
-    fun getAccounts(course: Course): List<Account> = TODO()
+    fun getAccounts(course: Course): List<Account> {
+      return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.account = account.id WHERE course = ?", course.id){it.collectAll()}
+    }
 
-    fun addToCourse(account: Account, course: Course): Nothing = TODO()
+    fun addToCourse(account: Account, course: Course) {
+        storage.execute("INSERT INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
+    }
 }

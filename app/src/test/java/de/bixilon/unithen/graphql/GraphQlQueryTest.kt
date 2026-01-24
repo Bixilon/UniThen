@@ -4,8 +4,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.graphql.UserPkPostings
-import de.bixilon.unithen.api.graphql.types.Course
-import de.bixilon.unithen.api.graphql.types.Posting
+import de.bixilon.unithen.api.graphql.types.CourseQl
+import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.util.Jackson
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
@@ -24,11 +24,11 @@ class GraphQlQueryTest {
 
     @Test
     fun `read posting`() {
-        val response = readResponse<Posting>("posting")
+        val response = readResponse<PostingQl>("posting")
 
         assertEquals(response.id, "b2583378-fbdd-48ab-81c6-ab3ddfb0236c".toUUID())
 
-        val course = response.product.resource.cast<Course>()
+        val course = response.product.resource.cast<CourseQl>()
 
         assertEquals(course.name, "Yoga - Allround Yoga - Yogilates - Meditation")
 

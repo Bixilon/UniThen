@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes(
-    JsonSubTypes.Type(value = Course::class, name = COURSE_TYPE),
-    JsonSubTypes.Type(value = Fee::class, name = FEE_TYPE),
+    JsonSubTypes.Type(value = CourseQl::class, name = COURSE_TYPE),
+    JsonSubTypes.Type(value = FeeQl::class, name = FEE_TYPE),
 )
-interface Resource : Identified {
+interface ResourceQl : IdentifiedQl {
     val __typename: String
 }

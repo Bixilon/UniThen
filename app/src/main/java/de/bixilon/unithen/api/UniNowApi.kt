@@ -6,7 +6,7 @@ import de.bixilon.unithen.api.graphql.http.GrapQlResponse
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
-import de.bixilon.unithen.api.graphql.types.Posting
+import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.util.Jackson
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -47,7 +47,7 @@ open class UniNowApi(
         return Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response).data
     }
 
-    fun postings(userId: UUID): List<Posting> {
+    fun postings(userId: UUID): List<PostingQl> {
         return graphql<UserPkPostings>("courses", "userID" to userId).userPk.postings
     }
 }

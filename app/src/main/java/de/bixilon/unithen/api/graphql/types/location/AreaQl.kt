@@ -2,9 +2,9 @@ package de.bixilon.unithen.api.graphql.types.location
 
 const val AREA_TYPE = "Area"
 
-class Area(
+class AreaQl(
    override val name: String,
     // TODO: floor, building
-): Location {
+) : LocationQl {
     override val __typename get() = AREA_TYPE
 }

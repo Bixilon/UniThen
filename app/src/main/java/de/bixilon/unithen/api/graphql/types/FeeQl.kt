@@ -4,8 +4,8 @@ import java.util.*
 
 const val FEE_TYPE = "Fee"
 
-data class Fee(
+data class FeeQl(
     override val id: UUID,
-) : Resource {
+) : ResourceQl {
     override val __typename get() = FEE_TYPE
 }

@@ -19,7 +19,7 @@ class AppointmentTable(
 
     override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getLocalDate(3), cursor.getLocalDate(4))
 
-    operator fun get(id: Key) = single("id=?", id.toString())
+    operator fun get(id: Key) = single("id=?", id)
     operator fun get(course: Course, uuid: UUID) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
 
     fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
@@ -28,7 +28,7 @@ class AppointmentTable(
 
 
     fun insert(course: Course, uuid: UUID, start: LocalDateTime, end: LocalDateTime) {
-        storage.execute("INSERT INTO $table(course, uuid, start, end) VALUES (?,?,?,?)", course.id.toString(), uuid.toString(), start.db().toString(), end.db().toString())
+        storage.execute("INSERT INTO $table(course, uuid, start, end) VALUES (?,?,?,?)", course.id, uuid, start.db(), end.db())
     }
 
     fun add(course: Course, uuid: UUID, start: LocalDateTime, end: LocalDateTime) {
