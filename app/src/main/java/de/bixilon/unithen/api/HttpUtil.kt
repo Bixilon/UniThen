@@ -2,6 +2,7 @@ package de.bixilon.unithen.api
 
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.util.KUtil.with
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import java.net.URI
@@ -12,7 +13,7 @@ object HttpUtil {
     fun create(base: URI, endpoint: String): Request.Builder {
         assert(base.scheme == "https") { "Insecure requests are forbidden!" }
         val request = Request.Builder()
-            .url(base.resolve(endpoint).toURL()) // TODO: kutil /
+            .url(base.with(path = endpoint).toURL())
             .header("User-Agent", "UniThen (version=${BuildConfig.VERSION})")
 
         return request

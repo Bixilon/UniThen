@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.util.KUtil.with
 import java.net.URI
 
 
@@ -19,7 +20,7 @@ fun WebAuthenticationView(modifier: Modifier = Modifier, base: URI, callback: (A
             }
 
             settings.javaScriptEnabled = true
-            loadUrl(base.resolve("/auth/login").toString()) // TODO: slash from kutil 1.31
+            loadUrl(base.with(path = "/auth/login").toString())
         }
     }
 )

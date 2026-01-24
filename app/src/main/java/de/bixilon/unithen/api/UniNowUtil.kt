@@ -39,7 +39,7 @@ object UniNowUtil {
             .find { it.data().contains("window.UniNow = ") }!!
             .data()
 
-        val userId = USER_ID_REGEX.find(content)!!.groupValues[1].toUUID()
+        val userId = USER_ID_REGEX.find(content)?.groupValues?.get(1)?.toUUID() ?: throw Error("Can not extract user id. Did UniNow change something in their response?")
         val firstname = FIRSTNAME_REGEX.find(content)!!.groupValues[1]
         val lastname = LASTNAME_REGEX.find(content)!!.groupValues[1]
         val email = EMAIL_REGEX.find(content)!!.groupValues[1]

@@ -10,4 +10,9 @@ class UniThen : Application() {
         super.onCreate()
         DataStorage.STORAGE = SqlStorage(applicationContext)
     }
+
+    override fun onTerminate() {
+        super.onTerminate()
+        DataStorage.STORAGE.close()
+    }
 }

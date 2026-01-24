@@ -1,5 +1,6 @@
 package de.bixilon.unithen.ui.main
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +26,7 @@ fun SitesScreen(navigation: NavController) {
 
         LazyColumn(Modifier.fillMaxSize()) {
             items(DataStorage.STORAGE.sites.all(), key = Site::id) {
-                Row {
+                Column {
                     Text(it.url.toString())
 
                     Button({ navigation.navigate(AUTHENTICATION_ROUTE(it)) }) {

@@ -19,7 +19,7 @@ CREATE TABLE accounts (
   firstname VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
 
-  session VARCHAR(1024),
+  session_key VARCHAR(1024),
 
   FOREIGN KEY (site) REFERENCES sites(id),
   UNIQUE (site, uuid)
