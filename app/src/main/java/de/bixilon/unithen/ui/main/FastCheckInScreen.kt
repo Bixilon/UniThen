@@ -12,27 +12,41 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.appointment.AppointmentCard
-import java.time.LocalDateTime
+import java.time.Instant
+import java.time.ZoneOffset
 
 
 const val FAST_CHECK_IN_ROUTE = "/fast_checkin"
 
 @Composable
 fun FastCheckInInScreen() {
-    val events by remember { derivedStateOf { DataStorage.STORAGE.appointments.getInRange(LocalDateTime.now().minusHours(1), LocalDateTime.now()) } }
+    val now = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() // LocalDateTime.now()
+    val appointments by remember { derivedStateOf { DataStorage.STORAGE.appointments.getInRange(now.minusHours(1), now) } }
+
+    if (appointments.isEmpty()) {
+        Text("No upcoming events!", color = Color.Red, fontSize = 50.sp)
+        return
+    }
+
+    if (appointments.size == 1) {
+        CheckInScreen(appointments.first())
+        return
+    }
 
     Row {
-        Text("Check in")
+        Text("Choose upcoming appointment...")
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(events) { item ->
+            items(appointments) { item ->
                 AppointmentCard(item)
             }
         }

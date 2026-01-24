@@ -17,7 +17,7 @@ import de.bixilon.unithen.ui.main.course.CoursesScreen
 fun NavigationStack() {
     val navigation = rememberNavController()
 
-    NavHost(navController = navigation, startDestination = FAST_CHECK_IN_ROUTE) {
+    NavHost(navController = navigation, startDestination = MAIN_ROUTE) {
         composable(route = MAIN_ROUTE) { MainScreen(navigation) }
 
         composable(route = APPOINTMENTS_ROUTE) { AppointmentsScreen(navigation) }
