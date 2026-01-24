@@ -22,21 +22,9 @@ class AccountTable(
     operator fun get(id: Key) = single("id=?", id.toString())
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun get(site: Site? = null, uuid: UUID? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null): List<Account> {
-        return all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
-    }
+    fun get(site: Site? = null, uuid: UUID? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
+    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
 
-    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) {
-        val (set, parameters) = SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey)
-        storage.execute("UPDATE $table SET $set WHERE id=?", parameters=arrayOf(*parameters.toTypedArray(), id.toString()))
-    }
-
-
-    private fun <X> select(filter: SqlFilter, runnable: (Cursor) -> X) = select(filter.where, arguments = filter.parameters.toTypedArray(), runnable)
-    private fun <X> select(where: String = "", vararg arguments: String, runnable: (Cursor) -> X): X {
-        val actualWhere = if (where.isBlank()) "" else "WHERE $where"
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table $actualWhere", *arguments, runnable = runnable)
-    }
 
     fun update(account: Account, details: UserDetails, authentication: Authentication) {
         update(account.id, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
@@ -44,7 +32,6 @@ class AccountTable(
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication) {
         storage.execute("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id.toString(), details.uuid.toString(), details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
-
     }
 
     fun add(site: Site, details: UserDetails, authentication: Authentication) {

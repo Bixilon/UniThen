@@ -2,6 +2,7 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import de.bixilon.kutil.exception.Unreachable
+import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 
 abstract class SqlTable<T>(
@@ -20,6 +21,10 @@ abstract class SqlTable<T>(
     @Deprecated("", level = DeprecationLevel.ERROR)
     fun update(id: Int): Nothing = Unreachable()
 
+    protected fun update(id: Key, filter: SqlFilter) {
+        storage.execute("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id.toString()))
+    }
+
 
     private fun <X> select(filter: SqlFilter, runnable: (Cursor) -> X) = select(filter.where, arguments = filter.parameters.toTypedArray(), runnable)
     private fun <X> select(where: String = "", vararg arguments: String, runnable: (Cursor) -> X): X {
@@ -29,7 +34,13 @@ abstract class SqlTable<T>(
 
     protected fun single(filter: SqlFilter) = single(filter.where, arguments = filter.parameters.toTypedArray())
     protected fun single(where: String = "", vararg arguments: String): T? {
-        return select(where, *arguments) { if (it.count == 0) return@select null else it.moveToNext(); map(it) }
+        return select(where, *arguments) {
+            when (it.count) {
+                0 -> null
+                1 -> map(it)
+                else -> throw IllegalStateException("More than one result found: $where")
+            }
+        }
     }
 
 
