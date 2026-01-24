@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.main.appointment
+package de.bixilon.unithen.ui.main.course
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,29 +11,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import de.bixilon.unithen.storage.Appointment
+import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 
 
-const val APPOINTMENTS_ROUTE = "/appointments"
+const val COURSES_ROUTE = "/courses"
 
 @Composable
-fun AppointmentCard(appointment: Appointment) {
-    Card {
-        Text(appointment.uuid.toString())
-        Text(appointment.start.toString())
+fun CourseCard(navigation: NavController, course: Course) {
+    Card(onClick = { navigation.navigate("/course/${course.id}") }) {
+        Text(course.name)
     }
 }
 
 @Composable
-fun AppointmentsScreen(navigation: NavController) {
+fun CoursesScreen(navigation: NavController) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(DataStorage.STORAGE.appointments.all()) { item ->
-            AppointmentCard(item)
+        items(DataStorage.STORAGE.courses.all()) { item ->
+            CourseCard(navigation, item)
         }
     }
 }

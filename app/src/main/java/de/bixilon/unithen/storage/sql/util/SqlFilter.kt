@@ -26,7 +26,7 @@ data class SqlFilter(
             }
             if (parameters.isEmpty()) return SqlFilter.EMPTY
 
-            return SqlFilter("($string)", parameters)
+            return SqlFilter("$string", parameters)
         }
 
         fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)

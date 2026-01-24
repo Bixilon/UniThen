@@ -1,8 +1,5 @@
-CREATE TABLE settings (
-  version INTEGER
-);
 
--- TODO: icon
+-- TODO: icon, name
 CREATE TABLE sites (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   url VARCHAR(255) NOT NULL UNIQUE

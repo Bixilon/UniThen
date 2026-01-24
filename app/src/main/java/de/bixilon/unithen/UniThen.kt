@@ -27,7 +27,7 @@ class UniThen : Application() {
         DataStorage.STORAGE = SqlStorage(applicationContext)
 
 
-        updateCourses()
+        //  updateCourses()
     }
 
     override fun onTerminate() {

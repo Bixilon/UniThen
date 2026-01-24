@@ -24,6 +24,12 @@ class AppointmentTable(
 
     fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
 
+    fun getInRange(from: LocalDateTime, to: LocalDateTime): List<Appointment> {
+        val filter = SqlFilter("(end >= ? AND ? >= start)", listOf(to.db(), from.db()))
+
+        return all(filter)
+    }
+
     fun update(id: Key, start: LocalDateTime? = null, end: LocalDateTime? = null) = update(id, SqlFilter.comma("start" to start?.db(), "end" to end?.db()))
 
 

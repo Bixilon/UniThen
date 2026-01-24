@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 
 
 const val MAIN_ROUTE = "/main"
+
 @Composable
 fun MainScreen(navigation: NavController) {
 
