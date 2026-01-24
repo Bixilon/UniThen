@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
 
+    implementation("com.lightspark:compose-qr-code:1.0.1")
+
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("org.jsoup:jsoup:1.22.1")
 

@@ -5,7 +5,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.bixilon.unithen.storage.DataStorage
-import de.bixilon.unithen.ui.auth.AUTHENTICATION_ROUTE
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.appointment.APPOINTMENTS_ROUTE
@@ -22,8 +21,8 @@ fun NavigationStack() {
         composable(route = COURSES_ROUTE) { CoursesScreen(navigation) }
         composable(route = SITES_ROUTE) { SitesScreen(navigation) }
 
-        composable(route = AUTHENTICATION_ROUTE) {
-            val site = DataStorage.STORAGE.getSite(it.arguments!!.getInt("site"))
+        composable(route = "/auth/{site}") {
+            val site = DataStorage.STORAGE.sites[it.arguments!!.getString("site")!!.toInt()]!!
             AuthenticationScreen(site.url)
         }
     }

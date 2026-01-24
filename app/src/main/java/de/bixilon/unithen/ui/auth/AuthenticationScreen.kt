@@ -11,10 +11,11 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.UniNowUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.Site
 import java.net.URI
 
 
-const val AUTHENTICATION_ROUTE = "/auth"
+fun AUTHENTICATION_ROUTE(site: Site) = "/auth/${site.id}"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,8 +39,8 @@ fun AuthenticationScreen(base: URI) = Scaffold(
         Log.v("Auth", "Found user details: $details")
 
         DataStorage.STORAGE.transaction {
-            val site = it.createSite(base)
-            it.updateAccount(site, details, authentication)
+            //   val site = it.sites.getSite(base)
+            //   it.updateAccount(site, details, authentication)
         }
     }
 
