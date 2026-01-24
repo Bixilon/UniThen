@@ -22,7 +22,9 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 
 @Preview
@@ -94,7 +96,7 @@ fun AppointmentCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "${appointment.start} - ",
+                    text = "${appointment.start} - ${appointment.end}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -186,8 +188,8 @@ fun FastCheckinAccountSelector(navigation: NavController, course: Course, appoin
 
 @Composable
 fun FastCheckinAppointment(navigation: NavController, appointment: Appointment) {
-    val course by remember { mutableStateOf(DataStorage.STORAGE.courses[appointment.course]!!) }
-    val accounts by remember { mutableStateOf(DataStorage.STORAGE.accounts[course]) }
+    val course = remember { DataStorage.STORAGE.courses[appointment.course]!! }
+    val accounts = remember { DataStorage.STORAGE.accounts[course] }
 
     when (accounts.size) {
         0 -> Broken("Unassociated data left in database!")
@@ -199,8 +201,10 @@ fun FastCheckinAppointment(navigation: NavController, appointment: Appointment) 
 @Composable
 fun FastCheckInInScreen(navigation: NavController) {
     val now = LocalDateTime.now()
-    // val now = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
-    val appointments by remember { mutableStateOf(DataStorage.STORAGE.appointments.getInRange(now.minusHours(1), now)) }
+    val fixed = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
+
+    val time = now // TODO: debug
+    val appointments by remember { mutableStateOf(DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time)) }
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()

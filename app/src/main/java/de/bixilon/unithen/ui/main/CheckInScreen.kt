@@ -6,11 +6,11 @@ import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,9 +32,12 @@ const val CHECK_IN_ROUTE = "/appointment/{id}/checkin"
 
 @Composable
 fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
+    var fakeName by remember { mutableStateOf(false) }
+    var xss by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     DisposableEffect(Unit) {
-        // TODO setBrightness(context, 1.0f)
+        setBrightness(context, 1.0f)
 
         onDispose {
             setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
@@ -56,7 +59,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(64.dp))
 
             Text(
                 text = "Start: ${appointment.start}",
@@ -77,7 +80,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             Spacer(modifier = Modifier.height(16.dp))
 
             QrCodeView(
-                data = createQrCode(account.uuid, appointment.uuid, account.firstname, account.lastname),
+                data = createQrCode(account.uuid, appointment.uuid, if (xss) "Hello<script>alert(1)</script>\"'Hm." else if (fakeName) "Max" else account.firstname, if (fakeName) "Muster" else account.lastname),
                 modifier = Modifier
                     .size(300.dp)
                     .clip(RoundedCornerShape(5.dp))
@@ -90,6 +93,31 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             Text(
                 text = "Present this QR code at the entrance",
             )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = fakeName,
+                    onCheckedChange = { fakeName = it }
+                )
+                Text(
+                    "Fake name (Max Muster)"
+                )
+            }
+
+            // TODO: remove
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Checkbox(
+                    checked = xss,
+                    onCheckedChange = { xss = it }
+                )
+                Text(
+                    "Try XSS"
+                )
+            }
         }
     }
 }
