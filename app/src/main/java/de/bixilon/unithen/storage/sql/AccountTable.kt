@@ -31,14 +31,16 @@ class AccountTable(
         update(account.id, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
     }
 
-    fun insert(site: Site, details: UserDetails, authentication: Authentication) {
-        storage.execute("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+    fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
+        val id =  storage.insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+
+        return this[id]!! // TODO: cleanup
     }
 
-    fun add(site: Site, details: UserDetails, authentication: Authentication) {
-         this[site, details.uuid]?.let { return update(it, details, authentication) }
+    fun add(site: Site, details: UserDetails, authentication: Authentication): Account {
+         this[site, details.uuid]?.let { update(it, details, authentication); return it }
 
-        insert(site, details, authentication)
+       return insert(site, details, authentication)
     }
 
     fun getAccounts(course: Course): List<Account> {

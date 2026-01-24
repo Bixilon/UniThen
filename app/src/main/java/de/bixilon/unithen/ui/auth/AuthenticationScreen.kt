@@ -8,10 +8,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.cast.CastUtil.unsafeNull
 import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
+import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.UniNowUtil
 import de.bixilon.unithen.api.UserDetails
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
 import java.net.URI
@@ -22,6 +26,7 @@ fun AUTHENTICATION_ROUTE(site: Site) = "/auth/${site.id}"
 enum class AuthenticationState {
     SHOW_LOGIN,
     FETCH_USER_DETAILS,
+    FETCH_COURSES,
     DONE,
 }
 
@@ -58,11 +63,28 @@ fun AuthenticationScreen(base: URI) = Scaffold(
             }
             Log.v("Auth", "Found user details: $details")
 
+            var site: Site = unsafeNull()
+            var account: Account = unsafeNull()
             DataStorage.STORAGE.transaction {
-                val site = it.sites[base]!!
-                it.accounts.add(site, details, authentication)
+                site = it.sites[base]!!
+                account = it.accounts.add(site, details, authentication)
             }
-            state = AuthenticationState.DONE
+
+            state = AuthenticationState.FETCH_COURSES
+            DefaultThreadPool += add@{
+                Log.i("Auth", "Fetching courses...")
+                try {
+                    val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
+                    val courses = api.postings(account.uuid)
+
+                    DataStorage.STORAGE.populate(site, account, courses)
+                } catch (_error: Throwable) {
+                    Log.e("Auth", "Error fetching courses: $_error")
+                    _error.printStackTrace()
+                    error = _error
+                    return@add
+                }
+            }
         }
     }
 
@@ -79,6 +101,13 @@ fun AuthenticationScreen(base: URI) = Scaffold(
                 modifier = Modifier.width(64.dp),
             )
             Text("Fetching user details...")
+        }
+
+        AuthenticationState.FETCH_COURSES -> Row(modifier = modifier) {
+            CircularProgressIndicator(
+                modifier = Modifier.width(64.dp),
+            )
+            Text("Fetching courses...")
         }
 
         AuthenticationState.DONE -> Text("Done: $authentication", modifier = modifier) // TODO: don't print authentication

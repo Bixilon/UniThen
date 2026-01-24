@@ -9,10 +9,8 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 
 class UniThen : Application() {
 
-    override fun onCreate() {
-        super.onCreate()
-        DataStorage.STORAGE = SqlStorage(applicationContext)
 
+    fun updateCourses() {
         DataStorage.STORAGE.accounts.all().forEach {
             val site = DataStorage.STORAGE.sites[it.site]!!
             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
@@ -21,8 +19,15 @@ class UniThen : Application() {
 
                 DataStorage.STORAGE.populate(site, it, courses)
             }
-
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        DataStorage.STORAGE = SqlStorage(applicationContext)
+
+
+        updateCourses()
     }
 
     override fun onTerminate() {
