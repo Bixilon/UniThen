@@ -6,7 +6,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
-import de.bixilon.unithen.ui.main.*
+import de.bixilon.unithen.ui.main.MAIN_ROUTE
+import de.bixilon.unithen.ui.main.MainScreen
+import de.bixilon.unithen.ui.main.SITES_ROUTE
+import de.bixilon.unithen.ui.main.SitesScreen
 import de.bixilon.unithen.ui.main.appointment.APPOINTMENTS_ROUTE
 import de.bixilon.unithen.ui.main.appointment.AppointmentsScreen
 import de.bixilon.unithen.ui.main.course.COURSES_ROUTE
@@ -28,7 +31,6 @@ fun NavigationStack() {
         }
 
         composable(route = SITES_ROUTE) { SitesScreen(navigation) }
-        composable(route = FAST_CHECK_IN_ROUTE) { FastCheckInInScreen() }
 
         composable(route = "/auth/{site}") {
             val site = DataStorage.STORAGE.sites[it.arguments!!.getString("site")!!.toInt()]!!

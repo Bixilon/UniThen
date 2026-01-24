@@ -25,7 +25,7 @@ class AppointmentTable(
     fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
 
     fun getInRange(from: LocalDateTime, to: LocalDateTime): List<Appointment> {
-        val filter = SqlFilter("(end >= ? AND ? >= start)", listOf(to.db(), from.db()))
+        val filter = SqlFilter("NOT (end < ? OR start > ?) ORDER BY start DESC", listOf(from.db(), to.db()))
 
         return all(filter)
     }

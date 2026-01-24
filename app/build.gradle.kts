@@ -76,6 +76,7 @@ dependencies {
 
 
     implementation("de.bixilon", "kutil", "1.30.2")
+    implementation(libs.material3)
 
     jacksonCore("core")
     jacksonCore("databind")

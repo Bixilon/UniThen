@@ -38,6 +38,6 @@ class CourseTable(
 
 
     fun getAccounts(account: Account): List<Course> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = course.id WHERE account = ?", account.id) { it.collectAll() }
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = courses.id WHERE account = ?", account.id) { it.collectAll() }
     }
 }
