@@ -1,93 +1,74 @@
 package de.bixilon.unithen.ui.navigation
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.navigation.*
-import androidx.navigation.compose.composable
+import android.content.Context
+import android.content.ContextWrapper
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
+import de.bixilon.kutil.cast.CastUtil.cast
+import java.util.Stack
+import kotlin.reflect.KClass
 
 
 class UnserializedNavigation(
-    val controller: NavHostController,
+    private val start: NavigationRoute,
 ) {
-    val map: MutableMap<Int, NavigationRoute> = HashMap() // TODO: memory leak
-    private var id = 0
+    private val stack = Stack<Frame>()
+    private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
+    private var observe: (() -> Unit)? = null
 
-
-    inner class Builder(
-        val builder: NavGraphBuilder,
+    class Builder(
+        val routes: HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>,
     ) {
 
-        inline fun <reified T : NavigationRoute> composable(crossinline compose: @Composable (T) -> Unit) {
-            val id = T::class.java.typeName
-            builder.composable("$id/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) {
-                val data = remember { map[it.arguments!!.getInt("id")] }
-                compose.invoke(data as T)
-            }
+        inline fun <reified T : NavigationRoute> composable(noinline compose: @Composable (T) -> Unit) {
+            routes[T::class] = compose.cast()
         }
     }
 
+    fun Context.findActivity(): ComponentActivity? = when (this) {
+        is ComponentActivity -> this
+        is ContextWrapper -> baseContext.findActivity()
+        else -> null
+    }
 
     @Composable
-    fun NavHost(
-        startDestination: NavigationRoute,
-        modifier: Modifier = Modifier,
-        contentAlignment: Alignment = Alignment.TopStart,
-        route: String? = null,
-        enterTransition:
-        (@JvmSuppressWildcards
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) =
-            {
-                fadeIn(animationSpec = tween(700))
-            },
-        exitTransition:
-        (@JvmSuppressWildcards
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) =
-            {
-                fadeOut(animationSpec = tween(700))
-            },
-        popEnterTransition:
-        (@JvmSuppressWildcards
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition) =
-            enterTransition,
-        popExitTransition:
-        (@JvmSuppressWildcards
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition) =
-            exitTransition,
-        sizeTransform:
-        (@JvmSuppressWildcards
-        AnimatedContentTransitionScope<NavBackStackEntry>.() -> SizeTransform?)? =
-            null,
-        builder: Builder.() -> Unit,
-    ) {
-        val id = id++
-        map[id] = startDestination
+    fun Host(builder: Builder.() -> Unit) {
+        val instance = remember { Builder(routes).apply(builder); navigate(start); "" }
+        var size by remember { mutableIntStateOf(1) }
 
-        androidx.navigation.compose.NavHost(
-            this.controller,
-            remember(route, startDestination.toRoute(id)) {
-                this.controller.createGraph(startDestination.toRoute(id), route, { builder.invoke(Builder(this)) })
-            },
-            modifier,
-            contentAlignment,
-            enterTransition,
-            exitTransition,
-            popEnterTransition,
-            popExitTransition,
-            sizeTransform
-        )
+        DisposableEffect(Unit) {
+            this@UnserializedNavigation.observe = { size = stack.size }
+
+            onDispose {
+                this@UnserializedNavigation.observe = null
+            }
+        }
+        instance.isEmpty()
+
+        val context = LocalContext.current
+        BackHandler { if (stack.size > 1) pop() else context.findActivity()?.finish() }
+
+        val frame = remember(size) { stack.peek() }
+
+        frame.composable(frame.route)
     }
-
 
     fun navigate(route: NavigationRoute) {
-        val id = id++
-        map[id] = route
-        controller.navigate(route.toRoute(id))
+        val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
+
+        stack += Frame(route, composable)
+        observe?.invoke()
     }
 
+    fun pop() {
+        stack.pop()
+        observe?.invoke()
+    }
 
-    private fun NavigationRoute.toRoute(id: Int) = this::class.java.typeName + "/$id"
+    data class Frame(
+        val route: NavigationRoute,
+        val composable: @Composable (NavigationRoute) -> Unit,
+    )
 }

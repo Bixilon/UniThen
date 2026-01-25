@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.main.fast.*
@@ -23,18 +22,15 @@ import de.bixilon.unithen.ui.theme.UniThenTheme
 
 @Composable
 fun FastCheckInNavigator() {
-    val controller = rememberNavController()
-    val navigation = remember { UnserializedNavigation(controller) }
+    val navigation = remember { UnserializedNavigation(FastCheckinHome) }
 
 
-    navigation.NavHost(FastCheckinHome) {
+    navigation.Host {
         composable<FastCheckinHome> { FastCheckInInScreen(navigation) }
 
         composable<CheckInAppointment> { FastCheckinAppointment(navigation, it.course, it.appointment) }
         composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
     }
-
-    navigation.navigate(FastCheckinHome)
 }
 
 class FastCheckinActivity : ComponentActivity() {
