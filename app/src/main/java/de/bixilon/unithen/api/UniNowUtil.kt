@@ -3,6 +3,7 @@ package de.bixilon.unithen.api
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.HttpUtil.authenticate
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.user.UserDetails
 import okhttp3.OkHttpClient
 import org.jsoup.Jsoup
 import java.net.URI
@@ -34,6 +35,7 @@ object UniNowUtil {
     }
 
     fun extractUserDetails(html: String): UserDetails {
+        // TODO: parse json, failover: user-nav
         val content = Jsoup.parse(html).head()
             .getElementsByTag("script")
             .find { it.data().contains("window.UniNow = ") }!!

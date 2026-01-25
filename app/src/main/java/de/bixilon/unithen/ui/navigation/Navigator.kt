@@ -5,7 +5,6 @@ import android.content.ContextWrapper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import de.bixilon.kutil.cast.CastUtil.cast
@@ -44,10 +43,7 @@ class Navigator(
     @Composable
     fun Host() {
         val context = LocalContext.current
-        BackHandler {
-            if (stack.size > 1) pop()
-            else context.findActivity()?.finish()
-        }
+        BackHandler { if (stack.size > 1) pop() else context.findActivity()?.finish() }
 
         val frame = stack.last()
 
@@ -62,18 +58,11 @@ class Navigator(
         CompositionLocalProvider(
             LocalNavigation provides this,
         ) {
-            AnimatedContent(
-                targetState = frame,
-                transitionSpec = {
-                    if (isForward) {
-                        slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
-                    } else {
-                        slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
-                    }
+            val target = frame
+            if (frame.content == null) {
+                frame.content = movableContentOf { target.composable(target.route) }
                 }
-            ) { target ->
-                target.composable(target.route)
-            }
+            frame.content!!.invoke()
         }
     }
 
@@ -81,7 +70,7 @@ class Navigator(
         val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
 
         if (isNavigating) {
-            Log.v("NAV", "Ignoring route $route (already navigating)")
+            Log.w("NAV", "Ignoring route $route (already navigating)")
             return
         }
 
@@ -97,5 +86,6 @@ class Navigator(
     data class Frame(
         val route: NavigationRoute,
         val composable: @Composable (NavigationRoute) -> Unit,
+        var content: (@Composable () -> Unit)? = null,
     )
 }

@@ -1,4 +1,4 @@
-package de.bixilon.unithen.api
+package de.bixilon.unithen.api.user
 
 import java.util.*
 

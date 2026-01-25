@@ -1,15 +1,20 @@
 package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import org.intellij.lang.annotations.Language
 
 abstract class SqlTable<T>(
     val storage: SqlStorage,
     val table: String,
 ) {
     val count get() = storage.query("SELECT COUNT(*) FROM $table;") { it.moveToFirst(); it.getInt(0) }
+    var notify = mutableIntStateOf(0)
 
     protected abstract val columns: List<String>
 
@@ -23,6 +28,11 @@ abstract class SqlTable<T>(
 
     protected fun update(id: Key, filter: SqlFilter) {
         storage.execute("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
+        notify.intValue++
+    }
+
+    protected fun insert(@Language("SQL") sql: String, vararg parameters: Any): Int {
+        return storage.insert(sql, *parameters).apply { notify.intValue++ }
     }
 
 
@@ -63,4 +73,16 @@ abstract class SqlTable<T>(
     }
 
     fun all(): List<T> = all("TRUE")
+
+    companion object {
+
+        fun <S : SqlTable<*>, T> S.stateOf(block: S.() -> T): State<T> {
+            this.notify // TODO: broken
+
+            val data = block.invoke(this)
+
+            return mutableStateOf(data)
+        }
+    }
+
 }

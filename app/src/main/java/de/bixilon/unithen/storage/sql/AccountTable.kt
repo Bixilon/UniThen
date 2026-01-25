@@ -2,9 +2,9 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import de.bixilon.kutil.cast.CastUtil.cast
-import de.bixilon.unithen.api.UserDetails
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
@@ -32,7 +32,7 @@ class AccountTable(
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id =  storage.insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
 
         return this[id]!! // TODO: cleanup
     }
@@ -48,6 +48,7 @@ class AccountTable(
     }
 
     fun addToCourse(account: Account, course: Course) {
-        storage.execute("INSERT INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
+        insert("INSERT INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
+        storage.courses.notify.intValue++
     }
 }

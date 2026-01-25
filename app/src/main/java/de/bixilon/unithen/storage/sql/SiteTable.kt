@@ -15,4 +15,16 @@ class SiteTable(
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(url: URI) = single("url=?", url.host)
+
+    fun insert(url: URI): Site {
+        val id = insert("INSERT INTO $table(url) VALUES (?)", url.host)
+
+        return this[id]!!
+    }
+
+    fun add(url: URI): Site {
+        this[url]?.let { return it }
+
+        return insert(url)
+    }
 }

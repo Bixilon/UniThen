@@ -19,6 +19,7 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import java.time.Instant
@@ -118,8 +119,8 @@ fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(appointments) { item ->
-                val course by remember { mutableStateOf(DataStorage.STORAGE.courses[item.course]!!) }
+            items(appointments, key = Appointment::id) { item ->
+                val course by remember { DataStorage.STORAGE.courses.stateOf { this[item.course]!! } }
                 val navigator = LocalNavigation.current
                 AppointmentCard(course, item) { navigator.navigate(CheckInAppointment(course, item)) }
             }
@@ -141,7 +142,7 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(accounts) { item ->
+            items(accounts, key = Account::id) { item ->
 
                 val navigation = LocalNavigation.current
                 Card(
@@ -177,7 +178,7 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
             contentPadding = PaddingValues(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(accounts) { item ->
+            items(accounts, key = Account::id) { item ->
                 Card {
                     Text(item.firstname)
                     Text(item.lastname)
@@ -189,7 +190,7 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
 
 @Composable
 fun FastCheckinAppointment(course: Course, appointment: Appointment) {
-    val accounts = remember { DataStorage.STORAGE.accounts[course] }
+    val accounts by remember { DataStorage.STORAGE.accounts.stateOf { this[course] } }
 
     when (accounts.size) {
         0 -> Broken("Unassociated data left in database!")
@@ -206,9 +207,10 @@ fun FastCheckInInScreen() {
     LaunchedEffect(fakeTime) {
         time = if (fakeTime) Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() else LocalDateTime.now()
     }
+    // TODO: fetch time every 10 seconds
 
 
-    val appointments by remember { derivedStateOf { DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time) } }
+    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time.minusHours(1), time) } }
 
 
     if (BuildConfig.DEBUG) {

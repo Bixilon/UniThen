@@ -100,9 +100,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
                     checked = fakeName,
                     onCheckedChange = { fakeName = it }
                 )
-                Text(
-                    "Fake name (Max Muster)"
-                )
+                Text("Fake name (Max Muster)")
             }
 
             // TODO: remove
@@ -113,9 +111,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
                     checked = xss,
                     onCheckedChange = { xss = it }
                 )
-                Text(
-                    "Try XSS"
-                )
+                Text("Try XSS")
             }
         }
     }

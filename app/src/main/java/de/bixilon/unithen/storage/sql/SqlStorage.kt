@@ -17,7 +17,7 @@ import java.util.*
 
 class SqlStorage(context: Context) : DataStorage, Closeable {
     private val helper = SqlHelper(context)
-    private val database = helper.writableDatabase
+    val database = helper.writableDatabase
 
     val sites = SiteTable(this)
     val accounts = AccountTable(this)
@@ -50,7 +50,7 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
     }
 
 
-    fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
+    inline fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
 
 
     fun populate(site: Site, account: Account, postings: List<PostingQl>) = transaction {

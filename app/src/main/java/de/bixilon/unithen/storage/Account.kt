@@ -1,6 +1,7 @@
 package de.bixilon.unithen.storage
 
 import java.util.*
+import kotlin.time.Instant
 
 data class Account(
     override val id: Key,
@@ -9,6 +10,8 @@ data class Account(
 
     val firstname: String,
     val lastname: String,
+
+    val fetched: Instant,
 
     @Deprecated("multiple authentication methods")
     val session: String,

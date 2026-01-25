@@ -4,6 +4,7 @@ import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.user.UserDetails
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

@@ -25,7 +25,7 @@ class CourseTable(
 
 
     fun insert(site: Site, uuid: UUID, name: String): Course {
-        val id = storage.insert("INSERT INTO $table(site, uuid, name) VALUES (?,?,?)", site.id, uuid, name)
+        val id = insert("INSERT INTO $table(site, uuid, name) VALUES (?,?,?)", site.id, uuid, name)
 
         return this[id]!! // TODO: cleanup
     }

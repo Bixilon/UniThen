@@ -32,7 +32,7 @@ fun AuthenticationProgress(text: String, modifier: Modifier) {
         CircularProgressIndicator(
             modifier = Modifier.width(64.dp),
         )
-        Text("Fetching courses...")
+        Text(text)
     }
 }
 
