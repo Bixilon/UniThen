@@ -76,6 +76,8 @@ fun AuthenticationScreen(base: URI) = Scaffold(
                     val courses = api.postings(account.uuid)
 
                     DataStorage.STORAGE.populate(site, account, courses)
+                    Log.i("Auth", "Courses fetched (total: ${courses.size})")
+                    state = AuthenticationState.DONE
                 } catch (_error: Throwable) {
                     Log.e("Auth", "Error fetching courses: $_error")
                     _error.printStackTrace()
@@ -108,6 +110,6 @@ fun AuthenticationScreen(base: URI) = Scaffold(
             Text("Fetching courses...")
         }
 
-        AuthenticationState.DONE -> Text("Done: $authentication", modifier = modifier) // TODO: don't print authentication
+        AuthenticationState.DONE -> Text("Done!", modifier = modifier)
     }
 }

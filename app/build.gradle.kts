@@ -18,7 +18,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "0.1"
 
         buildConfigField("String", "VERSION", "\"" + (versionName ?: "unknown") + "\"")
 
@@ -27,8 +27,17 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = false // TODO
+            isShrinkResources = false // TODO
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        debug {
+            isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue("string", "app_name", "Debug: UniThen")
+            resValue("string", "app_name_fast_checkin", "Debug: UniThen Fast Check In")
+
         }
     }
     compileOptions {
