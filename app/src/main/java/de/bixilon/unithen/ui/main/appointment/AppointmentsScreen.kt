@@ -10,12 +10,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.ui.navigation.Navigator
 
-
-const val APPOINTMENTS_ROUTE = "/appointments"
 
 @Composable
 fun AppointmentCard(appointment: Appointment) {
@@ -26,7 +24,7 @@ fun AppointmentCard(appointment: Appointment) {
 }
 
 @Composable
-fun AppointmentsScreen(navigation: NavController) {
+fun AppointmentsScreen(navigator: Navigator) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),

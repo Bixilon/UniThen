@@ -9,16 +9,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
-import de.bixilon.unithen.ui.auth.AUTHENTICATION_ROUTE
+import de.bixilon.unithen.ui.navigation.Navigator
 
-
-const val SITES_ROUTE = "/sites"
 
 @Composable
-fun SitesScreen(navigation: NavController) {
+fun SitesScreen(navigator: Navigator) {
 
     Row {
         Text("Sites")
@@ -29,7 +26,7 @@ fun SitesScreen(navigation: NavController) {
                 Column {
                     Text(it.url.toString())
 
-                    Button({ navigation.navigate(AUTHENTICATION_ROUTE(it)) }) {
+                    Button({ navigator.navigate(AuthRoute(it)) }) {
                         Text("Authenticate")
                     }
                 }

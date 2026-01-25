@@ -10,22 +10,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.ui.navigation.Navigator
 
-
-const val COURSES_ROUTE = "/courses"
 
 @Composable
-fun CourseCard(navigation: NavController, course: Course) {
-    Card(onClick = { navigation.navigate("/course/${course.id}") }) {
+fun CourseCard(navigation: Navigator, course: Course) {
+    Card(onClick = { /*navigation.navigate("/course/${course.id}")*/ }) {
         Text(course.name)
     }
 }
 
 @Composable
-fun CoursesScreen(navigation: NavController) {
+fun CoursesScreen(navigation: Navigator) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),

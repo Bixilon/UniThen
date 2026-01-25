@@ -21,8 +21,6 @@ import de.bixilon.unithen.storage.Site
 import java.net.URI
 
 
-fun AUTHENTICATION_ROUTE(site: Site) = "/auth/${site.id}"
-
 enum class AuthenticationState {
     SHOW_LOGIN,
     FETCH_USER_DETAILS,

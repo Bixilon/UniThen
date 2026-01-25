@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.main.fast
+package de.bixilon.unithen.ui.fast
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*

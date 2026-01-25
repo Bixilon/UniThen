@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.main.fast
+package de.bixilon.unithen.ui.fast
 
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
