@@ -28,7 +28,6 @@ import de.bixilon.unithen.util.Jackson
 import java.util.*
 
 
-const val CHECK_IN_ROUTE = "/appointment/{id}/checkin"
 
 @Composable
 fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {

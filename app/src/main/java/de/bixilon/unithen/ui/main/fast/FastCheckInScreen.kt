@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.main
+package de.bixilon.unithen.ui.main.fast
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -16,12 +16,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.ui.main.CheckInScreen
+import de.bixilon.unithen.ui.navigation.UnserializedNavigation
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -107,7 +108,7 @@ fun AppointmentCard(
 
 
 @Composable
-fun FastCheckinAppointmentSelector(navigation: NavController, appointments: List<Appointment>) {
+fun FastCheckinAppointmentSelector(navigation: UnserializedNavigation, appointments: List<Appointment>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -121,7 +122,7 @@ fun FastCheckinAppointmentSelector(navigation: NavController, appointments: List
         ) {
             items(appointments) { item ->
                 val course by remember { mutableStateOf(DataStorage.STORAGE.courses[item.course]!!) }
-                AppointmentCard(course, item) { navigation.navigate("/appointment/${item.id}") }
+                AppointmentCard(course, item) { navigation.navigate(CheckInAppointment(course, item)) }
             }
         }
     }
@@ -129,7 +130,7 @@ fun FastCheckinAppointmentSelector(navigation: NavController, appointments: List
 
 
 @Composable
-fun FastCheckinAccountSelector(navigation: NavController, course: Course, appointment: Appointment, accounts: List<Account>) {
+fun FastCheckinAccountSelector(navigation: UnserializedNavigation, course: Course, appointment: Appointment, accounts: List<Account>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -146,7 +147,7 @@ fun FastCheckinAccountSelector(navigation: NavController, course: Course, appoin
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navigation.navigate("/appointment/${appointment.id}/${item.id}") },
+                        .clickable { navigation.navigate(CheckInRoute(item, course, appointment)) },
                     shape = RoundedCornerShape(16.dp),
                     elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
                     colors = CardDefaults.cardColors(
@@ -187,8 +188,7 @@ fun FastCheckinAccountSelector(navigation: NavController, course: Course, appoin
 }
 
 @Composable
-fun FastCheckinAppointment(navigation: NavController, appointment: Appointment) {
-    val course = remember { DataStorage.STORAGE.courses[appointment.course]!! }
+fun FastCheckinAppointment(navigation: UnserializedNavigation, course: Course, appointment: Appointment) {
     val accounts = remember { DataStorage.STORAGE.accounts[course] }
 
     when (accounts.size) {
@@ -199,16 +199,16 @@ fun FastCheckinAppointment(navigation: NavController, appointment: Appointment) 
 }
 
 @Composable
-fun FastCheckInInScreen(navigation: NavController) {
-    val now = LocalDateTime.now()
+fun FastCheckInInScreen(navigation: UnserializedNavigation) {
+    LocalDateTime.now()
     val fixed = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
 
-    val time = now // TODO: debug
+    val time = fixed // TODO: debug
     val appointments by remember { mutableStateOf(DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time)) }
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()
-        1 -> FastCheckinAppointment(navigation, appointments[0])
+        1 -> FastCheckinAppointment(navigation, DataStorage.STORAGE.courses[appointments[0].course]!!, appointments[0])
         else -> FastCheckinAppointmentSelector(navigation, appointments)
     }
 }

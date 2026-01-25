@@ -10,18 +10,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
-import de.bixilon.unithen.ui.main.FastCheckInInScreen
-import de.bixilon.unithen.ui.main.FastCheckinAppointment
+import de.bixilon.unithen.ui.main.fast.*
+import de.bixilon.unithen.ui.navigation.UnserializedNavigation
 import de.bixilon.unithen.ui.theme.UniThenTheme
 
+
+@Composable
+fun FastCheckInNavigator() {
+    val navigation = rememberNavController()
+    val shit = remember { UnserializedNavigation(FastCheckinHome, navigation) }
+
+    NavHost(navController = navigation, startDestination = "/") {
+        shit.host = this
+        composable(route = "/") { FastCheckInInScreen(shit) }
+        shit.composable3<FastCheckinHome> { FastCheckInInScreen(shit) }
+
+        shit.composable3<CheckInAppointment> { FastCheckinAppointment(shit, it.course, it.appointment) }
+        shit.composable3<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
+    }
+
+    shit.navigate(FastCheckinHome)
+}
 
 class FastCheckinActivity : ComponentActivity() {
 
@@ -45,18 +62,7 @@ class FastCheckinActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        val navigation = rememberNavController()
-
-                        NavHost(navController = navigation, startDestination = "/") {
-                            composable(route = "/") { FastCheckInInScreen(navigation) }
-                            composable(route = "/appointment/{id}", arguments = listOf(navArgument("id") { type = NavType.IntType })) { FastCheckinAppointment(navigation, DataStorage.STORAGE.appointments[it.arguments!!.getInt("id")]!!) }
-                            composable(route = "/appointment/{id}/{account}", arguments = listOf(navArgument("id") { type = NavType.IntType }, navArgument("account") { type = NavType.IntType })) {
-                                val appointment = DataStorage.STORAGE.appointments[it.arguments!!.getInt("id")]!!
-                                val course = DataStorage.STORAGE.courses[appointment.course]!!
-                                val account = DataStorage.STORAGE.accounts[it.arguments!!.getInt("account")]!!
-                                CheckInScreen(account, course, appointment)
-                            }
-                        }
+                        FastCheckInNavigator()
                     }
                 }
             }
