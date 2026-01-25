@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.Broken
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
@@ -210,14 +211,16 @@ fun FastCheckInInScreen() {
     val appointments by remember { derivedStateOf { DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time) } }
 
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Checkbox(
-            checked = fakeTime,
-            onCheckedChange = { fakeTime = it }
-        )
-        Text("Fake time")
+    if (BuildConfig.DEBUG) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Checkbox(
+                checked = fakeTime,
+                onCheckedChange = { fakeTime = it }
+            )
+            Text("Fake time")
+        }
     }
 
     when (appointments.size) {

@@ -20,8 +20,7 @@ class Navigator(
     private var isNavigating by mutableStateOf(false)
 
 
-    inner class Builder(
-    ) {
+    inner class Builder {
         val routes get() = this@Navigator.routes
 
         inline fun <reified T : NavigationRoute> composable(noinline compose: @Composable (T) -> Unit) {
