@@ -13,8 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
@@ -25,19 +23,18 @@ import de.bixilon.unithen.ui.theme.UniThenTheme
 
 @Composable
 fun FastCheckInNavigator() {
-    val navigation = rememberNavController()
-    val shit = remember { UnserializedNavigation(FastCheckinHome, navigation) }
+    val controller = rememberNavController()
+    val navigation = remember { UnserializedNavigation(controller) }
 
-    NavHost(navController = navigation, startDestination = "/") {
-        shit.host = this
-        composable(route = "/") { FastCheckInInScreen(shit) }
-        shit.composable3<FastCheckinHome> { FastCheckInInScreen(shit) }
 
-        shit.composable3<CheckInAppointment> { FastCheckinAppointment(shit, it.course, it.appointment) }
-        shit.composable3<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
+    navigation.NavHost(FastCheckinHome) {
+        composable<FastCheckinHome> { FastCheckInInScreen(navigation) }
+
+        composable<CheckInAppointment> { FastCheckinAppointment(navigation, it.course, it.appointment) }
+        composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
     }
 
-    shit.navigate(FastCheckinHome)
+    navigation.navigate(FastCheckinHome)
 }
 
 class FastCheckinActivity : ComponentActivity() {
