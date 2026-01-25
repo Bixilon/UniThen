@@ -22,7 +22,7 @@ import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
-import de.bixilon.unithen.ui.navigation.UnserializedNavigation
+import de.bixilon.unithen.ui.navigation.Navigator
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -108,7 +108,7 @@ fun AppointmentCard(
 
 
 @Composable
-fun FastCheckinAppointmentSelector(navigation: UnserializedNavigation, appointments: List<Appointment>) {
+fun FastCheckinAppointmentSelector(navigation: Navigator, appointments: List<Appointment>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -130,7 +130,7 @@ fun FastCheckinAppointmentSelector(navigation: UnserializedNavigation, appointme
 
 
 @Composable
-fun FastCheckinAccountSelector(navigation: UnserializedNavigation, course: Course, appointment: Appointment, accounts: List<Account>) {
+fun FastCheckinAccountSelector(navigation: Navigator, course: Course, appointment: Appointment, accounts: List<Account>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -188,7 +188,7 @@ fun FastCheckinAccountSelector(navigation: UnserializedNavigation, course: Cours
 }
 
 @Composable
-fun FastCheckinAppointment(navigation: UnserializedNavigation, course: Course, appointment: Appointment) {
+fun FastCheckinAppointment(navigation: Navigator, course: Course, appointment: Appointment) {
     val accounts = remember { DataStorage.STORAGE.accounts[course] }
 
     when (accounts.size) {
@@ -199,7 +199,7 @@ fun FastCheckinAppointment(navigation: UnserializedNavigation, course: Course, a
 }
 
 @Composable
-fun FastCheckInInScreen(navigation: UnserializedNavigation) {
+fun FastCheckInInScreen(navigation: Navigator) {
     LocalDateTime.now()
     val fixed = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
 

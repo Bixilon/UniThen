@@ -16,21 +16,23 @@ import androidx.compose.ui.Modifier
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.main.fast.*
-import de.bixilon.unithen.ui.navigation.UnserializedNavigation
+import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.theme.UniThenTheme
 
 
 @Composable
 fun FastCheckInNavigator() {
-    val navigation = remember { UnserializedNavigation(FastCheckinHome) }
+    val navigation = remember { Navigator(FastCheckinHome) }
 
 
-    navigation.Host {
+    navigation.routes {
         composable<FastCheckinHome> { FastCheckInInScreen(navigation) }
 
         composable<CheckInAppointment> { FastCheckinAppointment(navigation, it.course, it.appointment) }
         composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
     }
+
+    navigation.Host()
 }
 
 class FastCheckinActivity : ComponentActivity() {
