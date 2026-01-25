@@ -14,24 +14,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.main.*
+import de.bixilon.unithen.ui.main.setup.SetupScreen
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.theme.UniThenTheme
 
 
 @Composable
 fun MainNavigator() {
-    val navigator = remember { Navigator(Home) }
+    val navigator = remember { Navigator(HomeRoute) }
 
     navigator.routes {
-        composable<Home> { MainScreen() }
+        composable<HomeRoute> { MainScreen() }
+        composable<SetupRoute> { SetupScreen { navigator.pop() } }
 
         // composable(route = APPOINTMENTS_ROUTE) { AppointmentsScreen(navigation) }
         // composable(route = COURSES_ROUTE) { CoursesScreen(navigation) }
         // composable(route = "/course/{course}") {CourseScreen(course, navigation)}
 
-        composable<Sites> { SitesScreen() }
+        composable<SitesRoute> { SitesScreen() }
 
-        composable<AuthRoute> { AuthenticationScreen(it.site.url) }
+        composable<AuthenticationRoute> { AuthenticationScreen(it.site.url) { navigator.pop() } }
     }
 
     navigator.Host()
