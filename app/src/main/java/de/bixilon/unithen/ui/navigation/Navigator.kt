@@ -60,17 +60,21 @@ class Navigator(
             isNavigating = false
         }
 
-        AnimatedContent(
-            targetState = frame,
-            transitionSpec = {
-                if (isForward) {
-                    slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
-                } else {
-                    slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
+        CompositionLocalProvider(
+            LocalNavigation provides this,
+        ) {
+            AnimatedContent(
+                targetState = frame,
+                transitionSpec = {
+                    if (isForward) {
+                        slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+                    } else {
+                        slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
+                    }
                 }
+            ) { target ->
+                target.composable(target.route)
             }
-        ) { target ->
-            target.composable(target.route)
         }
     }
 

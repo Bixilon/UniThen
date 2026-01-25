@@ -26,9 +26,9 @@ fun FastCheckInNavigator() {
 
 
     navigator.routes {
-        composable<FastCheckinHome> { FastCheckInInScreen(navigator) }
+        composable<FastCheckinHome> { FastCheckInInScreen() }
 
-        composable<CheckInAppointment> { FastCheckinAppointment(navigator, it.course, it.appointment) }
+        composable<CheckInAppointment> { FastCheckinAppointment(it.course, it.appointment) }
         composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
     }
 

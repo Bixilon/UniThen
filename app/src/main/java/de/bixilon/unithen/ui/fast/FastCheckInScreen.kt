@@ -6,10 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -22,7 +19,7 @@ import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.CheckInScreen
-import de.bixilon.unithen.ui.navigation.Navigator
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -108,7 +105,7 @@ fun AppointmentCard(
 
 
 @Composable
-fun FastCheckinAppointmentSelector(navigation: Navigator, appointments: List<Appointment>) {
+fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -122,7 +119,8 @@ fun FastCheckinAppointmentSelector(navigation: Navigator, appointments: List<App
         ) {
             items(appointments) { item ->
                 val course by remember { mutableStateOf(DataStorage.STORAGE.courses[item.course]!!) }
-                AppointmentCard(course, item) { navigation.navigate(CheckInAppointment(course, item)) }
+                val navigator = LocalNavigation.current
+                AppointmentCard(course, item) { navigator.navigate(CheckInAppointment(course, item)) }
             }
         }
     }
@@ -130,7 +128,7 @@ fun FastCheckinAppointmentSelector(navigation: Navigator, appointments: List<App
 
 
 @Composable
-fun FastCheckinAccountSelector(navigation: Navigator, course: Course, appointment: Appointment, accounts: List<Account>) {
+fun FastCheckinAccountSelector(course: Course, appointment: Appointment, accounts: List<Account>) {
     Column {
         Text(
             text = "Choose upcoming appointment",
@@ -144,6 +142,7 @@ fun FastCheckinAccountSelector(navigation: Navigator, course: Course, appointmen
         ) {
             items(accounts) { item ->
 
+                val navigation = LocalNavigation.current
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -188,27 +187,42 @@ fun FastCheckinAccountSelector(navigation: Navigator, course: Course, appointmen
 }
 
 @Composable
-fun FastCheckinAppointment(navigation: Navigator, course: Course, appointment: Appointment) {
+fun FastCheckinAppointment(course: Course, appointment: Appointment) {
     val accounts = remember { DataStorage.STORAGE.accounts[course] }
 
     when (accounts.size) {
         0 -> Broken("Unassociated data left in database!")
         1 -> CheckInScreen(accounts[0], course, appointment)
-        else -> FastCheckinAccountSelector(navigation, course, appointment, accounts)
+        else -> FastCheckinAccountSelector(course, appointment, accounts)
     }
 }
 
 @Composable
-fun FastCheckInInScreen(navigation: Navigator) {
-    LocalDateTime.now()
-    val fixed = Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime()
+fun FastCheckInInScreen() {
+    var fakeTime by remember { mutableStateOf(false) }
+    var time by remember { mutableStateOf(LocalDateTime.now()) }
 
-    val time = fixed // TODO: debug
-    val appointments by remember { mutableStateOf(DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time)) }
+    LaunchedEffect(fakeTime) {
+        time = if (fakeTime) Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() else LocalDateTime.now()
+    }
+
+
+    val appointments by remember { derivedStateOf { DataStorage.STORAGE.appointments.getInRange(time.minusHours(1), time) } }
+
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            checked = fakeTime,
+            onCheckedChange = { fakeTime = it }
+        )
+        Text("Fake time")
+    }
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()
-        1 -> FastCheckinAppointment(navigation, DataStorage.STORAGE.courses[appointments[0].course]!!, appointments[0])
-        else -> FastCheckinAppointmentSelector(navigation, appointments)
+        1 -> FastCheckinAppointment(DataStorage.STORAGE.courses[appointments[0].course]!!, appointments[0])
+        else -> FastCheckinAppointmentSelector(appointments)
     }
 }

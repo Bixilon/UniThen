@@ -11,11 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
-import de.bixilon.unithen.ui.navigation.Navigator
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 @Composable
-fun SitesScreen(navigator: Navigator) {
+fun SitesScreen() {
 
     Row {
         Text("Sites")
@@ -26,6 +26,7 @@ fun SitesScreen(navigator: Navigator) {
                 Column {
                     Text(it.url.toString())
 
+                    val navigator = LocalNavigation.current
                     Button({ navigator.navigate(AuthRoute(it)) }) {
                         Text("Authenticate")
                     }

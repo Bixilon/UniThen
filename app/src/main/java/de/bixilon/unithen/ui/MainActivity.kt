@@ -17,23 +17,24 @@ import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.theme.UniThenTheme
 
+
 @Composable
 fun MainNavigator() {
-    val navigation = remember { Navigator(Home) }
+    val navigator = remember { Navigator(Home) }
 
-    navigation.routes {
-        composable<Home> { MainScreen(navigation) }
+    navigator.routes {
+        composable<Home> { MainScreen() }
 
         // composable(route = APPOINTMENTS_ROUTE) { AppointmentsScreen(navigation) }
         // composable(route = COURSES_ROUTE) { CoursesScreen(navigation) }
         // composable(route = "/course/{course}") {CourseScreen(course, navigation)}
 
-        composable<Sites> { SitesScreen(navigation) }
+        composable<Sites> { SitesScreen() }
 
         composable<AuthRoute> { AuthenticationScreen(it.site.url) }
     }
 
-    navigation.Host()
+    navigator.Host()
 }
 
 
