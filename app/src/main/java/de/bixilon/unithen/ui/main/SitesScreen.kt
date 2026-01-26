@@ -37,6 +37,5 @@ fun SitesScreen() {
                 }
             }
         }
-
     }
 }

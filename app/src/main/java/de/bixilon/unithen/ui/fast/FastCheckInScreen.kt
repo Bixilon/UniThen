@@ -22,9 +22,11 @@ import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import kotlin.time.Duration.Companion.seconds
 
 
 @Preview
@@ -199,15 +201,19 @@ fun FastCheckinAppointment(course: Course, appointment: Appointment) {
     }
 }
 
+fun getTime(fake: Boolean) = if (fake) Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() else LocalDateTime.now()
+
 @Composable
 fun FastCheckInInScreen() {
     var fakeTime by remember { mutableStateOf(false) }
-    var time by remember { mutableStateOf(LocalDateTime.now()) }
+    var time by remember { mutableStateOf(getTime(fakeTime)) }
 
-    LaunchedEffect(fakeTime) {
-        time = if (fakeTime) Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() else LocalDateTime.now()
+    LaunchedEffect(Unit) {
+        while (true) {
+            time = getTime(fakeTime)
+            delay(10.seconds)
+        }
     }
-    // TODO: fetch time every 10 seconds
 
 
     val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time.minusHours(1), time) } }
@@ -227,7 +233,7 @@ fun FastCheckInInScreen() {
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()
-        1 -> FastCheckinAppointment(DataStorage.STORAGE.courses[appointments[0].course]!!, appointments[0])
+        1 -> FastCheckinAppointment(remember { DataStorage.STORAGE.courses[appointments[0].course]!! }, appointments[0])
         else -> FastCheckinAppointmentSelector(appointments)
     }
 }
