@@ -32,16 +32,18 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
         database.execSQL(sql, parameters)
     }
 
-    fun insert(@Language("SQL") sql: String, vararg parameters: Any): Int {
+    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
         val statement = database.compileStatement(sql)
 
         for ((index, parameter) in parameters.withIndex()) {
             when (parameter) {
+                null -> statement.bindNull(index + 1)
                 is Int -> statement.bindLong(index + 1, parameter.toLong())
                 is Long -> statement.bindLong(index + 1, parameter)
                 is String -> statement.bindString(index + 1, parameter)
                 is LocalDateTime -> statement.bindLong(index + 1, parameter.db())
                 is UUID -> statement.bindString(index + 1, parameter.toString())
+                is ByteArray -> statement.bindBlob(index + 1, parameter)
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
             }
         }

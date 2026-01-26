@@ -1,20 +1,17 @@
 package de.bixilon.unithen.ui.main.setup
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.uri.URIUtil.toURI
+import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
+import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -29,26 +26,64 @@ enum class SetupStage {
 }
 
 @Composable
-fun SelectSiteSetupScreen(callback: ((Site) -> Unit) = {}) {
+fun SelectSiteSetupScreen(
+    onSiteSelected: (Site) -> Unit = {},
+) {
     val input = remember { TextFieldState("") }
-    Row {
+    val sites by remember { DataStorage.STORAGE.sites.stateOf { all() } }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+    ) {
         Text("Please select a site where you booked your courses")
-        val sites by remember { DataStorage.STORAGE.sites.stateOf { all() } }
 
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.weight(1.0f),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(sites, key = Site::id) { item ->
-                Card(onClick = { callback.invoke(item) }) {
-                    Text(item.url.toString())
+            items(
+                items = sites,
+                key = Site::id
+            ) { site ->
+                Card(modifier = Modifier.fillMaxWidth(), onClick = { onSiteSelected(site) }) {
+                    Text(text = site.name)
+                    Text(text = site.url.toString())
                 }
             }
         }
-        TextField(input, placeholder = { Text(text = "kurse.uni.de") })
 
-        Button({ DataStorage.STORAGE.sites.add(input.text.toString().toURI()) }, enabled = input.text.isNotBlank()) {
+        TextField(state = input, modifier = Modifier.fillMaxWidth(), placeholder = { Text("kurse.uni.de") })
+
+        var text: String? by remember { mutableStateOf(null) }
+
+        if (text != null) {
+            AlertDialog({}, {}, text = { Text(text ?: "") })
+        }
+
+        Button(
+            onClick = {
+                val url = input.text.toString()
+                input.clearText()
+                text = "Fetching: $url"
+                DefaultThreadPool += {
+                    try {
+                        val url = SiteDetails.fix(url)
+                        val details = SiteDetails.fetch(url)
+
+                        val site = DataStorage.STORAGE.sites.add(url, details.name, details.icon)
+                        text = "Done!"
+                        onSiteSelected.invoke(site)
+                    } catch (error: Throwable) {
+                        error.printStackTrace()
+                        text = error.toString()
+                    }
+                }
+            },
+            modifier = Modifier.align(Alignment.End),
+            enabled = input.text.isNotBlank()
+        ) {
             Text("Add site")
         }
     }

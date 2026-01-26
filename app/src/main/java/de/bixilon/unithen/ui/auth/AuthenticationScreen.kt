@@ -11,9 +11,9 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.cast.CastUtil.unsafeNull
 import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.UniNowUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
@@ -38,7 +38,7 @@ fun AuthenticationProgress(text: String, modifier: Modifier) {
 
 private fun fetchUserDetails(base: URI, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
     Log.i("Auth", "Fetching user details...")
-    val details = UniNowUtil.fetchUserDetails(base, authentication)
+    val details = UserDetails.fetch(base, authentication)
 
     Log.v("Auth", "Found user details: $details")
 

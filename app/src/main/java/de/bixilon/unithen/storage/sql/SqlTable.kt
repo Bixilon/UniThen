@@ -31,7 +31,7 @@ abstract class SqlTable<T>(
         notify.intValue++
     }
 
-    protected fun insert(@Language("SQL") sql: String, vararg parameters: Any): Int {
+    protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
         return storage.insert(sql, *parameters).apply { notify.intValue++ }
     }
 
@@ -77,12 +77,9 @@ abstract class SqlTable<T>(
     companion object {
 
         fun <S : SqlTable<*>, T> S.stateOf(block: S.() -> T): State<T> {
-            this.notify // TODO: broken
+            notify.intValue
 
-            val data = block.invoke(this)
-
-            return mutableStateOf(data)
+            return mutableStateOf(block.invoke(this))
         }
     }
-
 }

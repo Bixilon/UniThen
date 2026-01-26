@@ -8,7 +8,7 @@ data class Site(
     val url: URI,
 
     val name: String,
-    val icon: ByteArray,
+    val icon: ByteArray?,
 
     val fetched: Instant,
 ) : DbKeyed

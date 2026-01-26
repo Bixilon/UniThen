@@ -9,6 +9,7 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import java.util.*
@@ -16,9 +17,9 @@ import java.util.*
 class AccountTable(
     storage: SqlStorage,
 ) : SqlTable<Account>(storage, "accounts") {
-    override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key")
+    override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key", "fetched")
 
-    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getString(5))
+    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInstant(6))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
