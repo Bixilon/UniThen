@@ -4,6 +4,8 @@ import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 object SetupRoute : NavigationRoute
+object AddAccountRoute : NavigationRoute
+
 object HomeRoute : NavigationRoute
 object SitesRoute : NavigationRoute
 

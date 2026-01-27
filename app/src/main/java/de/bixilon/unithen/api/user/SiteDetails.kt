@@ -1,5 +1,6 @@
 package de.bixilon.unithen.api.user
 
+import de.bixilon.kutil.stream.InputStreamUtil.readAll
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
 import okhttp3.OkHttpClient
@@ -18,6 +19,8 @@ data class SiteDetails(
 
         fun fix(url: String) = "https://${url.toURI().host}".toURI()
 
+        private fun fetchIcon(url: URI) = url.toURL().openStream().readAll()
+
         fun fetch(url: URI): SiteDetails {
             val request = HttpUtil.create(url, "/")
                 .get()
@@ -32,7 +35,7 @@ data class SiteDetails(
 
             if (response.code != 200) throw IllegalStateException("Request is not OK")
 
-            return parse(response.body.string(), null) // TODO: Icon
+            return parse(response.body.string(), this::fetchIcon) // TODO: Icon
         }
 
         fun parse(html: String, fetcher: ((URI) -> ByteArray)?): SiteDetails {

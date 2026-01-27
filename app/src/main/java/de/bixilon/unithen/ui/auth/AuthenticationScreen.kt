@@ -77,7 +77,7 @@ fun AuthenticationScreen(base: URI, callback: (Authentication) -> Unit) = Scaffo
     var state by remember { mutableStateOf(AuthenticationState.FETCH_USER_DETAILS) }
     var error: Throwable? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(state) {
+    LaunchedEffect(authentication) {
         if (state != AuthenticationState.FETCH_USER_DETAILS) return@LaunchedEffect
         val authentication = authentication ?: return@LaunchedEffect
 
