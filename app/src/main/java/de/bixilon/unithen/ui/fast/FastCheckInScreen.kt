@@ -45,7 +45,7 @@ import kotlin.time.Instant
 @Preview
 @Composable
 fun FastCheckinNoAppointments() {
-    SimpleErrorScreen("No upcoming appointments", "Are you sure you are there at the right time?")
+    SimpleErrorScreen("No upcoming courses!", "Are you sure you are there at the right time?")
 }
 
 @Composable

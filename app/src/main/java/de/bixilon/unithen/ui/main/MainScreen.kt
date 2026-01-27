@@ -58,6 +58,9 @@ fun MainScreen() {
             }
         }) { if (refreshing) Text("Refreshing...") else Text("Refresh courses") }
 
+
+        Button({ navigator.navigate(CoursesRoute) }) { Text("Courses") }
+
         SitesScreen()
     }
 }

@@ -21,4 +21,6 @@ object AddAccountRoute : NavigationRoute
 object HomeRoute : NavigationRoute
 object SitesRoute : NavigationRoute
 
+object CoursesRoute : NavigationRoute
+
 data class AuthenticationRoute(val site: Site) : NavigationRoute
