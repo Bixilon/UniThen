@@ -60,7 +60,6 @@ fun MainScreen() {
 
 
         Button({ navigator.navigate(CoursesRoute) }) { Text("Courses") }
-
-        SitesScreen()
+        Button({ navigator.navigate(AccountsRoute) }) { Text("Accounts") }
     }
 }

@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main
 
+import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
@@ -20,6 +21,9 @@ object AddAccountRoute : NavigationRoute
 
 object HomeRoute : NavigationRoute
 object SitesRoute : NavigationRoute
+object AccountsRoute : NavigationRoute
+
+data class AccountDetailsRoute(val account: Account) : NavigationRoute
 
 object CoursesRoute : NavigationRoute
 
