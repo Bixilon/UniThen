@@ -19,3 +19,6 @@ local.properties
 
 
 *.sqlite
+
+
+app/release

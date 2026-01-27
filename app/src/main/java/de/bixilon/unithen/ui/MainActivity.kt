@@ -36,7 +36,7 @@ fun MainNavigator() {
         composable<SitesRoute> { SitesScreen() }
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
-        composable<AuthenticationRoute> { AuthenticationScreen(it.site.url) { navigator.pop() } }
+        composable<AuthenticationRoute> { AuthenticationScreen(it.site) { navigator.pop() } }
     }
 
     navigator.Host()

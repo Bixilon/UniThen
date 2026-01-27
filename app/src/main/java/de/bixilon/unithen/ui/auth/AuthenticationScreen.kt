@@ -8,16 +8,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.cast.CastUtil.unsafeNull
 import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
-import java.net.URI
 
 
 enum class AuthenticationState {
@@ -36,19 +33,13 @@ fun AuthenticationProgress(text: String, modifier: Modifier) {
     }
 }
 
-private fun fetchUserDetails(base: URI, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
+private fun fetchUserDetails(site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
     Log.i("Auth", "Fetching user details...")
-    val details = UserDetails.fetch(base, authentication)
+    val details = UserDetails.fetch(site.url, authentication)
 
     Log.v("Auth", "Found user details: $details")
 
-    var site: Site = unsafeNull()
-    var account: Account = unsafeNull()
-
-    DataStorage.STORAGE.transaction {
-        site = it.sites[base]!!
-        account = it.accounts.add(site, details, authentication)
-    }
+    val account = DataStorage.STORAGE.transaction { it.accounts.add(site, details, authentication) }
 
     callback.invoke(AuthenticationState.FETCH_COURSES)
 
@@ -63,7 +54,7 @@ private fun fetchUserDetails(base: URI, authentication: Authentication, callback
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthenticationScreen(base: URI, callback: (Authentication) -> Unit) = Scaffold(
+fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) = Scaffold(
     topBar = {
         TopAppBar(
             title = {
@@ -78,12 +69,11 @@ fun AuthenticationScreen(base: URI, callback: (Authentication) -> Unit) = Scaffo
     var error: Throwable? by remember { mutableStateOf(null) }
 
     LaunchedEffect(authentication) {
-        if (state != AuthenticationState.FETCH_USER_DETAILS) return@LaunchedEffect
         val authentication = authentication ?: return@LaunchedEffect
 
         DefaultThreadPool += add@{
             try {
-                fetchUserDetails(base, authentication) { state = it }
+                fetchUserDetails(site, authentication) { state = it }
                 callback.invoke(authentication)
             } catch (_error: Throwable) {
                 Log.e("Auth", "Error fetching user details: $_error")
@@ -100,7 +90,7 @@ fun AuthenticationScreen(base: URI, callback: (Authentication) -> Unit) = Scaffo
     }
 
     if (authentication == null) {
-        WebAuthenticationView(modifier, base) { authentication = it }
+        WebAuthenticationView(modifier, site.url) { authentication = it }
         return@Scaffold
     }
 

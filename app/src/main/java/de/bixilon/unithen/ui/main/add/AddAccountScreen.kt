@@ -1,6 +1,7 @@
 package de.bixilon.unithen.ui.main.add
 
 import android.graphics.BitmapFactory
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -66,11 +67,12 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
 fun AddAccountScreen(callback: () -> Unit) {
     var site: Site? by remember { mutableStateOf(null) }
 
-    val _site = site
+    BackHandler(site != null) { site = null }
 
-    if (_site == null) {
-        SelectSiteSetupScreen { site = it }
+    site?.let {
+        AuthenticationScreen(it) { callback.invoke() }
         return
     }
-    AuthenticationScreen(_site.url) { callback.invoke() }
+
+    SelectSiteSetupScreen { site = it }
 }

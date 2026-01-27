@@ -9,7 +9,7 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.util.CookieParser
 
 
-class WebAuthClient(
+open class WebAuthClient(
     val callback: (Authentication) -> Unit,
 ) : WebViewClient() {
 

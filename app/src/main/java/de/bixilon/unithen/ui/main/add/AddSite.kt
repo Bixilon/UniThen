@@ -1,5 +1,6 @@
 package de.bixilon.unithen.ui.main.add
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.input.TextFieldState
@@ -45,11 +46,12 @@ fun AddSiteDialog(callback: (Site) -> Unit) {
     val input = remember { TextFieldState("") }
     var url: String? by remember { mutableStateOf(null) }
 
-    if (url != null) {
+    BackHandler(url != null) { url = null }
+
+    url?.let {
         AddSiteProgressDialog(url!!, callback)
         return
     }
-
 
     LaunchedEffect(input) {
         val text = input.text.toString()
