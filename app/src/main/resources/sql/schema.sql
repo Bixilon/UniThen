@@ -2,16 +2,13 @@
 -- TODO: icon, name
 CREATE TABLE sites (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  url VARCHAR(255) NOT NULL UNIQUE,
+  host VARCHAR(255) NOT NULL UNIQUE,
 
   name VARCHAR(255) NOT NULL,
   icon BLOB,
 
   fetched INTEGER
 );
-
--- TODO: Remove (or add all sites by default)
-INSERT INTO sites (url, name, fetched) VALUES ('kurse.zhs-muenchen.de', "ZHS", 0);
 
 CREATE TABLE accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

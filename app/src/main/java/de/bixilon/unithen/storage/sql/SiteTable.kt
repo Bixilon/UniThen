@@ -14,38 +14,43 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import androidx.core.database.getBlobOrNull
+import de.bixilon.kutil.uri.URIUtil.toURI
+import de.bixilon.unithen.api.user.SiteDetails
+import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import java.net.URI
 import kotlin.time.Clock
 
 class SiteTable(
     storage: SqlStorage,
 ) : SqlTable<Site>(storage, "sites") {
 
-    override val columns = listOf("id", "url", "name", "icon", "fetched")
+    override val columns = listOf("id", "host", "name", "icon", "fetched")
 
-    override fun map(cursor: Cursor) = Site(cursor.getInt(0), URI("https://${cursor.getString(1)}"), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
+    override fun map(cursor: Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(url: URI) = single("url=?", url.host)
+    operator fun get(host: String) = single("host=?", host)
 
-    fun insert(url: URI, name: String, icon: ByteArray?): Site {
-        val id = insert("INSERT INTO $table(url, name, icon, fetched) VALUES (?,?,?,?)", url.host, name, icon, Clock.System.now().epochSeconds)
+    fun insert(host: String, name: String, icon: ByteArray?): Site {
+        val id = insert("INSERT INTO $table(host, name, icon, fetched) VALUES (?,?,?,?)", host, name, icon, Clock.System.now().epochSeconds)
 
         return this[id]!!
     }
 
-    fun add(url: URI, name: String, icon: ByteArray?): Site {
-        this[url]?.let { return it } // TODO: update
+    fun add(host: String, name: String, icon: ByteArray?): Site {
+        assert(!host.startsWith("https://"))
+        this[host]?.let { return it } // TODO: update
 
-        return insert(url, name, icon)
+        return insert(host, name, icon)
     }
 
+    fun add(url: String): Site {
+        val fixed = SiteDetails.fix(url)
+        val url = "https://${fixed}".toURI()
+        val details = SiteDetails.fetch(url)
 
-    @Deprecated("move somewhere else")
-    fun add(url: String) {
-        // TODO
+        return DataStorage.STORAGE.sites.add(fixed, details.name, details.icon)
     }
 }

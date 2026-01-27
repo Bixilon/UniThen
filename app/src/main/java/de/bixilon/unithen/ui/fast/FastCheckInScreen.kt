@@ -22,7 +22,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.Broken
@@ -34,6 +33,7 @@ import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.util.SimpleErrorScreen
 import kotlinx.coroutines.delay
 import java.time.Instant
 import java.time.LocalDateTime
@@ -44,39 +44,7 @@ import kotlin.time.Duration.Companion.seconds
 @Preview
 @Composable
 fun FastCheckinNoAppointments() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .padding(top = 50.dp),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.errorContainer,
-            tonalElevation = 2.dp,
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = "No upcoming appointments!",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = "Are you sure you are there at the right time?",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-    }
+    SimpleErrorScreen("No upcoming appointments", "Are you sure you are there at the right time?")
 }
 
 @Composable

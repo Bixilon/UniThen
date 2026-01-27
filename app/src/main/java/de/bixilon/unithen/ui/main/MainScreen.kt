@@ -18,11 +18,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
-import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.util.AndroidUtil.activity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -45,14 +47,14 @@ fun MainScreen() {
 
         Button(enabled = !refreshing, onClick = {
             refreshing = true
-            DefaultThreadPool += {
+            CoroutineScope(Dispatchers.IO).launch {
                 try {
                     UniThen.updateCourses()
-                    context.activity?.runOnUiThread { Toast.makeText(context, "Courses refreshed!", 1000) }
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
                 } catch (error: Throwable) {
-                    context.activity?.runOnUiThread { Toast.makeText(context, "Error: $error", 1000) }
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show() }
                 }
-                refreshing = false
+                withContext(Dispatchers.Main) { refreshing = false }
             }
         }) { if (refreshing) Text("Refreshing...") else Text("Refresh courses") }
 

@@ -47,23 +47,30 @@ class PageDetailsTest {
     }
 
     @Test
+    fun `remove https`() {
+        val url = SiteDetails.fix("https://")
+
+        assertEquals(url, "")
+    }
+
+    @Test
     fun `fix url correct`() {
         val url = SiteDetails.fix("https://kurse.zhs-muenchen.de/")
 
-        assertEquals(url, "https://kurse.zhs-muenchen.de".toURI())
+        assertEquals(url, "kurse.zhs-muenchen.de")
     }
 
     @Test
     fun `fix url no scheme`() {
         val url = SiteDetails.fix("kurse.zhs-muenchen.de/")
 
-        assertEquals(url, "https://kurse.zhs-muenchen.de".toURI())
+        assertEquals(url, "kurse.zhs-muenchen.de")
     }
 
     @Test
     fun `fix url with path`() {
         val url = SiteDetails.fix("kurse.zhs-muenchen.de/de")
 
-        assertEquals(url, "https://kurse.zhs-muenchen.de".toURI())
+        assertEquals(url, "kurse.zhs-muenchen.de")
     }
 }

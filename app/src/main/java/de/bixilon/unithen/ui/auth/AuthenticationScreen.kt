@@ -13,20 +13,27 @@
 package de.bixilon.unithen.ui.auth
 
 import android.util.Log
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
+import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.ui.util.SimpleErrorScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 enum class AuthenticationState {
@@ -36,13 +43,26 @@ enum class AuthenticationState {
 }
 
 @Composable
-fun AuthenticationProgress(text: String, modifier: Modifier) {
-    Row(modifier = modifier) {
-        CircularProgressIndicator(
-            modifier = Modifier.width(64.dp),
-        )
-        Text(text)
+fun AuthenticationProgress(state: AuthenticationState) {
+    val text = when (state) {
+        AuthenticationState.FETCH_USER_DETAILS -> "Fetching user details..."
+        AuthenticationState.FETCH_COURSES -> "Fetching courses..."
+        AuthenticationState.DONE -> Broken()
     }
+    AlertDialog(
+        confirmButton = {},
+        onDismissRequest = {},
+        title = { Text("Logging in...") },
+        text = {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text)
+            }
+        },
+    )
 }
 
 private fun fetchUserDetails(site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
@@ -64,18 +84,8 @@ private fun fetchUserDetails(site: Site, authentication: Authentication, callbac
     callback.invoke(AuthenticationState.DONE)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) = Scaffold(
-    topBar = {
-        TopAppBar(
-            title = {
-                Text("Authentication")
-            }
-        )
-    },
-) { innerPadding ->
-    val modifier = Modifier.padding(innerPadding)
+fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
     var authentication: Authentication? by remember { mutableStateOf(null) }
     var state by remember { mutableStateOf(AuthenticationState.FETCH_USER_DETAILS) }
     var error: Throwable? by remember { mutableStateOf(null) }
@@ -83,7 +93,7 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) = Scaff
     LaunchedEffect(authentication) {
         val authentication = authentication ?: return@LaunchedEffect
 
-        DefaultThreadPool += add@{
+        withContext(Dispatchers.IO) {
             try {
                 fetchUserDetails(site, authentication) { state = it }
                 callback.invoke(authentication)
@@ -91,25 +101,24 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) = Scaff
                 Log.e("Auth", "Error fetching user details: $_error")
                 _error.printStackTrace()
                 error = _error
-                return@add
             }
         }
     }
 
+
     if (error != null) {
-        Text("Error fetching user details: $error", modifier = modifier)
-        return@Scaffold
+        SimpleErrorScreen("Error fetching user details", error.toString())
+        return
     }
 
     if (authentication == null) {
-        WebAuthenticationView(modifier, site.url) { authentication = it }
-        return@Scaffold
+        WebAuthenticationView(url = site.url) { authentication = it }
+        return
+    }
+    if (state == AuthenticationState.DONE) {
+        Text("Done")
+        return
     }
 
-
-    when (state) {
-        AuthenticationState.FETCH_USER_DETAILS -> AuthenticationProgress("Fetching user details...", modifier)
-        AuthenticationState.FETCH_COURSES -> AuthenticationProgress("Fetching courses...", modifier)
-        AuthenticationState.DONE -> Text("Done!", modifier = modifier)
-    }
+    AuthenticationProgress(state)
 }

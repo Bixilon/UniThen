@@ -12,15 +12,18 @@
 
 package de.bixilon.unithen.storage
 
+import de.bixilon.kutil.uri.URIUtil.toURI
 import java.net.URI
 import kotlin.time.Instant
 
 data class Site(
     override val id: Int,
-    val url: URI,
+    val host: String,
 
     val name: String,
     val icon: ByteArray?,
 
     val fetched: Instant,
-) : DbKeyed
+) : DbKeyed {
+    val url: URI get() = "https://$host".toURI()
+}

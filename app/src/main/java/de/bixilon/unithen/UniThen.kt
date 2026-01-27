@@ -17,6 +17,9 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UniThen : Application() {
 
@@ -24,8 +27,9 @@ class UniThen : Application() {
         super.onCreate()
         DataStorage.STORAGE = SqlStorage(applicationContext)
 
-
-        //  updateCourses()
+        if (DataStorage.STORAGE.sites.count == 0) {
+            CoroutineScope(Dispatchers.IO).launch { DataStorage.STORAGE.sites.add("kurse.zhs-muenchen.de") }
+        }
     }
 
     override fun onTerminate() {

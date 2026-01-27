@@ -13,81 +13,116 @@
 package de.bixilon.unithen.ui.main.add
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import de.bixilon.kutil.concurrent.pool.DefaultThreadPool
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
-private fun AddSiteProgressDialog(url: String, callback: (Site) -> Unit) {
-    var text: String by remember { mutableStateOf("Fetching: $url") }
+fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
+    var error: Throwable? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(Unit) {
-        DefaultThreadPool += {
-            try {
-                val url = SiteDetails.fix(url)
-                val details = SiteDetails.fetch(url)
+    BackHandler { cancel.invoke() }
 
-                val site = DataStorage.STORAGE.sites.add(url, details.name, details.icon)
-                text = "Done!"
-                callback.invoke(site)
-            } catch (error: Throwable) {
-                error.printStackTrace()
-                text = error.toString()
-            }
+    LaunchedEffect(url) {
+        try {
+            val site = withContext(Dispatchers.IO) { DataStorage.STORAGE.sites.add(url) }
+            callback(site)
+        } catch (_error: Throwable) {
+            _error.printStackTrace()
+            error = _error
         }
     }
 
-    AlertDialog({}, {}, text = { Text(text) })
+    AlertDialog(
+        onDismissRequest = cancel,
+        title = { if (error != null) Text("Error!") else Text("Add Site") },
+        text = {
+            error?.let {
+                Text("An error occurred while fetching page details: $it", color = Color.Red)
+                return@AlertDialog
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Fetching page details ($url)...")
+            }
+        },
+        confirmButton = { if (error != null) TextButton(onClick = cancel) { Text("Close") } }
+    )
 }
 
 @Composable
-fun AddSiteDialog(callback: (Site) -> Unit) {
-    val input = remember { TextFieldState("") }
+fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
     var url: String? by remember { mutableStateOf(null) }
 
-    BackHandler(url != null) { url = null }
-
     url?.let {
-        AddSiteProgressDialog(url!!, callback)
+        AddSiteProgressDialog(it, { url = null }, callback)
         return
     }
 
-    LaunchedEffect(input) {
+    val input = remember { TextFieldState("") }
+
+    LaunchedEffect(input.text) {
         val text = input.text.toString()
-        val fixed = catchAll { SiteDetails.fix(text).toString() } ?: text
+        val fixed = catchAll { SiteDetails.fix(text) } ?: text
         if (fixed != text) {
             input.edit { this.replace(0, this.length, fixed) }
         }
     }
 
-
-    Column {
-
-        TextField(state = input, modifier = Modifier.fillMaxWidth(), placeholder = { Text("kurse.uni.de") })
-        Button(
-            onClick = {
-                val text = input.text.toString()
-                input.clearText()
-                url = text
-            },
-            enabled = input.text.isNotBlank()
-        ) {
-            Text("Add site")
-        }
-    }
+    AlertDialog(
+        onDismissRequest = cancel ?: {},
+        title = { Text("Add New Site") },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    "Enter the URL of the site you want to add.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    state = input,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    placeholder = { Text("e.g., kurse.uni.de") },
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val text = input.text.toString()
+                    input.clearText()
+                    url = text
+                },
+                enabled = catchAll { SiteDetails.fix(input.text.toString()) }?.isNotBlank() ?: false,
+            ) {
+                Text("Add Site")
+            }
+        },
+        dismissButton = {
+            cancel?.let { TextButton(onClick = it) { Text("Cancel") } }
+        },
+        containerColor = MaterialTheme.colorScheme.background
+    )
 }
 
 
@@ -95,13 +130,25 @@ fun AddSiteDialog(callback: (Site) -> Unit) {
 fun AddSiteButton(callback: (Site) -> Unit) {
     var open by remember { mutableStateOf(false) }
 
+
     if (open) {
-        AddSiteDialog(callback)
+        BackHandler { open = false }
+        AddSiteDialog({ open = false }, callback)
     }
 
     if (!open) {
-        Button({ open = true }) {
-            Text("Can not find your site?")
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Can’t find your site?",
+                modifier = Modifier.clickable { open = true },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }

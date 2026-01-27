@@ -18,11 +18,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
@@ -33,32 +38,60 @@ import de.bixilon.unithen.ui.auth.AuthenticationScreen
 fun ByteArray.toBitmap() = BitmapFactory.decodeByteArray(this, 0, this.size)
 
 @Composable
-private fun SiteList(sites: List<Site>, callback: (Site) -> Unit) {
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+private fun SiteCard(site: Site, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        onClick = onClick,
     ) {
-        items(
-            items = sites,
-            key = Site::id
-        ) { site ->
-            Card(modifier = Modifier.fillMaxWidth(), onClick = { callback.invoke(site) }) {
-                val bitmap = remember { site.icon?.toBitmap()?.asImageBitmap() }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        ) {
+            Row {
+                val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+
                 if (bitmap != null) {
-                    Image(bitmap = bitmap, contentDescription = "icon")
+                    Image(
+                        bitmap = bitmap,
+                        contentDescription = "Site icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+
+                    Spacer(modifier = Modifier.width(16.dp))
                 }
-                Text(text = site.name)
-                Text(text = site.url.toString())
+
+                Text(
+                    text = site.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
+
+            Text(
+                text = site.url.toString(),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+            )
         }
     }
 }
+
 
 @Composable
 fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
     val sites by remember { DataStorage.STORAGE.sites.stateOf { all() } }
 
     if (sites.isEmpty()) {
-        AddSiteDialog(callback)
+        AddSiteDialog(null, callback)
         return
     }
 
@@ -67,9 +100,19 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text("Please select a site where you booked your courses")
+        Text(
+            text = "Select the site where you booked your courses",
+            style = MaterialTheme.typography.titleLarge,
+        )
 
-        SiteList(sites, callback)
+        Spacer(Modifier.height(16.dp))
+
+        LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            items(items = sites, key = Site::id) { site -> SiteCard(site) { callback.invoke(site) } }
+        }
+
+        Spacer(Modifier.height(16.dp))
+
         AddSiteButton(callback)
     }
 }

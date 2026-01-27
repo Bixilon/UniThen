@@ -13,6 +13,7 @@
 package de.bixilon.unithen.api.user
 
 import de.bixilon.kutil.stream.InputStreamUtil.readAll
+import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
 import okhttp3.OkHttpClient
@@ -27,7 +28,20 @@ data class SiteDetails(
 
     companion object {
 
-        fun fix(url: String) = "https://${url.toURI().host}".toURI()
+        fun fix(url: String): String {
+            val transformed = url
+                .removeWhitespaces()
+                .split("://", limit = 2).last()
+                .split(":").first()
+                .split("/").first()
+
+
+            if (transformed.isBlank()) return ""
+
+            if ("." !in transformed) throw IllegalArgumentException("Invalid host: $url")
+
+            return transformed
+        }
 
         private fun fetchIcon(url: URI) = url.toURL().openStream().readAll()
 
