@@ -12,14 +12,12 @@
 
 package de.bixilon.unithen.ui.navigation
 
-import android.content.Context
-import android.content.ContextWrapper
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import de.bixilon.kutil.cast.CastUtil.cast
+import de.bixilon.unithen.util.AndroidUtil.activity
 import kotlin.reflect.KClass
 
 
@@ -39,12 +37,6 @@ class Navigator(
         }
     }
 
-    fun Context.findActivity(): ComponentActivity? = when (this) {
-        is ComponentActivity -> this
-        is ContextWrapper -> baseContext.findActivity()
-        else -> null
-    }
-
     fun routes(builder: Builder.() -> Unit) {
         if (stack.isNotEmpty()) return
 
@@ -55,7 +47,7 @@ class Navigator(
     @Composable
     fun Host() {
         val context = LocalContext.current
-        BackHandler { if (stack.size > 1) pop() else context.findActivity()?.finish() }
+        BackHandler { if (stack.size > 1) pop() else context.activity?.finish() }
 
         val frame = stack.last()
 

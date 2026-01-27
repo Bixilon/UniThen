@@ -43,7 +43,7 @@ fun SitesScreen() {
 
                     val navigator = LocalNavigation.current
                     Button({ navigator.navigate(AuthenticationRoute(it)) }) {
-                        Text("Authenticate")
+                        Text("Add account")
                     }
                 }
             }
