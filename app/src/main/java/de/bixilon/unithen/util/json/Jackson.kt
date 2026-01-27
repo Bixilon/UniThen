@@ -10,13 +10,12 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.util
+package de.bixilon.unithen.util.json
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.MapperFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 
@@ -36,7 +35,6 @@ object Jackson {
                 .configure(KotlinFeature.NewStrictNullChecks, false)
                 .build()
         )
-        .registerModule(JavaTimeModule())
 
     val GRAPH_QL = JsonMapper.builder()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -53,5 +51,5 @@ object Jackson {
                 .configure(KotlinFeature.NewStrictNullChecks, false)
                 .build()
         )
-        .registerModule(JavaTimeModule())
+        .registerModule(InstantSerializer)
 }

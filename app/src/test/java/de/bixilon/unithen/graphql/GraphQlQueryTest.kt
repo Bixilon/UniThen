@@ -18,12 +18,14 @@ import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.graphql.UserPkPostings
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.PostingQl
-import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.util.json.Jackson
 import junit.framework.TestCase.assertEquals
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.toInstant
 import org.junit.Test
 import java.io.FileNotFoundException
-import java.time.LocalDateTime
-import java.time.Month
 
 class GraphQlQueryTest {
 
@@ -47,7 +49,7 @@ class GraphQlQueryTest {
         val appointment = course.appointments.first()
 
         assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUUID())
-        assertEquals(appointment.start, LocalDateTime.of(2026, Month.MARCH, 11, 17, 30, 0))
+        assertEquals(appointment.start, LocalDateTime(2026, Month.MARCH, 11, 17, 30, 0).toInstant(UtcOffset.ZERO))
     }
 
     @Test

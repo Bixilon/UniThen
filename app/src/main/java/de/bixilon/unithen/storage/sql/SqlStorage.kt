@@ -24,8 +24,8 @@ import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import okio.Closeable
 import org.intellij.lang.annotations.Language
-import java.time.LocalDateTime
 import java.util.*
+import kotlin.time.Instant
 
 class SqlStorage(context: Context) : DataStorage, Closeable {
     private val helper = SqlHelper(context)
@@ -36,11 +36,11 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
 
-    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any, runnable: (Cursor) -> T): T {
-        return database.rawQuery(sql, parameters.map { it.toString() }.toTypedArray()).use { runnable.invoke(it) }
+    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
+        return database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
     }
 
-    fun execute(@Language("SQL") sql: String, vararg parameters: Any) {
+    fun execute(@Language("SQL") sql: String, vararg parameters: Any?) {
         database.execSQL(sql, parameters)
     }
 
@@ -53,7 +53,7 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
                 is Int -> statement.bindLong(index + 1, parameter.toLong())
                 is Long -> statement.bindLong(index + 1, parameter)
                 is String -> statement.bindString(index + 1, parameter)
-                is LocalDateTime -> statement.bindLong(index + 1, parameter.db())
+                is Instant -> statement.bindLong(index + 1, parameter.epochSeconds)
                 is UUID -> statement.bindString(index + 1, parameter.toString())
                 is ByteArray -> statement.bindBlob(index + 1, parameter)
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")

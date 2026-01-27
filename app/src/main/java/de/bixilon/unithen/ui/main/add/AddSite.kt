@@ -136,19 +136,18 @@ fun AddSiteButton(callback: (Site) -> Unit) {
         AddSiteDialog({ open = false }, callback)
     }
 
-    if (!open) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Can’t find your site?",
-                modifier = Modifier.clickable { open = true },
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp)
+            .clickable { open = true },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "Can't find your site?",
+            modifier = Modifier.padding(vertical = 15.dp),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }

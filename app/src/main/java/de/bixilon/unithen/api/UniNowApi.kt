@@ -19,7 +19,7 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import de.bixilon.unithen.api.graphql.types.PostingQl
-import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.util.json.Jackson
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody

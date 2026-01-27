@@ -95,6 +95,9 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("org.jsoup:jsoup:1.22.1")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+
+
 
     implementation("de.bixilon", "kutil", "1.30.2")
     implementation(libs.material3)
@@ -102,7 +105,6 @@ dependencies {
     jacksonCore("core")
     jacksonCore("databind")
     jackson("module", "kotlin")
-    jackson("datatype", "jsr310")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

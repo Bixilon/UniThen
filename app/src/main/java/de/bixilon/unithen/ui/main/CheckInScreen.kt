@@ -36,9 +36,9 @@ import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.util.json.Jackson
 import java.util.*
-
 
 
 @Composable
@@ -73,12 +73,12 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             Spacer(modifier = Modifier.height(64.dp))
 
             Text(
-                text = "Start: ${appointment.start}",
+                text = "Start: ${appointment.start.format()}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "End: ${appointment.end}",
+                text = "End: ${appointment.end.format()}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

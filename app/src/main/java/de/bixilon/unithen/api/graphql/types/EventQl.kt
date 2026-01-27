@@ -12,12 +12,12 @@
 
 package de.bixilon.unithen.api.graphql.types
 
-import java.time.LocalDateTime
 import java.util.*
+import kotlin.time.Instant
 
 data class EventQl(
     override val id: UUID,
     val name: String,
-    val start: LocalDateTime,
-    val end: LocalDateTime,
+    val start: Instant,
+    val end: Instant,
 ) : IdentifiedQl

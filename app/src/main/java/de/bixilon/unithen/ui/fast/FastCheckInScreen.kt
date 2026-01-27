@@ -34,11 +34,12 @@ import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.SimpleErrorScreen
+import de.bixilon.unithen.ui.util.UiUtil.format
 import kotlinx.coroutines.delay
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 
 @Preview
@@ -78,7 +79,7 @@ fun AppointmentCard(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "${appointment.start} - ${appointment.end}",
+                    text = "${appointment.start.format()} - ${appointment.end.format()}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -181,7 +182,7 @@ fun FastCheckinAppointment(course: Course, appointment: Appointment) {
     }
 }
 
-fun getTime(fake: Boolean) = if (fake) Instant.ofEpochSecond(1769446901).atZone(ZoneOffset.systemDefault()).toLocalDateTime() else LocalDateTime.now()
+fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else Clock.System.now()
 
 @Composable
 fun FastCheckInInScreen() {
@@ -196,7 +197,7 @@ fun FastCheckInInScreen() {
     }
 
 
-    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time.minusHours(1), time) } }
+    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time - 1.hours, time) } }
 
 
     if (BuildConfig.DEBUG) {

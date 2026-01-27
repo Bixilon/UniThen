@@ -13,14 +13,14 @@
 package de.bixilon.unithen.api.graphql.types
 
 import de.bixilon.unithen.api.graphql.types.location.LocationQl
-import java.time.LocalDateTime
 import java.util.*
+import kotlin.time.Instant
 
 data class AppointmentQl(
     override val id: UUID,
-    val start: LocalDateTime,
-    val end: LocalDateTime,
-    val cancelledAt: LocalDateTime?,
+    val start: Instant,
+    val end: Instant,
+    val cancelledAt: Instant?,
     val tutors: List<TutorQl>,
     val location: LocationQl,
 ) : IdentifiedQl
