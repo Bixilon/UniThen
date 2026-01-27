@@ -16,10 +16,10 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
+object MainRoute : NavigationRoute
 object SetupRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
 
-object HomeRoute : NavigationRoute
 object SitesRoute : NavigationRoute
 object AccountsRoute : NavigationRoute
 
@@ -28,3 +28,6 @@ data class AccountDetailsRoute(val account: Account) : NavigationRoute
 object CoursesRoute : NavigationRoute
 
 data class AuthenticationRoute(val site: Site) : NavigationRoute
+
+
+object DebugRoute : NavigationRoute

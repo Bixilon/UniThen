@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
@@ -38,10 +39,11 @@ import de.bixilon.unithen.ui.theme.UniThenTheme
 
 @Composable
 fun MainNavigator() {
-    val navigator = remember { Navigator(HomeRoute) }
+    val navigator = remember { Navigator(if (BuildConfig.DEBUG) DebugRoute else MainRoute) }
 
     navigator.routes {
-        composable<HomeRoute> { MainScreen() }
+        composable<MainRoute> { MainScreen() }
+        composable<DebugRoute> { DebugScreen() }
         composable<SetupRoute> { SetupScreen() }
 
         composable<SitesRoute> { SitesScreen() }

@@ -12,19 +12,13 @@
 
 package de.bixilon.unithen.ui.main
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
-import de.bixilon.unithen.UniThen
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -40,26 +34,7 @@ fun MainScreen() {
 
     Column {
         Text("Welcome!")
-        Button({ navigator.navigate(SetupRoute) }) { Text("Open setup") }
-        var refreshing by remember { mutableStateOf(false) }
 
-        val context = LocalContext.current
-
-        Button(enabled = !refreshing, onClick = {
-            refreshing = true
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    UniThen.updateCourses()
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
-                } catch (error: Throwable) {
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show() }
-                }
-                withContext(Dispatchers.Main) { refreshing = false }
-            }
-        }) { if (refreshing) Text("Refreshing...") else Text("Refresh courses") }
-
-
-        Button({ navigator.navigate(CoursesRoute) }) { Text("Courses") }
-        Button({ navigator.navigate(AccountsRoute) }) { Text("Accounts") }
+        Button({ navigator.navigate(DebugRoute) }) { Text("Debug menu") }
     }
 }

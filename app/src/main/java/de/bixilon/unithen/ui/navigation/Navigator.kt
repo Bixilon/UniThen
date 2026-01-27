@@ -14,7 +14,10 @@ package de.bixilon.unithen.ui.navigation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.util.AndroidUtil.activity
@@ -49,24 +52,20 @@ class Navigator(
         val context = LocalContext.current
         BackHandler { if (stack.size > 1) pop() else context.activity?.finish() }
 
-        val frame = stack.last()
-
-        var previousStackSize by remember { mutableIntStateOf(stack.size) }
-        val isForward = stack.size > previousStackSize
+        val last = stack.last()
 
         LaunchedEffect(stack.size) {
-            previousStackSize = stack.size
             isNavigating = false
         }
 
         CompositionLocalProvider(
             LocalNavigation provides this,
         ) {
-            val target = frame
-            if (frame.content == null) {
-                frame.content = movableContentOf { target.composable(target.route) }
+            for (frame in stack) {
+                Box(modifier = if (frame !== last) invisible else Modifier) {
+                    frame.composable.invoke(frame.route)
                 }
-            frame.content!!.invoke()
+            }
         }
     }
 
@@ -92,4 +91,9 @@ class Navigator(
         val composable: @Composable (NavigationRoute) -> Unit,
         var content: (@Composable () -> Unit)? = null,
     )
+
+    private val invisible = Modifier.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        layout(placeable.width, placeable.height) {}
+    }
 }
