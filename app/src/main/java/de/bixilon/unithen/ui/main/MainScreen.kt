@@ -12,6 +12,9 @@
 
 package de.bixilon.unithen.ui.main
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
@@ -20,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
@@ -57,6 +61,7 @@ fun MainScreen() {
     }
 
     Scaffold(
+        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
                 Destinations.entries.forEach { destination ->
@@ -77,6 +82,6 @@ fun MainScreen() {
             }
         }
     ) { contentPadding ->
-        navigator.Host()
+        Box(modifier = Modifier.padding(contentPadding)) { navigator.Host() }
     }
 }
