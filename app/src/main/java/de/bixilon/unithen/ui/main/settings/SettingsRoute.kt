@@ -10,43 +10,34 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main
+package de.bixilon.unithen.ui.main.settings
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.DataStorage
-import de.bixilon.unithen.storage.Site
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.ui.main.AboutRoute
+import de.bixilon.unithen.ui.main.DebugRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 
-
 @Composable
-fun SitesScreen() {
-    val sites by remember { DataStorage.STORAGE.sites.stateOf { all() } }
+@Preview
+fun SettingsScreen() {
+    val navigator = LocalNavigation.current
 
-    Column {
-        Text("Sites")
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .verticalScroll(rememberScrollState())) {
 
-
-        LazyColumn(Modifier.fillMaxSize()) {
-            items(sites, key = Site::id) {
-                Column {
-                    Text(it.url.toString())
-
-                    val navigator = LocalNavigation.current
-                    Button({ navigator.navigate(AuthenticationRoute(it)) }) {
-                        Text("Add account")
-                    }
-                }
-            }
-        }
+        Button({ navigator.navigate(DebugRoute) }) { Text("Debug") }
+        Button({ navigator.navigate(AboutRoute) }) { Text("About") }
     }
 }

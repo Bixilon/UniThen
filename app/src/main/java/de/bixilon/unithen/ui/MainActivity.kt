@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
@@ -32,9 +34,12 @@ import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
+import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.setup.SetupScreen
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.unithen.util.AndroidUtil.activity
 
 
 @Composable
@@ -48,7 +53,6 @@ fun MainNavigator() {
 
         composable<AboutRoute> { AboutScreen() }
 
-        composable<SitesRoute> { SitesScreen() }
         composable<CoursesRoute> { CoursesScreen() }
 
         composable<AccountsRoute> { AccountsScreen() }
@@ -56,9 +60,15 @@ fun MainNavigator() {
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
         composable<AuthenticationRoute> { AuthenticationScreen(it.site) { navigator.pop() } }
+
+        composable<SettingsRoute> { SettingsScreen() }
     }
 
-    navigator.Host()
+    CompositionLocalProvider(
+        LocalNavigation provides navigator,
+    ) {
+        navigator.Host()
+    }
 }
 
 
@@ -68,6 +78,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
+            BackHandler { activity?.finish() }
             UniThenTheme {
                 Scaffold(
                     modifier = Modifier.imePadding(),

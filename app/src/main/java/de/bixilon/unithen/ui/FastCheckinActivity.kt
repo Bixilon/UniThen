@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
@@ -24,13 +25,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.fast.*
 import de.bixilon.unithen.ui.main.CheckInScreen
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.unithen.util.AndroidUtil.activity
 
 
 @Composable
@@ -45,7 +49,11 @@ fun FastCheckInNavigator() {
         composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
     }
 
-    navigator.Host()
+    CompositionLocalProvider(
+        LocalNavigation provides navigator,
+    ) {
+        navigator.Host()
+    }
 }
 
 class FastCheckinActivity : ComponentActivity() {
@@ -60,6 +68,7 @@ class FastCheckinActivity : ComponentActivity() {
         }
 
         setContent {
+            BackHandler { activity?.finish() }
             UniThenTheme {
                 Scaffold(
                     modifier = Modifier.imePadding(),

@@ -12,30 +12,71 @@
 
 package de.bixilon.unithen.ui.main
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.ui.main.accounts.AccountsScreen
+import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.NavigationRoute
+import de.bixilon.unithen.ui.navigation.Navigator
+
+
+enum class Destinations(
+    val icon: ImageVector,
+    val label: String,
+    val route: NavigationRoute,
+) {
+    COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
+    ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
+}
 
 
 @Composable
 fun MainScreen() {
-    val navigator = LocalNavigation.current
+    val navigator = remember { Navigator(CoursesRoute) }
 
+    val _navigator = LocalNavigation.current
     LaunchedEffect(Unit) {
         if (DataStorage.STORAGE.accounts.count == 0) {
-            navigator.navigate(SetupRoute)
+            _navigator.navigate(SetupRoute)
         }
     }
 
 
-    Column {
-        Text("Welcome!")
+    navigator.routes {
+        composable<CoursesRoute> { CoursesScreen() }
+        composable<AccountsRoute> { AccountsScreen() }
+    }
 
-        Button({ navigator.navigate(DebugRoute) }) { Text("Debug menu") }
-        Button({ navigator.navigate(AboutRoute) }) { Text("About") }
+    Scaffold(
+        bottomBar = {
+            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
+                Destinations.entries.forEach { destination ->
+                    NavigationBarItem(
+                        selected = navigator.current().route == destination.route,
+                        onClick = { navigator.navigate(destination.route) },
+                        icon = { Icon(destination.icon, contentDescription = "") },
+                        label = { Text(destination.label) }
+                    )
+                }
+
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { _navigator.navigate(SettingsRoute) },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = "") },
+                    label = { Text("Settings") }
+                )
+            }
+        }
+    ) { contentPadding ->
+        navigator.Host()
     }
 }

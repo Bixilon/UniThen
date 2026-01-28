@@ -18,9 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
 import de.bixilon.kutil.cast.CastUtil.cast
-import de.bixilon.unithen.util.AndroidUtil.activity
 import kotlin.reflect.KClass
 
 
@@ -49,8 +47,7 @@ class Navigator(
 
     @Composable
     fun Host() {
-        val context = LocalContext.current
-        BackHandler { if (stack.size > 1) pop() else context.activity?.finish() }
+        BackHandler(stack.size > 1) { pop() }
 
         val last = stack.last()
 
@@ -58,15 +55,11 @@ class Navigator(
             isNavigating = false
         }
 
-        CompositionLocalProvider(
-            LocalNavigation provides this,
-        ) {
             for (frame in stack) {
                 Box(modifier = if (frame !== last) invisible else Modifier) {
                     frame.composable.invoke(frame.route)
                 }
             }
-        }
     }
 
     fun navigate(route: NavigationRoute) {
@@ -85,6 +78,8 @@ class Navigator(
         assert(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)
     }
+
+    fun current() = stack.last()
 
     data class Frame(
         val route: NavigationRoute,

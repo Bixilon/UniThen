@@ -21,7 +21,6 @@ object SetupRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
 object AboutRoute : NavigationRoute
 
-object SitesRoute : NavigationRoute
 object AccountsRoute : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
@@ -32,3 +31,6 @@ data class AuthenticationRoute(val site: Site) : NavigationRoute
 
 
 object DebugRoute : NavigationRoute
+
+
+object SettingsRoute : NavigationRoute
