@@ -36,5 +36,6 @@ fun MainScreen() {
         Text("Welcome!")
 
         Button({ navigator.navigate(DebugRoute) }) { Text("Debug menu") }
+        Button({ navigator.navigate(AboutRoute) }) { Text("About") }
     }
 }

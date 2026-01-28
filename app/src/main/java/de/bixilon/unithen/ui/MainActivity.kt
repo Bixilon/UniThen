@@ -46,6 +46,8 @@ fun MainNavigator() {
         composable<DebugRoute> { DebugScreen() }
         composable<SetupRoute> { SetupScreen() }
 
+        composable<AboutRoute> { AboutScreen() }
+
         composable<SitesRoute> { SitesScreen() }
         composable<CoursesRoute> { CoursesScreen() }
 

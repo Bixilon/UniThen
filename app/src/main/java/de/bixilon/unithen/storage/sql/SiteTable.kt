@@ -46,8 +46,8 @@ class SiteTable(
         return insert(host, name, icon)
     }
 
-    fun add(url: String): Site {
-        val fixed = SiteDetails.fix(url)
+    fun add(host: String): Site {
+        val fixed = SiteDetails.fix(host)
         val url = "https://${fixed}".toURI()
         val details = SiteDetails.fetch(url)
 

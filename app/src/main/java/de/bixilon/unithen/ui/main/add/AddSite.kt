@@ -92,7 +92,7 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Enter the URL of the site you want to add.",
+                    "Enter the URL of the site you want to add:",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -102,7 +102,7 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    placeholder = { Text("e.g., kurse.uni.de") },
+                    placeholder = { Text("e.g. kurse.uni.de") },
                 )
             }
         },

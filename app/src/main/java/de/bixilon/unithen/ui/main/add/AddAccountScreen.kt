@@ -101,7 +101,7 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
             .padding(16.dp),
     ) {
         Text(
-            text = "Select the site where you booked your courses",
+            text = "Please choose your booking site:",
             style = MaterialTheme.typography.titleLarge,
         )
 

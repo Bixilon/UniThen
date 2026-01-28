@@ -19,6 +19,7 @@ import de.bixilon.unithen.ui.navigation.NavigationRoute
 object MainRoute : NavigationRoute
 object SetupRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
+object AboutRoute : NavigationRoute
 
 object SitesRoute : NavigationRoute
 object AccountsRoute : NavigationRoute

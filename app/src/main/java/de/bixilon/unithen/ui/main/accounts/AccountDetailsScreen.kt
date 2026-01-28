@@ -48,7 +48,7 @@ fun AccountDetailsScreen(account: Account) {
                 )
                 Text(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = "${site.name} (https://${site.url})",
+                    text = "${site.name} (${site.url})",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
