@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.sql
 
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteStatement
 import androidx.core.database.sqlite.transaction
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.graphql.types.CourseQl
@@ -36,33 +37,41 @@ class SqlStorage(context: Context) : DataStorage, Closeable {
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
 
-    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
-        return database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
+    private fun SQLiteStatement.bind(vararg parameters: Any?) {
+        for ((index, parameter) in parameters.withIndex()) {
+            val actual = index + 1
+            when (parameter) {
+                null -> bindNull(actual)
+                is Int -> bindLong(actual, parameter.toLong())
+                is Long -> bindLong(actual, parameter)
+                is String -> bindString(actual, parameter)
+                is Instant -> bindLong(actual, parameter.epochSeconds)
+                is UUID -> bindString(actual, parameter.toString())
+                is ByteArray -> bindBlob(actual, parameter)
+                else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
+            }
+        }
     }
 
-    fun execute(@Language("SQL") sql: String, vararg parameters: Any?) {
-        database.execSQL(sql, parameters)
+    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
+        return database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
     }
 
     fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
         val statement = database.compileStatement(sql)
 
-        for ((index, parameter) in parameters.withIndex()) {
-            when (parameter) {
-                null -> statement.bindNull(index + 1)
-                is Int -> statement.bindLong(index + 1, parameter.toLong())
-                is Long -> statement.bindLong(index + 1, parameter)
-                is String -> statement.bindString(index + 1, parameter)
-                is Instant -> statement.bindLong(index + 1, parameter.epochSeconds)
-                is UUID -> statement.bindString(index + 1, parameter.toString())
-                is ByteArray -> statement.bindBlob(index + 1, parameter)
-                else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
-            }
-        }
+        statement.bind(*parameters)
 
         return statement.use { it.executeInsert().toInt() }
     }
 
+    fun update(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+        val statement = database.compileStatement(sql)
+
+        statement.bind(*parameters)
+
+        return statement.use { it.executeUpdateDelete() }
+    }
 
     inline fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
 

@@ -195,6 +195,7 @@ fun FastCheckInInScreen() {
             delay(10.seconds)
         }
     }
+    LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
 
 
     val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time - 1.hours, time) } }

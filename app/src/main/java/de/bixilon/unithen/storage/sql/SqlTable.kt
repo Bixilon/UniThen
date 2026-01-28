@@ -14,8 +14,8 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -39,7 +39,7 @@ abstract class SqlTable<T>(
     fun update(id: Int): Nothing = Unreachable()
 
     protected fun update(id: Key, filter: SqlFilter) {
-        storage.execute("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
+        storage.update("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
         notify.intValue++
     }
 
@@ -89,9 +89,7 @@ abstract class SqlTable<T>(
     companion object {
 
         fun <S : SqlTable<*>, T> S.stateOf(block: S.() -> T): State<T> {
-            notify.intValue
-
-            return mutableStateOf(block.invoke(this))
+            return derivedStateOf { notify.intValue; block.invoke(this) }
         }
     }
 }

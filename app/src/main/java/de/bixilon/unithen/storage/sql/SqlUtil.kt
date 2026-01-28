@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
+import java.util.*
 import kotlin.time.Instant
 
 object SqlUtil {
@@ -23,7 +24,11 @@ object SqlUtil {
 
     fun Any?.db(): String? = when (this) {
         null -> null
+        is Int -> this.toString()
+        is Long -> this.toString()
+        is String -> this
+        is UUID -> this.toString()
         is Instant -> epochSeconds.toString()
-        else -> this.toString()
+        else -> throw IllegalArgumentException("Unknown parameter type: $this")
     }
 }
