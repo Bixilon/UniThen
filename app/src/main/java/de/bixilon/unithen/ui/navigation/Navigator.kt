@@ -47,19 +47,20 @@ class Navigator(
 
     @Composable
     fun Host() {
-        BackHandler(stack.size > 1) { pop() }
-
         val last = stack.last()
 
         LaunchedEffect(stack.size) {
             isNavigating = false
         }
 
-            for (frame in stack) {
-                Box(modifier = if (frame !== last) invisible else Modifier) {
-                    frame.composable.invoke(frame.route)
-                }
+        for (frame in stack) {
+            val current = frame === last
+            BackHandler(current && stack.size > 1) { pop() }
+
+            Box(modifier = if (!current) invisible else Modifier) {
+                frame.composable.invoke(frame.route)
             }
+        }
     }
 
     fun navigate(route: NavigationRoute) {
