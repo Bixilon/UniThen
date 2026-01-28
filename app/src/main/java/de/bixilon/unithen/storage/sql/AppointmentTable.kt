@@ -45,7 +45,7 @@ class AppointmentTable(
 
 
     fun insert(course: Course, uuid: UUID, start: Instant, end: Instant) {
-        storage.execute("INSERT INTO $table(course, uuid, start, end) VALUES (?,?,?,?)", course.id, uuid, start, end)
+        storage.insert("INSERT INTO $table(course, uuid, start, end) VALUES (?,?,?,?)", course.id, uuid, start, end)
     }
 
     fun add(course: Course, uuid: UUID, start: Instant, end: Instant) {
