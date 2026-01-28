@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
+import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import de.bixilon.unithen.ui.navigation.Navigator
@@ -40,6 +41,7 @@ enum class Destinations(
 ) {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
+    SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
 }
 
 
@@ -58,6 +60,7 @@ fun MainScreen() {
     navigator.routes {
         composable<CoursesRoute> { CoursesScreen() }
         composable<AccountsRoute> { AccountsScreen() }
+        composable<SettingsRoute> { SettingsScreen() }
     }
 
     Scaffold(
@@ -72,13 +75,6 @@ fun MainScreen() {
                         label = { Text(destination.label) }
                     )
                 }
-
-                NavigationBarItem(
-                    selected = false,
-                    onClick = { _navigator.navigate(SettingsRoute) },
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "") },
-                    label = { Text("Settings") }
-                )
             }
         }
     ) { contentPadding ->

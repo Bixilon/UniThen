@@ -31,7 +31,7 @@ object InstantSerializer : SimpleModule() {
         override fun deserialize(parser: JsonParser, context: DeserializationContext?) = when (parser.currentToken) {
             JsonToken.VALUE_NUMBER_INT -> Instant.fromEpochSeconds(parser.valueAsLong, 0L)
             JsonToken.VALUE_STRING -> Instant.parse(parser.valueAsString)
-            else -> TODO("Can not parse instant!")
+            else -> throw IllegalArgumentException("Can not parse instant!")
         }
     }
 }
