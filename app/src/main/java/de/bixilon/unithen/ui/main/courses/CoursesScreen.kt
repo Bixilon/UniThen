@@ -12,21 +12,27 @@
 
 package de.bixilon.unithen.ui.main.courses
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 private fun CourseCard(course: Course, onClick: () -> Unit) {
@@ -55,8 +61,10 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
 
 @Composable
 fun CoursesScreen() {
+    var refreshing by remember { mutableStateOf(false) }
     val courses by remember { DataStorage.STORAGE.courses.stateOf { all() } }
 
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -69,9 +77,21 @@ fun CoursesScreen() {
 
         Spacer(Modifier.height(16.dp))
 
-        LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(items = courses, key = Course::id) { course -> CourseCard(course) { } }
+        PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
+            refreshing = true
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    UniThen.updateCourses()
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                } catch (error: Throwable) {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show() }
+                }
+                withContext(Dispatchers.Main) { refreshing = false }
+            }
+        }) {
+            LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(items = courses, key = Course::id) { course -> CourseCard(course) { } }
+            }
         }
-
     }
 }
