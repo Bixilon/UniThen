@@ -167,6 +167,9 @@ dependencies {
 
     implementation(libs.kutil)
     implementation(libs.material3)
+    implementation(libs.androidx.datastore.core)
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
+
 
     jacksonCore("core")
     jacksonCore("databind")

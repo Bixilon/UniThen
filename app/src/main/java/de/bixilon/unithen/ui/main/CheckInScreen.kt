@@ -18,7 +18,6 @@ import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,6 +35,8 @@ import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberBooleanSetting
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.util.json.Jackson
 import java.util.*
@@ -43,8 +44,7 @@ import java.util.*
 
 @Composable
 fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
-    var fakeName by remember { mutableStateOf(false) }
-    var xss by remember { mutableStateOf(false) }
+    var fakeName by rememberBooleanSetting(Settings.QR_CODE_FAKE_NAME, false)
 
     val context = LocalContext.current
     DisposableEffect(Unit) {
@@ -54,6 +54,8 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
         }
     }
+
+    val name by remember { derivedStateOf { if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname) } }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -83,48 +85,28 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                text = "Name: ${account.firstname} ${account.lastname}",
+                text = "Name: ${name.first} ${name.second}",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            QrCodeView(
-                data = createQrCode(account.uuid, appointment.uuid, if (xss) "Hello<script>alert(1)</script>\"'Hm." else if (fakeName) "Max" else account.firstname, if (fakeName) "Muster" else account.lastname),
-                modifier = Modifier
-                    .size(300.dp)
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(Color.White)
-                    .padding(16.dp)
-            )
+            Box(Modifier.padding(16.dp)) {
+                QrCodeView(
+                    data = createQrCode(account.uuid, appointment.uuid, name.first, name.second),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1f, matchHeightConstraintsFirst = true)
+                        .clip(RoundedCornerShape(5.dp))
+                        .background(Color.White)
+                        .padding(16.dp)
+                )
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            Text(
-                text = "Present this QR code at the entrance",
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = fakeName,
-                    onCheckedChange = { fakeName = it }
-                )
-                Text("Fake name (Max Muster)")
-            }
-
-            // TODO: remove
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Checkbox(
-                    checked = xss,
-                    onCheckedChange = { xss = it }
-                )
-                Text("Try XSS")
-            }
+            Text("Present this QR code at the entrance")
         }
     }
 }
