@@ -38,6 +38,7 @@ import de.bixilon.unithen.ui.util.UiUtil.format
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -198,7 +199,7 @@ fun FastCheckInInScreen() {
     LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
 
 
-    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time - 1.hours, time) } }
+    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes) } }
 
 
     if (BuildConfig.DEBUG) {
