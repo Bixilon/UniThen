@@ -59,7 +59,7 @@ data class SiteDetails(
 
             if (response.code != 200) throw IllegalStateException("Request is not OK")
 
-            return parse(response.body.string(), this::fetchIcon) // TODO: Icon
+            return parse(response.body.string(), this::fetchIcon)
         }
 
         fun parse(html: String, fetcher: ((URI) -> ByteArray)?): SiteDetails {
@@ -68,6 +68,15 @@ data class SiteDetails(
             val name = parsed.head()
                 .getElementsByTag("title")
                 .first()?.text() ?: throw IllegalStateException("Can not extract title!")
+
+
+            parsed.head()
+                .getElementsByTag("script")
+                .find { it.data().contains("window.UniNow = ") } ?: throw IllegalStateException("Not a uni now page!")
+
+
+            parsed.body().getElementsMatchingText("in Magdeburg by").firstOrNull() ?: throw IllegalStateException("Not a uni now page!")
+
 
             val iconUrl = parsed.head()
                 .getElementsByTag("link")
