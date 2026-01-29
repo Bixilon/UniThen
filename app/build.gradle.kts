@@ -104,8 +104,8 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false // TODO
-            isShrinkResources = false // TODO
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
@@ -154,21 +154,21 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation("androidx.compose.material:material-icons-core")
+    implementation(libs.androidx.material.icons.core)
 
-    implementation("com.lightspark:compose-qr-code:1.0.1")
+    implementation(libs.compose.qr.code)
 
     implementation("com.squareup.okhttp3:okhttp:5.3.2")
     implementation("org.jsoup:jsoup:1.22.1")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
+    implementation(libs.kotlinx.datetime)
 
 
 
     implementation(libs.kutil)
     implementation(libs.material3)
     implementation(libs.androidx.datastore.core)
-    implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation(libs.androidx.datastore.preferences)
 
 
     jacksonCore("core")
