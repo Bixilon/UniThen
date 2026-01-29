@@ -24,6 +24,7 @@ import kotlin.reflect.KClass
 
 class Navigator(
     private val start: NavigationRoute,
+    val mode: NavigationMode = NavigationMode.STANDARD,
 ) {
     private val stack = mutableStateListOf<Frame>()
     private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
@@ -49,11 +50,10 @@ class Navigator(
     fun Host() {
         val last = stack.last()
 
-        LaunchedEffect(stack.size) {
-            isNavigating = false
-        }
+        LaunchedEffect(stack.size) { isNavigating = false }
 
         for (frame in stack) {
+            // TODO: provide key
             val current = frame === last
             BackHandler(current && stack.size > 1) { pop() }
 
@@ -72,6 +72,16 @@ class Navigator(
         }
 
         isNavigating = true
+
+        if (mode == NavigationMode.SINGLE) {
+            val existing = stack.find { it.route == route }
+            if (existing != null) {
+                stack.removeAt(stack.indexOf(existing))
+                stack += existing
+                return
+            }
+        }
+
         stack += Frame(route, composable)
     }
 

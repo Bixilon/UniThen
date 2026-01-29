@@ -22,14 +22,17 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import de.bixilon.unithen.ui.navigation.Navigator
 
@@ -47,11 +50,12 @@ enum class Destinations(
 
 @Composable
 fun MainScreen() {
-    val navigator = remember { Navigator(CoursesRoute) }
+    val navigator = remember { Navigator(CoursesRoute, NavigationMode.SINGLE) }
+    val count by remember { DataStorage.STORAGE.accounts.stateOf { count } }
 
     val _navigator = LocalNavigation.current
-    LaunchedEffect(Unit) {
-        if (DataStorage.STORAGE.accounts.count == 0) {
+    LaunchedEffect(count) {
+        if (count == 0) {
             _navigator.navigate(SetupRoute)
         }
     }
