@@ -93,7 +93,7 @@ android {
         buildConfigField("String", "GIT_CLEAN", git?.clean?.let { "\"$it\"" }.toString())
         buildConfigField("String", "GIT_TAG", git?.tag?.let { "\"$it\"" }.toString())
 
-        var version = (git?.tag ?: git?.commit?.substring(0, 10) ?: "unknown")
+        var version = (git?.tag?.removePrefix("v") ?: git?.commit?.substring(0, 10) ?: "unknown")
         git?.takeIf { !it.clean }?.let { version += "-dirty" }
         buildConfigField("String", "VERSION", "\"" + version + "\"")
 
