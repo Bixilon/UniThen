@@ -24,16 +24,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.ui.fast.CheckInRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.UiUtil.format
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
     val site = remember { DataStorage.STORAGE.sites[course.site]!! }
     val appointsments by remember { DataStorage.STORAGE.appointments.stateOf { this[course] } }
+    val accounts by remember { DataStorage.STORAGE.accounts.stateOf { this[course] } }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Card(
@@ -52,6 +56,26 @@ fun CourseDetailsScreen(course: Course) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
+                // TODO: show account name if just one
+            }
+        }
+
+        if (accounts.size > 1) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                items(items = accounts, key = Account::id) { account ->
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = "${account.firstname}  ${account.lastname}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
             }
         }
 
@@ -64,6 +88,7 @@ fun CourseDetailsScreen(course: Course) {
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
+        val navigation = LocalNavigation.current
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp),
             modifier = Modifier.weight(1f)
@@ -72,6 +97,7 @@ fun CourseDetailsScreen(course: Course) {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
                     modifier = Modifier.fillMaxWidth(),
+                    onClick = { navigation.navigate(CheckInRoute(accounts.first(), course, appointment)) } // TODO: multi accounting
                 ) {
                     Text(
                         text = "${appointment.start.format()} - ${appointment.end.format()}",

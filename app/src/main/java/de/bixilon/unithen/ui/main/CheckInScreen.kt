@@ -74,6 +74,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
 
             Spacer(modifier = Modifier.height(64.dp))
 
+            // TODO: color date differently if passed/upcoming
             Text(
                 text = "Start: ${appointment.start.format()}",
                 style = MaterialTheme.typography.bodyLarge,
