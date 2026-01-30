@@ -28,6 +28,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.ui.fast.CheckInRoute
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
@@ -59,6 +60,9 @@ fun MainNavigator() {
 
         composable<CoursesRoute> { CoursesScreen() }
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
+
+        composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
+
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
 

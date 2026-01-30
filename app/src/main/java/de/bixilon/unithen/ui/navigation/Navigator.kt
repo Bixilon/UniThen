@@ -15,7 +15,9 @@ package de.bixilon.unithen.ui.navigation
 import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import de.bixilon.kutil.cast.CastUtil.cast
@@ -28,7 +30,7 @@ class Navigator(
 ) {
     private val stack = mutableStateListOf<Frame>()
     private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
-    private var isNavigating by mutableStateOf(false)
+    private var isNavigating = false
 
 
     inner class Builder {
@@ -50,7 +52,9 @@ class Navigator(
     fun Host() {
         val last = stack.last()
 
-        LaunchedEffect(stack.size) { isNavigating = false }
+        if (isNavigating) {
+            isNavigating = false
+        }
 
         for (frame in stack) {
             key(frame.route) {
