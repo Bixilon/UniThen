@@ -166,7 +166,6 @@ dependencies {
 
 
     implementation(libs.kutil)
-    implementation(libs.material3)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.datastore.preferences)
 
