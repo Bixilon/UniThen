@@ -28,11 +28,11 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
-import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
+import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.setup.SetupScreen
@@ -53,13 +53,14 @@ fun MainNavigator() {
 
         composable<AboutRoute> { AboutScreen() }
 
-        composable<CoursesRoute> { CoursesScreen() }
 
         composable<AccountsRoute> { AccountsScreen() }
         composable<AccountDetailsRoute> { AccountDetailsScreen(it.account) }
 
+        composable<CoursesRoute> { CoursesScreen() }
+        composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
+
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
-        composable<AuthenticationRoute> { AuthenticationScreen(it.site) { navigator.pop() } }
 
         composable<SettingsRoute> { SettingsScreen() }
     }

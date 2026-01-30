@@ -29,6 +29,8 @@ import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.ui.main.CourseDetailsRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -61,6 +63,7 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
 
 @Composable
 fun CoursesScreen() {
+    val navigation = LocalNavigation.current
     var refreshing by remember { mutableStateOf(false) }
     val courses by remember { DataStorage.STORAGE.courses.stateOf { all() } }
 
@@ -90,7 +93,7 @@ fun CoursesScreen() {
             }
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(items = courses, key = Course::id) { course -> CourseCard(course) { } }
+                items(items = courses, key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
             }
         }
     }
