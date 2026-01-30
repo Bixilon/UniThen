@@ -114,7 +114,6 @@ android {
             versionNameSuffix = "-debug"
             resValue("string", "app_name", "Debug: UniThen")
             resValue("string", "app_name_fast_checkin", "Debug: UniThen Fast Check In")
-
         }
     }
     compileOptions {

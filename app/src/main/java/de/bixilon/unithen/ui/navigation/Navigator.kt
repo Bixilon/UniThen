@@ -53,12 +53,13 @@ class Navigator(
         LaunchedEffect(stack.size) { isNavigating = false }
 
         for (frame in stack) {
-            // TODO: provide key
-            val current = frame === last
-            BackHandler(current && stack.size > 1) { pop() }
+            key(frame.route) {
+                val current = frame === last
+                BackHandler(current && stack.size > 1) { pop() }
 
-            Box(modifier = if (!current) invisible else Modifier) {
-                frame.composable.invoke(frame.route)
+                Box(modifier = if (!current) invisible else Modifier) {
+                    frame.composable.invoke(frame.route)
+                }
             }
         }
     }
@@ -95,7 +96,6 @@ class Navigator(
     data class Frame(
         val route: NavigationRoute,
         val composable: @Composable (NavigationRoute) -> Unit,
-        var content: (@Composable () -> Unit)? = null,
     )
 
     private val invisible = Modifier.layout { measurable, constraints ->
