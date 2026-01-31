@@ -26,6 +26,7 @@ import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.AccountTable
 import de.bixilon.unithen.storage.sql.tables.AppointmentTable
 import de.bixilon.unithen.storage.sql.tables.CourseTable
+import de.bixilon.unithen.storage.sql.tables.EventTable
 import de.bixilon.unithen.storage.sql.tables.SiteTable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,7 @@ class SqlStorage(context: Context) : Closeable {
     val database = helper.writableDatabase
 
     val sites = SiteTable(this)
+    val event = EventTable(this)
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)

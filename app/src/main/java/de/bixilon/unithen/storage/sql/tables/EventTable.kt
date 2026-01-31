@@ -13,46 +13,37 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
-import androidx.core.database.getBlobOrNull
-import de.bixilon.kutil.uri.URIUtil.toURI
-import de.bixilon.unithen.api.user.SiteDetails
+import de.bixilon.unithen.storage.Event
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import kotlin.time.Clock
+import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SqlFilter
+import java.util.*
+import kotlin.time.Instant
 
-class SiteTable(
+class EventTable(
     storage: SqlStorage,
-) : SqlTable<Site>(storage, "sites") {
+) : SqlTable<Event>(storage, "events") {
 
-    override val columns = listOf("id", "host", "name", "icon", "fetched")
+    override val columns = listOf("id", "site", "uuid", "name", "start", "end")
 
-    override fun map(cursor: Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
+    override fun map(cursor: Cursor) = Event(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getInstant(4), cursor.getInstant(5))
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(host: String) = single("host=?", host)
+    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun insert(host: String, name: String, icon: ByteArray?): Site {
-        val id = insert("INSERT INTO $table(host, name, icon, fetched) VALUES (?,?,?,?)", host, name, icon, Clock.System.now())
+    fun insert(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
+        val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?)", site.id, uuid, name, start, end)
 
         return this[id]!!
     }
 
-    fun add(host: String, name: String, icon: ByteArray?): Site {
-        assert(!host.startsWith("https://"))
-        this[host]?.let { return it } // TODO: update
+    fun add(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
+        this[site, uuid]?.let { return it } // TODO: update
 
-        return insert(host, name, icon)
-    }
-
-    fun add(host: String): Site {
-        val fixed = SiteDetails.fix(host)
-        val url = "https://${fixed}".toURI()
-        val details = SiteDetails.fetch(url)
-
-        return STORAGE.sites.add(fixed, details.name, details.icon)
+        return insert(site, uuid, name, start, end)
     }
 }

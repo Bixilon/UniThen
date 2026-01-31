@@ -8,6 +8,20 @@ CREATE TABLE sites (
   fetched INTEGER
 );
 
+CREATE TABLE events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    site INTEGER,
+    uuid VARCHAR(36),
+
+    name VARCHAR(255) NOT NULL,
+
+    start INTEGER,
+    end INTEGER,
+
+    FOREIGN KEY (site) REFERENCES sites(id),
+    UNIQUE (site, uuid)
+);
+
 CREATE TABLE accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   site INTEGER,
