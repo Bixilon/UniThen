@@ -27,13 +27,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 
 @Composable
 fun AccountDetailsScreen(account: Account) {
-    val site = remember { DataStorage.STORAGE.sites[account.site]!! }
-    val courses by remember { DataStorage.STORAGE.courses.stateOf { this[account] } }
+    val site = remember { STORAGE.sites[account.site]!! }
+    val courses by remember { STORAGE.courses.stateOf { this[account] } }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Card(

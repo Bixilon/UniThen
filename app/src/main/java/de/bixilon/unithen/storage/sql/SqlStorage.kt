@@ -20,7 +20,6 @@ import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import okio.Closeable
@@ -28,7 +27,7 @@ import org.intellij.lang.annotations.Language
 import java.util.*
 import kotlin.time.Instant
 
-class SqlStorage(context: Context) : DataStorage, Closeable {
+class SqlStorage(context: Context) : Closeable {
     private val helper = SqlHelper(context)
     val database = helper.writableDatabase
 

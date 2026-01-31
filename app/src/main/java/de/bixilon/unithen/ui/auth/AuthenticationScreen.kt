@@ -29,7 +29,7 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.ui.util.SimpleErrorScreen
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +71,7 @@ private fun fetchUserDetails(site: Site, authentication: Authentication, callbac
 
     Log.v("Auth", "Found user details: $details")
 
-    val account = DataStorage.STORAGE.transaction { it.accounts.add(site, details, authentication) }
+    val account = STORAGE.transaction { it.accounts.add(site, details, authentication) }
 
     callback.invoke(AuthenticationState.FETCH_COURSES)
 
@@ -79,7 +79,7 @@ private fun fetchUserDetails(site: Site, authentication: Authentication, callbac
     val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
     val courses = api.postings(account.uuid)
 
-    DataStorage.STORAGE.populate(site, account, courses)
+    STORAGE.populate(site, account, courses)
     Log.i("Auth", "Courses fetched (total: ${courses.size})")
     callback.invoke(AuthenticationState.DONE)
 }

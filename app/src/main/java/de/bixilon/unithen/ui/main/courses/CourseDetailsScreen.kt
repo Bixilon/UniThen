@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.fast.CheckInRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -35,9 +35,9 @@ import de.bixilon.unithen.ui.util.UiUtil.format
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
-    val site = remember { DataStorage.STORAGE.sites[course.site]!! }
-    val appointsments by remember { DataStorage.STORAGE.appointments.stateOf { this[course] } }
-    val accounts by remember { DataStorage.STORAGE.accounts.stateOf { this[course] } }
+    val site = remember { STORAGE.sites[course.site]!! }
+    val appointsments by remember { STORAGE.appointments.stateOf { this[course] } }
+    val accounts by remember { STORAGE.accounts.stateOf { this[course] } }
 
     Column(modifier = Modifier.padding(16.dp)) {
         Card(

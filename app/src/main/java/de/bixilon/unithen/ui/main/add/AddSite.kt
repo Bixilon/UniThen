@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.user.SiteDetails
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -38,7 +38,7 @@ fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> U
 
     LaunchedEffect(url) {
         try {
-            val site = withContext(Dispatchers.IO) { DataStorage.STORAGE.sites.add(url) }
+            val site = withContext(Dispatchers.IO) { STORAGE.sites.add(url) }
             callback(site)
         } catch (_error: Throwable) {
             _error.printStackTrace()

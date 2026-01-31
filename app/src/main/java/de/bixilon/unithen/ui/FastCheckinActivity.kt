@@ -28,7 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.ui.fast.*
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -62,7 +62,7 @@ class FastCheckinActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        if (DataStorage.STORAGE.appointments.count == 0) {
+        if (STORAGE.appointments.count == 0) {
             this.startActivity(Intent(this, MainActivity::class.java))
             return
         }

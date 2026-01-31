@@ -26,7 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
@@ -51,7 +51,7 @@ enum class Destinations(
 @Composable
 fun MainScreen() {
     val navigator = remember { Navigator(CoursesRoute, NavigationMode.SINGLE) }
-    val count by remember { DataStorage.STORAGE.accounts.stateOf { count } }
+    val count by remember { STORAGE.accounts.stateOf { count } }
 
     val _navigator = LocalNavigation.current
     LaunchedEffect(count) {

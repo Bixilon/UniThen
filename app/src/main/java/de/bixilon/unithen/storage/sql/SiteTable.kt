@@ -16,8 +16,8 @@ import android.database.Cursor
 import androidx.core.database.getBlobOrNull
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.user.SiteDetails
-import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import kotlin.time.Clock
@@ -51,6 +51,6 @@ class SiteTable(
         val url = "https://${fixed}".toURI()
         val details = SiteDetails.fetch(url)
 
-        return DataStorage.STORAGE.sites.add(fixed, details.name, details.icon)
+        return STORAGE.sites.add(fixed, details.name, details.icon)
     }
 }

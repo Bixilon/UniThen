@@ -18,7 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import de.bixilon.unithen.BuildConfig
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
@@ -44,7 +44,7 @@ fun FastCheckInInScreen() {
     LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
 
 
-    val appointments by remember { DataStorage.STORAGE.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes) } }
+    val appointments by remember { STORAGE.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes) } }
 
 
     if (BuildConfig.DEBUG) {
@@ -61,7 +61,7 @@ fun FastCheckInInScreen() {
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()
-        1 -> FastCheckinAppointment(remember { DataStorage.STORAGE.courses[appointments[0].course]!! }, appointments[0])
+        1 -> FastCheckinAppointment(remember { STORAGE.courses[appointments[0].course]!! }, appointments[0])
         else -> FastCheckinAppointmentSelector(appointments)
     }
 }

@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.UiUtil.format
@@ -70,7 +70,7 @@ fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(appointments, key = Appointment::id) { item ->
-                val course by remember { DataStorage.STORAGE.courses.stateOf { this[item.course]!! } }
+                val course by remember { STORAGE.courses.stateOf { this[item.course]!! } }
                 val navigator = LocalNavigation.current
                 AppointmentCard(course, item) { navigator.navigate(CheckInAppointment(course, item)) }
             }

@@ -15,7 +15,7 @@ package de.bixilon.unithen
 import android.app.Application
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.settings.SETTINGS
 import de.bixilon.unithen.ui.main.settings.SettingsStore
@@ -28,27 +28,27 @@ class UniThen : Application() {
     override fun onCreate() {
         super.onCreate()
         SETTINGS = SettingsStore(this)
-        DataStorage.STORAGE = SqlStorage(applicationContext)
+        STORAGE = SqlStorage(applicationContext)
 
-        if (DataStorage.STORAGE.sites.count == 0) {
-            CoroutineScope(Dispatchers.IO).launch { DataStorage.STORAGE.sites.add("kurse.zhs-muenchen.de") }
+        if (STORAGE.sites.count == 0) {
+            CoroutineScope(Dispatchers.IO).launch { STORAGE.sites.add("kurse.zhs-muenchen.de") }
         }
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        DataStorage.STORAGE.close()
+        STORAGE.close()
     }
 
     companion object {
 
         fun updateCourses() {
-            DataStorage.STORAGE.accounts.all().forEach {
-                val site = DataStorage.STORAGE.sites[it.site]!!
+            STORAGE.accounts.all().forEach {
+                val site = STORAGE.sites[it.site]!!
                 val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                 val courses = api.postings(it.uuid)
 
-                DataStorage.STORAGE.populate(site, it, courses)
+                STORAGE.populate(site, it, courses)
             }
         }
     }

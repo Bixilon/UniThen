@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -65,7 +65,7 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
 fun CoursesScreen() {
     val navigation = LocalNavigation.current
     var refreshing by remember { mutableStateOf(false) }
-    val courses by remember { DataStorage.STORAGE.courses.stateOf { all() } }
+    val courses by remember { STORAGE.courses.stateOf { all() } }
 
     val context = LocalContext.current
     Column(

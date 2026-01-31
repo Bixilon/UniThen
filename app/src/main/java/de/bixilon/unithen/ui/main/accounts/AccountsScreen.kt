@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.DataStorage
+import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
@@ -58,7 +58,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
                         val courses = api.postings(account.uuid)
 
-                        DataStorage.STORAGE.populate(site, account, courses)
+                        STORAGE.populate(site, account, courses)
                     }
                 }
             )
@@ -73,7 +73,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
 
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
-    val site = remember { DataStorage.STORAGE.sites[account.site]!! }
+    val site = remember { STORAGE.sites[account.site]!! }
 
     Card(
         modifier = Modifier
@@ -114,7 +114,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 @Composable
 fun AccountsScreen() {
-    val accounts by remember { DataStorage.STORAGE.accounts.stateOf { all() } }
+    val accounts by remember { STORAGE.accounts.stateOf { all() } }
 
     Column(
         modifier = Modifier
