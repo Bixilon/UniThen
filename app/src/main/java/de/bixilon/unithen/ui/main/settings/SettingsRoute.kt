@@ -31,8 +31,8 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 @Composable
-fun BooleanSetting(key: String, default: Boolean, title: String, description: String) {
-    var value by rememberBooleanSetting(key, default)
+fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String) {
+    var value by rememberSetting(setting)
 
     Row(
         modifier = Modifier
@@ -70,7 +70,7 @@ fun SettingsScreen() {
                 .padding(horizontal = 16.dp, vertical = 24.dp)
         )
 
-        BooleanSetting(Settings.QR_CODE_FAKE_NAME, false, "Fake name (QR code)", "Replace your real name with Max Muster when performing check in")
+        BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replace your real name with Max Muster when performing check in")
 
         HorizontalDivider()
 

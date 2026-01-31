@@ -36,7 +36,7 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.ui.main.settings.Settings
-import de.bixilon.unithen.ui.main.settings.rememberBooleanSetting
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.util.json.Jackson
 import java.util.*
@@ -44,7 +44,7 @@ import java.util.*
 
 @Composable
 fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
-    var fakeName by rememberBooleanSetting(Settings.QR_CODE_FAKE_NAME, false)
+    var fakeName by rememberSetting(Settings.QR_CODE_FAKE_NAME)
 
     val context = LocalContext.current
     DisposableEffect(Unit) {

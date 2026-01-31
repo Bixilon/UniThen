@@ -51,11 +51,13 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
 
 
 @Composable
-fun rememberBooleanSetting(key: String, default: Boolean): MutableState<Boolean> {
-    return rememberSetting(booleanPreferencesKey(key), default)
+@JvmName("renemberBooleanSetting")
+fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
+    return rememberSetting(booleanPreferencesKey(setting.key), setting.default)
 }
 
 @Composable
-fun rememberIntSetting(key: String, default: Int): MutableState<Int> {
-    return rememberSetting(intPreferencesKey(key), default)
+@JvmName("renemberIntSetting")
+fun rememberSetting(setting: Setting<Int>): MutableState<Int> {
+    return rememberSetting(intPreferencesKey(setting.key), setting.default)
 }
