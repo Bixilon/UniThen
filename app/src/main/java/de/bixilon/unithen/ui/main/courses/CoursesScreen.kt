@@ -25,7 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.UniThen
+import de.bixilon.unithen.api.AuthenticatedUniNowApi
+import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -84,7 +85,13 @@ fun CoursesScreen() {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    UniThen.updateCourses()
+                    STORAGE.accounts.all().forEach {
+                        val site = STORAGE.sites[it.site]!!
+                        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
+                        val courses = api.postings(it.uuid)
+
+                        STORAGE.populate(site, it, courses)
+                    }
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
                 } catch (error: Throwable) {
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show() }

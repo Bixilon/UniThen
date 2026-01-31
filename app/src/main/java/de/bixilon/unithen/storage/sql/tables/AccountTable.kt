@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.sql
+package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
 import de.bixilon.kutil.cast.CastUtil.cast
@@ -21,6 +21,8 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter

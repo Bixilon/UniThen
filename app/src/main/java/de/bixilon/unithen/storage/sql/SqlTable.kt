@@ -25,7 +25,7 @@ abstract class SqlTable<T>(
     val storage: SqlStorage,
     val table: String,
 ) {
-    val count get() = storage.query("SELECT COUNT(*) FROM $table;") { it.moveToFirst(); it.getInt(0) }
+    val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.moveToFirst(); it.getInt(0) }
     var notify = mutableIntStateOf(0)
 
     protected abstract val columns: List<String>

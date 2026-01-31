@@ -23,6 +23,10 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
+import de.bixilon.unithen.storage.sql.tables.AccountTable
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable
+import de.bixilon.unithen.storage.sql.tables.CourseTable
+import de.bixilon.unithen.storage.sql.tables.SiteTable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
