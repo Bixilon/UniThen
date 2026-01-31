@@ -20,8 +20,12 @@ import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.storage.Account
+import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okio.Closeable
 import org.intellij.lang.annotations.Language
 import java.util.*
@@ -35,6 +39,13 @@ class SqlStorage(context: Context) : Closeable {
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
+
+    init {
+        if (helper.created) {
+            // TODO: sync ui with this?
+            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { sites.add(it) } }
+        }
+    }
 
     private fun SQLiteStatement.bind(vararg parameters: Any?) {
         for ((index, parameter) in parameters.withIndex()) {

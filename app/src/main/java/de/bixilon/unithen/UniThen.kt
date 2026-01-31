@@ -19,9 +19,6 @@ import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.settings.SETTINGS
 import de.bixilon.unithen.ui.main.settings.SettingsStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class UniThen : Application() {
 
@@ -29,10 +26,6 @@ class UniThen : Application() {
         super.onCreate()
         SETTINGS = SettingsStore(this)
         STORAGE = SqlStorage(applicationContext)
-
-        if (STORAGE.sites.count == 0) {
-            CoroutineScope(Dispatchers.IO).launch { STORAGE.sites.add("kurse.zhs-muenchen.de") }
-        }
     }
 
     override fun onTerminate() {

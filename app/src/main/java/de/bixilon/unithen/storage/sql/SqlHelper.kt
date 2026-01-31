@@ -19,9 +19,11 @@ import androidx.core.database.sqlite.transaction
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 
 class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION) {
+    var created = false
 
 
     override fun onCreate(database: SQLiteDatabase) {
+        created = true
         val schema = SqlHelper::class.java.getResourceAsStream("/sql/schema.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
 
         database.transaction { schema.forEach { database.execSQL(it) } }
