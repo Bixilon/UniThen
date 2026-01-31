@@ -17,6 +17,8 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.DataStorage
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.main.settings.SETTINGS
+import de.bixilon.unithen.ui.main.settings.SettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,6 +27,7 @@ class UniThen : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        SETTINGS = SettingsStore(this)
         DataStorage.STORAGE = SqlStorage(applicationContext)
 
         if (DataStorage.STORAGE.sites.count == 0) {

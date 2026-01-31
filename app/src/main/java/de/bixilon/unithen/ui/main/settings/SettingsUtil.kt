@@ -12,25 +12,18 @@
 
 package de.bixilon.unithen.ui.main.settings
 
-import android.content.Context
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 
-private val Context.dataStore by preferencesDataStore(name = "settings")
-
-
 @Composable
 fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
-    val context = LocalContext.current
-    val store = context.dataStore
+    val store = SETTINGS.store
     val scope = rememberCoroutineScope()
 
     val value by store.data.map { it[key] }.collectAsState(initial = null)
