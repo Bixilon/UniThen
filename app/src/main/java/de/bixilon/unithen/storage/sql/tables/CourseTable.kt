@@ -13,10 +13,7 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.Event
-import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.*
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
@@ -26,7 +23,7 @@ import java.util.*
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, "courses") {
-    override val columns = listOf("id", "event", "uuid",  "name")
+    override val columns = listOf("id", "event", "uuid", "name")
 
     override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3))
 
@@ -53,5 +50,9 @@ class CourseTable(
 
     operator fun get(account: Account): List<Course> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = courses.id WHERE account = ?", account.id) { it.collectAll() }
+    }
+
+    operator fun get(tutor: Tutor): List<Course> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.course = courses.id WHERE tutor = ?", tutor.id) { it.collectAll() }
     }
 }

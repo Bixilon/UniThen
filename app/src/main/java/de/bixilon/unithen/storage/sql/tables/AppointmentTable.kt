@@ -27,10 +27,10 @@ import kotlin.time.Instant
 class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, "appointments") {
-    override val columns = listOf("id", "course", "uuid", "start", "end")
+    override val columns = listOf("id", "course", "uuid", "start", "end", "location")
 
 
-    override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4))
+    override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getString(5))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(course: Course, uuid: UUID) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
@@ -43,16 +43,18 @@ class AppointmentTable(
         return all(filter)
     }
 
-    fun update(id: Key, start: Instant? = null, end: Instant? = null) = update(id, SqlFilter.comma("start" to start, "end" to end))
+    fun update(id: Key, start: Instant? = null, end: Instant? = null, location: String? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "location" to location))
 
 
-    fun insert(course: Course, uuid: UUID, start: Instant, end: Instant) {
-        storage.insert("INSERT INTO $table(course, uuid, start, end) VALUES (?,?,?,?)", course.id, uuid, start, end)
+    fun insert(course: Course, uuid: UUID, start: Instant, end: Instant, location: String): Appointment {
+        val id = storage.insert("INSERT INTO $table(course, uuid, start, end, location) VALUES (?,?,?,?,?)", course.id, uuid, start, end, location)
+
+        return this[id]!!
     }
 
-    fun add(course: Course, uuid: UUID, start: Instant, end: Instant) {
-        this[course, uuid]?.let { return update(it.id, start, end) }
+    fun add(course: Course, uuid: UUID, start: Instant, end: Instant, location: String): Appointment {
+        this[course, uuid]?.let { update(it.id, start, end, location); return it }
 
-        insert(course, uuid, start, end)
+        return insert(course, uuid, start, end, location)
     }
 }

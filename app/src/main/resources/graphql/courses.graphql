@@ -23,6 +23,7 @@ query List_Postings($userID: ID!) {
                         end
                     }
                     tutors {
+                        id
                         first_name
                         last_name
                     }
@@ -32,6 +33,7 @@ query List_Postings($userID: ID!) {
                         end
                         canceledAt
                         tutors {
+                            id
                             first_name
                             last_name
                         }

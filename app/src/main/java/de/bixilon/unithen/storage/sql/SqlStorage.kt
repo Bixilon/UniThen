@@ -37,7 +37,8 @@ class SqlStorage(context: Context) : Closeable {
     val database = helper.writableDatabase
 
     val sites = SiteTable(this)
-    val event = EventTable(this)
+    val events = EventTable(this)
+    val tutors = TutorTable(this)
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
@@ -93,12 +94,23 @@ class SqlStorage(context: Context) : Closeable {
             val courseQl = posting.product.resource.nullCast<CourseQl>() ?: continue
             val evenQl = courseQl.event
 
-            val event = event.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
+            val event = events.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
+
 
             val course = courses.add(event, courseQl.id, courseQl.name)
 
-            for (appointment in courseQl.appointments) {
-                appointments.add(course, appointment.id, appointment.start, appointment.end)
+            for (tutorQl in courseQl.tutors) {
+                val tutor = tutors.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                tutors.addTo(tutor, course)
+            }
+
+            for (appointmentQl in courseQl.appointments) {
+                val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.location.name)
+
+                for (tutorQl in appointmentQl.tutors) {
+                    val tutor = tutors.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                    tutors.addTo(tutor, appointment)
+                }
             }
             accounts.addToCourse(account, course)
         }

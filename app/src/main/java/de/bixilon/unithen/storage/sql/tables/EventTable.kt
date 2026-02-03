@@ -35,6 +35,10 @@ class EventTable(
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
+
+    fun update(id: Key, name: String? = null, start: Instant? = null, end: Instant? = null) = update(id, SqlFilter.comma("name" to name, "start" to start, "end" to end))
+
+
     fun insert(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
         val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?,?)", site.id, uuid, name, start, end)
 
@@ -42,7 +46,7 @@ class EventTable(
     }
 
     fun add(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
-        this[site, uuid]?.let { return it } // TODO: update
+        this[site, uuid]?.let { update(it.id, name, start, end); return it }
 
         return insert(site, uuid, name, start, end)
     }

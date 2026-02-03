@@ -13,13 +13,11 @@
 package de.bixilon.unithen.storage
 
 import java.util.*
-import kotlin.time.Instant
 
-data class Appointment(
+data class Tutor(
     override val id: Key,
-    val course: Key,
+    val site: Key,
     val uuid: UUID,
-    val start: Instant,
-    val end: Instant,
-    val location: String,
+    val firstName: String,
+    val lastName: String,
 ) : DbKeyed
