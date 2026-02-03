@@ -159,9 +159,7 @@ fun AccountsScreen() {
             items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
         }
 
-        Spacer(Modifier
-            .height(16.dp)
-            .weight(1.0f))
+        Spacer(Modifier.height(8.dp))
 
         Button({ navigator.navigate(AddAccountRoute) }, modifier = Modifier.fillMaxWidth()) { Text("Add account") }
     }
