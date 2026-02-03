@@ -23,7 +23,7 @@ import kotlin.time.Instant
 
 object UiUtil {
     private val MONTHS_GERMAN = MonthNames("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
-    val DATE_FORMAT_ENGLISH = LocalDateTime.Format { monthName(MonthNames.ENGLISH_FULL); char(' '); day(); char(' '); char(' '); year(); chars(" - "); amPmHour(); char(':'); minute(); char(' '); amPmMarker("AM", "PM") }
+    val DATE_FORMAT_ENGLISH = LocalDateTime.Format { monthName(MonthNames.ENGLISH_FULL); char(' '); day(); char(' '); year(); chars(" - "); amPmHour(); char(':'); minute(); char(' '); amPmMarker("AM", "PM") }
     val DATE_FORMAT_GERMAN = LocalDateTime.Format { day(); chars(". "); monthName(MONTHS_GERMAN); char(' '); year(); chars(" - "); hour(); char(':'); minute() }
 
     val DATE_FORMAT = if (Locale.getDefault() == Locale.GERMAN) DATE_FORMAT_GERMAN else DATE_FORMAT_ENGLISH
