@@ -23,11 +23,7 @@ import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
-import de.bixilon.unithen.storage.sql.tables.AccountTable
-import de.bixilon.unithen.storage.sql.tables.AppointmentTable
-import de.bixilon.unithen.storage.sql.tables.CourseTable
-import de.bixilon.unithen.storage.sql.tables.EventTable
-import de.bixilon.unithen.storage.sql.tables.SiteTable
+import de.bixilon.unithen.storage.sql.tables.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -95,8 +91,11 @@ class SqlStorage(context: Context) : Closeable {
     fun populate(site: Site, account: Account, postings: List<PostingQl>) = transaction {
         for (posting in postings) {
             val courseQl = posting.product.resource.nullCast<CourseQl>() ?: continue
+            val evenQl = courseQl.event
 
-            val course = courses.add(site, courseQl.id, courseQl.name)
+            val event = event.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
+
+            val course = courses.add(event, courseQl.id, courseQl.name)
 
             for (appointment in courseQl.appointments) {
                 appointments.add(course, appointment.id, appointment.start, appointment.end)

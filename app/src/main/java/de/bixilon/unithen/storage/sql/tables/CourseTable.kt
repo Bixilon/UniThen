@@ -15,8 +15,8 @@ package de.bixilon.unithen.storage.sql.tables
 import android.database.Cursor
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.Event
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
@@ -26,28 +26,28 @@ import java.util.*
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, "courses") {
-    override val columns = listOf("id", "site", "uuid", "name")
+    override val columns = listOf("id", "event", "uuid",  "name")
 
     override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3))
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(event: Event, uuid: UUID) = single(SqlFilter.and("event" to event.id, "uuid" to uuid))
 
-    fun get(site: Site? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "name" to name))
+    fun get(event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("event" to event, "uuid" to uuid, "name" to name))
 
     fun update(id: Key, name: String? = null) = update(id, SqlFilter.comma("name" to name))
 
 
-    fun insert(site: Site, uuid: UUID, name: String): Course {
-        val id = insert("INSERT INTO $table(site, uuid, name) VALUES (?,?,?)", site.id, uuid, name)
+    fun insert(event: Event, uuid: UUID, name: String): Course {
+        val id = insert("INSERT INTO $table(event, uuid, name) VALUES (?,?,?)", event.id, uuid, name)
 
         return this[id]!! // TODO: cleanup
     }
 
-    fun add(site: Site, uuid: UUID, name: String): Course {
-        this[site, uuid]?.let { update(it.id, name); return it }
+    fun add(event: Event, uuid: UUID, name: String): Course {
+        this[event, uuid]?.let { update(it.id, name); return it }
 
-        return insert(site, uuid, name)
+        return insert(event, uuid, name)
     }
 
 

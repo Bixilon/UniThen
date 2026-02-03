@@ -36,7 +36,7 @@ class EventTable(
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun insert(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
-        val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?)", site.id, uuid, name, start, end)
+        val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?,?)", site.id, uuid, name, start, end)
 
         return this[id]!!
     }

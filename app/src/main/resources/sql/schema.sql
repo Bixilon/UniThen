@@ -40,13 +40,13 @@ CREATE TABLE accounts (
 
 CREATE TABLE courses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  site INTEGER,
+  event INTEGER,
   uuid VARCHAR(36),
 
   name VARCHAR(1024) NOT NULL,
 
-  FOREIGN KEY (site) REFERENCES sites(id),
-  UNIQUE (site, uuid)
+  FOREIGN KEY (event) REFERENCES events(id),
+  UNIQUE (event, uuid)
 );
 
 CREATE TABLE appointments (

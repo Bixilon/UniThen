@@ -48,7 +48,7 @@ class AccountTable(
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key, fetched) VALUES (?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session, Clock.System.now())
+        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key, fetched) VALUES (?,?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session, Clock.System.now())
 
         return this[id]!! // TODO: cleanup
     }
