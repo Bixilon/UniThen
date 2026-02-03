@@ -13,13 +13,16 @@
 package de.bixilon.unithen.ui.main
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,21 +71,18 @@ fun MainScreen() {
         composable<SettingsRoute> { SettingsScreen() }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        bottomBar = {
-            NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                Destinations.entries.forEach { destination ->
-                    NavigationBarItem(
-                        selected = navigator.current().route == destination.route,
-                        onClick = { navigator.navigate(destination.route) },
-                        icon = { Icon(destination.icon, contentDescription = "") },
-                        label = { Text(destination.label) }
-                    )
-                }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
+
+        NavigationBar {
+            Destinations.entries.forEach { destination ->
+                NavigationBarItem(
+                    selected = navigator.current().route == destination.route,
+                    onClick = { navigator.navigate(destination.route) },
+                    icon = { Icon(destination.icon, contentDescription = "") },
+                    label = { Text(destination.label) }
+                )
             }
         }
-    ) { contentPadding ->
-        Box(modifier = Modifier.padding(contentPadding)) { navigator.Host() }
     }
 }
