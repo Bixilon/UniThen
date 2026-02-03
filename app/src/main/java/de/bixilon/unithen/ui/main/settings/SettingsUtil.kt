@@ -17,8 +17,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
@@ -26,12 +28,15 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
     val store = SETTINGS.store
     val scope = rememberCoroutineScope()
 
+    val flow = remember { store.data.map { it[key] } }
     val value by store.data.map { it[key] }.collectAsState(initial = null)
+
+    val initial = remember { runBlocking { flow.first() } }
 
     return remember {
         object : MutableState<T> {
             override var value: T
-                get() = value ?: default
+                get() = value ?: initial ?: default
                 set(newValue) {
                     scope.launch { store.edit { it[key] = newValue } }
                 }
