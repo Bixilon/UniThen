@@ -27,6 +27,7 @@ import de.bixilon.unithen.storage.*
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.fast.CheckInRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import kotlinx.coroutines.flow.first
 import kotlin.time.Clock
@@ -127,10 +128,11 @@ private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
-    val event = remember { STORAGE.events[course.event]!! }
-    val site = remember { STORAGE.sites[event.site]!! }
-    val appointments by remember { STORAGE.appointments.stateOf { this[course].sortedByDescending { it.start } } }
-    val accounts by remember { STORAGE.accounts.stateOf { this[course].sortedBy { it.lastname } } }
+    val storage = LocalStorage.current
+    val event = remember { storage.events[course.event]!! }
+    val site = remember { storage.sites[event.site]!! }
+    val appointments by remember { storage.appointments.stateOf { this[course].sortedByDescending { it.start } } }
+    val accounts by remember { storage.accounts.stateOf { this[course].sortedBy { it.lastname } } }
 
 
     Column(modifier = Modifier.padding(16.dp)) {

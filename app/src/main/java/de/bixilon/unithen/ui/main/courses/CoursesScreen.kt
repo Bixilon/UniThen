@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +39,9 @@ import kotlinx.coroutines.withContext
 
 @Composable
 private fun CourseCard(course: Course, onClick: () -> Unit) {
+    val storage = LocalStorage.current
+    val event = remember { storage.events[course.event]!! }
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -49,10 +52,15 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Row {
+            Column {
                 Text(
                     text = course.name,
                     style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = event.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -64,9 +72,10 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
 
 @Composable
 fun CoursesScreen() {
+    val storage = LocalStorage.current
     val navigation = LocalNavigation.current
     var refreshing by remember { mutableStateOf(false) }
-    val courses by remember { STORAGE.courses.stateOf { all() } }
+    val events by remember { storage.events.stateOf { all().sortedByDescending { it.start } } }
 
     val context = LocalContext.current
     Column(
@@ -85,12 +94,12 @@ fun CoursesScreen() {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    STORAGE.accounts.all().forEach {
-                        val site = STORAGE.sites[it.site]!!
+                    storage.accounts.all().forEach {
+                        val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                         val courses = api.postings(it.uuid)
 
-                        STORAGE.populate(site, it, courses)
+                        storage.populate(site, it, courses)
                     }
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
                 } catch (error: Throwable) {
@@ -100,7 +109,10 @@ fun CoursesScreen() {
             }
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(items = courses, key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
+                for (event in events) {
+                    item { Text(event.name) }
+                    items(items = storage.courses.get(event), key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
+                }
             }
         }
     }

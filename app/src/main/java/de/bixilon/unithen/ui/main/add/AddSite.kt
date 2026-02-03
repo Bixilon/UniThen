@@ -25,20 +25,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.user.SiteDetails
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
+    val storage = LocalStorage.current
     var error: Throwable? by remember { mutableStateOf(null) }
 
     BackHandler { cancel.invoke() }
 
     LaunchedEffect(url) {
         try {
-            val site = withContext(Dispatchers.IO) { STORAGE.sites.add(url) }
+            val site = withContext(Dispatchers.IO) { storage.sites.add(url) }
             callback(site)
         } catch (_error: Throwable) {
             _error.printStackTrace()

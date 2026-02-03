@@ -10,8 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage
+package de.bixilon.unithen.ui.storage
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import de.bixilon.unithen.storage.sql.SqlStorage
 
-lateinit var STORAGE: SqlStorage
+val LocalStorage = staticCompositionLocalOf<SqlStorage> { throw IllegalStateException("No storage set!") }

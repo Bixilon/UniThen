@@ -28,11 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.STORAGE
+import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.ui.fast.*
 import de.bixilon.unithen.ui.main.CheckInScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import de.bixilon.unithen.util.AndroidUtil.activity
 
@@ -62,7 +63,9 @@ class FastCheckinActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        if (STORAGE.appointments.count == 0) {
+        val storage = UniThen.STORAGE
+
+        if (storage.appointments.count == 0) {
             this.startActivity(Intent(this, MainActivity::class.java))
             return
         }
@@ -79,7 +82,11 @@ class FastCheckinActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        FastCheckInNavigator()
+                        CompositionLocalProvider(
+                            LocalStorage provides storage,
+                        ) {
+                            FastCheckInNavigator()
+                        }
                     }
                 }
             }

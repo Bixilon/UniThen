@@ -28,6 +28,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.ui.fast.CheckInRoute
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
@@ -39,6 +40,7 @@ import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.setup.SetupScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import de.bixilon.unithen.util.AndroidUtil.activity
 
@@ -94,7 +96,11 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
-                        MainNavigator()
+                        CompositionLocalProvider(
+                            LocalStorage provides UniThen.STORAGE,
+                        ) {
+                            MainNavigator()
+                        }
                     }
                 }
             }

@@ -29,8 +29,9 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.SimpleErrorScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,13 +66,13 @@ fun AuthenticationProgress(state: AuthenticationState) {
     )
 }
 
-private fun fetchUserDetails(site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
+private fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
     Log.i("Auth", "Fetching user details...")
     val details = UserDetails.fetch(site.url, authentication)
 
     Log.v("Auth", "Found user details: $details")
 
-    val account = STORAGE.transaction { it.accounts.add(site, details, authentication) }
+    val account = storage.transaction { it.accounts.add(site, details, authentication) }
 
     callback.invoke(AuthenticationState.FETCH_COURSES)
 
@@ -79,13 +80,14 @@ private fun fetchUserDetails(site: Site, authentication: Authentication, callbac
     val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
     val courses = api.postings(account.uuid)
 
-    STORAGE.populate(site, account, courses)
+    storage.populate(site, account, courses)
     Log.i("Auth", "Courses fetched (total: ${courses.size})")
     callback.invoke(AuthenticationState.DONE)
 }
 
 @Composable
 fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
+    val storage = LocalStorage.current
     var authentication: Authentication? by remember { mutableStateOf(null) }
     var state by remember { mutableStateOf(AuthenticationState.FETCH_USER_DETAILS) }
     var error: Throwable? by remember { mutableStateOf(null) }
@@ -95,7 +97,7 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
 
         withContext(Dispatchers.IO) {
             try {
-                fetchUserDetails(site, authentication) { state = it }
+                fetchUserDetails(storage, site, authentication) { state = it }
                 callback.invoke(authentication)
             } catch (_error: Throwable) {
                 Log.e("Auth", "Error fetching user details: $_error")

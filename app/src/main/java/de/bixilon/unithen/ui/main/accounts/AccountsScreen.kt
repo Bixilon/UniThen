@@ -12,26 +12,31 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
+import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,6 +44,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
+    val storage = LocalStorage.current
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
@@ -58,7 +64,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
                         val courses = api.postings(account.uuid)
 
-                        STORAGE.populate(site, account, courses)
+                        storage.populate(site, account, courses)
                     }
                 }
             )
@@ -73,7 +79,9 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
 
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
-    val site = remember { STORAGE.sites[account.site]!! }
+    val storage = LocalStorage.current
+    val site = remember { storage.sites[account.site]!! }
+    remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
 
     Card(
         modifier = Modifier
@@ -98,15 +106,32 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
             )
 
 
-            Text(
-                text = site.name,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            Row(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-            )
+            ) {
+                val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+
+                if (bitmap != null) {
+                    Image(
+                        bitmap = bitmap,
+                        contentDescription = "Site icon",
+                        modifier = Modifier
+                            .size(12.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
+
+                Text(
+                    text = site.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
     }
 }
@@ -114,7 +139,8 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 @Composable
 fun AccountsScreen() {
-    val accounts by remember { STORAGE.accounts.stateOf { all() } }
+    val storage = LocalStorage.current
+    val accounts by remember { storage.accounts.stateOf { all() } }
 
     Column(
         modifier = Modifier
