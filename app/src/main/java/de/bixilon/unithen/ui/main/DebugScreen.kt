@@ -18,8 +18,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.ui.FastCheckinActivity
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 
 
 @Composable
@@ -31,8 +33,10 @@ fun DebugScreen() {
         Button({ navigator.navigate(SetupRoute) }) { Text("Open setup") }
 
         val context = LocalContext.current
+        val storage = LocalStorage.current
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
+        Button({ storage.database.executeBatch("dummy") }) { Text("Fill database with junk") }
 
         Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }
     }

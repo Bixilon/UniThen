@@ -30,7 +30,7 @@ class CourseTable(
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(event: Event, uuid: UUID) = single(SqlFilter.and("event" to event.id, "uuid" to uuid))
 
-    fun get(event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("event" to event, "uuid" to uuid, "name" to name))
+    fun get(event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("event" to event?.id, "uuid" to uuid, "name" to name))
 
     fun update(id: Key, name: String? = null) = update(id, SqlFilter.comma("name" to name))
 

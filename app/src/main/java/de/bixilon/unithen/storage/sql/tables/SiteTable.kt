@@ -17,7 +17,6 @@ import androidx.core.database.getBlobOrNull
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.STORAGE
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
@@ -53,6 +52,6 @@ class SiteTable(
         val url = "https://${fixed}".toURI()
         val details = SiteDetails.fetch(url)
 
-        return STORAGE.sites.add(fixed, details.name, details.icon)
+        return add(fixed, details.name, details.icon)
     }
 }

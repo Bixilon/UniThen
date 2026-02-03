@@ -24,20 +24,23 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
     override fun onCreate(database: SQLiteDatabase) {
         created = true
-        val schema = SqlHelper::class.java.getResourceAsStream("/sql/schema.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
-
-        database.transaction { schema.forEach { database.execSQL(it) } }
+        database.executeBatch("schema")
     }
 
     override fun onUpgrade(database: SQLiteDatabase, start: Int, end: Int) = database.transaction {
         for (version in (start + 1)..end) {
-            val schema = SqlHelper::class.java.getResourceAsStream("/sql/migrations/${version}.sql")!!.readAsString()
-            database.execSQL(schema)
+            database.executeBatch("migrations/${version}")
         }
     }
 
     companion object {
         const val NAME = "uninow"
         const val VERSION = 1
+
+        fun SQLiteDatabase.executeBatch(path: String) {
+            val schema = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
+
+            transaction { schema.forEach { execSQL(it) } }
+        }
     }
 }

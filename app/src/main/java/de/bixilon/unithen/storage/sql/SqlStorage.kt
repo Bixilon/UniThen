@@ -34,7 +34,7 @@ import kotlin.time.Instant
 
 class SqlStorage(context: Context) : Closeable {
     private val helper = SqlHelper(context)
-    val database = helper.writableDatabase
+    val database = helper.writableDatabase!!
 
     val sites = SiteTable(this)
     val events = EventTable(this)
