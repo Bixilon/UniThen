@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-private fun CourseCard(course: Course, onClick: () -> Unit) {
+fun CourseCard(course: Course, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
