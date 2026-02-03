@@ -16,7 +16,7 @@ import java.util.*
 
 data class Course(
     override val id: Key,
-    val site: Key,
+    val event: Key,
     val uuid: UUID,
     val name: String,
 ) : DbKeyed
