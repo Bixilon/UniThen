@@ -49,10 +49,10 @@ class CourseTable(
 
 
     operator fun get(account: Account): List<Course> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = courses.id WHERE account = ?", account.id) { it.collectAll() }
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
     }
 
     operator fun get(tutor: Tutor): List<Course> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.course = courses.id WHERE tutor = ?", tutor.id) { it.collectAll() }
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.course = $table.id WHERE tutor = ?", tutor.id) { it.collectAll() }
     }
 }

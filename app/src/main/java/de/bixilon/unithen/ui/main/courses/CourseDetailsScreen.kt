@@ -69,6 +69,49 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
     }
 }
 
+@Composable
+private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) -> Unit) {
+    val now = remember { Clock.System.now() }
+
+    val color = when {
+        appointment.end < now -> MaterialTheme.colorScheme.surfaceContainerLow
+        appointment.start <= now + 1.hours -> MaterialTheme.colorScheme.primaryContainer
+        else -> MaterialTheme.colorScheme.secondaryContainer
+    }
+
+    Card(
+        colors = CardDefaults.cardColors(containerColor = color),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        onClick = { onSelect(appointment) }
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = "${appointment.start.format()} - ${appointment.end.format()}",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            if (appointment.location.isNotBlank()) {
+                Text(
+                    text = appointment.location,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            val storage = LocalStorage.current
+            val tutors = remember { storage.tutors[appointment] }
+            if (tutors.isNotEmpty()) {
+                Text(
+                    text = tutors.joinToString(", ") { it.firstName + " " + it.lastName },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
 
 @Composable
 private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment) -> Unit) {
@@ -95,34 +138,7 @@ private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment
         state = state,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(items = appointments, key = Appointment::id) { appointment ->
-            val color = when {
-                appointment.end < now -> MaterialTheme.colorScheme.surfaceContainerLow
-                appointment.start <= now + 1.hours -> MaterialTheme.colorScheme.primaryContainer
-                else -> MaterialTheme.colorScheme.secondaryContainer
-            }
-
-            Card(
-                colors = CardDefaults.cardColors(containerColor = color),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                onClick = { onSelect(appointment) }
-            ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        text = "${appointment.start.format()} - ${appointment.end.format()}",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                    Text(
-                        text = appointment.location,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
+        items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment, onSelect) }
     }
 }
 

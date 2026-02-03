@@ -45,6 +45,15 @@ class TutorTable(
         return insert(site, uuid, firstName, lastName)
     }
 
+
+    operator fun get(course: Course): List<Tutor> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.tutor = $table.id WHERE course = ?", course.id) { it.collectAll() }
+    }
+
+    operator fun get(appointment: Appointment): List<Tutor> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_appointments ON tutor_appointments.tutor = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
+    }
+
     fun addTo(tutor: Tutor, course: Course) {
         insert("INSERT INTO tutor_courses(tutor, course) VALUES (?,?) ON CONFLICT(tutor, course) DO NOTHING", tutor.id, course.id)
         storage.courses.notify.intValue++
