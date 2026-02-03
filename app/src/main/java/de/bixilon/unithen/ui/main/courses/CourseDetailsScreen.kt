@@ -85,7 +85,7 @@ private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment
     }
 
     Text(
-        text = "Appointments",
+        text = "Appointments (${appointments.size})",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 8.dp)
     )

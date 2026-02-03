@@ -13,15 +13,20 @@
 package de.bixilon.unithen.ui.main.courses
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,7 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
+import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.CoroutineScope
@@ -39,9 +45,6 @@ import kotlinx.coroutines.withContext
 
 @Composable
 private fun CourseCard(course: Course, onClick: () -> Unit) {
-    val storage = LocalStorage.current
-    val event = remember { storage.events[course.event]!! }
-
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -59,11 +62,6 @@ private fun CourseCard(course: Course, onClick: () -> Unit) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                Text(
-                    text = event.name,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
             }
         }
     }
@@ -75,6 +73,8 @@ fun CoursesScreen() {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
     var refreshing by remember { mutableStateOf(false) }
+
+    val courseCount by remember { storage.courses.stateOf { count } }
     val events by remember { storage.events.stateOf { all().sortedByDescending { it.start } } }
 
     val context = LocalContext.current
@@ -84,7 +84,7 @@ fun CoursesScreen() {
             .padding(16.dp),
     ) {
         Text(
-            text = "All courses:",
+            text = "All courses ($courseCount):",
             style = MaterialTheme.typography.titleLarge,
         )
 
@@ -110,8 +110,30 @@ fun CoursesScreen() {
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 for (event in events) {
-                    item { Text(event.name) }
-                    items(items = storage.courses.get(event), key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
+                    val courses = storage.courses.get(event).sortedBy { it.name } // TODO: Cache
+                    if (courses.isEmpty()) continue
+
+                    item {
+                        val site = remember { storage.sites[event.site]!! }
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+
+                            if (bitmap != null) {
+                                Image(
+                                    bitmap = bitmap,
+                                    contentDescription = "Site icon",
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                )
+
+                                Spacer(modifier = Modifier.width(8.dp))
+                            }
+
+                            Text(event.name + " (${courses.size}):")
+                        }
+                    }
+                    items(items = courses, key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
                 }
             }
         }
