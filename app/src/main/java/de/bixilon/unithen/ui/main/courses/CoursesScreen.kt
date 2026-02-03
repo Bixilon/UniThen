@@ -84,8 +84,8 @@ fun CoursesScreen() {
             .padding(16.dp),
     ) {
         Text(
-            text = "All courses ($courseCount):",
-            style = MaterialTheme.typography.titleLarge,
+            "Courses ($courseCount):",
+            style = MaterialTheme.typography.headlineLarge,
         )
 
         Spacer(Modifier.height(16.dp))

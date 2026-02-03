@@ -148,8 +148,8 @@ fun AccountsScreen() {
             .padding(16.dp),
     ) {
         Text(
-            text = "All accounts:",
-            style = MaterialTheme.typography.titleLarge,
+            "Accounts (${accounts.size}):",
+            style = MaterialTheme.typography.headlineLarge,
         )
 
         Spacer(Modifier.height(16.dp))

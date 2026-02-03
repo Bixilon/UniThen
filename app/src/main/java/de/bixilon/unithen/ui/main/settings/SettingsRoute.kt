@@ -37,8 +37,7 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { value = !value }
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .clickable { value = !value },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier
@@ -64,10 +63,12 @@ fun SettingsScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Settings", style = MaterialTheme.typography.headlineLarge,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 24.dp)
+        Text(
+            "Settings",
+            style = MaterialTheme.typography.headlineLarge,
         )
 
         BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replace your real name with Max Muster when performing check in")
@@ -77,8 +78,7 @@ fun SettingsScreen() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { navigator.navigate(AboutRoute) }
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .clickable { navigator.navigate(AboutRoute) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "About", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1.0f))
