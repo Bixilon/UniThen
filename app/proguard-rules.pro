@@ -20,3 +20,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -dontwarn com.google.re2j.**
+
+-keepattributes *Annotation*,EnclosingMethod,Signature
+-keepnames class com.fasterxml.jackson.** { *; }
+-dontwarn com.fasterxml.jackson.databind.**
+-dontwarn java.awt.**
+-keep class de.bixilon.** {*; }
+-keep enum de.bixilon.**
+-keep interface de.bixilon.**
