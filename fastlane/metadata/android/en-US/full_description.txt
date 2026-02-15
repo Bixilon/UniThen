@@ -1,13 +1,16 @@
 This android application is for doing the QR code check in (and a bit more) for UniNow courses.
 It can be used for any booking system hosted by them, e.g. for the ZHS München.
 
-This app is **NOT** affiliated with UniNow GmbH, the provider/developer of the booking system.
+This app is NOT affiliated with UniNow GmbH, the provider/developer of the booking system.
+
 
 
 Features:
-- Multiple sites and accounts
-- QR Code Check in
-- List courses/appointments
-- Really fast, no ads, no trackers
-- Simple and small
-- Completely offline (authenticate once and refresh courses manually at any time)
+<ul>
+ <li>Multiple sites and accounts</li>
+ <li>QR Code Check in</li>
+ <li>List courses/appointments</li>
+ <li>Really fast, no ads, no trackers</li>
+ <li>Simple and small</li>
+ <li>Completely offline (authenticate once and refresh courses manually at any time)</li>
+</ul>
