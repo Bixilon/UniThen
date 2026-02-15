@@ -29,7 +29,7 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
     val scope = rememberCoroutineScope()
 
     val flow = remember { store.data.map { it[key] } }
-    val value by store.data.map { it[key] }.collectAsState(initial = null)
+    val value by flow.collectAsState(initial = null)
 
     val initial = remember { runBlocking { flow.first() } }
 
