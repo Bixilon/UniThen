@@ -69,14 +69,14 @@ fun executeGit(vararg args: String): String? {
 
 fun loadGitFromGit(): GitStatus? {
     val commit = executeGit("rev-parse", "HEAD") ?: return null
-    val branch = executeGit("branch", "--show-current") ?: return null
+    val branch = executeGit("branch", "--show-current") ?: "master"
     val clean = executeGit("status", "--porcelain") == null
     val tag = executeGit("describe", "--exact-match", "--tags")
 
     return GitStatus(commit, branch, clean, tag)
 }
 
-val git by lazy { loadGitFromEnv() ?: ignoreAll { loadGitFromGit() } }
+val git by lazy { ignoreAll { loadGitFromGit() } ?: loadGitFromEnv() }
 
 android {
     namespace = "de.bixilon.unithen"
