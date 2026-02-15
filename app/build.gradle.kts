@@ -11,6 +11,7 @@
  */
 
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
+import de.bixilon.kutil.primitive.BooleanUtil.toBoolean
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
 import de.bixilon.kutil.string.WhitespaceUtil.trimWhitespaces
@@ -48,6 +49,8 @@ fun loadGitFromEnv(): GitStatus? {
     return GitStatus(commit, branch, true, tag)
 }
 
+val FDROID = project.properties["fdroid"]?.toBoolean() ?: false
+
 val hasGit by lazy { project.rootDir.resolve(".git").exists() }
 
 fun executeGit(vararg args: String): String? {
@@ -70,7 +73,7 @@ fun executeGit(vararg args: String): String? {
 fun loadGitFromGit(): GitStatus? {
     val commit = executeGit("rev-parse", "HEAD") ?: return null
     val branch = executeGit("branch", "--show-current") ?: "master"
-    val clean = executeGit("status", "--porcelain") == null
+    val clean = if (FDROID) true else executeGit("status", "--porcelain") == null
     val tag = executeGit("describe", "--exact-match", "--tags")
 
     return GitStatus(commit, branch, clean, tag)
@@ -94,7 +97,7 @@ android {
         buildConfigField("String", "GIT_TAG", git?.tag?.let { "\"$it\"" }.toString())
 
         var version = (git?.tag?.removePrefix("v") ?: git?.commit?.substring(0, 10) ?: "unknown")
-        git?.takeIf { it.tag == null }?.takeIf { !it.clean }?.let { version += "-dirty" }
+        git?.takeIf { !it.clean }?.let { version += "-dirty" }
         buildConfigField("String", "VERSION", "\"" + version + "\"")
 
         versionName = version
