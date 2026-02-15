@@ -16,8 +16,9 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 - Completely offline (authenticate once and refresh courses manually at any time)
 
 ## Download
+The latest release is publish on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). F-Droid coming soon.
 
-TBA (probably gitlab releases and fdroid)
+The releases are signed with my release key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`).
 
 ## Why
 
