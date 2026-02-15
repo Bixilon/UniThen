@@ -16,9 +16,13 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 - Completely offline (authenticate once and refresh courses manually at any time)
 
 ## Download
-The latest release is publish on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). F-Droid coming soon.
 
-The releases are signed with my release key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`).
+[<img src="doc/fdroid.svg" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/de.bixilon.unithen)
+
+The latest release is published on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). and on [F-Droid](https://f-droid.org/packages/de.bixilon.unithen). F-Droid builds are reproducible,
+and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`) too. F-Droid is the preferred way, then you don't need to worry about updates.
+
+(This app is Android only, iOS is **NOT** supported and won't be)
 
 ## Why
 
@@ -37,3 +41,14 @@ And I don't want anything on my phone that I don't essentially need and that is 
 - Fetch user and page details and extract them from html (this could be improved with a dedicated api endpoint, did not touch the app yet)
 - Get courses and appointments with GraphQL
 - Store everything locally in SQL database
+
+## Releasing (Note for myself)
+
+IntelliJ breaks reproducible builds, build with:
+
+1. Create fastlane changelog
+2. `git tag v1.2.3`
+3. `./gradlew app:assembleRelease`
+4. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk`
+5. `curl --location --header "PRIVATE-TOKEN: XXXXXX" --upload-file app-release-signed.apk" "https://gitlab.bixilon.de/api/v4/projects/444/packages/generic/apk/VERSION/app-release.apk"`
+6. Push tags & create release (fdroid builds automatically)
