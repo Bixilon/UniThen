@@ -25,6 +25,7 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 open class UniNowApi(
     val url: URI,
@@ -40,6 +41,7 @@ open class UniNowApi(
 
 
         val client = OkHttpClient().newBuilder()
+            .readTimeout(60, TimeUnit.SECONDS)
             .followRedirects(true)
             .followSslRedirects(true)
             .build()
