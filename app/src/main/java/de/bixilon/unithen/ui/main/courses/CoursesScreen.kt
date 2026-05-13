@@ -99,6 +99,10 @@ fun CoursesScreen() {
                 var login = false
                 try {
                     storage.accounts.all().forEach {
+                        if (it.session.isBlank()) {
+                            login = true
+                            return@forEach
+                        }
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                         val courses = api.postings(it.uuid)
@@ -112,6 +116,7 @@ fun CoursesScreen() {
                         storage.populate(site, it, courses)
                     }
                     if (login) {
+                        withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
                         navigation.navigate(AddAccountRoute)
                     } else {
                         withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }

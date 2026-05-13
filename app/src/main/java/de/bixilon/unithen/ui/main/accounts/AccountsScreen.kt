@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.time.DurationUtil.weeks
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.http.GraphQlException
@@ -45,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.Clock
 
 
 @Composable
@@ -131,10 +133,18 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
     val site = remember { storage.sites[account.site]!! }
     remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
 
+
+    val color = when {
+        account.session.isBlank() -> MaterialTheme.colorScheme.errorContainer
+        Clock.System.now() - account.fetched < 4.weeks -> MaterialTheme.colorScheme.primaryContainer // TODO: That color sucks
+        else -> MaterialTheme.colorScheme.secondaryContainer
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth(),
         onClick = onClick,
+        colors = CardDefaults.cardColors(containerColor = color),
     ) {
         Box(
             modifier = Modifier
