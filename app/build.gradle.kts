@@ -24,7 +24,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-val jacksonVersion = "2.20.1"
+val jacksonVersion = "2.21.3"
 
 
 buildscript {
@@ -160,8 +160,8 @@ dependencies {
 
     implementation(libs.compose.qr.code)
 
-    implementation("com.squareup.okhttp3:okhttp:5.3.2")
-    implementation("org.jsoup:jsoup:1.22.1")
+    implementation(libs.okhttp)
+    implementation(libs.jsoup)
 
     implementation(libs.kotlinx.datetime)
 
