@@ -33,3 +33,5 @@ object DebugRoute : NavigationRoute
 
 
 object SettingsRoute : NavigationRoute
+
+data class CrashRoute(val exception: Throwable) : NavigationRoute

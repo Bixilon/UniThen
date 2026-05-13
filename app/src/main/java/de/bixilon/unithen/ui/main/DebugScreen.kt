@@ -37,6 +37,7 @@ fun DebugScreen() {
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
         Button({ storage.database.executeBatch("dummy") }) { Text("Fill database with junk") }
+        Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
         Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }
     }

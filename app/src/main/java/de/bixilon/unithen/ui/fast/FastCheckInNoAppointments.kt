@@ -2,7 +2,7 @@ package de.bixilon.unithen.ui.fast
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import de.bixilon.unithen.ui.util.SimpleErrorScreen
+import de.bixilon.unithen.ui.error.SimpleErrorScreen
 
 
 @Preview

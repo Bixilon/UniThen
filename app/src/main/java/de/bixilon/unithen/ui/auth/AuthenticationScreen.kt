@@ -31,8 +31,8 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.storage.LocalStorage
-import de.bixilon.unithen.ui.util.SimpleErrorScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -109,7 +109,7 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
 
 
     if (error != null) {
-        SimpleErrorScreen("Error fetching user details", error.toString())
+        CrashScreen("Error fetching user details", error!!)
         return
     }
 

@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
@@ -34,18 +36,23 @@ import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
+import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
 private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
+    val context = LocalContext.current
     val storage = LocalStorage.current
+    val navigation = LocalNavigation.current
     var expanded by remember { mutableStateOf(false) }
+    var refreshing by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         IconButton(onClick = { expanded = !expanded }) {
@@ -56,16 +63,24 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
             onDismissRequest = { expanded = false }
         ) {
             DropdownMenuItem(
-                text = { Text("Update") },
+                text = { Text(if (refreshing) "Updating..." else "Update") },
+                enabled = !refreshing,
                 onClick = {
-                    expanded = false
-                    // TODO: Progress dialog
+                    refreshing = true
                     CoroutineScope(Dispatchers.IO).launch {
-                        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-                        val courses = api.postings(account.uuid)
+                        try {
+                            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
+                            val courses = api.postings(account.uuid)
 
-                        storage.populate(site, account, courses)
+                            storage.populate(site, account, courses)
+                            withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
+                        } catch (error: Throwable) {
+                            navigation.navigate(CrashRoute(error))
+                        }
+                        withContext(Dispatchers.Main) { refreshing = false }
                     }
+
+                    expanded = false
                 }
             )
             DropdownMenuItem(

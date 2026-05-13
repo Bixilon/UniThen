@@ -35,6 +35,7 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
+import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -103,7 +104,7 @@ fun CoursesScreen() {
                     }
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
                 } catch (error: Throwable) {
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Error: $error", Toast.LENGTH_LONG).show() }
+                    navigation.navigate(CrashRoute(error))
                 }
                 withContext(Dispatchers.Main) { refreshing = false }
             }
