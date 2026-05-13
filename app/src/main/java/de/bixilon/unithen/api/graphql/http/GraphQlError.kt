@@ -12,7 +12,8 @@
 
 package de.bixilon.unithen.api.graphql.http
 
-data class GrapQlResponse<T>(
-    val data: T,
-    val errors: List<GraphQlError>? = null,
+data class GraphQlError(
+    val message: String,
+    val path: Any,
+    val extensions: Map<String, Any>?,
 )

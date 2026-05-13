@@ -15,6 +15,7 @@ package de.bixilon.unithen.api
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.unithen.api.graphql.UserPkPostings
 import de.bixilon.unithen.api.graphql.http.GrapQlResponse
+import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
@@ -58,7 +59,11 @@ open class UniNowApi(
         val request = GraphQlRequest(query.query, variables.toMap())
         val response = postJson("/api/query", request)
 
-        return Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response).data
+        val graphql = Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response)
+
+        if (graphql.errors != null && graphql.errors.isNotEmpty()) throw GraphQlException(graphql.errors)
+
+        return graphql.data
     }
 
     fun postings(userId: UUID): List<PostingQl>? {

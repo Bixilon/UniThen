@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.AddAccountRoute
@@ -114,6 +115,12 @@ fun CoursesScreen() {
                         navigation.navigate(AddAccountRoute)
                     } else {
                         withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                    }
+                } catch (error: GraphQlException) {
+                    if (error.isUnauthenticated()) {
+                        navigation.navigate(AddAccountRoute)
+                    } else {
+                        navigation.navigate(CrashRoute(error))
                     }
                 } catch (error: Throwable) {
                     navigation.navigate(CrashRoute(error))
