@@ -42,6 +42,11 @@ And I don't want anything on my phone that I don't essentially need and that is 
 - Get courses and appointments with GraphQL
 - Store everything locally in SQL database
 
+## Something is broken
+Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`
+
+Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
+
 ## Releasing (Note for myself)
 
 IntelliJ breaks reproducible builds, build with:
