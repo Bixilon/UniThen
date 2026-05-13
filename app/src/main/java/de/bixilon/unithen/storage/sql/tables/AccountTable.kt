@@ -54,13 +54,13 @@ class AccountTable(
     }
 
     fun add(site: Site, details: UserDetails, authentication: Authentication): Account {
-         this[site, details.uuid]?.let { update(it, details, authentication); return it }
+        this[site, details.uuid]?.let { update(it, details, authentication); return this[it.id]!! }
 
-       return insert(site, details, authentication)
+        return insert(site, details, authentication)
     }
 
     operator fun get(course: Course): List<Account> {
-      return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.account = $table.id WHERE course = ?", course.id){it.collectAll()}
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.account = $table.id WHERE course = ?", course.id) { it.collectAll() }
     }
 
     fun logout(account: Account) {
