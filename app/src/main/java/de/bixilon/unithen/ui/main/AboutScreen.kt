@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
@@ -75,6 +76,10 @@ fun AboutScreen() {
         ) {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Version: ${BuildConfig.VERSION} (${BuildConfig.VERSION_CODE})", textAlign = TextAlign.Center)
+
+                if (BuildConfig.DEBUG) {
+                    Text("This is a DEBUG build!", color = Color.Red)
+                }
 
                 Text(buildAnnotatedString {
                     append("Commit: ")
