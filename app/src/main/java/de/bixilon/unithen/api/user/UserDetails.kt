@@ -25,15 +25,15 @@ data class UserDetails(
     val uuid: UUID,
     val firstname: String,
     val lastname: String,
-    val email: String,
+    @Deprecated("unused") val email: String,
 ) {
 
 
     companion object {
         private val USER_ID_REGEX = "id: \"([\\w-]{36})\"".toRegex()
-        private val FIRSTNAME_REGEX = "first_name: \"(.+)\"".toRegex()
-        private val LASTNAME_REGEX = "last_name: \"(.+)\"".toRegex()
-        private val EMAIL_REGEX = "email: \"(.+@.+\\..+)\"".toRegex()
+        private val FIRSTNAME_REGEX = "first_name: \"(.+)\"".toRegex() // TODO: extract via user_pk->first_name
+        private val LASTNAME_REGEX = "last_name: \"(.+)\"".toRegex() // TODO: extract via user_pk->last_name
+        private val EMAIL_REGEX = "email: \"(.+@.+\\..+)\"".toRegex() // TODO: extract via user_pk->email
 
         fun fetch(url: URI, authentication: Authentication): UserDetails {
             val request = HttpUtil.create(url, "/")

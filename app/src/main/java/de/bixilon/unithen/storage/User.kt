@@ -14,7 +14,7 @@ package de.bixilon.unithen.storage
 
 import java.util.*
 
-data class Tutor(
+data class User(
     override val id: Key,
     val site: Key,
     val uuid: UUID,

@@ -1,55 +1,56 @@
 query List_Postings($userID: ID!) {
     user_pk(userID: $userID) {
         postings {
-        id
-        product {
             id
-            needs_approval
-            resource {
-                __typename
-                ... on Fee {
-                    id
-                }
-                ... on Course {
-                    id
-                    name
-                    offer {
-                        name
+            product {
+                id
+                needs_approval
+                resource {
+                    __typename
+                    ... on Fee {
+                        id
                     }
-                    event {
+                    ... on Course {
                         id
                         name
-                        start
-                        end
-                    }
-                    tutors {
-                        id
-                        first_name
-                        last_name
-                    }
-                    appointments {
-                        id
-                        start
-                        end
-                        canceledAt
+                        offer {
+                            name
+                        }
+                        event {
+                            id
+                            name
+                            start
+                            end
+                        }
                         tutors {
                             id
                             first_name
                             last_name
                         }
-                        location {
-                            __typename
-                            ... on Area {
-                                name
+                        appointments {
+                            id
+                            start
+                            end
+                            canceledAt
+                            tutors {
+                                id
+                                first_name
+                                last_name
                             }
-                            ... on Location {
-                                name
-                            }
-                            ... on Room {
-                                name
-                                floor {
-                                    building {
-                                        name
+                            location {
+                                __typename
+                                ... on Area {
+                                    name
+                                }
+                                ... on Location {
+                                    name
+                                }
+                                ... on Room {
+                                    name
+                                    floor {
+                                        building {
+                                            name
+                                        }
                                     }
                                 }
                             }
@@ -58,6 +59,5 @@ query List_Postings($userID: ID!) {
                 }
             }
         }
-    }
     }
 }

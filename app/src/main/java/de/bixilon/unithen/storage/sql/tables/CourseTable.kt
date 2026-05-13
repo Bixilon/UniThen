@@ -52,7 +52,7 @@ class CourseTable(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
     }
 
-    operator fun get(tutor: Tutor): List<Course> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.course = $table.id WHERE tutor = ?", tutor.id) { it.collectAll() }
+    operator fun get(user: User): List<Course> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_courses ON tutor_courses.course = $table.id WHERE tutor = ?", user.id) { it.collectAll() }
     }
 }

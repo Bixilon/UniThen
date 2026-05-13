@@ -22,7 +22,7 @@ CREATE TABLE events (
     UNIQUE (site, uuid)
 );
 
-CREATE TABLE tutors (
+CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     site INTEGER,
     uuid VARCHAR(36),
@@ -86,19 +86,19 @@ CREATE TABLE account_courses (
 );
 
 CREATE TABLE tutor_courses (
-  tutor INTEGER,
+  user INTEGER,
   course INTEGER,
 
-  PRIMARY KEY (tutor, course),
-  FOREIGN KEY (tutor) REFERENCES tutors(id),
+  PRIMARY KEY (user, course),
+  FOREIGN KEY (user) REFERENCES users(id),
   FOREIGN KEY (course) REFERENCES courses(id)
 );
 
 CREATE TABLE tutor_appointments (
-  tutor INTEGER,
+  user INTEGER,
   appointment INTEGER,
 
-  PRIMARY KEY (tutor, appointment),
-  FOREIGN KEY (tutor) REFERENCES tutors(id),
+  PRIMARY KEY (user, appointment),
+  FOREIGN KEY (user) REFERENCES users(id),
   FOREIGN KEY (appointment) REFERENCES appointments(id)
 );

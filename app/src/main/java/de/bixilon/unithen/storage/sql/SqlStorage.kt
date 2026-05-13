@@ -38,7 +38,7 @@ class SqlStorage(context: Context) : Closeable {
 
     val sites = SiteTable(this)
     val events = EventTable(this)
-    val tutors = TutorTable(this)
+    val users = UserTable(this)
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
@@ -100,16 +100,16 @@ class SqlStorage(context: Context) : Closeable {
             val course = courses.add(event, courseQl.id, courseQl.name)
 
             for (tutorQl in courseQl.tutors) {
-                val tutor = tutors.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-                tutors.addTo(tutor, course)
+                val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                users.addTutorTo(tutor, course)
             }
 
             for (appointmentQl in courseQl.appointments) {
                 val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.location.name)
 
                 for (tutorQl in appointmentQl.tutors) {
-                    val tutor = tutors.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-                    tutors.addTo(tutor, appointment)
+                    val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                    users.addTutorTo(tutor, appointment)
                 }
             }
             accounts.addToCourse(account, course)

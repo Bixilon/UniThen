@@ -101,7 +101,7 @@ private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) ->
             }
 
             val storage = LocalStorage.current
-            val tutors = remember { storage.tutors[appointment] }
+            val tutors = remember { storage.users.getTutors(appointment) }
             if (tutors.isNotEmpty()) {
                 Text(
                     text = tutors.joinToString(", ") { it.firstName + " " + it.lastName },
