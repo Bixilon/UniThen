@@ -9,47 +9,6 @@ query List_Postings($userID: ID!) {
                     __typename
                     ... on Course {
                         id
-                        name
-                        offer {
-                            name
-                        }
-                        event {
-                            id
-                            name
-                            start
-                            end
-                        }
-                        tutors {
-                            id
-                            first_name
-                            last_name
-                        }
-                        appointments {
-                            id
-                            start
-                            end
-                            canceledAt
-                            tutors {
-                                id
-                            }
-                            location {
-                                __typename
-                                ... on Area {
-                                    name
-                                }
-                                ... on Location {
-                                    name
-                                }
-                                ... on Room {
-                                    name
-                                    floor {
-                                        building {
-                                            name
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
