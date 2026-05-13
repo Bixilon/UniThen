@@ -105,6 +105,24 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
             )
         }
     }
+
+
+    if (refreshing) {
+        AlertDialog(
+            confirmButton = {},
+            onDismissRequest = {},
+            title = { Text("Refreshing account...") },
+            text = {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Fetching courses...")
+                }
+            },
+        )
+    }
 }
 
 @Composable
