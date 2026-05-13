@@ -34,6 +34,7 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
@@ -94,19 +95,31 @@ fun CoursesScreen() {
         PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
+                var login = false
                 try {
                     storage.accounts.all().forEach {
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                         val courses = api.postings(it.uuid)
 
+                        if (courses == null) {
+                            storage.accounts.logout(it)
+                            login = true
+                            return@forEach
+                        }
+
                         storage.populate(site, it, courses)
                     }
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                    if (login) {
+                        navigation.navigate(AddAccountRoute)
+                    } else {
+                        withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                    }
                 } catch (error: Throwable) {
                     navigation.navigate(CrashRoute(error))
+                } finally {
+                    withContext(Dispatchers.Main) { refreshing = false }
                 }
-                withContext(Dispatchers.Main) { refreshing = false }
             }
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {

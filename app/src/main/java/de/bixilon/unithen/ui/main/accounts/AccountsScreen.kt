@@ -71,13 +71,21 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                         try {
                             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
                             val courses = api.postings(account.uuid)
+                            if (courses == null) {
+                                storage.accounts.logout(account)
+
+                                navigation.navigate(AddAccountRoute)
+
+                                return@launch
+                            }
 
                             storage.populate(site, account, courses)
                             withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
                         } catch (error: Throwable) {
                             navigation.navigate(CrashRoute(error))
+                        } finally {
+                            withContext(Dispatchers.Main) { refreshing = false }
                         }
-                        withContext(Dispatchers.Main) { refreshing = false }
                     }
 
                     expanded = false

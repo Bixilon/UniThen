@@ -63,6 +63,10 @@ class AccountTable(
       return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.account = $table.id WHERE course = ?", course.id){it.collectAll()}
     }
 
+    fun logout(account: Account) {
+        update(account.id, sessionKey = "")
+    }
+
     fun addToCourse(account: Account, course: Course) {
         insert("INSERT INTO account_courses(account, course) VALUES (?,?) ON CONFLICT(account, course) DO NOTHING", account.id, course.id)
         storage.courses.notify.intValue++

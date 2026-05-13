@@ -61,7 +61,7 @@ open class UniNowApi(
         return Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response).data
     }
 
-    fun postings(userId: UUID): List<PostingQl> {
-        return graphql<UserPkPostings>("courses", "userID" to userId).userPk.postings
+    fun postings(userId: UUID): List<PostingQl>? {
+        return graphql<UserPkPostings>("courses", "userID" to userId).userPk?.postings
     }
 }

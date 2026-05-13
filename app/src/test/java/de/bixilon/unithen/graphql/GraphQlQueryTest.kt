@@ -56,6 +56,6 @@ class GraphQlQueryTest {
     fun `read courses response`() {
         val response = readResponse<UserPkPostings>("courses_response")
 
-        assertEquals(response.userPk.postings.size, 1)
+        assertEquals(response.userPk!!.postings.size, 1)
     }
 }
