@@ -55,7 +55,7 @@ IntelliJ breaks reproducible builds, build with:
 2. Create fastlane changelog
 3. `git tag v1.2.3`
 4. `./gradlew app:assembleRelease`
-5. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk`
+5. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk` (`app/build/outputs/apk/release/app-release-unsigned.apk`)
 6. `curl --location --header "PRIVATE-TOKEN: XXXXXX" --upload-file app-release-signed.apk" "https://gitlab.bixilon.de/api/v4/projects/444/packages/generic/apk/VERSION/app-release.apk"`
 7. Push tags & create release
 8. Update fdroid.txt with version information (then fdroid will build and deploy it automatically)
