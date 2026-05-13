@@ -1,0 +1,4 @@
+This release contains various improvements:
+ - Crash screen (if something goes south)
+ - Request to reauthenticate if backend wants us to
+ - Maintenance updates (code improvements, bump dependencies, ...)
