@@ -107,17 +107,12 @@ fun CoursesScreen() {
                     try {
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
-                        val courses = api.postings(it.uuid)
-
-                        if (courses == null) {
-                            storage.accounts.logout(it)
-                            login = true
-                            return@forEach
-                        }
+                        val courses = api.postings(it.uuid) ?: return@forEach
 
                         storage.populate(site, it, courses)
                     } catch (error: GraphQlException) {
                         if (error.isUnauthenticated()) {
+                            storage.accounts.logout(it)
                             login = true
                         } else {
                             caught = error

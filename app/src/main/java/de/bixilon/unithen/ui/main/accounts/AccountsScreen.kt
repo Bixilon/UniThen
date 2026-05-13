@@ -73,19 +73,13 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-                            val courses = api.postings(account.uuid)
-                            if (courses == null) {
-                                storage.accounts.logout(account)
-
-                                navigation.navigate(AddAccountRoute)
-
-                                return@launch
-                            }
+                            val courses = api.postings(account.uuid) ?: return@launch
 
                             storage.populate(site, account, courses)
                             withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
                         } catch (error: GraphQlException) {
                             if (error.isUnauthenticated()) {
+                                storage.accounts.logout(account)
                                 navigation.navigate(AddAccountRoute)
                             } else {
                                 navigation.navigate(CrashRoute(error))
