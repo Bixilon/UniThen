@@ -128,7 +128,7 @@ private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment
     }
 
     Text(
-        text = "Appointments (${appointments.size})",
+        text = "Appointments (${appointments.filter { it.start > now }.size} / ${appointments.size})",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 8.dp)
     )
