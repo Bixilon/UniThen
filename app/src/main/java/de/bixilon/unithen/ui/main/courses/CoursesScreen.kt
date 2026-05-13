@@ -97,12 +97,14 @@ fun CoursesScreen() {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
                 var login = false
-                try {
-                    storage.accounts.all().forEach {
-                        if (it.session.isBlank()) {
-                            login = true
-                            return@forEach
-                        }
+                var caught: Throwable? = null
+
+                storage.accounts.all().forEach {
+                    if (it.session.isBlank()) {
+                        login = true
+                        return@forEach
+                    }
+                    try {
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                         val courses = api.postings(it.uuid)
@@ -114,24 +116,26 @@ fun CoursesScreen() {
                         }
 
                         storage.populate(site, it, courses)
+                    } catch (error: GraphQlException) {
+                        if (error.isUnauthenticated()) {
+                            login = true
+                        } else {
+                            caught = error
+                        }
+                    } catch (error: Throwable) {
+                        caught = error
                     }
-                    if (login) {
-                        withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
-                        navigation.navigate(AddAccountRoute)
-                    } else {
-                        withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
-                    }
-                } catch (error: GraphQlException) {
-                    if (error.isUnauthenticated()) {
-                        navigation.navigate(AddAccountRoute)
-                    } else {
-                        navigation.navigate(CrashRoute(error))
-                    }
-                } catch (error: Throwable) {
-                    navigation.navigate(CrashRoute(error))
-                } finally {
-                    withContext(Dispatchers.Main) { refreshing = false }
                 }
+                if (login) {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
+                    navigation.navigate(AddAccountRoute)
+                } else {
+                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                }
+                if (caught != null) {
+                    navigation.navigate(CrashRoute(caught))
+                }
+                withContext(Dispatchers.Main) { refreshing = false }
             }
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
