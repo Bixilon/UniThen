@@ -14,11 +14,13 @@ package de.bixilon.unithen.ui.main
 
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 object MainRoute : NavigationRoute
 object SetupRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
+data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute

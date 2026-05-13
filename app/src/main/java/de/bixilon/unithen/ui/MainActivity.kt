@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
+import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.fast.CheckInRoute
 import de.bixilon.unithen.ui.main.*
@@ -68,6 +69,7 @@ fun MainNavigator() {
 
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
+        composable<ReauthenticateRoute> { AuthenticationScreen(it.site) { navigator.pop() } }
 
         composable<SettingsRoute> { SettingsScreen() }
 

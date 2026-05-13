@@ -39,6 +39,7 @@ import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -80,7 +81,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                         } catch (error: GraphQlException) {
                             if (error.isUnauthenticated()) {
                                 storage.accounts.logout(account)
-                                navigation.navigate(AddAccountRoute)
+                                navigation.navigate(ReauthenticateRoute(site))
                             } else {
                                 navigation.navigate(CrashRoute(error))
                             }

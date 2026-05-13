@@ -34,10 +34,11 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
-import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -96,12 +97,12 @@ fun CoursesScreen() {
         PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
-                var login = false
+                var loginSite: Key? = null
                 var caught: Throwable? = null
 
                 storage.accounts.all().forEach {
                     if (it.session.isBlank()) {
-                        login = true
+                        loginSite = it.site
                         return@forEach
                     }
                     try {
@@ -113,7 +114,7 @@ fun CoursesScreen() {
                     } catch (error: GraphQlException) {
                         if (error.isUnauthenticated()) {
                             storage.accounts.logout(it)
-                            login = true
+                            loginSite = it.site
                         } else {
                             caught = error
                         }
@@ -121,9 +122,9 @@ fun CoursesScreen() {
                         caught = error
                     }
                 }
-                if (login) {
+                if (loginSite != null) {
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
-                    navigation.navigate(AddAccountRoute)
+                    navigation.navigate(ReauthenticateRoute(storage.sites[loginSite]!!))
                 } else {
                     withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
                 }
