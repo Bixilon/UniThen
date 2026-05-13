@@ -19,7 +19,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,8 +55,6 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
         }
     }
-
-    val name by remember { derivedStateOf { if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname) } }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -99,7 +100,7 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     Text(
-                        text = "Name: ${name.first} ${name.second}",
+                        text = "Name: ${account.firstname} ${account.lastname}",
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
@@ -107,8 +108,9 @@ fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
             }
 
             Box(Modifier.padding(16.dp)) {
+                val (firstname, lastname) = if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname)
                 QrCodeView(
-                    data = createQrCode(account.uuid, appointment.uuid, name.first, name.second),
+                    data = createQrCode(account.uuid, appointment.uuid, firstname, lastname),
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1f, matchHeightConstraintsFirst = true)

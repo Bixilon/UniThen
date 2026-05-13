@@ -71,7 +71,7 @@ fun SettingsScreen() {
             style = MaterialTheme.typography.headlineLarge,
         )
 
-        BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replace your real name with Max Muster when performing check in")
+        BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replaces your name inside the QR code with \"Max Muster\". The name is not checked during checkin, the course leader can still see your actual name in the attendants list.")
 
         HorizontalDivider()
 
