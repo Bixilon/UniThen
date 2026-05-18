@@ -1,5 +1,7 @@
 # UniThen
 
+![Logo](logo.svg)
+
 This android application is for doing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
 It can be used for any booking system hosted by them, e.g. for the [ZHS München](https://kurse.zhs-muenchen.de).
 
@@ -23,6 +25,11 @@ The latest release is published on [gitlab releases](https://gitlab.bixilon.de/b
 and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`) too. F-Droid is the preferred way, then you don't need to worry about updates.
 
 (This app is Android only, iOS is **NOT** supported and won't be)
+
+## Screenshots
+
+| **Course overview** ![Course overview](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | **QR Code Check In** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
+| :-: | :-: |
 
 ## Why
 
