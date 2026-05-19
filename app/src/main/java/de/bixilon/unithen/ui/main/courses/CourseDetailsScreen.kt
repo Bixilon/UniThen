@@ -25,8 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.*
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
-import de.bixilon.unithen.ui.fast.CheckInRoute
-import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import kotlinx.coroutines.flow.first
@@ -70,7 +68,7 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 }
 
 @Composable
-private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) -> Unit) {
+private fun AppointmentCard(appointment: Appointment) {
     val now = remember { Clock.System.now() }
 
     val color = when {
@@ -84,8 +82,7 @@ private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) ->
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp),
-        onClick = { onSelect(appointment) }
+            .padding(horizontal = 4.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
@@ -115,7 +112,7 @@ private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) ->
 }
 
 @Composable
-private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment) -> Unit) {
+private fun Appointments(appointments: List<Appointment>) {
     val state = rememberLazyListState()
     val now = remember { Clock.System.now() }
 
@@ -139,7 +136,7 @@ private fun Appointments(appointments: List<Appointment>, onSelect: (Appointment
         state = state,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment, onSelect) }
+        items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment) }
     }
 }
 
@@ -157,8 +154,6 @@ fun CourseDetailsScreen(course: Course) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
-        val navigation = LocalNavigation.current
-        Appointments(appointments) { navigation.navigate(CheckInRoute(accounts.first(), course, it)) }
+        Appointments(appointments)
     }
 }
