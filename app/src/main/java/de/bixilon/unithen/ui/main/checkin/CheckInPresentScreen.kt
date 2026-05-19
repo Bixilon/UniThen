@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main
+package de.bixilon.unithen.ui.main.checkin
 
 import android.app.Activity
 import android.content.Context
@@ -44,7 +44,7 @@ import java.util.*
 
 
 @Composable
-fun CheckInScreen(account: Account, course: Course, appointment: Appointment) {
+fun CheckInPresentScreen(account: Account, course: Course, appointment: Appointment) {
     var fakeName by rememberSetting(Settings.QR_CODE_FAKE_NAME)
 
     val context = LocalContext.current

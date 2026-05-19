@@ -24,6 +24,7 @@ data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute
+object CheckInRoute : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 

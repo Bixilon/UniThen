@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.main
 
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
+import de.bixilon.unithen.ui.main.checkin.createQrCode
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 

@@ -36,6 +36,7 @@ import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
+import de.bixilon.unithen.ui.main.checkin.CheckInPresentScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
@@ -65,7 +66,7 @@ fun MainNavigator() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
 
-        composable<CheckInRoute> { CheckInScreen(it.account, it.course, it.appointment) }
+        composable<CheckInRoute> { CheckInPresentScreen(it.account, it.course, it.appointment) }
 
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
