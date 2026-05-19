@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -48,7 +47,6 @@ enum class Destinations(
 ) {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
-    CHECKIN(Icons.Default.Face, "CheckIn", CheckInRoute),
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
 }
 
