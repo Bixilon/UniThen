@@ -126,7 +126,7 @@ private fun Appointments(appointments: List<Appointment>) {
     }
 
     Text(
-        text = "Appointments (${appointments.filter { it.start > now }.size} / ${appointments.size})",
+        text = "Appointments (+${appointments.filter { it.start > now && it.canceled == null }.size}/${appointments.size})",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 8.dp)
     )
