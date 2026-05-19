@@ -1,0 +1,320 @@
+"Time/Date, e.g. 2025-10-12T22:00:00Z"
+scalar Date
+
+scalar Unknown
+
+type User {
+    id: ID!
+
+    first_name: String!
+    last_name: String!
+
+    email: String
+
+    postings: [Posting!]
+    paginatedPostings(filters: [Filter!], sorters: [SortBy!], pagination: CursorPagination): Unknown
+
+    messages(filters: [Filter], sorters: [Sorter], pagination: MessagePagination, search: String): Unknown
+    documents: Unknown
+    waitingList: Unknown
+}
+
+type CourseUser {
+    id: ID!
+
+    first_name: String!
+    last_name: String!
+
+    email: String
+}
+
+type Product {
+    id: ID!
+
+    needs_approval: Boolean!
+
+    price_options: Unknown
+
+    with_cancellation_fee: Boolean!
+    name_translatable: NameTranslatable
+
+    parent: Product
+}
+
+type Posting {
+    id: ID!
+
+    product: Product!
+    resource: Resource!
+
+
+    approved_at: Date
+
+    paymentIntent: Unknown
+
+    payment_completed: Date
+    payment_pending: Date
+    selected_duration: Unknown
+    auto_renew_end_date: Date
+}
+
+union Resource = Fee | Course | Room | Location | BookingSlotResource | Appointment | Equipment
+
+type Equipment {
+    id: ID!
+
+    name_translatable: NameTranslatable
+    condition: Unknown
+}
+type Fee {
+    id: ID!
+    name: String!
+    description: String
+    poster: Unknown
+
+    name_translatable: NameTranslatable
+}
+
+type Interval {
+    id: ID!
+    type: String # TODO: OFFLINE
+    startTime: Date
+    endTime: Unknown
+    weekdays: [Int!]
+
+    firstDate: Unknown
+    lastDate: Unknown
+
+    onlineSettings: Unknown # platformUrl, roomId, password
+    facility: Facility
+}
+
+type Course {
+    id: ID!
+    name: String!
+    description: String
+
+    offer: Offer!
+    event: Event! # TODO !
+
+    tutors: [CourseUser!]
+    appointments: [Appointment!]
+
+    intervals: [Interval!] # TODO
+
+    enrolled: [EnrolledCourseUser!]
+}
+
+type BookingSlotResource {
+    id: ID!
+    start: Date
+    end: Date
+}
+
+type Offer {
+    id: ID!
+    name: String!
+    slug: Unknown
+    group: CourseGroup!
+    poster: Unknown
+}
+
+type Event {
+    id: ID!
+    name: String!
+
+    start: Date!
+    end: Date!
+
+    current: Boolean!
+
+    location: String
+}
+
+type EnrolledCourseUser { # TODO: Typename
+    id: ID!
+    first_name: String
+    last_name: String
+    payment_completed: Unknown
+}
+
+type CheckInAttempt { # TODO: Typename
+    id: ID!
+    status: Unknown!
+    user: EnrolledCourseUser! # TODO: type
+
+    message: Unknown
+}
+
+type Appointment {
+    id: ID!
+    start: Date! # TODO !
+    end: Date! # TODO !
+
+    canceledAt: Date
+
+    tutors: [CourseUser!]
+
+    location: Facility
+
+    course: Course
+
+    onlineSettings: Unknown # platformUrl, roomId, password
+
+    checkInAttempts: [CheckInAttempt!]
+    attendees: [EnrolledCourseUser!]
+}
+
+union Facility = Area | Location | Room
+
+type GeoPoint { # TODO: typename
+    id: ID!
+    latitude: Unknown
+    longitude: Unknown
+}
+
+type Area {
+    id: ID!
+    name: String!
+    description: String
+    geopoints: [GeoPoint]
+}
+type Location {
+    id: ID!
+    name: String!
+    description: String
+    geopoint: GeoPoint # TODO: ?
+    geoPoint: GeoPoint
+}
+
+type Room {
+    id: ID!
+    name: String!
+    description: String   # TODO !
+    floor: Floor  # TODO !
+}
+
+type Floor {
+    id: ID!
+    building: Building # TODO !
+}
+
+type Building {
+    id: ID!
+    name: String!
+    geopoint: GeoPoint # TODO: ?
+    geoPoint: GeoPoint
+}
+
+type CourseGroup {
+    id: ID!
+    slug: Unknown
+    semester_calendar: Calendar
+}
+
+type Calendar {
+    id: ID!
+    events: [Event!]
+}
+
+input  Filter {
+    field: String!
+    in: [String!]
+    eq: [String!]
+}
+
+input SortBy {
+    field: String # TODO: enum?
+    order: String # Desc
+}
+
+input CursorPagination {
+    page_site: Int!
+}
+
+type ProductInfo { # TODO: Typename
+    already_booked: Boolean!
+    already_in_cart: Boolean!
+    availability: Int!
+    on_waiting_list: Boolean!
+    product_name: String!
+}
+
+type RecurringInformation { # TODO: Typename
+    billing_interval: Unknown
+    auto_renew: Unknown
+}
+
+type NameTranslatable { # TODO: Typename
+    key: Unknown
+    value: Unknown
+}
+type ProductOffset { # TODO: Typename
+    poster: Unknown
+    description: Unknown
+}
+
+type CartProducts { # TODO: Typename
+    id: ID!
+    name: String
+    duration: Unknown
+    recurring_information: RecurringInformation
+    resource: Resource!
+
+    price: Unknown
+    name_translatable: NameTranslatable
+    product_offer: ProductOffset
+}
+
+type Cart { # TODO: Typename
+    id: ID!
+    total: Unknown
+    reserved_until: Date!
+    seconds_until_reservation_ends: Int!
+    checkout_started_at: Date! # TODO
+    created_at: Date!
+    products: [CartProducts!]
+}
+
+type Payer {
+    ID: ID!
+    first_name: String
+    last_name: String
+
+    iban: String
+    # TODO
+}
+
+input MessagePagination {
+    page_size: Int!
+    cursor: Unknown
+}
+
+input Sorter {
+    field: String
+    order: String # Desc
+}
+
+
+type Query {
+    user_pk(userId: ID!): User
+    course_groups: Unknown
+    offers_pk(id: ID!): Offer
+
+    get_unread_messages: Int!
+    booking_in_progress: Boolean!
+
+    Product_infos(filters: Filter): ProductInfo # TODO: Filter array
+    cat: Cart
+
+    get_payer: Payer
+
+    list_transactions: Unknown
+
+    appointments_pk(id: ID!): Appointment
+}
+
+type Mutation {
+    appointment_checkin(actualAppointmentID: ID!, userID: ID!, expectedAppointmentID: ID!): CheckInAttempt
+    delete_checkin_attempt(checkinAttemptID: ID!): CheckInAttempt
+}
