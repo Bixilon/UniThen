@@ -21,6 +21,7 @@ object SqlUtil {
 
     fun Cursor.getUUID(index: Int) = getString(index).toUUID()
     fun Cursor.getInstant(index: Int) = Instant.fromEpochSeconds(getLong(index), 0)
+    fun Cursor.getInstantOrNull(index: Int) = if (isNull(index)) null else getInstant(index)
 
     fun Any?.db(): String? = when (this) {
         null -> null

@@ -105,7 +105,7 @@ class SqlStorage(context: Context) : Closeable {
             }
 
             for (appointmentQl in courseQl.appointments) {
-                val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.location.name)
+                val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
 
                 for (tutorQl in appointmentQl.tutors) {
                     val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)

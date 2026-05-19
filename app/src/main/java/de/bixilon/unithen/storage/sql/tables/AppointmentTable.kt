@@ -19,6 +19,7 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
+import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import java.util.*
@@ -27,10 +28,10 @@ import kotlin.time.Instant
 class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, "appointments") {
-    override val columns = listOf("id", "course", "uuid", "start", "end", "location")
+    override val columns = listOf("id", "course", "uuid", "start", "end", "canceled", "location")
 
 
-    override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getString(5))
+    override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getInstantOrNull(5), cursor.getString(6))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(course: Course, uuid: UUID) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
@@ -43,18 +44,18 @@ class AppointmentTable(
         return all(filter)
     }
 
-    fun update(id: Key, start: Instant? = null, end: Instant? = null, location: String? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "location" to location))
+    fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant?, location: String? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location))
 
 
-    fun insert(course: Course, uuid: UUID, start: Instant, end: Instant, location: String): Appointment {
-        val id = storage.insert("INSERT INTO $table(course, uuid, start, end, location) VALUES (?,?,?,?,?)", course.id, uuid, start, end, location)
+    fun insert(course: Course, uuid: UUID, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
+        val id = storage.insert("INSERT INTO $table(course, uuid, start, end, canceled, location) VALUES (?,?,?,?,?,?)", course.id, uuid, start, end, canceled, location)
 
         return this[id]!!
     }
 
-    fun add(course: Course, uuid: UUID, start: Instant, end: Instant, location: String): Appointment {
-        this[course, uuid]?.let { update(it.id, start, end, location); return it }
+    fun add(course: Course, uuid: UUID, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
+        this[course, uuid]?.let { update(it.id, start, end, canceled, location); return it }
 
-        return insert(course, uuid, start, end, location)
+        return insert(course, uuid, start, end, canceled, location)
     }
 }

@@ -74,6 +74,7 @@ private fun AppointmentCard(appointment: Appointment, onSelect: (Appointment) ->
     val now = remember { Clock.System.now() }
 
     val color = when {
+        appointment.canceled != null -> MaterialTheme.colorScheme.errorContainer
         appointment.end < now -> MaterialTheme.colorScheme.surfaceContainerLow
         appointment.start <= now + 1.hours -> MaterialTheme.colorScheme.primaryContainer
         else -> MaterialTheme.colorScheme.secondaryContainer

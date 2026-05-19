@@ -70,6 +70,8 @@ CREATE TABLE appointments (
   start INTEGER NOT NULL,
   end INTEGER NOT NULL,
 
+  canceled INTEGER NULL,
+
   location VARCHAR(255),
 
   FOREIGN KEY (course) REFERENCES courses(id),

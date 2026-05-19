@@ -20,7 +20,7 @@ data class AppointmentQl(
     override val id: UUID,
     val start: Instant,
     val end: Instant,
-    val cancelledAt: Instant?,
+    val canceledAt: Instant?,
     val tutors: List<TutorQl>,
     val location: LocationQl,
 ) : IdentifiedQl
