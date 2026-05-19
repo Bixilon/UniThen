@@ -6,11 +6,8 @@ query List_Postings($userID: ID!) {
                 id
                 needs_approval
                 resource {
-                    __typename
-                    ... on Fee {
-                        id
-                    }
                     ... on Course {
+                        __typename
                         id
                         name
                         offer {

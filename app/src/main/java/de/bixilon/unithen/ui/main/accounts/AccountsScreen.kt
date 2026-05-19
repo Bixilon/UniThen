@@ -75,7 +75,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-                            val courses = api.postings(account.uuid) ?: return@launch
+                            val courses = api.courses(account.uuid) ?: return@launch
 
                             storage.populate(site, account, courses)
                             withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }

@@ -17,16 +17,13 @@ import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
-import de.bixilon.unithen.api.graphql.queries.UserPkQuery
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
-import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.util.json.Jackson
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.net.URI
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 open class UniNowApi(
@@ -71,9 +68,5 @@ open class UniNowApi(
         }
 
         return graphql.data
-    }
-
-    fun postings(userId: UUID): List<PostingQl>? {
-        return graphql<UserPkQuery>("courses", "userID" to userId).userPk?.postings
     }
 }

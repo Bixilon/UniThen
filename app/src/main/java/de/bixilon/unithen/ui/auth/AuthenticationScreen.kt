@@ -78,7 +78,7 @@ private fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Au
 
     Log.i("Auth", "Fetching courses...")
     val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-    val courses = api.postings(account.uuid) ?: throw NullPointerException("Courses is null???")
+    val courses = api.courses(account.uuid) ?: throw NullPointerException("Courses is null???")
 
     storage.populate(site, account, courses)
     Log.i("Auth", "Courses fetched (total: ${courses.size})")

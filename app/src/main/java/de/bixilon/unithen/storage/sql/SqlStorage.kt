@@ -16,8 +16,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.sqlite.transaction
-import de.bixilon.kutil.cast.CastUtil.nullCast
-import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DefaultStorage
@@ -90,15 +88,14 @@ class SqlStorage(context: Context) : Closeable {
     inline fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
 
 
-    fun populate(site: Site, account: Account, postings: List<PostingQl>) = transaction {
-        for (posting in postings) {
-            val courseQl = posting.product.resource.nullCast<CourseQl>() ?: continue
+    fun populate(site: Site, account: Account, courses: List<CourseQl>) = transaction {
+        for (courseQl in courses) {
             val evenQl = courseQl.event
 
             val event = events.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
 
 
-            val course = courses.add(event, courseQl.id, courseQl.name)
+            val course = this.courses.add(event, courseQl.id, courseQl.name)
 
             for (tutorQl in courseQl.tutors) {
                 val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)

@@ -105,7 +105,7 @@ fun CoursesScreen() {
                     try {
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
-                        val courses = api.postings(it.uuid) ?: return@forEach
+                        val courses = api.courses(it.uuid) ?: return@forEach
 
                         storage.populate(site, it, courses)
                     } catch (_: AuthenticationException) {

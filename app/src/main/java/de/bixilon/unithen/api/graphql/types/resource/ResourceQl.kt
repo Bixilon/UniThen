@@ -19,7 +19,6 @@ import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes(
     JsonSubTypes.Type(value = CourseQl::class, name = COURSE_TYPE),
-    JsonSubTypes.Type(value = FeeQl::class, name = FEE_TYPE),
 )
 interface ResourceQl : IdentifiedQl {
     val __typename: String
