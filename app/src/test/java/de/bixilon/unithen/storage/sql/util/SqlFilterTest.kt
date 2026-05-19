@@ -12,10 +12,21 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import de.bixilon.unithen.storage.Appointment
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.neq
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
 class SqlFilterTest {
+
+    @Test
+    fun `complex building`() {
+        val filter = (Appointment::id eq "v") and ((Appointment::canceled neq "x") or (Appointment::location eq "y"))
+
+        assertEquals(filter.where, "(id=?) AND ((canceled!=?) OR (location=?))")
+        assertEquals(filter.parameters, listOf("v", "x", "y"))
+    }
 
     @Test
     fun `AND empty filter`() {

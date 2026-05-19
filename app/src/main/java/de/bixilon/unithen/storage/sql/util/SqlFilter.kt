@@ -12,10 +12,25 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import kotlin.reflect.KProperty1
+
 data class SqlFilter(
     val where: String,
     val parameters: List<Any>,
 ) {
+
+    private fun connect(conjunction: String, other: SqlFilter?): SqlFilter {
+        if (other == null || other.where.isBlank()) return this
+
+        return SqlFilter("($where) $conjunction (${other.where})", parameters + other.parameters)
+    }
+
+    infix fun and(other: SqlFilter?) = connect("AND", other)
+    infix fun or(other: SqlFilter?) = connect("OR", other)
+
+    operator fun plus(where: String?) = if (where == null) this else SqlFilter(this.where + " " + where, this.parameters)
+
+
 
     companion object {
         val EMPTY = SqlFilter("", emptyList())
@@ -36,7 +51,7 @@ data class SqlFilter(
 
                 parameters += value
             }
-            if (parameters.isEmpty()) return SqlFilter.EMPTY
+            if (parameters.isEmpty()) return EMPTY
 
             return SqlFilter("$string", parameters)
         }
@@ -44,5 +59,18 @@ data class SqlFilter(
         fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)
         fun or(vararg filters: Pair<String, Any?>) = join(" OR ", *filters)
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
+
+
+        private fun <T> KProperty1<*, T>.create(operator: String, other: T): SqlFilter {
+            return SqlFilter(this.name + operator + "?", listOf(other!!))
+        }
+
+        infix fun <T> KProperty1<*, T>.eq(other: T) = create("=", other)
+
+        infix fun <T> KProperty1<*, T>.neq(other: T) = create("!=", other)
+        infix fun <T> KProperty1<*, T>.gt(other: T) = create(">", other)
+        infix fun <T> KProperty1<*, T>.ge(other: T) = create(">=", other)
+        infix fun <T> KProperty1<*, T>.lt(other: T) = create("<", other)
+        infix fun <T> KProperty1<*, T>.le(other: T) = create("<=", other)
     }
 }
