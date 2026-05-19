@@ -39,6 +39,8 @@ type Product {
     name_translatable: NameTranslatable
 
     parent: Product
+
+    resource: Resource!
 }
 
 type Posting {
@@ -136,6 +138,7 @@ type EnrolledCourseUser { # TODO: Typename
     first_name: String
     last_name: String
     payment_completed: Unknown
+    email: String
 }
 
 type CheckInAttempt { # TODO: Typename
@@ -148,8 +151,13 @@ type CheckInAttempt { # TODO: Typename
 
 type Appointment {
     id: ID!
+
     start: Date! # TODO !
     end: Date! # TODO !
+
+    checkInStart: Date! # TODO !
+    checkInEnd: Date! # TODO !
+
 
     canceledAt: Date
 
@@ -183,7 +191,6 @@ type Location {
     id: ID!
     name: String!
     description: String
-    geopoint: GeoPoint # TODO: ?
     geoPoint: GeoPoint
 }
 
@@ -196,13 +203,13 @@ type Room {
 
 type Floor {
     id: ID!
+    name: String!
     building: Building # TODO !
 }
 
 type Building {
     id: ID!
     name: String!
-    geopoint: GeoPoint # TODO: ?
     geoPoint: GeoPoint
 }
 
@@ -210,6 +217,9 @@ type CourseGroup {
     id: ID!
     slug: Unknown
     semester_calendar: Calendar
+
+    agentRoles: [String!] # "Agent"
+    courseAgentRoles: [Unknown] # id, name
 }
 
 type Calendar {
@@ -297,7 +307,7 @@ input Sorter {
 
 
 type Query {
-    user_pk(userId: ID!): User
+    user_pk(userID: ID!): User
     course_groups: Unknown
     offers_pk(id: ID!): Offer
 
@@ -312,6 +322,8 @@ type Query {
     list_transactions: Unknown
 
     appointments_pk(id: ID!): Appointment
+    appointments: [Appointment!]
+    course_groups: [CourseGroup!] # TODO
 }
 
 type Mutation {
