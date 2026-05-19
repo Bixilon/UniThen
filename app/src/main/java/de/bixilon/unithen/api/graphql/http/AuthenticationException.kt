@@ -10,20 +10,6 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.authentication
+package de.bixilon.unithen.api.graphql.http
 
-import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import okhttp3.Request
-
-data class CookieAuthentication(
-    val session: String,
-) : Authentication {
-
-    init {
-        if (session.isBlank()) throw AuthenticationException("Authentication cookie can not be empty!")
-    }
-
-    override fun authenticate(request: Request.Builder) {
-        request.header("Cookie", "ory-session=$session")
-    }
-}
+class AuthenticationException(message: String?) : Exception(message)

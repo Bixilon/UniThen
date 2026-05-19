@@ -28,23 +28,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import java.net.UnknownHostException
 
 
 fun formatDetails(error: Throwable): String? = when (error) {
     is UnknownHostException -> error.message + "\nDo you have internet?"
-    is GraphQlException if error.isUnauthenticated() -> "Unauthenticated!"
-    is GraphQlException -> {
-        val builder = StringBuilder()
-
-        builder.append("GraphQL error:")
-
-        error.errors.forEach { builder.append("\n - ").append(it.message) }
-
-        builder.toString()
-    }
-
+    is AuthenticationException -> "Unauthenticated!"
+    is GraphQlException -> error.format()
     else -> null
 }
 

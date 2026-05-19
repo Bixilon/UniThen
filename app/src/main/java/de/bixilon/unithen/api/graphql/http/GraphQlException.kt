@@ -14,5 +14,13 @@ package de.bixilon.unithen.api.graphql.http
 
 class GraphQlException(val errors: List<GraphQlError>) : Exception("GraphQl error: $errors") {
 
-    fun isUnauthenticated() = errors.size == 1 && errors.first().message == "unauthenticated"
+    fun format(): String {
+        val builder = StringBuilder()
+
+        builder.append("GraphQL error:")
+
+        errors.forEach { builder.append("\n - ").append(it.message) }
+
+        return builder.toString()
+    }
 }

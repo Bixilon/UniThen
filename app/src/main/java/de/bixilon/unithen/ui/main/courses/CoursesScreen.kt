@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
@@ -101,23 +102,17 @@ fun CoursesScreen() {
                 var caught: Throwable? = null
 
                 storage.accounts.all().forEach {
-                    if (it.session.isBlank()) {
-                        loginSite = it.site
-                        return@forEach
-                    }
                     try {
                         val site = storage.sites[it.site]!!
                         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
                         val courses = api.postings(it.uuid) ?: return@forEach
 
                         storage.populate(site, it, courses)
+                    } catch (_: AuthenticationException) {
+                        storage.accounts.logout(it)
+                        loginSite = it.site
                     } catch (error: GraphQlException) {
-                        if (error.isUnauthenticated()) {
-                            storage.accounts.logout(it)
-                            loginSite = it.site
-                        } else {
-                            caught = error
-                        }
+                        caught = error
                     } catch (error: Throwable) {
                         caught = error
                     }

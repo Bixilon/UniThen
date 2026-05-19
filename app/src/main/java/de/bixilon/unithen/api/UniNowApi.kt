@@ -14,6 +14,7 @@ package de.bixilon.unithen.api
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.unithen.api.graphql.UserPkPostings
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GrapQlResponse
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
@@ -61,7 +62,13 @@ open class UniNowApi(
 
         val graphql = Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response)
 
-        if (graphql.errors != null && graphql.errors.isNotEmpty()) throw GraphQlException(graphql.errors)
+        if (graphql.errors != null && graphql.errors.isNotEmpty()) {
+            if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {
+                throw AuthenticationException("GraphQl: Not authenticated!")
+            }
+
+            throw GraphQlException(graphql.errors)
+        }
 
         return graphql.data
     }
