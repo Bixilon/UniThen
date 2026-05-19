@@ -1,5 +1,6 @@
 [versions]
 agp = "8.12.3"
+zxing = "3.0.2"
 composeQrCode = "1.0.1"
 datastorePreferences = "1.2.1"
 jsoup = "1.22.2"
@@ -15,6 +16,7 @@ activityCompose = "1.13.0"
 composeBom = "2026.05.00"
 datastoreCore = "1.2.1"
 okhttp = "5.3.2"
+cameraCore = "1.6.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,6 +36,11 @@ androidx-material-icons-core = { group = "androidx.compose.material", name = "ma
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
+androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "cameraCore" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraCore" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraCore" }
+androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", version.ref = "cameraCore" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCore" }
 
 compose-qr-code = { group = "com.lightspark", name = "compose-qr-code", version.ref = "composeQrCode" }
 
@@ -45,6 +52,8 @@ kutil = { group = "de.bixilon", name = "kutil", version.ref = "kutil" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+
+zxingcpp = { group = "io.github.zxing-cpp", name = "android", version.ref = "zxing" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
