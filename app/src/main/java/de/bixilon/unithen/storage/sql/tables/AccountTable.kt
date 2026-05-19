@@ -28,6 +28,7 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import java.util.*
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 class AccountTable(
     storage: SqlStorage,
@@ -40,7 +41,7 @@ class AccountTable(
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, uuid: UUID? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
-    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
+    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey, "fetched" to fetched))
 
 
     fun update(account: Account, details: UserDetails, authentication: Authentication) {

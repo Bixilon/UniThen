@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import okio.Closeable
 import org.intellij.lang.annotations.Language
 import java.util.*
+import kotlin.time.Clock
 import kotlin.time.Instant
 
 class SqlStorage(context: Context) : Closeable {
@@ -114,6 +115,9 @@ class SqlStorage(context: Context) : Closeable {
             }
             accounts.addToCourse(account, course)
         }
+
+        accounts.update(account.id, fetched = Clock.System.now())
+
         return@transaction
     }
 
