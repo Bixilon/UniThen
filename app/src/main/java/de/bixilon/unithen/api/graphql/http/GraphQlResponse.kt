@@ -12,7 +12,7 @@
 
 package de.bixilon.unithen.api.graphql.http
 
-data class GrapQlResponse<T>(
+data class GraphQlResponse<T>(
     val data: T,
     val errors: List<GraphQlError>? = null,
 )

@@ -13,6 +13,7 @@
 package de.bixilon.unithen.api.graphql.types
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
 import java.util.*
 
 data class ProductQl(

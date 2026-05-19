@@ -10,14 +10,21 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types
+package de.bixilon.unithen.api.graphql.types.resource
 
+import de.bixilon.unithen.api.graphql.types.AppointmentQl
+import de.bixilon.unithen.api.graphql.types.EventQl
+import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import java.util.*
 
-const val FEE_TYPE = "Fee"
+const val COURSE_TYPE = "Course"
 
-data class FeeQl(
+data class CourseQl(
     override val id: UUID,
+    val name: String,
+    val event: EventQl,
+    val tutors: List<CourseUserQl>,
+    val appointments: List<AppointmentQl>,
 ) : ResourceQl {
-    override val __typename get() = FEE_TYPE
+    override val __typename get() = COURSE_TYPE
 }

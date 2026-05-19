@@ -10,13 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types
+package de.bixilon.unithen.api.graphql.queries
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.util.*
+import de.bixilon.unithen.api.graphql.types.user.UserQl
 
-data class TutorQl(
-    override val id: UUID,
-    @JsonProperty("first_name") val firstName: String,
-    @JsonProperty("last_name") val lastName: String,
-) : IdentifiedQl
+data class UserPkQuery(
+    @field:JsonProperty("user_pk") val userPk: UserQl?,
+)

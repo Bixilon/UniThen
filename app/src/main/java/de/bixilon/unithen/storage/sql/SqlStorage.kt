@@ -17,8 +17,8 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.sqlite.transaction
 import de.bixilon.kutil.cast.CastUtil.nullCast
-import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.PostingQl
+import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.Site
@@ -109,8 +109,8 @@ class SqlStorage(context: Context) : Closeable {
                 val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
 
                 for (tutorQl in appointmentQl.tutors) {
-                    val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-                    users.addTutorTo(tutor, appointment)
+                    val user = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                    users.addTutorTo(user, appointment)
                 }
             }
             accounts.addToCourse(account, course)

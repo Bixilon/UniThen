@@ -12,7 +12,8 @@
 
 package de.bixilon.unithen.api.graphql.types
 
-import de.bixilon.unithen.api.graphql.types.location.LocationQl
+import de.bixilon.unithen.api.graphql.types.location.FacilityQl
+import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import java.util.*
 import kotlin.time.Instant
 
@@ -21,6 +22,6 @@ data class AppointmentQl(
     val start: Instant,
     val end: Instant,
     val canceledAt: Instant?,
-    val tutors: List<TutorQl>,
-    val location: LocationQl,
+    val tutors: List<CourseUserQl>,
+    val location: FacilityQl,
 ) : IdentifiedQl

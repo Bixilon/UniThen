@@ -13,11 +13,11 @@
 package de.bixilon.unithen.api
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.bixilon.unithen.api.graphql.UserPkPostings
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.http.GrapQlResponse
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
+import de.bixilon.unithen.api.graphql.http.GraphQlResponse
+import de.bixilon.unithen.api.graphql.queries.UserPkQuery
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import de.bixilon.unithen.api.graphql.types.PostingQl
@@ -60,7 +60,7 @@ open class UniNowApi(
         val request = GraphQlRequest(query.query, variables.toMap())
         val response = postJson("/api/query", request)
 
-        val graphql = Jackson.GRAPH_QL.readValue<GrapQlResponse<T>>(response)
+        val graphql = Jackson.GRAPH_QL.readValue<GraphQlResponse<T>>(response)
 
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {
             if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {
@@ -74,6 +74,6 @@ open class UniNowApi(
     }
 
     fun postings(userId: UUID): List<PostingQl>? {
-        return graphql<UserPkPostings>("courses", "userID" to userId).userPk?.postings
+        return graphql<UserPkQuery>("courses", "userID" to userId).userPk?.postings
     }
 }

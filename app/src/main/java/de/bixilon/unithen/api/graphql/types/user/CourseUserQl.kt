@@ -10,13 +10,14 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types.location
+package de.bixilon.unithen.api.graphql.types.user
 
-const val LOCATION_TYPE = "Location"
+import com.fasterxml.jackson.annotation.JsonProperty
+import de.bixilon.unithen.api.graphql.types.IdentifiedQl
+import java.util.*
 
-class _LocationQl(
-   override val name: String,
-    // TODO: floor, building
-) : LocationQl {
-    override val __typename get() = LOCATION_TYPE
-}
+data class CourseUserQl(
+    override val id: UUID,
+    @JsonProperty("first_name") val firstName: String,
+    @JsonProperty("last_name") val lastName: String,
+) : IdentifiedQl

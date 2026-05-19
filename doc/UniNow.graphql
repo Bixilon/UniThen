@@ -17,6 +17,8 @@ type User {
     messages(filters: [Filter], sorters: [Sorter], pagination: MessagePagination, search: String): Unknown
     documents: Unknown
     waitingList: Unknown
+
+    calendars: Calendar
 }
 
 type CourseUser {
@@ -125,6 +127,8 @@ type Event {
     id: ID!
     name: String!
 
+    owner: Unknown
+
     start: Date!
     end: Date!
 
@@ -143,7 +147,7 @@ type EnrolledCourseUser { # TODO: Typename
 
 type CheckInAttempt { # TODO: Typename
     id: ID!
-    status: Unknown!
+    status: Unknown! # "Success", "Failed"?
     user: EnrolledCourseUser! # TODO: type
 
     message: Unknown
@@ -187,6 +191,7 @@ type Area {
     description: String
     geopoints: [GeoPoint]
 }
+
 type Location {
     id: ID!
     name: String!
@@ -224,6 +229,7 @@ type CourseGroup {
 
 type Calendar {
     id: ID!
+    color: Unknown
     events: [Event!]
 }
 
@@ -308,7 +314,6 @@ input Sorter {
 
 type Query {
     user_pk(userID: ID!): User
-    course_groups: Unknown
     offers_pk(id: ID!): Offer
 
     get_unread_messages: Int!
@@ -324,6 +329,8 @@ type Query {
     appointments_pk(id: ID!): Appointment
     appointments: [Appointment!]
     course_groups: [CourseGroup!] # TODO
+
+    courses: [Course!] # Timeout
 }
 
 type Mutation {

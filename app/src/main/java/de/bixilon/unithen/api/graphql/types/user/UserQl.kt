@@ -10,16 +10,10 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql
+package de.bixilon.unithen.api.graphql.types.user
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import de.bixilon.unithen.api.graphql.types.PostingQl
 
-data class UserPkPostings(
-    @field:JsonProperty("user_pk") val userPk: UserPk?,
-) {
-
-    data class UserPk(
-        val postings: List<PostingQl>,
-    )
-}
+data class UserQl(
+    val postings: List<PostingQl>,
+)
