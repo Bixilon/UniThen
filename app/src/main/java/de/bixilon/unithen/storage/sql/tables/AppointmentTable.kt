@@ -22,6 +22,8 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNotNull
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
 import java.util.*
 import kotlin.time.Instant
 
@@ -38,10 +40,12 @@ class AppointmentTable(
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
 
-    fun getInRange(from: Instant, to: Instant): List<Appointment> {
-        val filter = SqlFilter("NOT (end < ? OR start > ?) ORDER BY start DESC", listOf(from, to))
+    fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null): List<Appointment> {
+        val _canceled = canceled?.let { if (it) Appointment::canceled.isNotNull() else Appointment::canceled.isNull() }
 
-        return all(filter)
+        val filter = SqlFilter("NOT (end < ? OR start > ?)", listOf(from, to)) and _canceled
+
+        return all(filter + "ORDER BY start DESC")
     }
 
     fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant?, location: String? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location))

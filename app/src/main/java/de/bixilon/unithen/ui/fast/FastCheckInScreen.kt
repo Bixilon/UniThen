@@ -45,7 +45,7 @@ fun FastCheckInInScreen() {
     LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
 
 
-    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes) } }
+    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes, canceled = false) } }
 
 
     if (BuildConfig.DEBUG) {

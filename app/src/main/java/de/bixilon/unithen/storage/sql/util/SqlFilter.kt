@@ -16,7 +16,7 @@ import kotlin.reflect.KProperty1
 
 data class SqlFilter(
     val where: String,
-    val parameters: List<Any>,
+    val parameters: List<Any> = emptyList(),
 ) {
 
     private fun connect(conjunction: String, other: SqlFilter?): SqlFilter {
@@ -34,6 +34,9 @@ data class SqlFilter(
 
     companion object {
         val EMPTY = SqlFilter("", emptyList())
+
+
+        operator fun invoke() = EMPTY
 
         fun join(separator: String, vararg filters: Pair<String, Any?>): SqlFilter {
             val parameters = ArrayList<Any>()
@@ -72,5 +75,9 @@ data class SqlFilter(
         infix fun <T> KProperty1<*, T>.ge(other: T) = create(">=", other)
         infix fun <T> KProperty1<*, T>.lt(other: T) = create("<", other)
         infix fun <T> KProperty1<*, T>.le(other: T) = create("<=", other)
+
+
+        fun <T> KProperty1<*, T>.isNull() = SqlFilter(this.name + " IS NULL")
+        fun <T> KProperty1<*, T>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
     }
 }
