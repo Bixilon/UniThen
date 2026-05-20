@@ -1,6 +1,7 @@
 "Time/Date, e.g. 2025-10-12T22:00:00Z"
 scalar Date
 
+"@deprecated Unknown."
 scalar Unknown
 
 type User {
@@ -49,7 +50,6 @@ type Posting {
     id: ID!
 
     product: Product!
-    resource: Resource!
 
 
     approved_at: Date
@@ -233,7 +233,7 @@ type Calendar {
     events: [Event!]
 }
 
-input  Filter {
+input Filter {
     field: String!
     in: [String!]
     eq: [String!]
@@ -265,7 +265,7 @@ type NameTranslatable { # TODO: Typename
     key: Unknown
     value: Unknown
 }
-type ProductOffset { # TODO: Typename
+type ProductOffer { # TODO: Typename
     poster: Unknown
     description: Unknown
 }
@@ -279,7 +279,7 @@ type CartProducts { # TODO: Typename
 
     price: Unknown
     name_translatable: NameTranslatable
-    product_offer: ProductOffset
+    product_offer: ProductOffer
 }
 
 type Cart { # TODO: Typename
