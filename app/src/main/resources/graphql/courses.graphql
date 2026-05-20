@@ -1,10 +1,10 @@
 query List_Postings($userID: ID!) {
     user_pk(userID: $userID) {
+        id
         postings {
             id
             product {
                 id
-                needs_approval
                 resource {
                     ... on Course {
                         __typename

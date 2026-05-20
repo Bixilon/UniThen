@@ -13,8 +13,11 @@
 package de.bixilon.unithen.api.graphql.queries
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.user.UserQl
 
-data class UserPkQuery(
+data class Queries(
     @field:JsonProperty("user_pk") val userPk: UserQl?,
+    @field:JsonProperty("appointments_pk") val appointmentsPk: AppointmentQl?,
+    @field:JsonProperty("appointments") val appointments: List<AppointmentQl>?,
 )

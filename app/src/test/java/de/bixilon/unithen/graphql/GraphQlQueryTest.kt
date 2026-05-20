@@ -15,7 +15,7 @@ package de.bixilon.unithen.graphql
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
-import de.bixilon.unithen.api.graphql.queries.UserPkQuery
+import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.util.json.Jackson
@@ -54,8 +54,8 @@ class GraphQlQueryTest {
 
     @Test
     fun `read courses response`() {
-        val response = readResponse<UserPkQuery>("courses_response")
+        val response = readResponse<Queries>("courses_response")
 
-        assertEquals(response.userPk!!.postings.size, 1)
+        assertEquals(response.userPk!!.postings!!.size, 1)
     }
 }

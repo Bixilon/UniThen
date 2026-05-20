@@ -14,7 +14,7 @@ package de.bixilon.unithen.api
 
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.graphql.queries.UserPkQuery
+import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import okhttp3.Request
 import java.net.URI
@@ -34,6 +34,6 @@ open class AuthenticatedUniNowApi(
     }
 
     fun courses(userId: UUID): List<CourseQl>? {
-        return graphql<UserPkQuery>("courses", "userID" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
+        return graphql<Queries>("courses", "userID" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
     }
 }

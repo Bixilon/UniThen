@@ -2,7 +2,6 @@
   "id": "b2583378-fbdd-48ab-81c6-ab3ddfb0236c",
   "product": {
     "id": "f046b8b6-63ce-4ce2-8fc1-60208617352b",
-    "needs_approval": false,
     "resource": {
       "__typename": "Course",
       "id": "22b7b082-a55b-4516-bf5a-7657009cccea",
