@@ -20,10 +20,14 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 
 object CourseFetcher {
+    val COURSE_FETCH_INTERVAL = 1.hours
+
 
     fun SqlStorage.fetch(account: Account) {
+        val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
         val postings = api.getPostings(account.uuid) ?: throw NullPointerException("Could not fetch postings?")
@@ -31,7 +35,15 @@ object CourseFetcher {
         for (postingQl in postings) {
             val courseQl = postingQl.product.resource.nullCast<CourseQl>() ?: continue
 
-            val course = store(site, courseQl)
+            var course = courses[site, courseQl.id]
+
+            if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
+                accounts.addToCourse(account, course)
+                continue
+            }
+
+
+            course = store(site, api.getCourse(account.uuid, postingQl.id)!!)
 
             accounts.addToCourse(account, course)
         }
@@ -42,7 +54,8 @@ object CourseFetcher {
 
 
     private fun SqlStorage.store(site: Site, courseQl: CourseQl) = transaction {
-        val evenQl = courseQl.event
+        if (courseQl.name == null) throw NullPointerException("Course details not fetched, wrong query?")
+        val evenQl = courseQl.event!!
 
         val event = events.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
 
@@ -50,16 +63,16 @@ object CourseFetcher {
         val course = this.courses.add(site, event, courseQl.id, courseQl.name, Clock.System.now())
 
         courses.clearTutors(course)
-        for (tutorQl in courseQl.tutors) {
+        for (tutorQl in courseQl.tutors!!) {
             val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
             courses.addTutor(tutor, course)
         }
 
-        for (appointmentQl in courseQl.appointments) {
+        for (appointmentQl in courseQl.appointments!!) {
             val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
 
             appointments.clearTutors(appointment)
-            for (tutorQl in appointmentQl.tutors) {
+            for (tutorQl in appointmentQl.tutors!!) {
                 val user = users[site, tutorQl.id] ?: continue // TODO: Warn if tutor is not in course->tutors?
                 appointments.addTutor(user, appointment)
             }

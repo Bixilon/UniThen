@@ -1,15 +1,12 @@
-query List_Postings($userID: ID!, $postingID: ID!) {
+query List_Postings($userID: ID!, $postingID: String!) {
     user_pk(userID: $userID) {
+        id
         postings(filters: [{field: "postings.id", eq: $postingID}]) {
             id
             product {
                 id
-                needs_approval
                 resource {
                     __typename
-                    ... on Fee {
-                        id
-                    }
                     ... on Course {
                         id
                         name

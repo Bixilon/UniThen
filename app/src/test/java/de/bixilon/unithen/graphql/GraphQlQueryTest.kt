@@ -38,9 +38,9 @@ class GraphQlQueryTest {
 
     @Test
     fun `read courses slim`() {
-        val response = readResponse<UserPkPostings>("courses")
+        val response = readResponse<Queries>("courses")
 
-        assertEquals(response.userPk!!.postings.size, 2)
+        assertEquals(response.userPk!!.postings!!.size, 2)
     }
 
     @Test

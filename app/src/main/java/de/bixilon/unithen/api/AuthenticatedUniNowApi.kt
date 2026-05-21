@@ -12,9 +12,11 @@
 
 package de.bixilon.unithen.api
 
+import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.PostingQl
+import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import okhttp3.Request
 import java.net.URI
 import java.util.*
@@ -34,5 +36,9 @@ open class AuthenticatedUniNowApi(
 
     fun getPostings(userId: UUID): List<PostingQl>? {
         return graphql<Queries>("courses", "userID" to userId).userPk?.postings
+    }
+
+    fun getCourse(userId: UUID, postingId: UUID): CourseQl? {
+        return graphql<Queries>("course", "userID" to userId, "postingID" to postingId).userPk?.postings?.firstNotNullOf { it.product.resource.nullCast<CourseQl>() }
     }
 }

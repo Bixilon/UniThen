@@ -55,6 +55,8 @@ open class UniNowApi(
     inline fun <reified T> graphql(name: String, vararg variables: Pair<String, Any>) = graphql<T>(QueryLoader[name], *variables)
     inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, Any>): T {
         val request = GraphQlRequest(query.query, variables.toMap())
+
+        // Log.i("TEST", Jackson.MAPPER.writeValueAsString(request))
         val response = postJson("/api/query", request)
 
         val graphql = Jackson.GRAPH_QL.readValue<GraphQlResponse<T>>(response)
