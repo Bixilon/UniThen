@@ -16,10 +16,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.sqlite.transaction
-import de.bixilon.unithen.api.graphql.types.resource.CourseQl
-import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.DefaultStorage
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.*
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +25,6 @@ import kotlinx.coroutines.launch
 import okio.Closeable
 import org.intellij.lang.annotations.Language
 import java.util.*
-import kotlin.time.Clock
 import kotlin.time.Instant
 
 class SqlStorage(context: Context) : Closeable {
@@ -86,37 +82,6 @@ class SqlStorage(context: Context) : Closeable {
     }
 
     inline fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
-
-
-    fun populate(site: Site, account: Account, courses: List<CourseQl>) = transaction {
-        for (courseQl in courses) {
-            val evenQl = courseQl.event
-
-            val event = events.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
-
-
-            val course = this.courses.add(event, courseQl.id, courseQl.name)
-
-            for (tutorQl in courseQl.tutors) {
-                val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-                users.addTutorTo(tutor, course)
-            }
-
-            for (appointmentQl in courseQl.appointments) {
-                val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
-
-                for (tutorQl in appointmentQl.tutors) {
-                    val user = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-                    users.addTutorTo(user, appointment)
-                }
-            }
-            accounts.addToCourse(account, course)
-        }
-
-        accounts.update(account.id, fetched = Clock.System.now())
-
-        return@transaction
-    }
 
     override fun close() {
         database.close()

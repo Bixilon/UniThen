@@ -30,10 +30,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
-import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Account
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -74,10 +73,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                     refreshing = true
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-                            val courses = api.courses(account.uuid) ?: return@launch
-
-                            storage.populate(site, account, courses)
+                            storage.fetch(account)
                             withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
                         } catch (_: AuthenticationException) {
                             storage.accounts.logout(account)

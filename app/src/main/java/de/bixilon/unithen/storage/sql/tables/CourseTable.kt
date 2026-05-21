@@ -13,41 +13,40 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.Event
-import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.*
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
+import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import java.util.*
+import kotlin.time.Instant
 
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, "courses") {
-    override val columns = listOf("id", "event", "uuid", "name")
+    override val columns = listOf("id", "site", "event", "uuid", "name", "fetched")
 
-    override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3))
+    override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5))
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(event: Event, uuid: UUID) = single(SqlFilter.and("event" to event.id, "uuid" to uuid))
+    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun get(event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("event" to event?.id, "uuid" to uuid, "name" to name))
+    fun get(site: Site? = null, event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
 
-    fun update(id: Key, name: String? = null) = update(id, SqlFilter.comma("name" to name))
+    fun update(id: Key, name: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("name" to name, "fetched" to fetched))
 
 
-    fun insert(event: Event, uuid: UUID, name: String): Course {
-        val id = insert("INSERT INTO $table(event, uuid, name) VALUES (?,?,?)", event.id, uuid, name)
+    fun insert(site: Site, event: Event, uuid: UUID, name: String, fetched: Instant): Course {
+        val id = insert("INSERT INTO $table(site, event, uuid, name, fetched) VALUES (?,?,?,?,?)", site.id, event.id, uuid, name, fetched)
 
         return this[id]!! // TODO: cleanup
     }
 
-    fun add(event: Event, uuid: UUID, name: String): Course {
-        this[event, uuid]?.let { update(it.id, name); return it }
+    fun add(site: Site, event: Event, uuid: UUID, name: String, fetched: Instant): Course {
+        this[site, uuid]?.let { update(it.id, name, fetched); return it }
 
-        return insert(event, uuid, name)
+        return insert(site, event, uuid, name, fetched)
     }
 
 

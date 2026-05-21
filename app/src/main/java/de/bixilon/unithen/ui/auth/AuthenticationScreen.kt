@@ -25,9 +25,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.Broken
-import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -77,11 +76,10 @@ private fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Au
     callback.invoke(AuthenticationState.FETCH_COURSES)
 
     Log.i("Auth", "Fetching courses...")
-    val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
-    val courses = api.courses(account.uuid) ?: throw NullPointerException("Courses is null???")
 
-    storage.populate(site, account, courses)
-    Log.i("Auth", "Courses fetched (total: ${courses.size})")
+    storage.fetch(account)
+
+    Log.i("Auth", "Courses fetched")
     callback.invoke(AuthenticationState.DONE)
 }
 

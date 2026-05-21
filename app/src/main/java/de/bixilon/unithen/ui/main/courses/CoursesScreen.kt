@@ -30,10 +30,9 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -103,11 +102,7 @@ fun CoursesScreen() {
 
                 storage.accounts.all().forEach {
                     try {
-                        val site = storage.sites[it.site]!!
-                        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(it.session))
-                        val courses = api.courses(it.uuid) ?: return@forEach
-
-                        storage.populate(site, it, courses)
+                        storage.fetch(it)
                     } catch (_: AuthenticationException) {
                         storage.accounts.logout(it)
                         loginSite = it.site
@@ -131,7 +126,7 @@ fun CoursesScreen() {
         }) {
             LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 for (event in events) {
-                    val courses = storage.courses.get(event).sortedBy { it.name } // TODO: Cache
+                    val courses = storage.courses.get(event = event).sortedBy { it.name } // TODO: Cache
                     if (courses.isEmpty()) continue
 
                     item {

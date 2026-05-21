@@ -6,8 +6,8 @@ query List_Postings($userID: ID!) {
             product {
                 id
                 resource {
+                    __typename
                     ... on Course {
-                        __typename
                         id
                         name
                         offer {

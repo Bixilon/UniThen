@@ -53,11 +53,15 @@ CREATE TABLE accounts (
 
 CREATE TABLE courses (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  site INTEGER,
   event INTEGER,
   uuid VARCHAR(36),
 
   name VARCHAR(1024) NOT NULL,
 
+  fetched INTEGER,
+
+  FOREIGN KEY (site) REFERENCES sites(id),
   FOREIGN KEY (event) REFERENCES events(id),
   UNIQUE (event, uuid)
 );

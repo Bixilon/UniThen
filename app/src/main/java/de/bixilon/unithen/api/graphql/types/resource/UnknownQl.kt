@@ -10,16 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage
+package de.bixilon.unithen.api.graphql.types.resource
 
 import java.util.*
-import kotlin.time.Instant
 
-data class Course(
-    override val id: Key,
-    val site: Key,
-    val event: Key,
-    val uuid: UUID,
-    val name: String,
-    val fetched: Instant,
-) : DbKeyed
+class UnknownQl : ResourceQl {
+    override val id get() = UUID(0L, 0L)
+    override val __typename get() = ""
+}

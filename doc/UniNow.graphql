@@ -12,7 +12,7 @@ type User {
 
     email: String
 
-    postings: [Posting!]
+    postings(filters: [Filter!]): [Posting!]
     paginatedPostings(filters: [Filter!], sorters: [SortBy!], pagination: CursorPagination): Unknown
 
     messages(filters: [Filter], sorters: [Sorter], pagination: MessagePagination, search: String): Unknown
@@ -20,6 +20,8 @@ type User {
     waitingList: Unknown
 
     calendars: Calendar
+
+    courses: [Course!] # Unused
 }
 
 type CourseUser {
@@ -236,7 +238,7 @@ type Calendar {
 input Filter {
     field: String!
     in: [String!]
-    eq: [String!]
+    eq: String
 }
 
 input SortBy {
