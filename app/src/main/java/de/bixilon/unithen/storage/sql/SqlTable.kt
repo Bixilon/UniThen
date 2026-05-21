@@ -37,6 +37,8 @@ abstract class SqlTable<T>(
 
 
     protected fun notifyState() {
+        SqlStorage.TRANSACTIONS.get()?.let { it += notify; return }
+
         CoroutineScope(Dispatchers.Default).launch {
             notify.intValue++
         }

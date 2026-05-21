@@ -15,6 +15,7 @@ package de.bixilon.unithen.storage.sql
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
+import androidx.compose.runtime.MutableIntState
 import androidx.core.database.sqlite.transaction
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.sql.SqlUtil.db
@@ -28,8 +29,7 @@ import java.util.*
 import kotlin.time.Instant
 
 class SqlStorage(context: Context) : Closeable {
-    private val helper = SqlHelper(context)
-    val database = helper.writableDatabase!!
+    val helper = SqlHelper(context)
 
     val sites = SiteTable(this)
     val events = EventTable(this)
@@ -62,11 +62,11 @@ class SqlStorage(context: Context) : Closeable {
     }
 
     fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
-        return database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
+        return helper.readableDatabase.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
     }
 
     fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        val statement = database.compileStatement(sql)
+        val statement = helper.writableDatabase.compileStatement(sql)
 
         statement.bind(*parameters)
 
@@ -74,17 +74,30 @@ class SqlStorage(context: Context) : Closeable {
     }
 
     fun update(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        val statement = database.compileStatement(sql)
+        val statement = helper.writableDatabase.compileStatement(sql)
 
         statement.bind(*parameters)
 
         return statement.use { it.executeUpdateDelete() }
     }
 
-    inline fun <T> transaction(block: (SqlStorage) -> T) = database.transaction { block.invoke(this@SqlStorage) }
+    inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T {
+        if (TRANSACTIONS.get() != null) throw IllegalStateException("Nested transactions are forbidden!")
+        val set: MutableSet<MutableIntState> = mutableSetOf()
+        try {
+            TRANSACTIONS.set(set)
+            return helper.writableDatabase.transaction { block.invoke(this@SqlStorage) }
+        } finally {
+            CoroutineScope(Dispatchers.Main).launch { set.forEach { it.intValue++ } }
+            TRANSACTIONS.remove()
+        }
+    }
 
     override fun close() {
-        database.close()
         helper.close()
+    }
+
+    companion object {
+        val TRANSACTIONS = ThreadLocal<MutableSet<MutableIntState>>()
     }
 }
