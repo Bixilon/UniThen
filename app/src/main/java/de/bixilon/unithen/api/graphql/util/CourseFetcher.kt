@@ -24,7 +24,6 @@ import kotlin.time.Clock
 object CourseFetcher {
 
     fun SqlStorage.fetch(account: Account) {
-        Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
         val postings = api.getPostings(account.uuid) ?: throw NullPointerException("Could not fetch postings?")

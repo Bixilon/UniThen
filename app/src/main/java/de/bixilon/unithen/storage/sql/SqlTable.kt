@@ -19,6 +19,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 
 abstract class SqlTable<T>(
@@ -26,11 +29,18 @@ abstract class SqlTable<T>(
     val table: String,
 ) {
     val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.moveToFirst(); it.getInt(0) }
-    var notify = mutableIntStateOf(0)
+    private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
 
     protected abstract val columns: List<String>
 
     protected abstract fun map(cursor: Cursor): T
+
+
+    protected fun notifyState() {
+        CoroutineScope(Dispatchers.Default).launch {
+            notify.intValue++
+        }
+    }
 
     @Deprecated("", level = DeprecationLevel.ERROR)
     fun get(): Nothing = Unreachable()
@@ -40,11 +50,11 @@ abstract class SqlTable<T>(
 
     protected fun update(id: Key, filter: SqlFilter) {
         storage.update("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
-        notify.intValue++
+        notifyState()
     }
 
     protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        return storage.insert(sql, *parameters).apply { notify.intValue++ }
+        return storage.insert(sql, *parameters).apply { notifyState() }
     }
 
 
