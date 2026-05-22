@@ -20,7 +20,7 @@ stages:
         - build
         - .gradle
     - key:
-        files:
+        files_commits:
           - "app/build.gradle.kts"
           - "build.gradle.kts"
           - "gradle.properties"
@@ -28,7 +28,7 @@ stages:
       paths:
         - .home/caches
     - key:
-        files:
+        files_commits:
           - "gradle/wrapper/gradle-wrapper.properties"
       paths:
         - .home/wrapper
