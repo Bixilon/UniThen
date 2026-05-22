@@ -43,7 +43,7 @@ build:
 
 
 test:
-  extends: .gradle
+  extends: .android
   stage: test
   script: ./gradlew test
   rules:
@@ -57,7 +57,7 @@ test:
 
 
 package:
-  extends: .gradle
+  extends: .android
   stage: test
   script: ./gradlew assembleRelease
   rules:
