@@ -1,0 +1,69 @@
+# https://gitlab.bixilon.de/bixnet/ci/android
+
+variables:
+ ANDROID_SDK_VERSION: 36
+
+stages:
+  - build
+  - test
+  - package
+
+
+.android:
+  image: gitlab-registry.bixilon.de:443/bixnet/ci/android:$ANDROID_SDK_VERSION
+  variables:
+    GRADLE_USER_HOME: $CI_PROJECT_DIR/.home
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  cache:
+    - key: "$CI_COMMIT_SHA"
+      paths:
+        - build
+        - .gradle
+    - key:
+        files:
+          - "app/build.gradle.kts"
+          - "build.gradle.kts"
+          - "gradle.properties"
+          - "gradle/libs.versions.toml"
+      paths:
+        - .home/caches
+    - key:
+        files:
+          - "gradle/wrapper/gradle-wrapper.properties"
+      paths:
+        - .home/wrapper
+
+build:
+  extends: .android
+  stage: build
+  script: ./gradlew --build-cache build
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
+
+
+test:
+  extends: .gradle
+  stage: test
+  script: ./gradlew test
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
+  artifacts:
+    when: always
+    reports:
+      junit: build/test-results/**/TEST-*.xml
+
+
+
+package:
+  extends: .gradle
+  stage: test
+  script: ./gradlew assembleRelease
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
+  artifacts:
+    when: always
+    reports:
+      junit: app/build/outputs/apk/release/app-release-unsigned.apk
