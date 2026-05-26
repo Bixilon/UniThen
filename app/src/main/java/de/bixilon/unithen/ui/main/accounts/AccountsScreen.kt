@@ -33,9 +33,9 @@ import de.bixilon.kutil.time.DurationUtil.weeks
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.CrashRoute

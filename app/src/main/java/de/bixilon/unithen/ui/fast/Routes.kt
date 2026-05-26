@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.ui.fast
 
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Appointment
-import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 

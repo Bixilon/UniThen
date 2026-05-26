@@ -13,14 +13,14 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
-import de.bixilon.unithen.storage.Event
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.types.Event
+import de.bixilon.unithen.storage.types.Site
 import java.util.*
 import kotlin.time.Instant
 

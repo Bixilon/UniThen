@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
-import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute

@@ -33,9 +33,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.QrCodeView
 import de.bixilon.kutil.cast.CastUtil.nullCast
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Appointment
-import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.util.UiUtil.format

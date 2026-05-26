@@ -10,21 +10,18 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage
+package de.bixilon.unithen.storage.types
 
+import de.bixilon.unithen.storage.DbKeyed
+import de.bixilon.unithen.storage.Key
 import java.util.*
 import kotlin.time.Instant
 
-data class Account(
+data class Event(
     override val id: Key,
     val site: Key,
     val uuid: UUID,
-
-    val firstname: String,
-    val lastname: String,
-
-    @Deprecated("multiple authentication methods")
-    val session: String,
-
-    val fetched: Instant,
+    val name: String,
+    val start: Instant,
+    val end: Instant,
 ) : DbKeyed

@@ -17,10 +17,10 @@ import androidx.core.database.getBlobOrNull
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
+import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
 
 class SiteTable(

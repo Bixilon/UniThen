@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.ui.main
 
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.Site
+import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 object MainRoute : NavigationRoute

@@ -13,11 +13,15 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
-import de.bixilon.unithen.storage.*
+import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.storage.types.User
 import java.util.*
 
 class UserTable(

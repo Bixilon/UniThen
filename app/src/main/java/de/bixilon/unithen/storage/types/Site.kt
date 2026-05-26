@@ -10,17 +10,21 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage
+package de.bixilon.unithen.storage.types
 
-import java.util.*
+import de.bixilon.kutil.uri.URIUtil.toURI
+import de.bixilon.unithen.storage.DbKeyed
+import java.net.URI
 import kotlin.time.Instant
 
-data class Appointment(
-    override val id: Key,
-    val course: Key,
-    val uuid: UUID,
-    val start: Instant,
-    val end: Instant,
-    val canceled: Instant?,
-    val location: String,
-) : DbKeyed
+data class Site(
+    override val id: Int,
+    val host: String,
+
+    val name: String,
+    val icon: ByteArray?,
+
+    val fetched: Instant,
+) : DbKeyed {
+    val url: URI get() = "https://$host".toURI()
+}

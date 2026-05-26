@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.storage.sql.util
 
-import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.neq
+import de.bixilon.unithen.storage.types.Appointment
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
