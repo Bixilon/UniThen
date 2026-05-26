@@ -51,7 +51,11 @@ abstract class SqlTable<T>(
     fun update(id: Int): Nothing = Unreachable()
 
     protected fun update(id: Key, filter: SqlFilter) {
-        storage.update("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
+        update("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
+    }
+
+    protected fun update(sql: String, vararg parameters: Any?) {
+        storage.update(sql, parameters = parameters)
         notifyState()
     }
 

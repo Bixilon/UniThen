@@ -50,6 +50,12 @@ class CourseTable(
     }
 
 
+    fun clearTutors(course: Course) = update("DELETE FROM tutor_courses WHERE course = ?", course.id)
+    fun addTutor(user: User, course: Course) {
+        insert("INSERT INTO tutor_courses(user, course) VALUES (?,?) ON CONFLICT(user, course) DO NOTHING", user.id, course.id)
+        notifyState()
+    }
+
     operator fun get(account: Account): List<Course> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
     }

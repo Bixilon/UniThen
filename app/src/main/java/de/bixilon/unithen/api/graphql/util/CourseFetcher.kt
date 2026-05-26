@@ -49,17 +49,19 @@ object CourseFetcher {
 
         val course = this.courses.add(site, event, courseQl.id, courseQl.name, Clock.System.now())
 
+        courses.clearTutors(course)
         for (tutorQl in courseQl.tutors) {
-            val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
-            users.addTutorTo(tutor, course)
+            val tutor = users.add(site, tutorQl.id, tutorQl.firstName!!, tutorQl.lastName!!)
+            courses.addTutor(tutor, course)
         }
 
         for (appointmentQl in courseQl.appointments) {
             val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
 
+            appointments.clearTutors(appointment)
             for (tutorQl in appointmentQl.tutors) {
                 val user = users[site, tutorQl.id] ?: continue // TODO: Warn if tutor is not in course->tutors?
-                users.addTutorTo(user, appointment)
+                appointments.addTutor(user, appointment)
             }
         }
 

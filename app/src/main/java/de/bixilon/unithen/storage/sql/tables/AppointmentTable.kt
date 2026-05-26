@@ -16,6 +16,7 @@ import android.database.Cursor
 import de.bixilon.unithen.storage.Appointment
 import de.bixilon.unithen.storage.Course
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.User
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
@@ -61,5 +62,12 @@ class AppointmentTable(
         this[course, uuid]?.let { update(it.id, start, end, canceled, location); return it }
 
         return insert(course, uuid, start, end, canceled, location)
+    }
+
+
+    fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)
+    fun addTutor(user: User, appointment: Appointment) {
+        insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id)
+        notifyState()
     }
 }
