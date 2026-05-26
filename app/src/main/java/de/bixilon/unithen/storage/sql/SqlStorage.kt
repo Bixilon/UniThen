@@ -39,7 +39,7 @@ class SqlStorage(context: Context) : Closeable {
     val appointments = AppointmentTable(this)
 
     init {
-        if (helper.created) {
+        if (sites.count == 0) {
             // TODO: sync ui with this?
             CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { sites.add(it) } }
         }
