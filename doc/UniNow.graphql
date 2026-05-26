@@ -4,6 +4,11 @@ scalar Date
 "@deprecated Unknown."
 scalar Unknown
 
+enum CheckInAttemptStatus {
+    Success,
+    Failed, # TODO: Guessed
+}
+
 type User {
     id: ID!
 
@@ -31,6 +36,8 @@ type CourseUser {
     last_name: String!
 
     email: String
+
+    payment_completed: Unknown
 }
 
 type Product {
@@ -108,7 +115,7 @@ type Course {
 
     intervals: [Interval!] # TODO
 
-    enrolled: [EnrolledCourseUser!]
+    enrolled: [CourseUser!]
 }
 
 type BookingSlotResource {
@@ -139,20 +146,12 @@ type Event {
     location: String
 }
 
-type EnrolledCourseUser { # TODO: Typename
+type CheckInAttempt {
     id: ID!
-    first_name: String
-    last_name: String
-    payment_completed: Unknown
-    email: String
-}
+    status: CheckInAttemptStatus!
+    user: CourseUser!
 
-type CheckInAttempt { # TODO: Typename
-    id: ID!
-    status: Unknown! # "Success", "Failed"?
-    user: EnrolledCourseUser! # TODO: type
-
-    message: Unknown
+    message: String
 }
 
 type Appointment {
@@ -176,7 +175,7 @@ type Appointment {
     onlineSettings: Unknown # platformUrl, roomId, password
 
     checkInAttempts: [CheckInAttempt!]
-    attendees: [EnrolledCourseUser!]
+    attendees: [CourseUser!]
 }
 
 union Facility = Area | Location | Room
