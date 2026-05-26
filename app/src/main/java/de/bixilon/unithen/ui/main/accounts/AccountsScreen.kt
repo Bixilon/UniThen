@@ -125,7 +125,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 
     val color = when {
-        account.session.isBlank() -> MaterialTheme.colorScheme.errorContainer
+        account.session.isNullOrBlank() -> MaterialTheme.colorScheme.errorContainer
         Clock.System.now() - account.fetched < 4.weeks -> MaterialTheme.colorScheme.primaryContainer // TODO: That color sucks
         else -> MaterialTheme.colorScheme.secondaryContainer
     }

@@ -36,7 +36,7 @@ fun DebugScreen() {
         val storage = LocalStorage.current
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
-        Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Fill database with junk") }
+        Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
         Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }

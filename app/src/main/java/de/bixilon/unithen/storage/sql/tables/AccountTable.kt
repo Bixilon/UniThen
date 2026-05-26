@@ -13,6 +13,7 @@
 package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
+import androidx.core.database.getStringOrNull
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
@@ -35,7 +36,7 @@ class AccountTable(
 ) : SqlTable<Account>(storage, "accounts") {
     override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key", "fetched")
 
-    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getInstant(6))
+    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))

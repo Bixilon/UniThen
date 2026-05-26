@@ -26,7 +26,7 @@ data class Account(
     val lastname: String,
 
     @Deprecated("multiple authentication methods")
-    val session: String,
+    val session: String?,
 
     val fetched: Instant,
 ) : DbKeyed

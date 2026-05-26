@@ -25,7 +25,7 @@ object CourseFetcher {
 
     fun SqlStorage.fetch(account: Account) {
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
+        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
         val postings = api.getPostings(account.uuid) ?: throw NullPointerException("Could not fetch postings?")
 
         for (postingQl in postings) {
@@ -51,7 +51,7 @@ object CourseFetcher {
 
         courses.clearTutors(course)
         for (tutorQl in courseQl.tutors) {
-            val tutor = users.add(site, tutorQl.id, tutorQl.firstName!!, tutorQl.lastName!!)
+            val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
             courses.addTutor(tutor, course)
         }
 
