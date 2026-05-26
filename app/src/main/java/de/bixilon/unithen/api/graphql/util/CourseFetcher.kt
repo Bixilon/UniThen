@@ -16,9 +16,6 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
-import de.bixilon.unithen.storage.Account
-import de.bixilon.unithen.storage.Course
-import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
