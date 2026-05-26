@@ -35,7 +35,7 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
     companion object {
         const val NAME = "uninow"
-        const val VERSION = 5
+        const val VERSION = 6
 
         fun SQLiteDatabase.executeBatch(path: String) {
             val schema = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
