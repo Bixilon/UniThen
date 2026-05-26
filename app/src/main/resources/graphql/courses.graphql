@@ -31,8 +31,6 @@ query List_Postings($userID: ID!) {
                             canceledAt
                             tutors {
                                 id
-                                first_name
-                                last_name
                             }
                             location {
                                 __typename

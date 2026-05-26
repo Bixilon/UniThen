@@ -58,7 +58,7 @@ object CourseFetcher {
             val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
 
             for (tutorQl in appointmentQl.tutors) {
-                val user = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+                val user = users[site, tutorQl.id] ?: continue // TODO: Warn if tutor is not in course->tutors?
                 users.addTutorTo(user, appointment)
             }
         }
