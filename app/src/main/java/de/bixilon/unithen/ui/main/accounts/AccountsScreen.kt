@@ -73,7 +73,7 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
                     refreshing = true
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            storage.fetch(account)
+                            storage.fetch(account, true)
                             withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
                         } catch (_: AuthenticationException) {
                             storage.accounts.logout(account)

@@ -77,7 +77,7 @@ private fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Au
 
     Log.i("Auth", "Fetching courses...")
 
-    storage.fetch(account)
+    storage.fetch(account, true)
 
     Log.i("Auth", "Courses fetched")
     callback.invoke(AuthenticationState.DONE)

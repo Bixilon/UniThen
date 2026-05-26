@@ -102,7 +102,7 @@ fun CoursesScreen() {
 
                 storage.accounts.all().forEach {
                     try {
-                        storage.fetch(it)
+                        storage.fetch(it, false)
                     } catch (_: AuthenticationException) {
                         storage.accounts.logout(it)
                         loginSite = it.site
