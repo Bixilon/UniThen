@@ -94,11 +94,11 @@ object CourseFetcher {
 
 
     private fun SqlStorage.store(site: Site, course: Course, enrolled: List<CourseUserQl>) = transaction {
+        courses.clearEnrolled(course)
         for (enrolledQl in enrolled) {
             val enrolled = users.add(site, enrolledQl.id, enrolledQl.firstName!!, enrolledQl.lastName!!)
 
             courses.addEnrolled(enrolled, course)
         }
-        // TODO: remove all others
     }
 }
