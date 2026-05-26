@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.api.graphql.types
 
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.location.FacilityQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import java.util.*
@@ -24,4 +25,7 @@ data class AppointmentQl(
     val canceledAt: Instant?,
     val tutors: List<CourseUserQl>?,
     val location: FacilityQl?,
+
+    val checkInAttempts: List<CheckInAttemptQl>?,
+    val attendees: List<CourseUserQl>?,
 ) : IdentifiedQl

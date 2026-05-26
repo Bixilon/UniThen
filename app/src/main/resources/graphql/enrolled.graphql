@@ -1,22 +1,11 @@
-query List_Postings($userID: ID!, $postingID: String!) {
-    user_pk(userID: $userID) {
+query ($course: ID!) {
+    courses_pk(id: $course) {
+        __typename
         id
-        postings(filters: [{field: "postings.id", eq: $postingID}]) {
+        enrolled {
             id
-            product {
-                id
-                resource {
-                    __typename
-                    ... on Course {
-                        id
-                        enrolled {
-                            id
-                            first_name
-                            last_name
-                        }
-                    }
-                }
-            }
+            first_name
+            last_name
         }
     }
 }

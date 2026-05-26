@@ -1,0 +1,7 @@
+mutation Delete_checkin_attempt($checkinAttemptId: ID!) {
+    delete_checkin_attempt(checkinAttemptID: $checkinAttemptId) {
+        id
+        status
+        message
+    }
+}

@@ -10,22 +10,25 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types.resource
+package de.bixilon.unithen.api.graphql.types.checkin
 
-import de.bixilon.unithen.api.graphql.types.AppointmentQl
-import de.bixilon.unithen.api.graphql.types.EventQl
+import com.fasterxml.jackson.annotation.JsonProperty
+import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import java.util.*
 
-const val COURSE_TYPE = "Course"
-
-data class CourseQl(
+data class CheckInAttemptQl(
     override val id: UUID,
-    val name: String?,
-    val event: EventQl?,
-    val tutors: List<CourseUserQl>?,
-    val appointments: List<AppointmentQl>?,
-    val enrolled: List<CourseUserQl>?,
-) : ResourceQl {
-    override val __typename get() = COURSE_TYPE
+    val status: Status,
+    val message: String?,
+    val user: CourseUserQl,
+) : IdentifiedQl {
+
+
+    enum class Status {
+        @JsonProperty("Success")
+        SUCCESS,
+        @JsonProperty("Error")
+        ERROR,
+    }
 }

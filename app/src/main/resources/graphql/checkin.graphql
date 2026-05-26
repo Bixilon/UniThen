@@ -1,0 +1,15 @@
+mutation Appointment_checkin(
+    $actualAppointmentId: ID!
+    $userId: ID!
+    $expectedAppointmentId: ID!
+) {
+    appointment_checkin(
+        actualAppointmentID: $actualAppointmentId
+        userID: $userId
+        expectedAppointmentID: $expectedAppointmentId
+    ) {
+        id
+        message
+        status
+    }
+}

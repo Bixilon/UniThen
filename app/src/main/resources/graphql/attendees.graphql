@@ -1,0 +1,11 @@
+query ($appointment: ID!) {
+    appointments_pk(id: $appointment) {
+        id
+
+        attendees {
+            id
+            first_name
+            last_name
+        }
+    }
+}

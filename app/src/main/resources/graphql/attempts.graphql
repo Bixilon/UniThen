@@ -1,0 +1,13 @@
+query ($appointment: ID!) {
+    appointments_pk(id: $appointment) {
+        id
+
+        checkInAttempts {
+            id
+            status
+            user {
+                id
+            }
+        }
+    }
+}
