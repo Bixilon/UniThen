@@ -119,7 +119,7 @@ object CourseFetcher {
     fun SqlStorage.fetchCheckInAttempts(account: Account, appointment: Appointment, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
+        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
 
         if (appointment.attendeesFetched != null && now - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL && !force) return
 
@@ -128,6 +128,4 @@ object CourseFetcher {
 
         appointments.update(appointment.id, attendeesFetched = now)
     }
-
-
 }

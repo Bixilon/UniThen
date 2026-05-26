@@ -44,3 +44,9 @@ INSERT INTO tutor_courses(user, course) VALUES(905, 902);
 
 INSERT INTO tutor_appointments(user, appointment) VALUES(901, 901);
 INSERT INTO tutor_appointments(user, appointment) VALUES(905, 902);
+
+INSERT INTO course_enrolled(user, course) VALUES(902, 901);
+INSERT INTO course_enrolled(user, course) VALUES(903, 901);
+INSERT INTO course_enrolled(user, course) VALUES(904, 901);
+INSERT INTO course_enrolled(user, course) VALUES(905, 901);
+INSERT INTO course_enrolled(user, course) VALUES(901, 902);
