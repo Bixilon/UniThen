@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.api.graphql.util
 
-import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
@@ -30,12 +29,10 @@ object CourseFetcher {
         val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
-        val postings = api.getPostings(account.uuid) ?: throw NullPointerException("Could not fetch postings?")
+        val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
 
-        for (postingQl in postings) {
-            val courseQl = postingQl.product.resource.nullCast<CourseQl>() ?: continue
-
-            var course = courses[site, courseQl.id]
+        for (courseQl in coursesQl) {
+            var course = this.courses[site, courseQl.id]
 
             if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
                 accounts.addToCourse(account, course)
@@ -43,7 +40,7 @@ object CourseFetcher {
             }
 
 
-            course = store(site, api.getCourse(account.uuid, postingQl.id)!!)
+            course = store(site, api.getCourse(courseQl.id)!!)
 
             accounts.addToCourse(account, course)
         }
@@ -69,7 +66,7 @@ object CourseFetcher {
         }
 
         for (appointmentQl in courseQl.appointments!!) {
-            val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start, appointmentQl.end, appointmentQl.canceledAt, appointmentQl.location.name)
+            val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start!!, appointmentQl.end!!, appointmentQl.canceledAt, appointmentQl.location!!.name)
 
             appointments.clearTutors(appointment)
             for (tutorQl in appointmentQl.tutors!!) {

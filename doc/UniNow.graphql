@@ -332,6 +332,7 @@ type Query {
     course_groups: [CourseGroup!] # TODO
 
     courses: [Course!] # Timeout
+    courses_pk(id: ID!): Course
 }
 
 type Mutation {

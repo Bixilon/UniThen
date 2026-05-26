@@ -1,56 +1,45 @@
-query List_Postings($userID: ID!, $postingID: String!) {
-    user_pk(userID: $userID) {
+query List_Postings($course: ID!) {
+    courses_pk(id: $course) {
+        __typename
         id
-        postings(filters: [{field: "postings.id", eq: $postingID}]) {
+        name
+        offer {
+            name
+        }
+        event {
             id
-            product {
+            name
+            start
+            end
+        }
+        tutors {
+            id
+            first_name
+            last_name
+        }
+        appointments {
+            id
+            start
+            end
+            canceledAt
+            tutors {
                 id
-                resource {
-                    __typename
-                    ... on Course {
-                        id
-                        name
-                        offer {
+                first_name
+                last_name
+            }
+            location {
+                __typename
+                ... on Area {
+                    name
+                }
+                ... on Location {
+                    name
+                }
+                ... on Room {
+                    name
+                    floor {
+                        building {
                             name
-                        }
-                        event {
-                            id
-                            name
-                            start
-                            end
-                        }
-                        tutors {
-                            id
-                            first_name
-                            last_name
-                        }
-                        appointments {
-                            id
-                            start
-                            end
-                            canceledAt
-                            tutors {
-                                id
-                                first_name
-                                last_name
-                            }
-                            location {
-                                __typename
-                                ... on Area {
-                                    name
-                                }
-                                ... on Location {
-                                    name
-                                }
-                                ... on Room {
-                                    name
-                                    floor {
-                                        building {
-                                            name
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }

@@ -19,9 +19,9 @@ import kotlin.time.Instant
 
 data class AppointmentQl(
     override val id: UUID,
-    val start: Instant,
-    val end: Instant,
+    val start: Instant?,
+    val end: Instant?,
     val canceledAt: Instant?,
-    val tutors: List<CourseUserQl>,
-    val location: FacilityQl,
+    val tutors: List<CourseUserQl>?,
+    val location: FacilityQl?,
 ) : IdentifiedQl
