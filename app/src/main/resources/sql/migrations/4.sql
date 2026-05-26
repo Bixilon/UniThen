@@ -27,8 +27,4 @@ CREATE TABLE courses (
 INSERT INTO courses (id, site, event, uuid, name, fetched)
 SELECT id, site, event, uuid, name, fetched FROM courses_old;
 
--- TODO: Test
-
-
 DROP TABLE courses_old;
-
