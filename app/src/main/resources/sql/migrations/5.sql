@@ -20,8 +20,8 @@ CREATE TABLE appointment_checkins (
   user INTEGER,
   appointment INTEGER,
 
-  time INTEGER NULL,
   uuid VARCHAR(36) NULL,
+  time INTEGER NULL,
 
   message VARCHAR(1024) NULL,
 
@@ -35,6 +35,9 @@ CREATE TABLE appointment_checkins (
   FOREIGN KEY (appointment) REFERENCES appointments(id),
   UNIQUE (appointment, uuid)
 );
+
+ALTER TABLE appointments
+  ADD attendees_fetched INTEGER NULL;
 
 ALTER TABLE users
 RENAME COLUMN first_name TO firstname,

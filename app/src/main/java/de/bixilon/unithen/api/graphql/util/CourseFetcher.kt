@@ -14,6 +14,7 @@ package de.bixilon.unithen.api.graphql.util
 
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -21,15 +22,20 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 object CourseFetcher {
+    val ACCOUNT_FETCH_INTERVAL = 5.minutes
     val COURSE_FETCH_INTERVAL = 1.hours
+    val ATTENDEES_FETCH_INTERVAL = 5.minutes
 
 
-    fun SqlStorage.fetch(account: Account) {
+    fun SqlStorage.fetch(account: Account, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+        if (!force && now - account.fetched < ACCOUNT_FETCH_INTERVAL) return
+
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
 
         for (courseQl in coursesQl) {
@@ -54,7 +60,7 @@ object CourseFetcher {
         }
 
 
-        accounts.update(account.id, fetched = Clock.System.now())
+        accounts.update(account.id, fetched = now)
     }
 
 
@@ -98,4 +104,30 @@ object CourseFetcher {
             courses.addEnrolled(enrolled, course)
         }
     }
+
+    private fun SqlStorage.store(site: Site, appointment: Appointment, attempts: List<CheckInAttemptQl>) = transaction {
+        val now = Clock.System.now()
+        for (attemptQl in attempts) {
+            val userQl = attemptQl.user
+            val user = users.add(site, userQl.id, userQl.firstName!!, userQl.lastName!!)
+
+            checkIns.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckIn.Status.OK else CheckIn.Status.FAILED)
+        }
+    }
+
+
+    fun SqlStorage.fetchCheckInAttempts(account: Account, appointment: Appointment, force: Boolean) {
+        val now = Clock.System.now()
+        val site = sites[account.site]!!
+        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session))
+
+        if (appointment.attendeesFetched != null && now - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL && !force) return
+
+        val attemptsQl = api.getCheckInAttempts(appointment.uuid)
+        store(site, appointment, attemptsQl!!)
+
+        appointments.update(appointment.id, attendeesFetched = now)
+    }
+
+
 }

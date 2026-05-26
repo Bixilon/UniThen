@@ -76,6 +76,8 @@ CREATE TABLE appointments (
 
   canceled INTEGER NULL,
 
+  attendees_fetched INTEGER NULL,
+
   location VARCHAR(255),
 
   FOREIGN KEY (course) REFERENCES courses(id),
@@ -131,8 +133,8 @@ CREATE TABLE appointment_checkins (
   user INTEGER,
   appointment INTEGER,
 
-  time INTEGER NULL,
   uuid VARCHAR(36) NULL,
+  time INTEGER NULL,
 
   message VARCHAR(1024) NULL,
 

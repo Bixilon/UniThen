@@ -48,10 +48,6 @@ open class AuthenticatedUniNowApi(
         return graphql<Queries>("enrolled", "course" to courseId).course?.enrolled
     }
 
-    fun getAttendees(appointmentId: UUID): List<CourseUserQl>? {
-        return graphql<Queries>("attendees", "appointment" to appointmentId).appointment?.attendees
-    }
-
     fun getCheckInAttempts(appointmentId: UUID): List<CheckInAttemptQl>? {
         return graphql<Queries>("attempts", "appointment" to appointmentId).appointment?.checkInAttempts
     }

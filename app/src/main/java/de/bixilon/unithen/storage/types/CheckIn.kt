@@ -10,30 +10,33 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.sql
+package de.bixilon.unithen.storage.types
 
-import android.database.Cursor
 import de.bixilon.kutil.enums.ValuesEnum
-import de.bixilon.kutil.uuid.UUIDUtil.toUUID
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.storage.Key
 import java.util.*
 import kotlin.time.Instant
 
-object SqlUtil {
+data class CheckIn(
+    val user: Key,
+    val appointment: Key,
+    val uuid: UUID?,
+    val time: Instant?,
+    val message: String?,
+    val sync: Instant?,
+    val status: Status,
+) {
 
-    fun Cursor.getUUID(index: Int) = getString(index).toUUID()
-    fun Cursor.getInstant(index: Int) = Instant.fromEpochSeconds(getLong(index), 0)
-    fun Cursor.getInstantOrNull(index: Int) = if (isNull(index)) null else getInstant(index)
+    enum class Status {
+        OK,
+        FAILED,
+        PENDING,
+        ;
 
-    fun <T : Enum<T>> Cursor.getEnum(index: Int, values: ValuesEnum<T>) = values[getString(index)]
-
-    fun Any?.db(): String? = when (this) {
-        null -> null
-        is Int -> this.toString()
-        is Long -> this.toString()
-        is String -> this
-        is UUID -> this.toString()
-        is Instant -> epochSeconds.toString()
-        is Enum<*> -> name
-        else -> throw IllegalArgumentException("Unknown parameter type: $this")
+        companion object : ValuesEnum<Status> {
+            override val VALUES = values()
+            override val NAME_MAP = names()
+        }
     }
 }

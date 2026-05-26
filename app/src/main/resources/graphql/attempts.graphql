@@ -7,6 +7,8 @@ query ($appointment: ID!) {
             status
             user {
                 id
+                first_name
+                last_name
             }
         }
     }

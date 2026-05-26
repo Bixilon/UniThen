@@ -25,4 +25,6 @@ data class Appointment(
     val end: Instant,
     val canceled: Instant?,
     val location: String,
+
+    val attendeesFetched: Instant?,
 ) : DbKeyed
