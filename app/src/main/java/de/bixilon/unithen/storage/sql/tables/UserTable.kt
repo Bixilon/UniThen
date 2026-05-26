@@ -27,18 +27,17 @@ import java.util.*
 class UserTable(
     storage: SqlStorage,
 ) : SqlTable<User>(storage, "users") {
-
-    override val columns = listOf("id", "site", "uuid", "first_name", "last_name")
+    override val columns = listOf("id", "site", "uuid", "firstname", "lastname")
 
     override fun map(cursor: Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun update(id: Key, firstName: String? = null, lastName: String? = null) = update(id, SqlFilter.comma("first_name" to firstName, "last_name" to lastName))
+    fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
 
-    fun insert(site: Site, uuid: UUID, firstName: String, lastName: String): User {
-        val id = insert("INSERT INTO $table(site, uuid, first_name, last_name) VALUES (?,?,?,?)", site.id, uuid, firstName, lastName)
+    fun insert(site: Site, uuid: UUID, firstname: String, lastname: String): User {
+        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname) VALUES (?,?,?,?)", site.id, uuid, firstname, lastname)
 
         return this[id]!!
     }

@@ -3,7 +3,7 @@ CREATE TABLE sites (
   host VARCHAR(255) NOT NULL UNIQUE,
 
   name VARCHAR(255) NOT NULL,
-  icon BLOB,
+  icon BLOB NULL,
 
   fetched INTEGER
 );
@@ -27,8 +27,8 @@ CREATE TABLE users (
     site INTEGER,
     uuid VARCHAR(36),
 
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
+    firstname VARCHAR(255) NOT NULL,
+    lastname VARCHAR(255) NOT NULL,
 
     FOREIGN KEY (site) REFERENCES sites(id),
     UNIQUE (site, uuid)
