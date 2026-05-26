@@ -108,3 +108,21 @@ CREATE TABLE tutor_appointments (
   FOREIGN KEY (user) REFERENCES users(id),
   FOREIGN KEY (appointment) REFERENCES appointments(id)
 );
+
+CREATE TABLE course_enrolled (
+  user INTEGER,
+  course INTEGER,
+
+  PRIMARY KEY (user, course),
+  FOREIGN KEY (user) REFERENCES users(id),
+  FOREIGN KEY (course) REFERENCES courses(id)
+);
+
+CREATE TABLE appointment_attendee (
+  user INTEGER,
+  course INTEGER,
+
+  PRIMARY KEY (user, course),
+  FOREIGN KEY (user) REFERENCES users(id),
+  FOREIGN KEY (course) REFERENCES courses(id)
+);

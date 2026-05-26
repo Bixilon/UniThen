@@ -15,6 +15,10 @@ package de.bixilon.unithen.api.graphql.util
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
+import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import de.bixilon.unithen.storage.Account
+import de.bixilon.unithen.storage.Course
+import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
@@ -40,7 +44,14 @@ object CourseFetcher {
             }
 
 
-            course = store(site, api.getCourse(courseQl.id)!!)
+            val detailsQl = api.getCourse(courseQl.id)!!
+
+            course = store(site, detailsQl)
+
+            if (detailsQl.tutors?.any { account.uuid == it } ?: false) { // TODO: is that the way to check?
+                val enrolled = api.getEnrolled(course.uuid)
+                store(site, course, enrolled!!)
+            }
 
             accounts.addToCourse(account, course)
         }
@@ -79,5 +90,15 @@ object CourseFetcher {
         courses.update(course.id, fetched = Clock.System.now())
 
         return@transaction course
+    }
+
+
+    private fun SqlStorage.store(site: Site, course: Course, enrolled: List<CourseUserQl>) = transaction {
+        for (enrolledQl in enrolled) {
+            val enrolled = users.add(site, enrolledQl.id, enrolledQl.firstName!!, enrolledQl.lastName!!)
+
+            courses.addEnrolled(enrolled, course)
+        }
+        // TODO: remove all others
     }
 }

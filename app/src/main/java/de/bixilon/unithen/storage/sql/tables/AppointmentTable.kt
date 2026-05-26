@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.User
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
