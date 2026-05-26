@@ -61,7 +61,7 @@ object CourseFetcher {
 
         courses.clearTutors(course)
         for (tutorQl in courseQl.tutors!!) {
-            val tutor = users.add(site, tutorQl.id, tutorQl.firstName, tutorQl.lastName)
+            val tutor = users.add(site, tutorQl.id, tutorQl.firstName!!, tutorQl.lastName!!)
             courses.addTutor(tutor, course)
         }
 
