@@ -26,8 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.api.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Site
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Site
