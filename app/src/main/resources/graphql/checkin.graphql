@@ -11,5 +11,11 @@ mutation Appointment_checkin(
         id
         message
         status
+
+        user {
+            id
+            first_name
+            last_name
+        }
     }
 }
