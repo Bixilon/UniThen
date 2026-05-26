@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.ui.FastCheckInNavigator
+import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
@@ -47,6 +49,7 @@ enum class Destinations(
 ) {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
+    CHECKIN(Icons.Default.QrCode, "Check In", CheckInRoute),
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
 }
 
@@ -69,6 +72,7 @@ fun MainScreen() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<AccountsRoute> { AccountsScreen() }
         composable<SettingsRoute> { SettingsScreen() }
+        composable<CheckInRoute> { FastCheckInNavigator() } // TODO: That sucks, e.g. screen brightness is never cleared again
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
