@@ -27,6 +27,9 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
+
+val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically provides that
+
 fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else Clock.System.now()
 
 @Composable
@@ -45,7 +48,7 @@ fun FastCheckInInScreen() {
     LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
 
 
-    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + 1.hours + 30.minutes, canceled = false) } }
+    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) } }
 
 
     if (BuildConfig.DEBUG) {

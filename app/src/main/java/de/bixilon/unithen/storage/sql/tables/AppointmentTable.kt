@@ -41,10 +41,12 @@ class AppointmentTable(
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
 
-    fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null): List<Appointment> {
+    fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null, member: Boolean? = null, tutor: Boolean? = null): List<Appointment> {
         val _canceled = canceled?.let { if (it) Appointment::canceled.isNotNull() else Appointment::canceled.isNull() }
+        val _member = member?.let { val not = if (it) "" else "NOT"; SqlFilter("id $not IN (SELECT course FROM account_courses)") }
+        val _tutor = tutor?.let { val not = if (it) "" else "NOT"; SqlFilter("id $not IN (SELECT course FROM tutor_courses)") }
 
-        val filter = SqlFilter("NOT (end < ? OR start > ?)", listOf(from, to)) and _canceled
+        val filter = SqlFilter("NOT (end < ? OR start > ?)", listOf(from, to)) and _canceled and _tutor and _member
 
         return all(filter + "ORDER BY start DESC")
     }
