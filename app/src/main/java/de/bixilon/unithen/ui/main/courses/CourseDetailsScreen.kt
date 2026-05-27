@@ -46,7 +46,7 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
             )
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "${site.name} (${site.url})",
+                text = "${site.name} (${site.host})",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
