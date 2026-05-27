@@ -13,7 +13,7 @@ stages:
   image: gitlab-registry.bixilon.de:443/bixnet/ci/android:$ANDROID_SDK_VERSION
   variables:
     GRADLE_USER_HOME: $CI_PROJECT_DIR/.home
-    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false --build-cache"
   cache:
     - key: "$CI_COMMIT_SHA"
       paths:
@@ -36,7 +36,7 @@ stages:
 build:
   extends: .android
   stage: build
-  script: ./gradlew --build-cache build
+  script: ./gradlew build
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
@@ -52,7 +52,7 @@ test:
   artifacts:
     when: always
     reports:
-      junit: build/test-results/**/TEST-*.xml
+      junit: app/build/test-results/**/TEST-*.xml
 
 
 
@@ -64,6 +64,6 @@ package:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
   artifacts:
-    when: always
-    reports:
-      junit: app/build/outputs/apk/release/app-release-unsigned.apk
+    paths:
+      - app/build/outputs/apk/release/app-release-unsigned.apk
+    expire_in: 1 days
