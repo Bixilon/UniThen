@@ -37,8 +37,10 @@ import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.QrScanAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
@@ -71,7 +73,13 @@ fun MainNavigator() {
         composable<PresentQrRoute> { CheckInPresentScreen(it.account, it.course, it.appointment) }
 
         composable<ScanAppointmentRoute> { ScanAppointmentScreen(it.appointment) }
-        composable<ScanScanAppointmentRoute> { QrScanAppointmentScreen(it.appointment) }
+        composable<ScanScanAppointmentRoute> {
+            CompositionLocalProvider(
+                LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
+            ) {
+                QrScanAppointmentScreen()
+            }
+        }
 
 
         composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }

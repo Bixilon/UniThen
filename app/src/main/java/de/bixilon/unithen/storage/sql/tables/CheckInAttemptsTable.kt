@@ -14,40 +14,49 @@ package de.bixilon.unithen.storage.sql.tables
 
 import android.database.Cursor
 import androidx.core.database.getStringOrNull
+import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getEnum
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.storage.types.CheckIn
+import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import java.util.*
 import kotlin.time.Instant
 
 
-class CheckInTable(
+class CheckInAttemptsTable(
     storage: SqlStorage,
-) : SqlTable<CheckIn>(storage, "appointment_checkins") {
+) : SqlTable<CheckInAttempt>(storage, "appointment_checkins") {
     override val columns = listOf("user", "appointment", "uuid", "time", "message", "sync", "status")
 
-    override fun map(cursor: Cursor) = CheckIn(cursor.getInt(0), cursor.getInt(1), cursor.getUUIDOrNull(2), cursor.getInstant(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5), cursor.getEnum(6, CheckIn.Status))
+    override fun map(cursor: Cursor) = CheckInAttempt(cursor.getInt(0), cursor.getInt(1), cursor.getUUIDOrNull(2), cursor.getInstantOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5), cursor.getEnum(6, CheckInAttempt.Status))
 
     operator fun get(appointment: Appointment, uuid: UUID) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
     operator fun get(appointment: Appointment, user: User) = single(SqlFilter.and("appointment" to appointment.id, "user" to user.id))
-    operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id))
+    operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) + " ORDER BY status")
+
+    @Deprecated("data", level = DeprecationLevel.ERROR)
+    fun update(appointment: Appointment, user: User) : Nothing= Broken()
+
+    fun update(appointment: Appointment, user: User, uuid: UUID? = null, time: Instant? = null, message: String? = null, sync: Instant? = null, status: CheckInAttempt.Status? = null) {
+        val filter = SqlFilter.comma("uuid" to uuid, "time" to time, "message" to message, "sync" to sync, "status" to status)
+
+        update("UPDATE $table SET ${filter.where} WHERE appointment=? AND user=?", parameters = arrayOf(*filter.parameters.toTypedArray(), appointment.id, user.id))
+    }
 
 
-    fun getNotOk(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) and SqlFilter.or("status" to CheckIn.Status.PENDING, "status" to CheckIn.Status.FAILED))
+    fun add(appointment: Appointment, user: User, uuid: UUID, message: String?, sync: Instant, status: CheckInAttempt.Status) {
+        this[appointment, user]?.let { update(appointment, user, uuid, null, message, sync, status); return }
 
-    fun add(appointment: Appointment, user: User, uuid: UUID, message: String?, sync: Instant, status: CheckIn.Status) {
         insert("INSERT INTO $table(appointment, user, uuid, message, sync, status) VALUES (?,?,?,?,?,?)", appointment.id, user.id, uuid, message, sync, status)
     }
 
-    fun add(appointment: Appointment, user: User): CheckIn {
-        insert("INSERT INTO $table(appointment, user, status) VALUES (?,?,?)", appointment.id, user.id, CheckIn.Status.PENDING)
+    fun add(appointment: Appointment, user: User, time: Instant, sync: Instant?): CheckInAttempt {
+        insert("INSERT INTO $table(appointment, user, status, time, sync) VALUES (?,?,?,?,?)", appointment.id, user.id, CheckInAttempt.Status.PENDING, time, sync)
 
         return this[appointment, user]!!
     }

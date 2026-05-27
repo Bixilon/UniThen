@@ -14,27 +14,29 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.storage.LocalStorage
 import java.util.*
 
 
 @Composable
-fun QrScanConfirmScreen(appointment: Appointment, user: User) {
+fun QrScanConfirmScreen(user: User) {
+    val (account, course, appointment) = LocalScanContext.current
     Text("Are you sure (${user.firstName} ${user.lastName}?")
 
     // TODO: Check if already checked in
 }
 
 @Composable
-fun QrScanConfirmScreen(appointment: Appointment, userId: UUID) {
+fun QrScanConfirmScreen(userId: UUID) {
+    val (account, course, appointment) = LocalScanContext.current
+
     val storage = LocalStorage.current
     val site = storage.sites[storage.courses[appointment.course]!!.site]!!
     val user = storage.users[site, userId]
 
     if (user != null) {
-        QrScanConfirmScreen(appointment, user)
+        QrScanConfirmScreen(user)
         return
     }
 

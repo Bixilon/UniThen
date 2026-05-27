@@ -15,7 +15,6 @@ package de.bixilon.unithen.ui.main.checkin.scan
 import androidx.compose.runtime.*
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
-import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.util.json.Jackson
 import java.util.*
@@ -26,11 +25,12 @@ data class ScannedQrCode(
 )
 
 @Composable
-fun QrScanAppointmentScreen(appointment: Appointment) {
+fun QrScanAppointmentScreen() {
+    val (_, _, appointment) = LocalScanContext.current
     var userId by remember { mutableStateOf<UUID?>(null) }
 
     if (userId != null) {
-        QrScanConfirmScreen(appointment, userId!!)
+        QrScanConfirmScreen(userId!!)
         return
     }
 
@@ -44,7 +44,7 @@ fun QrScanAppointmentScreen(appointment: Appointment) {
 
             val scanned = Jackson.MAPPER.readValue<ScannedQrCode>(text)
 
-            if (scanned.appointmentId != appointment) return@QrCameraPreview
+            if (scanned.appointmentId != appointment.uuid) return@QrCameraPreview
 
             userId = scanned.userId
         } catch (_: Throwable) {

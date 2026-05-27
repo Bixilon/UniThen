@@ -107,10 +107,10 @@ object CourseFetcher {
     private fun SqlStorage.store(site: Site, appointment: Appointment, attempts: List<CheckInAttemptQl>) = transaction {
         val now = Clock.System.now()
         for (attemptQl in attempts) {
-            val userQl = attemptQl.user
+            val userQl = attemptQl.user!!
             val user = users.add(site, userQl.id, userQl.firstName!!, userQl.lastName!!)
 
-            checkIns.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckIn.Status.OK else CheckIn.Status.FAILED)
+            checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
         }
     }
 

@@ -10,25 +10,13 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types.checkin
+package de.bixilon.unithen.ui.main.checkin.scan
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import de.bixilon.unithen.api.graphql.types.IdentifiedQl
-import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
-import java.util.*
+import androidx.compose.runtime.staticCompositionLocalOf
+import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
 
-data class CheckInAttemptQl(
-    override val id: UUID,
-    val status: Status,
-    val message: String?,
-    val user: CourseUserQl?,
-) : IdentifiedQl {
+data class ScanContextValue(val account: Account, val course: Course, val appointment: Appointment)
 
-
-    enum class Status {
-        @JsonProperty("Success")
-        SUCCESS,
-        @JsonProperty("Error")
-        ERROR,
-    }
-}
+val LocalScanContext = staticCompositionLocalOf<ScanContextValue> { throw IllegalStateException() }

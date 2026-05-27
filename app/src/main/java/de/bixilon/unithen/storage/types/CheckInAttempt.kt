@@ -18,11 +18,11 @@ import de.bixilon.unithen.storage.Key
 import java.util.*
 import kotlin.time.Instant
 
-data class CheckIn(
+data class CheckInAttempt(
     val user: Key,
     val appointment: Key,
     val uuid: UUID?,
-    val time: Instant,
+    val time: Instant?,
     val message: String?,
     val sync: Instant?,
     val status: Status,

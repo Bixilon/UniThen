@@ -120,15 +120,6 @@ CREATE TABLE course_enrolled (
   FOREIGN KEY (course) REFERENCES courses(id)
 );
 
-CREATE TABLE appointment_attendee (
-  user INTEGER,
-  appointment INTEGER,
-
-  PRIMARY KEY (user, appointment),
-  FOREIGN KEY (user) REFERENCES users(id),
-  FOREIGN KEY (appointment) REFERENCES appointments(id)
-);
-
 CREATE TABLE appointment_checkins (
   user INTEGER,
   appointment INTEGER,

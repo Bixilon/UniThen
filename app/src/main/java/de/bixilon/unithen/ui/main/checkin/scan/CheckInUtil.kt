@@ -12,21 +12,41 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
+import de.bixilon.unithen.api.AuthenticatedUniNowApi
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.time.Clock
 
 object CheckInUtil {
 
-    fun checkIn(storage: SqlStorage, appointment: Appointment, user: User) {
-        val attempt = storage.transaction {
-            storage.checkIns[appointment, user]?.let { return@transaction it }
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
+        val site = storage.sites[account.site]!!
+        val now = Clock.System.now()
 
-            // TODO: Check if user is enrolled?
+        storage.checkInAttempts.add(appointment, user, now, now)
 
-            storage.checkIns.add(appointment, user)
+        val attemptQl = withContext(Dispatchers.IO) {
+            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+
+            return@withContext api.checkInUser(appointment.uuid, user.uuid, appointment.uuid)
         }
+        if (attemptQl == null) throw IllegalStateException("Null attempt?")
+
+        attemptQl.user?.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
+
+        storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+
+        return storage.checkInAttempts[appointment, user]!!
     }
 
-    fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {}
+    fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
+        TODO("Implement")
+    }
 }

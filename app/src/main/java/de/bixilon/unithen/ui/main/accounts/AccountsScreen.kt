@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,31 +29,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
-import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
-import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
-import de.bixilon.unithen.ui.main.CrashRoute
-import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlin.time.Clock
 
 
 @Composable
-private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
-    val context = LocalContext.current
+private fun AccountOptions(account: Account, modifier: Modifier) {
+    LocalContext.current
     val storage = LocalStorage.current
-    val navigation = LocalNavigation.current
+    LocalNavigation.current
     var expanded by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
 
@@ -66,27 +57,13 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
+            val update = useAsyncNetwork<Unit>(account) { storage.fetch(account, true) }
             DropdownMenuItem(
                 text = { Text(if (refreshing) "Updating..." else "Update") },
                 enabled = !refreshing,
                 onClick = {
                     refreshing = true
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            storage.fetch(account, true)
-                            withContext(Dispatchers.Main) { Toast.makeText(context, "Account refreshed!", Toast.LENGTH_SHORT).show() }
-                        } catch (_: AuthenticationException) {
-                            storage.accounts.logout(account)
-                            navigation.navigate(ReauthenticateRoute(site))
-                        } catch (error: GraphQlException) {
-                            navigation.navigate(CrashRoute(error))
-                        } catch (error: Throwable) {
-                            navigation.navigate(CrashRoute(error))
-                        } finally {
-                            withContext(Dispatchers.Main) { refreshing = false }
-                        }
-                    }
-
+                    update.invoke(Unit)
                     expanded = false
                 }
             )
@@ -121,7 +98,6 @@ private fun AccountOptions(account: Account, site: Site, modifier: Modifier) {
 private fun AccountCard(account: Account, onClick: () -> Unit) {
     val storage = LocalStorage.current
     val site = remember { storage.sites[account.site]!! }
-    remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
 
 
     val color = when {
@@ -148,7 +124,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                 overflow = TextOverflow.Ellipsis
             )
 
-            AccountOptions(account, site, Modifier
+            AccountOptions(account, Modifier
                 .align(Alignment.TopEnd)
                 .offset(16.dp, -16.dp) // TODO: why?
             )
