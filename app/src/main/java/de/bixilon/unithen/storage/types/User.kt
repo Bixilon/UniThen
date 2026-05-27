@@ -20,6 +20,6 @@ data class User(
     override val id: Key,
     val site: Key,
     val uuid: UUID,
-    val firstName: String,
-    val lastName: String,
+    val firstname: String,
+    val lastname: String,
 ) : DbKeyed

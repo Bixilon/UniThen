@@ -116,6 +116,8 @@ object CourseFetcher {
 
 
     fun SqlStorage.fetchCheckInAttempts(account: Account, appointment: Appointment, force: Boolean) {
+        Thread.sleep(1000L)
+        return // TODO
         val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))

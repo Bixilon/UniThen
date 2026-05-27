@@ -49,7 +49,7 @@ private fun EnrolledCard(user: User) {
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
-                text = user.firstName + " " + user.lastName,
+                text = user.firstname + " " + user.lastname,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

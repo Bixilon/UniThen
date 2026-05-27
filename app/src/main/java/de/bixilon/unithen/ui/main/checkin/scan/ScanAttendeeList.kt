@@ -49,7 +49,7 @@ private fun AttendeeCard(attempt: CheckInAttempt) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstName + " " + user.lastName,
+                    text = user.firstname + " " + user.lastname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -87,7 +87,7 @@ private fun AttemptCard(attempt: CheckInAttempt) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstName + " " + user.lastName,
+                    text = user.firstname + " " + user.lastname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -124,7 +124,7 @@ private fun EnrolledCard(user: User) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstName + " " + user.lastName,
+                    text = user.firstname + " " + user.lastname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

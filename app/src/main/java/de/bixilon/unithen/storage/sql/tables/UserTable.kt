@@ -42,10 +42,10 @@ class UserTable(
         return this[id]!!
     }
 
-    fun add(site: Site, uuid: UUID, firstName: String, lastName: String): User {
-        this[site, uuid]?.let { update(it.id, firstName, lastName); return it }
+    fun add(site: Site, uuid: UUID, firstname: String, lastname: String): User {
+        this[site, uuid]?.let { update(it.id, firstname, lastname); return it }
 
-        return insert(site, uuid, firstName, lastName)
+        return insert(site, uuid, firstname, lastname)
     }
 
 
