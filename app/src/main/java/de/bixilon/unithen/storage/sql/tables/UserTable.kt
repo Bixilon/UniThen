@@ -56,14 +56,4 @@ class UserTable(
     fun getTutors(appointment: Appointment): List<User> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_appointments ON tutor_appointments.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
     }
-
-    fun addTutorTo(user: User, course: Course) {
-        insert("INSERT INTO tutor_courses(user, course) VALUES (?,?) ON CONFLICT(user, course) DO NOTHING", user.id, course.id)
-        notifyState()
-    }
-
-    fun addTutorTo(user: User, appointment: Appointment) {
-        insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id)
-        notifyState()
-    }
 }
