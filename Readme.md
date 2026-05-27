@@ -50,7 +50,7 @@ And I don't want anything on my phone that I don't essentially need and that is 
 
 - Webview for loading UniNow website + sniff (and store) cookie
 - Fetch user and page details and extract them from html (this could be improved with a dedicated api endpoint, did not touch the app yet)
-- Get courses and appointments with GraphQL
+- Get courses and appointments with GraphQL ([Schema](./doc/UniNow.graphql))
 - Store everything locally in SQL database
 
 ## Something is broken
