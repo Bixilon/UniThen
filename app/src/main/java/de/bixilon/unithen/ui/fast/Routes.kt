@@ -20,13 +20,13 @@ import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 object FastCheckinHome : NavigationRoute
 
-data class CheckInRoute(
+data class PresentQrRoute(
     val account: Account,
     val course: Course,
     val appointment: Appointment,
 ) : NavigationRoute
 
-data class CheckInAppointment(
+data class PresentQrAppointmentRoute(
     val course: Course,
     val appointment: Appointment,
 ) : NavigationRoute

@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.main
 
 import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
@@ -25,6 +26,9 @@ object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute
 object CheckInRoute : NavigationRoute
+
+data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
+data class ScanScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 

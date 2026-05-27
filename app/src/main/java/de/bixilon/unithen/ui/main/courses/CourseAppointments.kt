@@ -31,6 +31,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.flow.first
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -88,7 +89,7 @@ fun CourseAppointments(course: Course) {
     if (appointments.isEmpty()) return
 
     val state = rememberLazyListState()
-    val now = remember { Clock.System.now() }
+    val now = useTime()
 
     LaunchedEffect(now, appointments) {
         val upcoming = appointments.indexOfLast { it.end >= now }

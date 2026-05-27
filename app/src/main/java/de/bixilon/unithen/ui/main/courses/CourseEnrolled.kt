@@ -61,7 +61,7 @@ private fun EnrolledCard(user: User) {
 @Composable
 fun CourseEnrolled(course: Course) {
     val storage = LocalStorage.current
-    val users by remember { storage.users.stateOf { this.getTutors(course) } }
+    val users by remember { storage.users.stateOf { this.getEnrolled(course) } }
 
     if (users.isEmpty()) return
 

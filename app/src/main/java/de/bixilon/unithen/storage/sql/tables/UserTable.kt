@@ -56,4 +56,12 @@ class UserTable(
     fun getTutors(appointment: Appointment): List<User> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN tutor_appointments ON tutor_appointments.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
     }
+
+    fun getAttendees(appointment: Appointment): List<User> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN appointment_attendee ON appointment_attendee.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
+    }
+
+    fun getEnrolled(course: Course): List<User> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ?", course.id) { it.collectAll() }
+    }
 }

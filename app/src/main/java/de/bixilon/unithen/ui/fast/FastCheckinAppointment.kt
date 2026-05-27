@@ -7,7 +7,7 @@ import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.ui.main.checkin.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
 import de.bixilon.unithen.ui.storage.LocalStorage
 
 @Composable

@@ -39,7 +39,7 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { navigation.navigate(CheckInRoute(item, course, appointment)) },
+                        .clickable { navigation.navigate(PresentQrRoute(item, course, appointment)) },
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface

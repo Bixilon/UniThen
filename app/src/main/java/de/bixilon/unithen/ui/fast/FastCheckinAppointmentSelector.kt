@@ -73,7 +73,7 @@ fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
             items(appointments, key = Appointment::id) { item ->
                 val course by remember { storage.courses.stateOf { this[item.course]!! } }
                 val navigator = LocalNavigation.current
-                AppointmentCard(course, item) { navigator.navigate(CheckInAppointment(course, item)) }
+                AppointmentCard(course, item) { navigator.navigate(PresentQrAppointmentRoute(course, item)) }
             }
         }
     }

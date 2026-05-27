@@ -34,6 +34,10 @@ class CheckInTable(
     override fun map(cursor: Cursor) = CheckIn(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstantOrNull(3), cursor.getString(4), cursor.getInstantOrNull(5), cursor.getEnum(6, CheckIn.Status))
 
     operator fun get(appointment: Appointment, uuid: UUID) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
+    operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id))
+
+
+    fun getNotOk(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) and SqlFilter.or("status" to CheckIn.Status.PENDING, "status" to CheckIn.Status.FAILED))
 
     fun add(appointment: Appointment, user: User, uuid: UUID, message: String?, sync: Instant, status: CheckIn.Status) {
         insert("INSERT INTO $table(appointment, user, uuid, message, sync, status) VALUES (?,?,?,?,?,?)", appointment.id, user.id, uuid, message, sync, status)

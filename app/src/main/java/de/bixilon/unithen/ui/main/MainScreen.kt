@@ -30,9 +30,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
-import de.bixilon.unithen.ui.FastCheckInNavigator
 import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -49,7 +49,7 @@ enum class Destinations(
 ) {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
-    CHECKIN(Icons.Default.QrCode, "Check In", CheckInRoute),
+    CHECKIN(Icons.Default.QrCode, "Check In", CheckInRoute), // TODO: Only show if is tutor in at least on course
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
 }
 
@@ -72,7 +72,7 @@ fun MainScreen() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<AccountsRoute> { AccountsScreen() }
         composable<SettingsRoute> { SettingsScreen() }
-        composable<CheckInRoute> { FastCheckInNavigator() } // TODO: That sucks, e.g. screen brightness is never cleared again
+        composable<CheckInRoute> { CheckInScreen() }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

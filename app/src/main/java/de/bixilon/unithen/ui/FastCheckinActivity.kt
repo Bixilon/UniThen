@@ -30,7 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.ui.fast.*
-import de.bixilon.unithen.ui.main.checkin.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -46,8 +46,8 @@ fun FastCheckInNavigator() {
     navigator.routes {
         composable<FastCheckinHome> { FastCheckInInScreen() }
 
-        composable<CheckInAppointment> { FastCheckinAppointment(it.course, it.appointment) }
-        composable<CheckInRoute> { CheckInPresentScreen(it.account, it.course, it.appointment) }
+        composable<PresentQrAppointmentRoute> { FastCheckinAppointment(it.course, it.appointment) }
+        composable<PresentQrRoute> { CheckInPresentScreen(it.account, it.course, it.appointment) }
     }
 
     CompositionLocalProvider(
