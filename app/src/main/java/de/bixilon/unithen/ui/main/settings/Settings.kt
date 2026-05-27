@@ -14,4 +14,5 @@ package de.bixilon.unithen.ui.main.settings
 
 object Settings {
     val QR_CODE_FAKE_NAME = Setting("qr_code_fake_name", false)
+    val FAKE_TIME = Setting("fake_time", false)
 }

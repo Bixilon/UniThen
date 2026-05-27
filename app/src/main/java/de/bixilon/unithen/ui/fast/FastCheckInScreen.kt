@@ -12,56 +12,25 @@
 
 package de.bixilon.unithen.ui.fast
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import de.bixilon.unithen.BuildConfig
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.storage.LocalStorage
-import kotlinx.coroutines.delay
-import kotlin.time.Clock
+import de.bixilon.unithen.ui.util.useTime
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 
 
 val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically provides that
 
-fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else Clock.System.now()
-
 @Composable
 fun FastCheckInInScreen() {
     val storage = LocalStorage.current
-    var fakeTime by remember { mutableStateOf(false) }
-    var time by remember { mutableStateOf(getTime(fakeTime)) }
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            time = getTime(fakeTime)
-            delay(10.seconds)
-        }
-    }
-
-    LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
-
+    val time = useTime()
 
     val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) } }
 
-
-    if (BuildConfig.DEBUG) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Checkbox(
-                checked = fakeTime,
-                onCheckedChange = { fakeTime = it }
-            )
-            Text("Fake time")
-        }
-    }
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()

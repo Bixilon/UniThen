@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.ui.main.AboutRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 
@@ -72,6 +73,9 @@ fun SettingsScreen() {
         )
 
         BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replaces your name inside the QR code with \"Max Muster\". The name is not checked during checkin, the course leader can still see your actual name in the attendants list.")
+        if (BuildConfig.DEBUG) {
+            BooleanSetting(Settings.FAKE_TIME, "Fake time", "For appointment detection")
+        }
 
         HorizontalDivider()
 
