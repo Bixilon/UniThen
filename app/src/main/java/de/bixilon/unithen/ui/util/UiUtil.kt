@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui.util
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
+import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
@@ -23,8 +24,9 @@ import kotlin.time.Instant
 
 object UiUtil {
     private val MONTHS_GERMAN = MonthNames("Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember")
-    val DATE_FORMAT_ENGLISH = LocalDateTime.Format { monthName(MonthNames.ENGLISH_FULL); char(' '); day(); char(' '); year(); chars(" - "); amPmHour(); char(':'); minute(); char(' '); amPmMarker("AM", "PM") }
-    val DATE_FORMAT_GERMAN = LocalDateTime.Format { day(); chars(". "); monthName(MONTHS_GERMAN); char(' '); year(); chars(" - "); hour(); char(':'); minute() }
+    private val DAYS_GERMAN = DayOfWeekNames("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
+    val DATE_FORMAT_ENGLISH = LocalDateTime.Format { dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED); chars(", "); monthName(MonthNames.ENGLISH_FULL); char(' '); day(); char(' '); year(); chars(" - "); amPmHour(); char(':'); minute(); char(' '); amPmMarker("AM", "PM") }
+    val DATE_FORMAT_GERMAN = LocalDateTime.Format { dayOfWeek(DAYS_GERMAN); chars(", "); day(); chars(". "); monthName(MONTHS_GERMAN); char(' '); year(); chars(" - "); hour(); char(':'); minute() }
 
     val DATE_FORMAT = if (Locale.getDefault() == Locale.GERMAN) DATE_FORMAT_GERMAN else DATE_FORMAT_ENGLISH
 
