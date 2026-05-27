@@ -72,6 +72,7 @@ class SqlStorage(context: Context) : Closeable {
                 is Instant -> bindLong(actual, parameter.epochSeconds)
                 is UUID -> bindString(actual, parameter.toString())
                 is ByteArray -> bindBlob(actual, parameter)
+                is Enum<*> -> bindString(actual, parameter.name)
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
             }
         }

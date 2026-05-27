@@ -13,6 +13,7 @@
 package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
+import androidx.core.database.getStringOrNull
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import java.util.*
@@ -21,6 +22,7 @@ import kotlin.time.Instant
 object SqlUtil {
 
     fun Cursor.getUUID(index: Int) = getString(index).toUUID()
+    fun Cursor.getUUIDOrNull(index: Int) = getStringOrNull(index)?.toUUID()
     fun Cursor.getInstant(index: Int) = Instant.fromEpochSeconds(getLong(index), 0)
     fun Cursor.getInstantOrNull(index: Int) = if (isNull(index)) null else getInstant(index)
 

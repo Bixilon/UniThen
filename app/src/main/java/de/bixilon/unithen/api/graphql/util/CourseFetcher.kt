@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.minutes
 object CourseFetcher {
     val ACCOUNT_FETCH_INTERVAL = 5.minutes
     val COURSE_FETCH_INTERVAL = 1.hours
-    val ATTENDEES_FETCH_INTERVAL = 5.minutes
+    val ATTENDEES_FETCH_INTERVAL = 15.minutes
 
 
     fun SqlStorage.fetch(account: Account, force: Boolean) {

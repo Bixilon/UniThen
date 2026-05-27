@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -106,8 +105,6 @@ fun CoursesScreen() {
                     } catch (_: AuthenticationException) {
                         storage.accounts.logout(it)
                         loginSite = it.site
-                    } catch (error: GraphQlException) {
-                        caught = error
                     } catch (error: Throwable) {
                         caught = error
                     }

@@ -21,7 +21,7 @@ CREATE TABLE appointment_checkins (
   appointment INTEGER,
 
   uuid VARCHAR(36) NULL,
-  time INTEGER NULL,
+  time INTEGER,
 
   message VARCHAR(1024) NULL,
 

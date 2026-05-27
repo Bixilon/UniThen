@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.module.kotlin.readValue
@@ -31,7 +30,7 @@ fun QrScanAppointmentScreen(appointment: Appointment) {
     var userId by remember { mutableStateOf<UUID?>(null) }
 
     if (userId != null) {
-        Text(userId.toString())
+        QrScanConfirmScreen(appointment, userId!!)
         return
     }
 

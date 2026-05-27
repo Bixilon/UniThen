@@ -10,33 +10,23 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.types
+package de.bixilon.unithen.ui.main.checkin.scan
 
-import de.bixilon.kutil.enums.ValuesEnum
-import de.bixilon.kutil.enums.ValuesEnum.Companion.names
-import de.bixilon.unithen.storage.Key
-import java.util.*
-import kotlin.time.Instant
+import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.User
 
-data class CheckIn(
-    val user: Key,
-    val appointment: Key,
-    val uuid: UUID?,
-    val time: Instant,
-    val message: String?,
-    val sync: Instant?,
-    val status: Status,
-) {
+object CheckInUtil {
 
-    enum class Status {
-        OK,
-        FAILED,
-        PENDING,
-        ;
+    fun checkIn(storage: SqlStorage, appointment: Appointment, user: User) {
+        val attempt = storage.transaction {
+            storage.checkIns[appointment, user]?.let { return@transaction it }
 
-        companion object : ValuesEnum<Status> {
-            override val VALUES = values()
-            override val NAME_MAP = names()
+            // TODO: Check if user is enrolled?
+
+            storage.checkIns.add(appointment, user)
         }
     }
+
+    fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {}
 }
