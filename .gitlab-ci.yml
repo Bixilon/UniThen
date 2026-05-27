@@ -36,7 +36,7 @@ stages:
 build:
   extends: .android
   stage: build
-  script: ./gradlew --build-cache build
+  script: ./gradlew --build-cache assembleDebug
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
@@ -58,7 +58,7 @@ test:
 
 package:
   extends: .android
-  stage: test
+  stage: package
   script: ./gradlew --build-cache assembleRelease
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
