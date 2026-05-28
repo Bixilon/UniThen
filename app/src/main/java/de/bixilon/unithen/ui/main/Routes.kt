@@ -25,7 +25,13 @@ data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute
-object CheckInRoute : NavigationRoute
+object CheckInPresentRoute : NavigationRoute
+object CheckInScanRoute : NavigationRoute
+
+
+data class PresentQrRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute
+data class PresentQrAppointmentRoute(val course: Course, val appointment: Appointment) : NavigationRoute
+
 
 data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
 data class ScanScanAppointmentRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute

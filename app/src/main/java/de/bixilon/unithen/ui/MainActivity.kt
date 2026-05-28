@@ -31,7 +31,7 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
-import de.bixilon.unithen.ui.fast.PresentQrRoute
+import de.bixilon.unithen.ui.fast.FastCheckinAppointment
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
@@ -70,6 +70,7 @@ fun MainNavigator() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
 
+        composable<PresentQrAppointmentRoute> { FastCheckinAppointment(it.course, it.appointment) }
         composable<PresentQrRoute> { CheckInQrPresentScreen(it.account, it.course, it.appointment) }
 
         composable<ScanAppointmentRoute> { CheckInAppointmentScreen(it.appointment) }
@@ -88,6 +89,8 @@ fun MainNavigator() {
         composable<SettingsRoute> { SettingsScreen() }
 
         composable<CrashRoute> { CrashScreen(null, it.exception) }
+
+
     }
 
     CompositionLocalProvider(

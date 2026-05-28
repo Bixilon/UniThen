@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -27,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.ui.FastCheckinActivity
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -65,8 +63,6 @@ fun DebugScreen() {
         Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
         Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
-
-        Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }
 
         var progress by mutableStateOf<String?>(null)
         Button({
