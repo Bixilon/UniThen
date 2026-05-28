@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import android.accounts.NetworkErrorException
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -34,6 +33,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import okio.IOException
 import java.util.*
 
 
@@ -151,7 +151,7 @@ fun QrScanConfirmScreen(user: User) {
                     if (attempt.status == CheckInAttempt.Status.OK) {
                         navigation.pop()
                     }
-                } catch (error: NetworkErrorException) { // TODO: Exception
+                } catch (error: IOException) {
                     navigation.pop()
                     confirming = false
                     throw error

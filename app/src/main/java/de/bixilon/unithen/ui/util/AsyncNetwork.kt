@@ -12,10 +12,10 @@
 
 package de.bixilon.unithen.ui.util
 
-import android.accounts.NetworkErrorException
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import com.fasterxml.jackson.core.JacksonException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.IOException
 
 @Composable
 fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Unit {
@@ -42,7 +43,11 @@ fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Un
                 storage.accounts.logout(account)
                 withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
                 navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
-            } catch (error: NetworkErrorException) { // TODO: correct exception
+            } catch (error: JacksonException) {
+                error.printStackTrace()
+                navigation.navigate(CrashRoute(error))
+            } catch (error: IOException) {
+                error.printStackTrace()
                 withContext(Dispatchers.Main) { Toast.makeText(context, "Network error!", Toast.LENGTH_SHORT).show() }
             } catch (error: Throwable) {
                 error.printStackTrace()
@@ -51,5 +56,6 @@ fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Un
         }
         Unit
     }
+
     return invoke
 }
