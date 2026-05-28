@@ -19,10 +19,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
+import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.FastCheckinActivity
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import java.util.*
 
+
+private fun SqlStorage.insert1000Users() = transaction {
+    for (i in 0 until 1000) {
+        val userId = 930 + i
+        val uuid = UUID(userId.toLong(), userId.toLong())
+        this.insert("INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(?, 901, ?,?,?)", userId, uuid, "User", "#${i}")
+        this.insert("INSERT INTO course_enrolled(user, course) VALUES(?, 901)", userId)
+    }
+}
 
 @Composable
 fun DebugScreen() {
@@ -37,6 +48,7 @@ fun DebugScreen() {
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
         Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
+        Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
         Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }
