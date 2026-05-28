@@ -49,6 +49,8 @@ fun QrScanConfirmScreen(user: User) {
 
     var confirming by remember { mutableStateOf(false) }
 
+    // TODO: Settings: Auto checkin
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -59,11 +61,7 @@ fun QrScanConfirmScreen(user: User) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
-                // TODO: Align left
-                "Confirm",
-                style = MaterialTheme.typography.headlineLarge,
-            )
+            Text(course.name, style = MaterialTheme.typography.headlineLarge)
 
             val size = Modifier
                 .height(200.dp)
@@ -75,7 +73,7 @@ fun QrScanConfirmScreen(user: User) {
                 attempt != null && attempt.status == CheckInAttempt.Status.FAILED -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
                 attempt != null -> Icon(Icons.Filled.Warning, "", tint = Color.Yellow, modifier = size)
 
-                else -> Icon(Icons.Filled.CheckCircle, "", tint = Color.Green, modifier = size)
+                else -> Icon(Icons.Filled.CheckCircle, "", tint = Color(0xFF00A000), modifier = size) // dark green
             }
 
             val warning = when {
@@ -112,14 +110,8 @@ fun QrScanConfirmScreen(user: User) {
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Text(
-                        text = "Course: ${course.name}", // TODO: bold
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-
-                    Text(
                         text = "Name: ${account.firstname} ${account.lastname}", // TODO: bold
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.titleLarge,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
 
