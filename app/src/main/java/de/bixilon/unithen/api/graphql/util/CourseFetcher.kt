@@ -19,6 +19,11 @@ import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -29,7 +34,7 @@ object CourseFetcher {
     val ATTENDEES_FETCH_INTERVAL = 15.minutes
 
 
-    fun SqlStorage.fetch(account: Account, force: Boolean) {
+    suspend fun SqlStorage.fetch(account: Account, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
@@ -37,25 +42,30 @@ object CourseFetcher {
 
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
 
-        for (courseQl in coursesQl) {
-            var course = this.courses[site, courseQl.id]
+        val semaphore = Semaphore(4)
+        coroutineScope {
+            coursesQl.map { courseQl ->
+                async {
+                    var course = this@fetch.courses[site, courseQl.id]
 
-            if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
-                accounts.addToCourse(account, course)
-                continue
-            }
+                    if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
+                        accounts.addToCourse(account, course)
+                        return@async
+                    }
 
 
-            val detailsQl = api.getCourse(courseQl.id)!!
+                    val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
 
-            course = store(site, detailsQl)
+                    course = store(site, detailsQl)
 
-            if (detailsQl.tutors?.any { account.uuid == it } ?: false) { // TODO: is that the way to check?
-                val enrolled = api.getEnrolled(course.uuid)
-                store(site, course, enrolled!!)
-            }
+                    if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
+                        val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
+                        store(site, course, enrolled!!)
+                    }
 
-            accounts.addToCourse(account, course)
+                    accounts.addToCourse(account, course)
+                }
+            }.awaitAll()
         }
 
 

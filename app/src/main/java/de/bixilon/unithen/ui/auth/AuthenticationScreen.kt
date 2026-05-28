@@ -65,7 +65,7 @@ fun AuthenticationProgress(state: AuthenticationState) {
     )
 }
 
-private fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
+private suspend fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
     Log.i("Auth", "Fetching user details...")
     val details = UserDetails.fetch(site.url, authentication)
 
