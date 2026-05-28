@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import zxingcpp.BarcodeReader
 
 @Composable
-fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (BarcodeReader.Result) -> Unit) {
+fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
     val visible = LocalVisibility.current
     if (!visible) return
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
@@ -71,7 +71,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (BarcodeReader.Resu
 
                         val results = reader.read(bitmap, rect)
 
-                        results.forEach(onResult)
+                        onResult(results)
                     }
                 }
             }
