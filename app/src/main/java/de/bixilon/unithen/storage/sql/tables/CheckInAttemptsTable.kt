@@ -64,7 +64,7 @@ class CheckInAttemptsTable(
     }
 
     fun getPendingSyncCount(): Int {
-        return storage.query("SELECT COUNT(*) FROM $table WHERE state=?", CheckInAttempt.Status.PENDING) { it.collectIntAggregation() }
+        return storage.query("SELECT COUNT(*) FROM $table WHERE status=?", CheckInAttempt.Status.PENDING) { it.collectIntAggregation() }
     }
 
     fun takePendingSync(): CheckInAttempt? {
@@ -72,14 +72,11 @@ class CheckInAttemptsTable(
         val last = time - SYNC_BACKOFF
 
         return storage.transaction {
-            val entry = single("state=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
+            val entry = single("status=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 
             return@transaction entry
         }
     }
-
-
-    // fun clear(appointment: Appointment) = update("DELETE FROM $table WHERE appointment = ?", appointment.id)
 }

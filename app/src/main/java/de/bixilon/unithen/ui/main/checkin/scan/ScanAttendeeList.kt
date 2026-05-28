@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -46,7 +47,7 @@ private fun AttendeeCard(attempt: CheckInAttempt) {
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = user.firstname + " " + user.lastname,
@@ -84,7 +85,7 @@ private fun AttemptCard(attempt: CheckInAttempt) {
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = user.firstname + " " + user.lastname,
@@ -121,7 +122,7 @@ private fun EnrolledCard(user: User) {
             .fillMaxWidth()
             .padding(horizontal = 4.dp)
     ) {
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = user.firstname + " " + user.lastname,
