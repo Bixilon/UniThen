@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
@@ -44,9 +43,7 @@ import kotlin.time.Clock
 
 @Composable
 private fun AccountOptions(account: Account, modifier: Modifier) {
-    LocalContext.current
     val storage = LocalStorage.current
-    LocalNavigation.current
     var expanded by remember { mutableStateOf(false) }
     var refreshing by remember { mutableStateOf(false) }
 

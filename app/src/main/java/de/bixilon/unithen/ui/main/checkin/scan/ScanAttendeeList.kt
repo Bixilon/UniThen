@@ -99,7 +99,7 @@ private fun AttemptCard(attempt: CheckInAttempt) {
                 )
             }
             if (BuildConfig.DEBUG) {
-                Button({
+                IconButton({
                     val appointment = storage.appointments[attempt.appointment]!!
                     storage.checkInAttempts.update(appointment, user, uuid = UUID.randomUUID(), sync = Clock.System.now(), status = CheckInAttempt.Status.OK)
                 }) { Icon(Icons.Filled.Check, "approve") }
@@ -158,7 +158,7 @@ fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
 
 
     Text(
-        text = "Attendees (${ok.size}/${enrolled})",
+        text = "Attendees (${ok.size}/${enrolled}):",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 8.dp)
     )
