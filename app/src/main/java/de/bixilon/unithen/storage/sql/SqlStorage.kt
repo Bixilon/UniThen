@@ -16,6 +16,9 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.core.database.sqlite.transaction
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.sql.SqlUtil.db
@@ -31,6 +34,9 @@ import kotlin.time.Instant
 class SqlStorage(context: Context) : Closeable {
     val helper = SqlHelper(context)
 
+
+    private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
+
     val sites = SiteTable(this)
     val events = EventTable(this)
     val users = UserTable(this)
@@ -42,6 +48,15 @@ class SqlStorage(context: Context) : Closeable {
         if (sites.count == 0) {
             // TODO: sync ui with this?
             CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { sites.add(it) } }
+        }
+    }
+
+
+    fun notifyState() {
+        TRANSACTIONS.get()?.let { it += notify; return }
+
+        CoroutineScope(Dispatchers.Default).launch {
+            notify.intValue++
         }
     }
 
@@ -96,6 +111,11 @@ class SqlStorage(context: Context) : Closeable {
     override fun close() {
         helper.close()
     }
+
+    fun <T> stateOf(block: SqlStorage.() -> T): State<T> {
+        return derivedStateOf { notify.intValue; block.invoke(this) }
+    }
+
 
     companion object {
         val TRANSACTIONS = ThreadLocal<MutableSet<MutableIntState>>()

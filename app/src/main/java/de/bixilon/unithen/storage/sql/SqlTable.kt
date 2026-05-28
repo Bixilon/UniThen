@@ -14,35 +14,20 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
 
 abstract class SqlTable<T>(
-    val storage: SqlStorage,
-    val table: String,
+    protected val storage: SqlStorage,
+    protected val table: String,
 ) {
-    val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.moveToFirst(); it.getInt(0) }
-    private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
+    val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.collectIntAggregation() }
 
     protected abstract val columns: List<String>
 
     protected abstract fun map(cursor: Cursor): T
-
-
-    protected fun notifyState() {
-        SqlStorage.TRANSACTIONS.get()?.let { it += notify; return }
-
-        CoroutineScope(Dispatchers.Default).launch {
-            notify.intValue++
-        }
-    }
 
     @Deprecated("", level = DeprecationLevel.ERROR)
     fun get(): Nothing = Unreachable()
@@ -56,11 +41,11 @@ abstract class SqlTable<T>(
 
     protected fun update(sql: String, vararg parameters: Any?) {
         storage.update(sql, parameters = parameters)
-        notifyState()
+        storage.notifyState()
     }
 
     protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        return storage.insert(sql, *parameters).apply { notifyState() }
+        return storage.insert(sql, *parameters).apply { storage.notifyState() }
     }
 
 
@@ -95,6 +80,10 @@ abstract class SqlTable<T>(
         return result
     }
 
+    protected fun Cursor.collectIntAggregation(): Int {
+        moveToFirst(); return getInt(0)
+    }
+
     protected fun all(filter: SqlFilter) = all(filter.where, *filter.parameters.toTypedArray())
     protected fun all(where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
@@ -104,8 +93,10 @@ abstract class SqlTable<T>(
 
     companion object {
 
+        @Deprecated("SqlStorage::stateOf")
         fun <S : SqlTable<*>, T> S.stateOf(block: S.() -> T): State<T> {
-            return derivedStateOf { notify.intValue; block.invoke(this) }
+            val table = this
+            return storage.stateOf { block.invoke(table) }
         }
     }
 }
