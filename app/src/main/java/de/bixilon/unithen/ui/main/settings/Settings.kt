@@ -12,7 +12,11 @@
 
 package de.bixilon.unithen.ui.main.settings
 
+import de.bixilon.unithen.ui.main.Destinations
+
 object Settings {
     val QR_CODE_FAKE_NAME = Setting("qr_code_fake_name", false)
     val FAKE_TIME = Setting("fake_time", false)
+
+    val ENTRYPOINT = Setting("entrypoint", Destinations.COURSES)
 }

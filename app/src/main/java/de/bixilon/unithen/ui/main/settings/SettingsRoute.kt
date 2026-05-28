@@ -18,43 +18,23 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material3.*
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.ui.main.AboutRoute
+import de.bixilon.unithen.ui.main.Destinations
+import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
+import de.bixilon.unithen.ui.main.settings.types.EnumSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 @Composable
-fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String) {
-    var value by rememberSetting(setting)
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { value = !value },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(modifier = Modifier
-            .weight(1.0f)
-            .padding(end = 16.dp)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-
-        Switch(value, { value = it })
-    }
-}
-
-@Composable
-@Preview
 fun SettingsScreen() {
     val navigator = LocalNavigation.current
     val scrollState = rememberScrollState()
@@ -78,6 +58,8 @@ fun SettingsScreen() {
         }
 
         HorizontalDivider()
+
+        EnumSetting(Settings.ENTRYPOINT, Destinations, "Entrypoint", "Choose what screen should open when starting the app.")
 
         Row(
             modifier = Modifier

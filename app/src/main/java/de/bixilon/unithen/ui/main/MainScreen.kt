@@ -23,19 +23,21 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.fast.FastCheckInInScreen
 import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
+import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
+import de.bixilon.unithen.ui.main.settings.rememberSetting
+import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
@@ -45,21 +47,28 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 
 enum class Destinations(
     val icon: ImageVector,
-    val label: String,
+    override val label: String,
     val route: NavigationRoute,
-) {
+) : Labeled {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
     CHECKIN_PRESENT(Icons.Default.QrCode, "Check In (Show)", CheckInPresentRoute), // TODO: Only show if enrolled in at least ine course
     CHECKIN_SCAN(Icons.Default.QrCode, "Check In (Scan)", CheckInScanRoute), // TODO: Only show if is tutor in at least on course
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
+    ;
+
+    companion object : ValuesEnum<Destinations> {
+        override val VALUES = values()
+        override val NAME_MAP = names()
+    }
 }
 
 
 @Composable
 fun MainScreen() {
     val storage = LocalStorage.current
-    val navigator = remember { Navigator(CoursesRoute, NavigationMode.SINGLE) }
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT, Destinations)
+    val navigator = remember { Navigator(entrypoint.route, NavigationMode.SINGLE) }
     val count by remember { storage.accounts.stateOf { count } }
 
     val _navigator = LocalNavigation.current

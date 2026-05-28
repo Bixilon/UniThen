@@ -13,10 +13,8 @@
 package de.bixilon.unithen.ui.main.settings
 
 import androidx.compose.runtime.*
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.*
+import de.bixilon.kutil.enums.ValuesEnum
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -49,13 +47,41 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
 
 
 @Composable
-@JvmName("renemberBooleanSetting")
+@JvmName("rememberBooleanSetting")
 fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
     return rememberSetting(booleanPreferencesKey(setting.key), setting.default)
 }
 
 @Composable
-@JvmName("renemberIntSetting")
+@JvmName("rememberIntSetting")
 fun rememberSetting(setting: Setting<Int>): MutableState<Int> {
     return rememberSetting(intPreferencesKey(setting.key), setting.default)
+}
+
+@Composable
+@JvmName("rememberStringSetting")
+fun rememberSetting(setting: Setting<String>): MutableState<String> {
+    return rememberSetting(stringPreferencesKey(setting.key), setting.default)
+}
+
+
+@Composable
+@JvmName("rememberEnumSetting")
+fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
+    var raw by rememberSetting(stringPreferencesKey(setting.key), setting.default.name)
+
+
+
+    return remember {
+        object : MutableState<T> {
+            override var value: T
+                get() = values.getOrNull(raw) ?: setting.default
+                set(newValue) {
+                    raw = newValue.name
+                }
+
+            override fun component1() = value
+            override fun component2(): (T) -> Unit = { this.value = it }
+        }
+    }
 }
