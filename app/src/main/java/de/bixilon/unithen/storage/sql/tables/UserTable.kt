@@ -62,7 +62,7 @@ class UserTable(
     }
 
     fun getEnrolledNotCheckedIn(appointment: Appointment, course: Course): List<User> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ? AND NOT EXISTS (SELECT 1 FROM attempts WHERE attempts.appointment = ? AND attempts.user = $table.id)", course.id, appointment.id) { it.collectAll() }
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ? AND NOT EXISTS (SELECT 1 FROM appointment_checkins WHERE appointment_checkins.appointment = ? AND appointment_checkins.user = $table.id)", course.id, appointment.id) { it.collectAll() }
     }
 
     fun getEnrolledCount(course: Course): Int {

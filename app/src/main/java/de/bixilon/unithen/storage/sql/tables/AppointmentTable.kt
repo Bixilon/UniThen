@@ -70,6 +70,5 @@ class AppointmentTable(
     fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)
     fun addTutor(user: User, appointment: Appointment) {
         insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id)
-        notifyState()
     }
 }
