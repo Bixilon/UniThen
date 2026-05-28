@@ -51,7 +51,13 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
     var refreshing by remember { mutableStateOf(false) }
 
 
-    val _refresh = useAsyncNetwork<Boolean>(account) { storage.fetchCheckInAttempts(account, appointment, it); refreshing = false }
+    val _refresh = useAsyncNetwork<Boolean>(account) {
+        try {
+            storage.fetchCheckInAttempts(account, appointment, it)
+        } finally {
+            refreshing = false
+        }
+    }
 
     fun refresh(force: Boolean) {
         if (refreshing) return
@@ -85,7 +91,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         CompositionLocalProvider(
             LocalScanContext provides ScanContextValue(account, course, appointment),
         ) {
-            ScanAttendeeList(refreshing, { refresh(it) })
+            ScanAttendeeList(refreshing) { refresh(it) }
         }
     }
 }
