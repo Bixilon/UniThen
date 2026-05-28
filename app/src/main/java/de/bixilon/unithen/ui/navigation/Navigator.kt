@@ -16,6 +16,7 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
@@ -61,8 +62,13 @@ class Navigator(
                 val current = frame === last
                 BackHandler(current && stack.size > 1) { pop() }
 
-                Box(modifier = if (!current) invisible else Modifier) {
-                    frame.composable.invoke(frame.route)
+
+                CompositionLocalProvider(
+                    LocalVisibility provides current,
+                ) {
+                    Box(modifier = if (!current) invisible else Modifier) {
+                        frame.composable.invoke(frame.route)
+                    }
                 }
             }
         }

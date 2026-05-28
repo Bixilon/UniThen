@@ -27,11 +27,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import zxingcpp.BarcodeReader
 
 @Composable
 fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (BarcodeReader.Result) -> Unit) {
+    val visible = LocalVisibility.current
+    if (!visible) return
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) return

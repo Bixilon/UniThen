@@ -38,6 +38,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.util.json.Jackson
 import java.util.*
@@ -45,11 +46,14 @@ import java.util.*
 
 @Composable
 fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appointment) {
+    val visible = LocalVisibility.current
     var fakeName by rememberSetting(Settings.QR_CODE_FAKE_NAME)
 
     val context = LocalContext.current
-    DisposableEffect(Unit) {
-        setBrightness(context, 1.0f)
+    DisposableEffect(visible) {
+        if (visible) {
+            setBrightness(context, 1.0f)
+        }
 
         onDispose {
             setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
