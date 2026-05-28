@@ -161,13 +161,21 @@ fun QrScanConfirmScreen(user: User) {
                 }
             }
 
-            Button({
-                confirming = true
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Button({
+                    navigation.pop()
+                }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
+                    Icon(Icons.Filled.Close, "cancel")
+                    Text("Cancel")
+                }
+                Button({
+                    confirming = true
 
-                checkin.invoke(Unit)
-            }, enabled = !confirming && enrolled && attempt == null, modifier = Modifier.fillMaxWidth()) {
-                Icon(Icons.Filled.Check, "check")
-                Text("Confirm")
+                    checkin.invoke(Unit)
+                }, enabled = !confirming && enrolled && attempt == null, modifier = Modifier.fillMaxWidth()) {
+                    Icon(Icons.Filled.Check, "check")
+                    Text("Confirm")
+                }
             }
         }
     }
