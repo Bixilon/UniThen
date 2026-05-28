@@ -194,7 +194,7 @@ fun QrScanConfirmScreen(userId: UUID) {
         return
     }
 
-    // TODO: Icon?
+    // TODO: Icon?; Try anyways button
 
     SimpleErrorScreen("Unknown user!", "User was not found in local database. Perhaps refresh the attendees list?")
 }

@@ -13,10 +13,8 @@
 package de.bixilon.unithen.ui.main.courses
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -27,11 +25,19 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.fast.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.ui.fast.PresentQrAppointmentRoute
+import de.bixilon.unithen.ui.icons.QrCode
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.useTime
 
 
 @Composable
 private fun Header(site: Site, event: Event, course: Course, accounts: List<Account>) {
+    val navigator = LocalNavigation.current
+    val storage = LocalStorage.current
+
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         modifier = Modifier.fillMaxWidth(),
@@ -61,9 +67,20 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
+
+            val time = useTime()
+            val _appointment by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } } }
+            val appointment = _appointment
+
+            if (appointment != null) { // TODO: make button more beautiful
+                Button({ navigator.navigate(PresentQrAppointmentRoute(course, appointment)) }) {
+                    Icon(Icons.Default.QrCode, "checkin")
+                }
+            }
         }
     }
 }
+
 @Composable
 fun CourseDetailsScreen(course: Course) {
     val storage = LocalStorage.current

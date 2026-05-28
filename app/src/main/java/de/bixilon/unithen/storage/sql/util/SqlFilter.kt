@@ -12,14 +12,15 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import org.intellij.lang.annotations.Language
 import kotlin.reflect.KProperty1
 
 data class SqlFilter(
-    val where: String,
+    @param:Language("SQL") val where: String,
     val parameters: List<Any> = emptyList(),
 ) {
 
-    private fun connect(conjunction: String, other: SqlFilter?): SqlFilter {
+    private fun connect(@Language("SQL") conjunction: String, other: SqlFilter?): SqlFilter {
         if (other == null || other.where.isBlank()) return this
 
         return SqlFilter("($where) $conjunction (${other.where})", parameters + other.parameters)

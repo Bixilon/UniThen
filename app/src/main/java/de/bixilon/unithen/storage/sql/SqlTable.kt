@@ -55,7 +55,7 @@ abstract class SqlTable<T>(
     }
 
     protected fun single(filter: SqlFilter) = single(filter.where, arguments = filter.parameters.toTypedArray())
-    protected fun single(where: String = "", vararg arguments: Any): T? {
+    protected fun single(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             when (it.count) {
                 0 -> null
@@ -85,7 +85,7 @@ abstract class SqlTable<T>(
     }
 
     protected fun all(filter: SqlFilter) = all(filter.where, *filter.parameters.toTypedArray())
-    protected fun all(where: String = "", vararg arguments: Any): List<T> {
+    protected fun all(@Language("SQL") where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }
 

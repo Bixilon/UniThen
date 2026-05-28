@@ -14,15 +14,26 @@ package de.bixilon.unithen.ui.main
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.FastCheckinActivity
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -37,14 +48,18 @@ private fun SqlStorage.insert1000Users() = transaction {
 
 @Composable
 fun DebugScreen() {
+    val context = LocalContext.current
+    val storage = LocalStorage.current
     val navigator = LocalNavigation.current
 
     Column {
-        Text("Debug menu:")
+        Text(
+            "Debug menu",
+            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
         Button({ navigator.navigate(SetupRoute) }) { Text("Open setup") }
 
-        val context = LocalContext.current
-        val storage = LocalStorage.current
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
         Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
@@ -52,5 +67,14 @@ fun DebugScreen() {
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
         Button({ context.startActivity(Intent(context, FastCheckinActivity::class.java)) }) { Text("Fast Check In") }
+
+        var progress by mutableStateOf<String?>(null)
+        Button({
+            progress = "..."
+            CoroutineScope(Dispatchers.IO).launch {
+                CheckInUtil.synchronizeDatabase(storage) { current, total -> progress = "$current/$total" }
+                progress = null
+            }
+        }, enabled = progress == null) { Text(if (progress != null) "Synchronizing $progress" else "Synchronize checkins") }
     }
 }

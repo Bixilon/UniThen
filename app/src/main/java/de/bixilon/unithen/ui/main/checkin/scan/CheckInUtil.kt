@@ -20,8 +20,10 @@ import de.bixilon.unithen.storage.types.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 
 object CheckInUtil {
+    val SYNC_BACKOFF = 5.minutes
 
     private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User, attempt: CheckInAttempt) {
         val now = Clock.System.now()
@@ -64,7 +66,7 @@ object CheckInUtil {
 
         var done = 0
         while (true) {
-            val attempt = storage.checkInAttempts.getPendingSync() ?: break
+            val attempt = storage.checkInAttempts.takePendingSync() ?: break
 
             progress.invoke(done++, count)
 

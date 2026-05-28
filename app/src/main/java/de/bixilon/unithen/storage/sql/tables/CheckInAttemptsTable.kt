@@ -24,7 +24,9 @@ import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
 import java.util.*
+import kotlin.time.Clock
 import kotlin.time.Instant
 
 
@@ -61,12 +63,21 @@ class CheckInAttemptsTable(
         return this[appointment, user]!!
     }
 
-    fun getPendingSyncCount(): Int { // TODO
-        return 0
+    fun getPendingSyncCount(): Int {
+        return storage.query("SELECT COUNT(*) FROM $table WHERE state=?", CheckInAttempt.Status.PENDING) { it.collectIntAggregation() }
     }
 
-    fun getPendingSync(): CheckInAttempt? { // TODO
-        return null//TODO
+    fun takePendingSync(): CheckInAttempt? {
+        val time = Clock.System.now()
+        val last = time - SYNC_BACKOFF
+
+        return storage.transaction {
+            val entry = single("state=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
+
+            update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
+
+            return@transaction entry
+        }
     }
 
 
