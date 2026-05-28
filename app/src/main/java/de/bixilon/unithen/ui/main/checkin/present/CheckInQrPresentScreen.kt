@@ -44,7 +44,7 @@ import java.util.*
 
 
 @Composable
-fun CheckInPresentScreen(account: Account, course: Course, appointment: Appointment) {
+fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appointment) {
     var fakeName by rememberSetting(Settings.QR_CODE_FAKE_NAME)
 
     val context = LocalContext.current

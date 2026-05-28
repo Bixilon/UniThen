@@ -7,7 +7,7 @@ import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.present.CheckInQrPresentScreen
 import de.bixilon.unithen.ui.storage.LocalStorage
 
 @Composable
@@ -17,7 +17,7 @@ fun FastCheckinAppointment(course: Course, appointment: Appointment) {
 
     when (accounts.size) {
         0 -> Broken("Unassociated data left in database!")
-        1 -> CheckInPresentScreen(accounts[0], course, appointment)
+        1 -> CheckInQrPresentScreen(accounts[0], course, appointment)
         else -> FastCheckinAccountSelector(course, appointment, accounts)
     }
 }

@@ -36,10 +36,10 @@ import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
-import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.present.CheckInQrPresentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.QrScanAppointmentScreen
-import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
@@ -70,9 +70,9 @@ fun MainNavigator() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
 
-        composable<PresentQrRoute> { CheckInPresentScreen(it.account, it.course, it.appointment) }
+        composable<PresentQrRoute> { CheckInQrPresentScreen(it.account, it.course, it.appointment) }
 
-        composable<ScanAppointmentRoute> { ScanAppointmentScreen(it.appointment) }
+        composable<ScanAppointmentRoute> { CheckInAppointmentScreen(it.appointment) }
         composable<ScanScanAppointmentRoute> {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),

@@ -40,7 +40,7 @@ class CheckInAttemptsTable(
     operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) + " ORDER BY status")
 
     @Deprecated("data", level = DeprecationLevel.ERROR)
-    fun update(appointment: Appointment, user: User) : Nothing= Broken()
+    fun update(appointment: Appointment, user: User): Nothing = Broken()
 
     fun update(appointment: Appointment, user: User, uuid: UUID? = null, time: Instant? = null, message: String? = null, sync: Instant? = null, status: CheckInAttempt.Status? = null) {
         val filter = SqlFilter.comma("uuid" to uuid, "time" to time, "message" to message, "sync" to sync, "status" to status)

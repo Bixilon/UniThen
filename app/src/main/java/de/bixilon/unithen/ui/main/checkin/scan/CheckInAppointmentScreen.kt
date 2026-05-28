@@ -34,7 +34,7 @@ import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlin.time.Clock
 
 @Composable
-fun ScanAppointmentScreen(appointment: Appointment) {
+fun CheckInAppointmentScreen(appointment: Appointment) {
     val navigation = LocalNavigation.current
     LocalContext.current
     val storage = LocalStorage.current

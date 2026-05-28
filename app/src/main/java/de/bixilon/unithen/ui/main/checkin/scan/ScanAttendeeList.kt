@@ -146,19 +146,18 @@ fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
 
     val (_, course, appointment) = LocalScanContext.current
 
-    val attempts by remember { storage.checkInAttempts.stateOf { this[appointment] } }
-    val enrolled by remember { storage.users.stateOf { this.getEnrolled(course) } }
+    val enrolled by remember { storage.users.stateOf { this.getEnrolledCount(course) } }
 
+    val attempts by remember { storage.checkInAttempts.stateOf { this[appointment] } }
     val ok = remember(attempts) { attempts.filter { it.status == CheckInAttempt.Status.OK } }
     val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
 
-    // TODO: optimize in sql directly
-    val not = remember(attempts, enrolled) { enrolled.filter { user -> attempts.none { it.user == user.id } } }
+    val not by remember { storage.stateOf { users.getEnrolledNotCheckedIn(appointment, course) } }
 
 
 
     Text(
-        text = "Attendees (${ok.size}/${enrolled.size})",
+        text = "Attendees (${ok.size}/${enrolled})",
         style = MaterialTheme.typography.titleLarge,
         modifier = Modifier.padding(bottom = 8.dp)
     )

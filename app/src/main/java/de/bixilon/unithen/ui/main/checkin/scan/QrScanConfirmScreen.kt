@@ -43,7 +43,7 @@ fun QrScanConfirmScreen(user: User) {
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
 
-    val enrolled = storage.users.getEnrolled(course).find { it.id == user.id } != null // TODO: Optimize in sql
+    val enrolled = storage.users.isEnrolled(course, user)
     val _attempt by remember { storage.checkInAttempts.stateOf { this[appointment, user] } }
     val attempt = _attempt
 

@@ -104,7 +104,7 @@ fun CheckInScreen() {
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments() // TODO: proper error message
-        1 -> ScanAppointmentScreen(appointments.first())
+        1 -> CheckInAppointmentScreen(appointments.first())
         else -> ChooseAppointment(appointments)
     }
 }
