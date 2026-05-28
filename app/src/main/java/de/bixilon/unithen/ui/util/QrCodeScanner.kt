@@ -42,10 +42,15 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (BarcodeReader.Resu
     val requests = remember { MutableStateFlow<SurfaceRequest?>(null) }
     val reader = remember { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
 
+    var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val request by requests.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
-        val provider = ProcessCameraProvider.awaitInstance(context)
+        provider = ProcessCameraProvider.awaitInstance(context)
+    }
+
+    DisposableEffect(provider) {
+        val provider = provider ?: return@DisposableEffect onDispose {}
 
         val preview = Preview.Builder().build().apply {
             setSurfaceProvider { requests.value = it }
@@ -70,6 +75,11 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (BarcodeReader.Resu
 
         provider.unbindAll()
         provider.bindToLifecycle(owner, CameraSelector.DEFAULT_BACK_CAMERA, preview, analyzer)
+
+        onDispose {
+            provider.unbindAll()
+            requests.value = null
+        }
     }
 
     request?.let {
