@@ -16,21 +16,18 @@ import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.storage.types.Account
-import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.storage.types.CheckInAttempt
-import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.storage.types.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 
 object CheckInUtil {
 
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
-        val site = storage.sites[account.site]!!
+    private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User, attempt: CheckInAttempt) {
         val now = Clock.System.now()
 
-        storage.checkInAttempts.add(appointment, user, now, now)
+        storage.checkInAttempts.update(appointment, user, sync = now)
+
 
         val attemptQl = withContext(Dispatchers.IO) {
             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
@@ -42,11 +39,44 @@ object CheckInUtil {
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
 
         storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+    }
+
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
+        val site = storage.sites[account.site]!!
+        val now = Clock.System.now()
+
+        val attempt = storage.checkInAttempts.add(appointment, user, now, now)
+
+        fetch(storage, site, account, appointment, user, attempt)
 
         return storage.checkInAttempts[appointment, user]!!
     }
 
     fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
         TODO("Implement")
+    }
+
+
+    suspend fun synchronizeDatabase(storage: SqlStorage, progress: (current: Int, total: Int) -> Unit) {
+        val count = storage.checkInAttempts.getPendingSyncCount()
+
+        if (count == 0) return
+
+        var done = 0
+        while (true) {
+            val attempt = storage.checkInAttempts.getPendingSync() ?: break
+
+            progress.invoke(done++, count)
+
+            val user = storage.users[attempt.user]!!
+
+            val appointment = storage.appointments[attempt.appointment]!!
+            val course = storage.courses[appointment.course]!!
+            val site = storage.sites[course.site]!!
+            val account = storage.accounts.get(course).firstOrNull() ?: continue // TODO: only tutor accounts
+
+
+            fetch(storage, site, account, appointment, user, attempt)
+        }
     }
 }

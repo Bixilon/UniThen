@@ -61,6 +61,14 @@ class CheckInAttemptsTable(
         return this[appointment, user]!!
     }
 
+    fun getPendingSyncCount(): Int { // TODO
+        return 0
+    }
+
+    fun getPendingSync(): CheckInAttempt? { // TODO
+        return null//TODO
+    }
+
 
     // fun clear(appointment: Appointment) = update("DELETE FROM $table WHERE appointment = ?", appointment.id)
 }

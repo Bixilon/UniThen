@@ -34,7 +34,6 @@ import kotlin.time.Instant
 class SqlStorage(context: Context) : Closeable {
     val helper = SqlHelper(context)
 
-
     private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
 
     val sites = SiteTable(this)

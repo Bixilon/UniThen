@@ -69,7 +69,6 @@ class UserTable(
         return storage.query("SELECT COUNT(*) FROM course_enrolled WHERE course = ?", course.id) { it.collectIntAggregation() }
     }
 
-
     fun isEnrolled(course: Course, user: User): Boolean {
         return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.count > 0 } // TODO: verify
     }
