@@ -37,7 +37,8 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { value = !value },
+            .clickable { value = !value }
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier

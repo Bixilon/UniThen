@@ -47,19 +47,23 @@ fun SettingsScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text(
-            "Settings",
-            style = MaterialTheme.typography.headlineLarge,
-        )
+        Text("Settings", style = MaterialTheme.typography.headlineLarge)
 
-        BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replaces your name inside the QR code with \"Max Muster\". The name is not checked during checkin, the course leader can still see your actual name in the attendants list.")
         if (BuildConfig.DEBUG) {
-            BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "For appointment detection")
+            Text("Debug", style = MaterialTheme.typography.headlineSmall)
+            BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
+            HorizontalDivider()
         }
 
+
+        Text("General", style = MaterialTheme.typography.headlineSmall)
+        EnumSetting(Settings.ENTRYPOINT, Destinations, "Entrypoint", "Choose what screen should open when starting the app.")
         HorizontalDivider()
 
-        EnumSetting(Settings.ENTRYPOINT, Destinations, "Entrypoint", "Choose what screen should open when starting the app.")
+
+        Text("Advanced", style = MaterialTheme.typography.headlineSmall)
+        BooleanSetting(Settings.QR_CODE_FAKE_NAME, "Fake name (QR code)", "Replaces your name inside the QR code with \"Max Muster\". The name is not checked during checkin, the course leader can still see your actual name in the attendants list.")
+        HorizontalDivider()
 
         Row(
             modifier = Modifier

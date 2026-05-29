@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.settings.types
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.unithen.ui.main.settings.Setting
 import de.bixilon.unithen.ui.main.settings.rememberSetting
@@ -31,6 +31,7 @@ interface Labeled {
     val label: String
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title: String, description: String) {
     var expanded by remember { mutableStateOf(false) }
@@ -39,7 +40,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { value = values.next(value) },
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier
@@ -50,20 +51,24 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
             Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
-        Button(onClick = { expanded = true }) {
-            val value = value
-            Text(if (value is Labeled) value.label else value.name.lowercase())
-        }
-
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            for (option in values) {
-                DropdownMenuItem(
-                    text = { Text(if (option is Labeled) option.label else option.name.lowercase()) },
-                    onClick = {
-                        value = option
-                        expanded = false
-                    }
-                )
+        ExposedDropdownMenuBox(expanded = expanded, modifier = Modifier.fillMaxWidth(0.4f), onExpandedChange = { expanded = it }) {
+            TextField( // TODO: This is buggy (selection possible)
+                value = value.nullCast<Labeled>()?.label ?: value.name.lowercase(),
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                modifier = Modifier.menuAnchor()
+            )
+            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                for (option in values) {
+                    DropdownMenuItem(
+                        text = { Text(if (option is Labeled) option.label else option.name.lowercase()) },
+                        onClick = {
+                            value = option
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
     }
