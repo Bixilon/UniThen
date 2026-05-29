@@ -72,7 +72,7 @@ class CheckInAttemptsTable(
         val last = time - SYNC_BACKOFF
 
         return storage.transaction {
-            val entry = single("status=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
+            val entry = first("status=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 

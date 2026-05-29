@@ -69,6 +69,18 @@ abstract class SqlTable<T>(
         }
     }
 
+    protected fun first(@Language("SQL") where: String = "", vararg arguments: Any): T? {
+        return select(where, arguments = arguments) {
+            when (it.count) {
+                0 -> null
+                else -> {
+                    it.moveToNext()
+                    map(it)
+                }
+            }
+        }
+    }
+
 
     protected fun Cursor.collectAll(): List<T> {
         val result = ArrayList<T>(count)

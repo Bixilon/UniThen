@@ -17,10 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -29,9 +26,7 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 import java.util.*
 
 
@@ -46,7 +41,7 @@ private fun SqlStorage.insert1000Users() = transaction {
 
 @Composable
 fun DebugScreen() {
-    val context = LocalContext.current
+    LocalContext.current
     val storage = LocalStorage.current
     val navigator = LocalNavigation.current
 
@@ -64,13 +59,20 @@ fun DebugScreen() {
         Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
-        var progress by mutableStateOf<String?>(null)
-        Button({
-            progress = "..."
-            CoroutineScope(Dispatchers.IO).launch {
+        var progress by remember { mutableStateOf<String?>(null) }
+
+        val synchronize = useAsyncNetwork<Unit>(null) {
+            try {
                 CheckInUtil.synchronizeDatabase(storage) { current, total -> progress = "$current/$total" }
                 progress = null
+            } catch (error: Throwable) {
+                progress = "Error: ${error.message}"
+                throw error
             }
+        }
+        Button({
+            progress = "..."
+            synchronize.invoke(Unit)
         }, enabled = progress == null) { Text(if (progress != null) "Synchronizing $progress" else "Synchronize checkins") }
     }
 }

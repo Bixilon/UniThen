@@ -29,7 +29,7 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 
 @Composable
-fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Unit {
+fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): (T) -> Unit {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
     val context = LocalContext.current
@@ -40,9 +40,11 @@ fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Un
             try {
                 block.invoke(args)
             } catch (_: AuthenticationException) {
-                storage.accounts.logout(account)
                 withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
-                navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
+                if (account != null) {
+                    storage.accounts.logout(account)
+                    navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
+                }
             } catch (error: JacksonException) {
                 error.printStackTrace()
                 navigation.navigate(CrashRoute(error))
@@ -54,6 +56,7 @@ fun <T> useAsyncNetwork(account: Account, block: suspend (T) -> Unit): (T) -> Un
                 navigation.navigate(CrashRoute(error))
             }
         }
+
         Unit
     }
 
