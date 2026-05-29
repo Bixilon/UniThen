@@ -16,9 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,7 +28,6 @@ import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.fast.FastCheckInInScreen
-import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
@@ -53,7 +50,7 @@ enum class Destinations(
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
     CHECKIN_PRESENT(Icons.Default.QrCode, "Check In (Show)", CheckInPresentRoute), // TODO: Only show if enrolled in at least ine course
-    CHECKIN_SCAN(Icons.Default.QrCode, "Check In (Scan)", CheckInScanRoute), // TODO: Only show if is tutor in at least on course
+    CHECKIN_SCAN(Icons.Default.QrCodeScanner, "Check In (Scan)", CheckInScanRoute), // TODO: Only show if is tutor in at least on course
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
     ;
 

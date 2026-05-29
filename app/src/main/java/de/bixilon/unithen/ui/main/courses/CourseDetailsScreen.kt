@@ -14,10 +14,13 @@ package de.bixilon.unithen.ui.main.courses
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
@@ -26,8 +29,8 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.fast.CHECKIN_EARLY_DURATION
-import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
+import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useTime
@@ -35,8 +38,6 @@ import de.bixilon.unithen.ui.util.useTime
 
 @Composable
 private fun Header(site: Site, event: Event, course: Course, accounts: List<Account>) {
-    val navigator = LocalNavigation.current
-    val storage = LocalStorage.current
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -67,16 +68,6 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
-
-            val time = useTime()
-            val _appointment by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } } }
-            val appointment = _appointment
-
-            if (appointment != null) { // TODO: make button more beautiful
-                Button({ navigator.navigate(PresentQrAppointmentRoute(course, appointment)) }) {
-                    Icon(Icons.Default.QrCode, "checkin")
-                }
-            }
         }
     }
 }
@@ -84,17 +75,45 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 @Composable
 fun CourseDetailsScreen(course: Course) {
     val storage = LocalStorage.current
+    val navigator = LocalNavigation.current
     val event = remember { storage.events[course.event]!! }
     val site = remember { storage.sites[event.site]!! }
     val accounts by remember { storage.accounts.stateOf { this[course].sortedBy { it.lastname } } }
 
 
-    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Header(site, event, course, accounts)
+    Box {
+        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Header(site, event, course, accounts)
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        CourseAppointments(course)
-        CourseEnrolled(course)
+            CourseAppointments(course)
+            CourseEnrolled(course)
+
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(-20.dp, -20.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val time = useTime()
+
+            val present by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } } }
+
+            if (present != null) {
+                FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present!!)) }) {
+                    Icon(Icons.Filled.QrCode, "present")
+                }
+            }
+
+            val scan by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } } }
+            if (scan != null) {
+                FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan!!)) }) {
+                    Icon(Icons.Filled.QrCodeScanner, "scan")
+                }
+            }
+        }
     }
 }

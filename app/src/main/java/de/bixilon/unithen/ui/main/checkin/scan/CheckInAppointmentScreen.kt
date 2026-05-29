@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,6 @@ import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVA
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
-import de.bixilon.unithen.ui.icons.QrCode
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
