@@ -19,13 +19,14 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 
 object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
 
-    private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User, attempt: CheckInAttempt) {
+    private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
         val now = Clock.System.now()
 
         storage.checkInAttempts.update(appointment, user, sync = now)
@@ -43,15 +44,40 @@ object CheckInUtil {
         storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
     }
 
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
-        val site = storage.sites[account.site]!!
+    suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
         val now = Clock.System.now()
 
-        val attempt = storage.checkInAttempts.add(appointment, user, now, now)
+        val attemptQl = withContext(Dispatchers.IO) {
+            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
 
-        fetch(storage, site, account, appointment, user, attempt)
+            return@withContext api.checkInUser(appointment.uuid, userId, appointment.uuid)
+        }
+        if (attemptQl == null) return
+        if (attemptQl.user == null) {
+            throw CheckInUnknownUserException(attemptQl.message)
+        }
+
+        val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
+
+        storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+    }
+
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
+        val site = storage.sites[account.site]!!
+        Clock.System.now()
+
+        fetch(storage, site, account, appointment, user)
 
         return storage.checkInAttempts[appointment, user]!!
+    }
+
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: UUID): CheckInAttempt? {
+        val site = storage.sites[account.site]!!
+
+        fetch(storage, site, account, appointment, userId)
+        val user = storage.users[site, userId] ?: return null
+
+        return storage.checkInAttempts[appointment, user]
     }
 
     fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
@@ -78,7 +104,7 @@ object CheckInUtil {
             val account = storage.accounts.get(course).firstOrNull() ?: continue // TODO: only tutor accounts
 
 
-            fetch(storage, site, account, appointment, user, attempt)
+            fetch(storage, site, account, appointment, user)
         }
     }
 }

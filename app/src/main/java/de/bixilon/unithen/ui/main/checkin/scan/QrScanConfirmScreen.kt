@@ -14,10 +14,7 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -28,28 +25,28 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
-import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 
 
 @Composable
-fun QrScanConfirmScreen(user: User) {
+fun QrScanConfirmScreen(user: User?, userId: UUID) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
 
-    val enrolled = storage.users.isEnrolled(course, user)
-    val _attempt by remember { storage.checkInAttempts.stateOf { this[appointment, user] } }
+    val enrolled = user?.let { storage.users.isEnrolled(course, user) } ?: false
+    val _attempt by remember { storage.checkInAttempts.stateOf { user?.let { this[appointment, user] } } }
     val attempt = _attempt
 
+    var message by remember { mutableStateOf<String?>(null) }
     var confirming by remember { mutableStateOf(false) }
-
-    // TODO: Settings: Auto checkin
 
     Surface(
         modifier = Modifier
@@ -68,8 +65,9 @@ fun QrScanConfirmScreen(user: User) {
                 .width(200.dp)
 
             when {
-                !enrolled -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
                 confirming -> CircularProgressIndicator(modifier = size)
+                user == null -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
+                !enrolled -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
                 attempt != null && attempt.status == CheckInAttempt.Status.FAILED -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
                 attempt != null -> Icon(Icons.Filled.Warning, "", tint = Color.Yellow, modifier = size)
 
@@ -77,14 +75,15 @@ fun QrScanConfirmScreen(user: User) {
             }
 
             val warning = when {
-                !enrolled -> "User is not enrolled in course!"
                 confirming -> null
+                user == null -> "Unknown user!" // TODO: Check if attendee list was fetched
+                !enrolled -> "User is not enrolled in course!"
                 attempt != null && attempt.status == CheckInAttempt.Status.FAILED -> "Server did not accept previous check in (User might not be enrolled)!"
                 attempt != null -> "User is already checked in${if (attempt.status == CheckInAttempt.Status.PENDING) " (synchronization pending)" else ""}!"
                 else -> null
             }
 
-            warning?.let {
+            (message ?: warning)?.let {
                 Surface(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,
@@ -93,6 +92,22 @@ fun QrScanConfirmScreen(user: User) {
                 ) {
                     Text(
                         text = it,
+                        modifier = Modifier.padding(16.dp),
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
+
+            if ((message != null || warning != null) && (Clock.System.now() - course.fetched) > 15.minutes) {
+                Surface(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    tonalElevation = 2.dp,
+                ) {
+                    Text(
+                        text = "The enrolled list was fetched over 15 minutes ago on ${course.fetched.format()}",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onErrorContainer,
                         textAlign = TextAlign.Center,
@@ -109,11 +124,13 @@ fun QrScanConfirmScreen(user: User) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(
-                        text = "Name: ${account.firstname} ${account.lastname}", // TODO: bold
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
+                    user?.let {
+                        Text(
+                            text = "Name: ${user.firstname} ${user.lastname}", // TODO: bold
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        )
+                    }
 
                     Text(
                         text = "Start: ${appointment.start.format()}",
@@ -136,9 +153,9 @@ fun QrScanConfirmScreen(user: User) {
             Spacer(Modifier.height(16.dp))
 
 
-            val checkin = useAsyncNetwork<Unit>(account) {
+            useAsyncNetwork<Unit>(account) {
                 try {
-                    val attempt = CheckInUtil.checkIn(storage, account, appointment, user)
+                    val attempt = CheckInUtil.checkIn(storage, account, appointment, user!!)
                     confirming = false
                     if (attempt.status == CheckInAttempt.Status.OK) {
                         navigation.pop()
@@ -152,6 +169,36 @@ fun QrScanConfirmScreen(user: User) {
                     throw error
                 }
             }
+            val checkin = useAsyncNetwork<Unit>(account) {
+                try {
+                    val attempt = if (user == null) {
+                        CheckInUtil.checkIn(storage, account, appointment, userId) // TODO: Show message?
+                    } else {
+                        CheckInUtil.checkIn(storage, account, appointment, user)
+                    }
+                    confirming = false
+                    if (attempt == null) {
+                        return@useAsyncNetwork // TODO: How can that happen
+                    }
+                    if (attempt.status == CheckInAttempt.Status.OK) {
+                        navigation.pop()
+                    }
+                } catch (error: IOException) {
+                    if (user == null) {
+                        message = "Network error"
+                    } else {
+                        navigation.pop()
+                    }
+                    confirming = false
+                    throw error
+                } catch (error: CheckInUnknownUserException) {
+                    message = "Unknown user: " + (error.message ?: "")
+                    confirming = false
+                } catch (error: Throwable) {
+                    confirming = false
+                    throw error
+                }
+            }
 
             Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Button({
@@ -160,13 +207,28 @@ fun QrScanConfirmScreen(user: User) {
                     Icon(Icons.Filled.Close, "cancel")
                     Text("Cancel")
                 }
+
+                if (attempt != null && attempt.status == CheckInAttempt.Status.PENDING) {
+                    Button({
+                        confirming = true
+                        checkin.invoke(Unit)
+                    }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
+                        Icon(Icons.Filled.Sync, "synchronize")
+                        Text("Try synchronize")
+                    }
+                }
+
                 Button({
                     confirming = true
-
                     checkin.invoke(Unit)
-                }, enabled = !confirming && enrolled && attempt == null, modifier = Modifier.fillMaxWidth()) {
-                    Icon(Icons.Filled.Check, "check")
-                    Text("Confirm")
+                }, enabled = message == null && !confirming && attempt == null, modifier = Modifier.fillMaxWidth()) {
+                    if (user == null || !enrolled) { // TODO: danger button color?
+                        Icon(Icons.Filled.Warning, "check")
+                        Text("Try anyways")
+                    } else {
+                        Icon(Icons.Filled.Check, "check")
+                        Text("Confirm")
+                    }
                 }
             }
         }
@@ -181,12 +243,5 @@ fun QrScanConfirmScreen(userId: UUID) {
     val site = storage.sites[storage.courses[appointment.course]!!.site]!!
     val user = storage.users[site, userId]
 
-    if (user != null) {
-        QrScanConfirmScreen(user)
-        return
-    }
-
-    // TODO: Icon?; Try anyways button
-
-    SimpleErrorScreen("Unknown user!", "User was not found in local database. Perhaps refresh the attendees list?")
+    QrScanConfirmScreen(user, userId)
 }
