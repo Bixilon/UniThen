@@ -20,11 +20,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
@@ -84,35 +84,11 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
             }
 
             (message ?: warning)?.let {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    tonalElevation = 2.dp,
-                ) {
-                    Text(
-                        text = it,
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                ErrorBox(it)
             }
 
             if ((message != null || warning != null) && (Clock.System.now() - course.fetched) > 15.minutes) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    tonalElevation = 2.dp,
-                ) {
-                    Text(
-                        text = "The enrolled list was fetched over 15 minutes ago on ${course.fetched.format()}",
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                ErrorBox("Potential outdated list", "The enrolled list was fetched over 15 minutes ago on ${course.fetched.format()}")
             }
 
             Card(

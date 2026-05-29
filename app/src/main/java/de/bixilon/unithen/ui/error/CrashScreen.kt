@@ -19,13 +19,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fasterxml.jackson.core.JacksonException
@@ -51,32 +49,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             .padding(top = 50.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.errorContainer,
-            tonalElevation = 2.dp,
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = message ?: "Something went wrong!",
-                    modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
-                )
-                Text(
-                    text = "This should not have happened. Please contact the app developer if you don't know further.",
-                    modifier = Modifier.padding(16.dp),
-                    color = MaterialTheme.colorScheme.onErrorContainer,
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
+        ErrorBox(message ?: "Something went wrong!", "This should not have happened. Please contact the app developer if you don't know further.")
 
         val details = formatDetails(exception)
         if (details != null) {
