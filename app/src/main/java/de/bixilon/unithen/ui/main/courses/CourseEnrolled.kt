@@ -72,6 +72,8 @@ fun CourseEnrolled(course: Course) {
         modifier = Modifier.padding(bottom = 8.dp)
     )
 
+    // TODO: scrollbar
+
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {

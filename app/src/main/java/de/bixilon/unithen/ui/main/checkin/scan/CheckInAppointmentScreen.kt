@@ -14,12 +14,13 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -71,27 +72,33 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        Text(
-            course.name,
-            style = MaterialTheme.typography.headlineLarge,
-        )
+    Box {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+        ) {
+            Text(
+                course.name,
+                style = MaterialTheme.typography.headlineLarge,
+            )
 
-        Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(16.dp))
 
-        Button({ navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Filled.QrCode, "scan")
-            Text("Scan QR code")
+            CompositionLocalProvider(
+                LocalScanContext provides ScanContextValue(account, course, appointment),
+            ) {
+                ScanAttendeeList(refreshing) { refresh(it) }
+            }
         }
 
-        CompositionLocalProvider(
-            LocalScanContext provides ScanContextValue(account, course, appointment),
+        FloatingActionButton(
+            { navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(-15.dp, -15.dp),
         ) {
-            ScanAttendeeList(refreshing) { refresh(it) }
+            Icon(Icons.Filled.QrCodeScanner, "scan")
         }
     }
 }

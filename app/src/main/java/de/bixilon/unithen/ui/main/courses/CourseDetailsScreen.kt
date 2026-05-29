@@ -89,13 +89,12 @@ fun CourseDetailsScreen(course: Course) {
 
             CourseAppointments(course)
             CourseEnrolled(course)
-
         }
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .offset(-20.dp, -20.dp),
+                .offset(-15.dp, -15.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val time = useTime()
