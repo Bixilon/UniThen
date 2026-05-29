@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -52,7 +54,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        color = MaterialTheme.colorScheme.background
+        color = MaterialTheme.colorScheme.background,
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,47 +85,17 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 else -> null
             }
 
-            (message ?: warning)?.let {
-                ErrorBox(it)
-            }
+            (message ?: warning)?.let { ErrorBox(it) }
 
             if ((message != null || warning != null) && (Clock.System.now() - course.fetched) > 15.minutes) {
                 ErrorBox("Potential outdated list", "The enrolled list was fetched over 15 minutes ago on ${course.fetched.format()}")
             }
 
-            Card(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-                modifier = Modifier.padding(16.dp),
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    user?.let {
-                        Text(
-                            text = "Name: ${user.firstname} ${user.lastname}", // TODO: bold
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
-
-                    Text(
-                        text = "Start: ${appointment.start.format()}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                    Text(
-                        text = "End: ${appointment.end.format()}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                    Text(
-                        text = "Location: ${appointment.location}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                    )
-                }
+            InfoContainer {
+                user?.let { InfoPair("Name", "${user.firstname} ${user.lastname}") }
+                InfoPair("Start", appointment.start.format())
+                InfoPair("End", appointment.end.format())
+                InfoPair("Location", appointment.location)
             }
 
             Spacer(Modifier.height(16.dp))

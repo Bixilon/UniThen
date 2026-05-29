@@ -15,8 +15,6 @@ package de.bixilon.unithen.ui.main.accounts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.courses.CourseCard
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -39,23 +38,17 @@ fun AccountDetailsScreen(account: Account) {
     val courses by remember { storage.courses.stateOf { this[account] } }
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Card(
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(
-                    text = "${account.firstname} ${account.lastname}",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-                Text(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = "${site.name} (${site.url})",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
+        InfoContainer {
+            Text(
+                text = "${account.firstname} ${account.lastname}",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Text(
+                text = "${site.name} (${site.url})",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
         }
 
 
