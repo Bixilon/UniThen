@@ -91,8 +91,9 @@ fun CourseAppointments(course: Course) {
     val state = rememberLazyListState()
     val now = useTime()
 
-    LaunchedEffect(now, appointments) {
-        val upcoming = appointments.indexOfLast { it.end >= now }
+    val upcoming = remember(now, appointments) { appointments.indexOfLast { it.end >= now } }
+
+    LaunchedEffect(upcoming) {
         if (upcoming < 0) return@LaunchedEffect
 
         val offset = snapshotFlow { state.layoutInfo.viewportEndOffset }.first { it > 0 } / 3
