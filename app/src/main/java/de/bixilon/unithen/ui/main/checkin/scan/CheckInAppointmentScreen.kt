@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
@@ -37,7 +36,6 @@ import kotlin.time.Clock
 @Composable
 fun CheckInAppointmentScreen(appointment: Appointment) {
     val navigation = LocalNavigation.current
-    LocalContext.current
     val storage = LocalStorage.current
 
     val course = storage.courses[appointment.course]!!

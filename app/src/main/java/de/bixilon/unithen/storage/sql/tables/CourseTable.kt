@@ -61,6 +61,14 @@ class CourseTable(
         insert("INSERT INTO course_enrolled(user, course) VALUES (?,?) ON CONFLICT(user, course) DO NOTHING", user.id, course.id)
     }
 
+    fun isTutor(): Boolean {
+        return storage.query("SELECT 1 FROM account_courses INNER JOIN tutor_courses ON account_courses.course = tutor_courses.course") { it.count > 0 }
+    }
+
+    fun isMember(): Boolean {
+        return storage.query("SELECT 1 FROM account_courses LEFT JOIN tutor_courses ON account_courses.course = tutor_courses.course WHERE tutor_courses.user IS NULL") { it.count > 0 }
+    }
+
     operator fun get(account: Account): List<Course> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
     }

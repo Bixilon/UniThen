@@ -49,8 +49,8 @@ enum class Destinations(
 ) : Labeled {
     COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
     ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
-    CHECKIN_PRESENT(Icons.Default.QrCode, "Check In (Show)", CheckInPresentRoute), // TODO: Only show if enrolled in at least ine course
-    CHECKIN_SCAN(Icons.Default.QrCodeScanner, "Check In (Scan)", CheckInScanRoute), // TODO: Only show if is tutor in at least on course
+    CHECKIN_PRESENT(Icons.Default.QrCode, "Check In (Show)", CheckInPresentRoute),
+    CHECKIN_SCAN(Icons.Default.QrCodeScanner, "Check In (Scan)", CheckInScanRoute),
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
     ;
 
@@ -89,11 +89,17 @@ fun MainScreen() {
 
         NavigationBar {
             Destinations.entries.forEach { destination ->
+                val enabled = when (destination) {
+                    Destinations.CHECKIN_PRESENT -> storage.stateOf { storage.courses.isMember() }.value
+                    Destinations.CHECKIN_SCAN -> storage.stateOf { storage.courses.isTutor() }.value
+                    else -> true
+                }
                 NavigationBarItem(
                     selected = navigator.current().route == destination.route,
                     onClick = { navigator.navigate(destination.route) },
                     icon = { Icon(destination.icon, contentDescription = "") },
-                    label = { Text(destination.label) }
+                    label = { Text(destination.label) },
+                    enabled = enabled,
                 )
             }
         }

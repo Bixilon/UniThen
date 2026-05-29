@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -41,7 +40,6 @@ private fun SqlStorage.insert1000Users() = transaction {
 
 @Composable
 fun DebugScreen() {
-    LocalContext.current
     val storage = LocalStorage.current
     val navigator = LocalNavigation.current
 
