@@ -13,19 +13,17 @@
 package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.core.JacksonException
 import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.util.json.Jackson
@@ -57,6 +55,29 @@ fun getInvalidReason(storage: SqlStorage, course: Course, appointment: Appointme
     if (attempt != null) return "Already checked in"
 
     return null
+}
+
+@Composable
+private fun ErrorOverlay(errors: List<ErrorResult>) {
+    if (errors.isEmpty()) return
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .heightIn(max = 300.dp)
+            .padding(24.dp)
+            .padding(bottom = 50.dp),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            for (error in errors) {
+                ErrorBox(error.message)
+            }
+        }
+    }
 }
 
 @Composable
@@ -101,7 +122,7 @@ fun QrScanAppointmentScreen() {
                 try {
                     val text = code.text ?: continue
                     if (!text.startsWith("{")) {
-                        errors += ErrorResult("Invalid QR code format")
+                        errors += ErrorResult("Invalid QR code format!")
                         continue
                     }
 
@@ -109,7 +130,7 @@ fun QrScanAppointmentScreen() {
                     val scanned = Jackson.MAPPER.readValue<ScannedQrCode>(text)
 
                     if (scanned.appointmentId != appointment.uuid) {
-                        errors += ErrorResult("Mismatching appointment")
+                        errors += ErrorResult("Mismatching appointment (wrong course?)!")
                         continue
                     }
 
@@ -123,44 +144,14 @@ fun QrScanAppointmentScreen() {
                         errors += ErrorResult(result)
                         delayedUserId = scanned.userId
                     }
+                } catch (_: JacksonException) {
+                    errors += ErrorResult("Invalid QR code data!")
                 } catch (error: Throwable) {
                     errors += ErrorResult("Error: " + (error.message ?: ""))
                 }
             }
         }
-
-        if (errors.isNotEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp)
-                    .padding(bottom = 50.dp),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 300.dp),
-                    shape = MaterialTheme.shapes.medium,
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    tonalElevation = 2.dp,
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        for (error in errors) {
-                            Text(
-                                text = error.message,
-                                modifier = Modifier.padding(16.dp),
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
+
+    ErrorOverlay(errors)
 }
