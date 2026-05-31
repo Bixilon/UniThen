@@ -94,7 +94,7 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
             val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
 
             QrCodeView(
-                data = createQrCode(account.uuid, appointment.uuid, firstname, lastname),
+                data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f, matchHeightConstraintsFirst = true)
