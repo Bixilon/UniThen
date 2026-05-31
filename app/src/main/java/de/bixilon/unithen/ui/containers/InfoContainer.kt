@@ -23,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun InfoContainer(content: @Composable () -> Unit) {
+fun InfoContainer(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        modifier = Modifier
+        modifier = modifier
             .padding(4.dp)
             .fillMaxWidth(),
     ) {
@@ -36,9 +36,8 @@ fun InfoContainer(content: @Composable () -> Unit) {
                 .padding(16.dp)
                 .fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            content.invoke()
-        }
+            content = content,
+        )
     }
 }
 

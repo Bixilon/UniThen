@@ -16,24 +16,35 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.main.PresentQrRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 
 
-// TODO: test
 @Composable
 fun FastCheckinAccountSelector(course: Course, appointment: Appointment, accounts: List<Account>) {
+    val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 
-    Column {
+    val site = storage.sites[course.site]!!
+
+    Column(modifier = Modifier
+        .padding(all = 16.dp)
+        .padding(bottom = 0.dp)) {
         Text(
             text = "Choose account",
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
         )
+        InfoContainer {
+            InfoPair("Course", course.name)
+            InfoPair("Site", site.name)
+        }
 
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(accounts, key = Account::id) { item ->
@@ -45,7 +56,6 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-
                         Text(
                             text = item.firstname + " " + item.lastname,
                             style = MaterialTheme.typography.titleMedium,

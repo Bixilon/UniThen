@@ -19,7 +19,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -64,50 +63,51 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         }
     }
 
-    Surface(
+    Column(
         modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                text = course.name,
-                style = MaterialTheme.typography.headlineLarge,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-            )
+        Text(
+            text = course.name,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp),
+        )
 
-            Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
 
-            InfoContainer {
-                InfoPair("Name", "${account.firstname} ${account.lastname}")
-                InfoPair("Start", appointment.start.format())
-                InfoPair("End", appointment.end.format())
-                InfoPair("Location", appointment.location)
-            }
+        InfoContainer(modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(0.8f)) {
+            InfoPair("Name", "${account.firstname} ${account.lastname}")
+            InfoPair("Start", appointment.start.format())
+            InfoPair("End", appointment.end.format())
+            InfoPair("Location", appointment.location)
+        }
 
-            Box(Modifier.padding(16.dp)) {
-                val (firstname, lastname) = if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname)
-                QrCodeView(
-                    data = createQrCode(account.uuid, appointment.uuid, firstname, lastname),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f, matchHeightConstraintsFirst = true)
-                        .clip(RoundedCornerShape(5.dp))
-                        .background(Color.White)
-                        .padding(16.dp)
-                )
-            }
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Present this QR code at the entrance",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface,
+        Box(Modifier.padding(4.dp)) {
+            val (firstname, lastname) = if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname)
+            QrCodeView(
+                data = createQrCode(account.uuid, appointment.uuid, firstname, lastname),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(Color.White)
+                    .padding(6.dp)
             )
         }
+
+        Text(
+            text = "Present this QR code at the entrance",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
     }
 }
 
