@@ -37,6 +37,8 @@ INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(903, 902
 INSERT INTO account_courses(account, course) VALUES(901, 901);
 INSERT INTO account_courses(account, course) VALUES(901, 902);
 INSERT INTO account_courses(account, course) VALUES(902, 903);
+INSERT INTO account_courses(account, course) VALUES(903, 901);
+INSERT INTO account_courses(account, course) VALUES(903, 902);
 INSERT INTO account_courses(account, course) VALUES(903, 903);
 
 INSERT INTO tutor_courses(user, course) VALUES(901, 901);

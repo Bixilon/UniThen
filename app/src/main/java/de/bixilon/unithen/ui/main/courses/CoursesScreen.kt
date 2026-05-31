@@ -35,6 +35,8 @@ import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute
@@ -81,17 +83,8 @@ fun CoursesScreen() {
     val events by remember { storage.events.stateOf { all().sortedByDescending { it.start } } }
 
     val context = LocalContext.current
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        Text(
-            "Courses ($courseCount):",
-            style = MaterialTheme.typography.headlineLarge,
-        )
-
-        Spacer(Modifier.height(16.dp))
+    Screen {
+        ScreenTitle("Courses ($courseCount)")
 
         PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
             refreshing = true

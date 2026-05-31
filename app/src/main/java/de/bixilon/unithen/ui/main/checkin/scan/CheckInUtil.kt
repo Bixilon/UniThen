@@ -29,7 +29,7 @@ object CheckInUtil {
     private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
         val now = Clock.System.now()
 
-        storage.checkInAttempts.update(appointment, user, sync = now)
+        storage.checkInAttempts.add(appointment, user, now, sync = now)
 
 
         val attemptQl = withContext(Dispatchers.IO) {
@@ -41,7 +41,7 @@ object CheckInUtil {
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
 
-        storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+        storage.checkInAttempts.update(appointment, user, uuid = attemptQl.id, message = attemptQl.message, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
     }
 
     suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
@@ -64,7 +64,6 @@ object CheckInUtil {
 
     suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
         val site = storage.sites[account.site]!!
-        Clock.System.now()
 
         fetch(storage, site, account, appointment, user)
 

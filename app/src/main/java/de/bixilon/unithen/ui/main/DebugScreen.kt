@@ -12,16 +12,13 @@
 
 package de.bixilon.unithen.ui.main
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -43,12 +40,9 @@ fun DebugScreen() {
     val storage = LocalStorage.current
     val navigator = LocalNavigation.current
 
-    Column {
-        Text(
-            "Debug menu",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 8.dp),
-        )
+    Screen {
+        ScreenTitle("Debug menu")
+
         Button({ navigator.navigate(SetupRoute) }) { Text("Open setup") }
 
 

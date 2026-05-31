@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.containers.Section
+import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
 
 
@@ -64,19 +66,14 @@ fun CourseEnrolled(course: Course) {
 
     if (users.isEmpty()) return
 
-
-
-    Text(
-        text = "Enrolled (${users.size})",
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-
     // TODO: scrollbar
+    Section {
+        SectionTitle("Enrolled (${users.size})")
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(items = users, key = User::id) { EnrolledCard(it) }
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(items = users, key = User::id) { EnrolledCard(it) }
+        }
     }
 }

@@ -28,52 +28,49 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 @Composable
+private fun Note(text: String) = Text(text,
+    style = MaterialTheme.typography.bodySmall,
+    color = MaterialTheme.colorScheme.onSurfaceVariant
+)
+
+@Composable
 fun SetupScreen() {
     var accepted by rememberSaveable { mutableStateOf(false) }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Text("Setup", style = MaterialTheme.typography.headlineLarge)
+    Screen {
+        ScreenTitle("Setup")
 
-        Text(buildAnnotatedString {
-            append("This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at ")
+        Column(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(buildAnnotatedString {
+                append("This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at ")
 
-            withLink(LinkAnnotation.Url("https://gitlab.bixilon.de/bixilon/unithen")) { append("gitlab.bixilon.de/bixilon/unithen") }
+                withLink(LinkAnnotation.Url("https://gitlab.bixilon.de/bixilon/unithen")) { append("gitlab.bixilon.de/bixilon/unithen") }
 
-            append(".")
-        })
+                append(".")
+            })
 
-        Text("This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Note("This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.")
 
-        Text("An access token (generated with your credentials) will be saved securely on this device.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Note("An access token (generated with your credentials) will be saved securely on this device.")
 
-        Text("The servers are operated by UniNow GmbH, please check their privacy policy.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+            Note("The servers are operated by UniNow GmbH, please check their website for their privacy policy.")
 
-        Spacer(modifier = Modifier.weight(1.0f))
+            Spacer(modifier = Modifier.weight(1.0f))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Checkbox(accepted, { accepted = it })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(accepted, { accepted = it })
 
-            Spacer(Modifier.width(8.dp))
+                Spacer(Modifier.width(4.dp))
 
-            Text("I understand and accept these terms")
+                Text("I understand and accept these terms")
+            }
         }
 
 
@@ -83,7 +80,7 @@ fun SetupScreen() {
             enabled = accepted,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Add my account")
+            Text("Continue to login")
         }
     }
 }

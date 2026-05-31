@@ -10,25 +10,28 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.error
+package de.bixilon.unithen.ui.containers
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SimpleErrorScreen(message: String, details: String? = null) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .padding(top = 50.dp),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        ErrorBox(message, details)
-    }
+fun Section(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Column(modifier = modifier.fillMaxWidth(), content = content)
+}
+
+@Composable
+fun SectionTitle(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "$text: ",
+        style = MaterialTheme.typography.titleLarge,
+        modifier = modifier.padding(bottom = 8.dp)
+    )
 }

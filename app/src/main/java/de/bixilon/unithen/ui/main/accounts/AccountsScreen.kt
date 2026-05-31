@@ -32,6 +32,8 @@ import de.bixilon.kutil.time.DurationUtil.weeks
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
@@ -164,28 +166,20 @@ fun AccountsScreen() {
     val storage = LocalStorage.current
     val accounts by remember { storage.accounts.stateOf { all() } }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        Text(
-            "Accounts (${accounts.size}):",
-            style = MaterialTheme.typography.headlineLarge,
-        )
+    Screen {
+        ScreenTitle("Accounts (${accounts.size})")
 
-        Spacer(Modifier.height(16.dp))
+        Box {
+            val navigator = LocalNavigation.current
+            LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
+            }
 
-        val navigator = LocalNavigation.current
-        LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
-        }
-
-        Spacer(Modifier.height(8.dp))
-
-        Button({ navigator.navigate(AddAccountRoute) }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Default.Add, "add")
-            Text("Add account")
+            FloatingActionButton({ navigator.navigate(AddAccountRoute) }, modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = -15.dp)) {
+                Icon(Icons.Filled.Add, "add")
+            }
         }
     }
 }

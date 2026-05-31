@@ -18,6 +18,8 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.PresentQrRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -30,14 +32,9 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
 
     val site = storage.sites[course.site]!!
 
-    Column(modifier = Modifier
-        .padding(all = 16.dp)
-        .padding(bottom = 0.dp)) {
-        Text(
-            text = "Choose account",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(bottom = 16.dp),
-        )
+    Screen {
+        ScreenTitle("Please choose account")
+
         InfoContainer {
             InfoPair("Course", course.name)
             InfoPair("Site", site.name)

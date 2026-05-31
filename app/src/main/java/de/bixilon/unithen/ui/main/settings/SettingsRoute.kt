@@ -12,67 +12,60 @@
 
 package de.bixilon.unithen.ui.main.settings
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.containers.Section
+import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AboutRoute
-import de.bixilon.unithen.ui.main.Destinations
+import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.main.settings.types.EnumSetting
-import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 @Composable
 fun SettingsScreen() {
-    val navigator = LocalNavigation.current
     val scrollState = rememberScrollState()
 
-
     Column(
-        modifier = Modifier
+        modifier = Modifier // TODO: Screen
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        Text("Settings", style = MaterialTheme.typography.headlineLarge)
+        ScreenTitle("Settings")
 
         if (BuildConfig.DEBUG) {
-            Text("Debug", style = MaterialTheme.typography.headlineSmall)
-            BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
+            Section {
+                SectionTitle("Debug")
+
+                BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
+            }
             HorizontalDivider()
         }
 
-
-        Text("General", style = MaterialTheme.typography.headlineSmall)
-        EnumSetting(Settings.ENTRYPOINT, Destinations, "Entrypoint", "Choose what screen should open when starting the app.")
-        HorizontalDivider()
-
-
-        Text("Advanced", style = MaterialTheme.typography.headlineSmall)
-        BooleanSetting(Settings.QR_CODE_REMOVE_NAME, "Remove name (QR code)", "Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might still break scaning.")
-        HorizontalDivider()
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { navigator.navigate(AboutRoute) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "About", style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1.0f))
-            Icon(Icons.Default.Info, contentDescription = "about", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        Section {
+            SectionTitle("General")
+            EnumSetting(Settings.ENTRYPOINT, MainScreens, "Entrypoint", "Choose what screen should open when starting the app.")
         }
+        HorizontalDivider()
+        Section {
+            SectionTitle("Advanced")
+            BooleanSetting(Settings.QR_CODE_REMOVE_NAME, "Remove name (QR code)", "Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might still break scaning.")
+        }
+        HorizontalDivider()
+        SettingsLink("About", Icons.Default.Info, AboutRoute)
     }
 }

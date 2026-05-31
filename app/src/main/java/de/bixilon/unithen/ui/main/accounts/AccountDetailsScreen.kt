@@ -26,6 +26,8 @@ import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.Section
+import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.courses.CourseCard
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -55,19 +57,17 @@ fun AccountDetailsScreen(account: Account) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        Section {
+            SectionTitle("Courses (${courses.size})")
 
-        Text(
-            "Courses (${courses.size}):",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
 
-        val navigation = LocalNavigation.current
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.weight(1f)
-        ) {
-            items(items = courses, key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
+            val navigation = LocalNavigation.current
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                items(items = courses, key = Course::id) { course -> CourseCard(course) { navigation.navigate(CourseDetailsRoute(course)) } }
+            }
         }
     }
 }

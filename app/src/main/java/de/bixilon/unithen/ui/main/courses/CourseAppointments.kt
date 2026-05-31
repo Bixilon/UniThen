@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.containers.Section
+import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useTime
@@ -101,17 +103,14 @@ fun CourseAppointments(course: Course) {
         state.animateScrollToItem(upcoming, -offset)
     }
 
-    Text(
-        text = "Appointments (+${appointments.filter { it.start > now && it.canceled == null }.size}/${appointments.size})",
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
+    Section {
+        SectionTitle("Appointments (+${appointments.filter { it.start > now && it.canceled == null }.size}/${appointments.size})")
 
-
-    LazyColumn(
-        state = state,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment) }
+        LazyColumn(
+            state = state,
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment) }
+        }
     }
 }

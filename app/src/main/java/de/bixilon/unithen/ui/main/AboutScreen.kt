@@ -33,18 +33,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
+import de.bixilon.unithen.ui.containers.Screen
 
 
 @Composable
 @Preview(showBackground = true)
 fun AboutScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Screen(modifier = Modifier.verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Image(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),

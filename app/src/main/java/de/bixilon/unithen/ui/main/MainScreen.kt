@@ -42,7 +42,7 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 
 
-enum class Destinations(
+enum class MainScreens(
     val icon: ImageVector,
     override val label: String,
     val route: NavigationRoute,
@@ -54,7 +54,7 @@ enum class Destinations(
     SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
     ;
 
-    companion object : ValuesEnum<Destinations> {
+    companion object : ValuesEnum<MainScreens> {
         override val VALUES = values()
         override val NAME_MAP = names()
     }
@@ -64,13 +64,13 @@ enum class Destinations(
 @Composable
 fun MainScreen() {
     val storage = LocalStorage.current
-    var entrypoint by rememberSetting(Settings.ENTRYPOINT, Destinations)
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
     val navigator = remember { Navigator(entrypoint.route, NavigationMode.SINGLE) }
-    val count by remember { storage.accounts.stateOf { count } }
+    val accounts by remember { storage.accounts.stateOf { count } }
 
     val _navigator = LocalNavigation.current
-    LaunchedEffect(count) {
-        if (count == 0) {
+    LaunchedEffect(accounts) {
+        if (accounts == 0) {
             _navigator.navigate(SetupRoute)
         }
     }
@@ -88,10 +88,10 @@ fun MainScreen() {
         Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
 
         NavigationBar {
-            Destinations.entries.forEach { destination ->
+            MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
-                    Destinations.CHECKIN_PRESENT -> storage.stateOf { storage.courses.isMember() }.value
-                    Destinations.CHECKIN_SCAN -> storage.stateOf { storage.courses.isTutor() }.value
+                    MainScreens.CHECKIN_PRESENT -> storage.stateOf { storage.courses.isMember() }.value
+                    MainScreens.CHECKIN_SCAN -> storage.stateOf { storage.courses.isTutor() }.value
                     else -> true
                 }
                 NavigationBarItem(

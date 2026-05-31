@@ -32,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
 
 
@@ -96,17 +98,8 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
         return
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        Text(
-            text = "Please choose your booking site:",
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        Spacer(Modifier.height(16.dp))
+    Screen {
+        ScreenTitle("Please choose your booking site")
 
         LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(items = sites, key = Site::id) { site -> SiteCard(site) { callback.invoke(site) } }
@@ -114,7 +107,7 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
 
         Spacer(Modifier.height(16.dp))
 
-        AddSiteButton(callback)
+        AddSiteButton(callback) // TODO: FloatingActionButton?
     }
 }
 

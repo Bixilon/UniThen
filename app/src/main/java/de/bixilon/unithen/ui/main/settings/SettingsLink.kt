@@ -10,25 +10,33 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.error
+package de.bixilon.unithen.ui.main.settings
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 @Composable
-fun SimpleErrorScreen(message: String, details: String? = null) {
-    Box(
+fun SettingsLink(name: String, icon: ImageVector, route: NavigationRoute) {
+    val navigator = LocalNavigation.current
+
+    Row(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .padding(top = 50.dp),
-        contentAlignment = Alignment.TopCenter,
+            .fillMaxWidth()
+            .clickable { navigator.navigate(route) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        ErrorBox(message, details)
+        Text(text = name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1.0f))
+
+        Icon(icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

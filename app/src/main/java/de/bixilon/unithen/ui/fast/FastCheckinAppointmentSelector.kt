@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -60,12 +62,9 @@ fun AppointmentCard(course: Course, appointment: Appointment, onClick: () -> Uni
 @Composable
 fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
     val storage = LocalStorage.current
-    Column {
-        Text(
-            text = "Choose upcoming appointment",
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(16.dp)
-        )
+    Screen {
+        ScreenTitle("Please choose appointment")
+
 
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
