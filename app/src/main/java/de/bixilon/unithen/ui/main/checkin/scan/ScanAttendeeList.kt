@@ -22,11 +22,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.containers.Section
+import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
@@ -100,7 +103,7 @@ private fun AttemptCard(attempt: CheckInAttempt) {
                 IconButton({
                     val appointment = storage.appointments[attempt.appointment]!!
                     storage.checkInAttempts.update(appointment, user, uuid = UUID.randomUUID(), sync = Clock.System.now(), status = CheckInAttempt.Status.OK)
-                }) { Icon(Icons.Filled.Check, "approve") }
+                }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
             }
         }
     }
@@ -151,23 +154,19 @@ fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
 
     val not by remember { storage.stateOf { users.getEnrolledNotCheckedIn(appointment, course) } }
 
+    Section {
+        SectionTitle("Attendees (${ok.size}/${enrolled})")
 
 
-    Text(
-        text = "Attendees (${ok.size}/${enrolled}):",
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(bottom = 8.dp)
-    )
-
-
-    PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            items(items = ok, key = { it.user }) { AttendeeCard(it) }
-            items(items = other, key = { it.user }) { AttemptCard(it) }
-            items(items = not, key = User::id) { EnrolledCard(it) }
+        PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                items(items = ok, key = { it.user }) { AttendeeCard(it) }
+                items(items = other, key = { it.user }) { AttemptCard(it) }
+                items(items = not, key = User::id) { EnrolledCard(it) }
+            }
         }
     }
 }

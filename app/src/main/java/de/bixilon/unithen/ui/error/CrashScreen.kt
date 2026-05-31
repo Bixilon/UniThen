@@ -60,7 +60,6 @@ fun CrashScreen(message: String?, exception: Throwable) {
                     .verticalScroll(rememberScrollState())
                     .background(
                         color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = MaterialTheme.shapes.small
                     )
                     .padding(8.dp)
             ) {
@@ -83,7 +82,6 @@ fun CrashScreen(message: String?, exception: Throwable) {
                 .horizontalScroll(rememberScrollState())
                 .background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.small
                 )
                 .padding(8.dp)
         ) {

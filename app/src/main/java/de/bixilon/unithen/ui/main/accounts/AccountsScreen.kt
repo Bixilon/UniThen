@@ -67,11 +67,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
                     expanded = false
                 }
             )
-            DropdownMenuItem(
-                text = { Text("Remove") },
-                enabled = false,
-                onClick = { expanded = false } // TODO
-            )
+            // TODO: Remove account
         }
     }
 
@@ -82,9 +78,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
             onDismissRequest = {},
             title = { Text("Refreshing account...") },
             text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator()
                     Spacer(modifier = Modifier.height(16.dp))
                     Text("Fetching courses...")

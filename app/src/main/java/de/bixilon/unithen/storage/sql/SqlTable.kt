@@ -36,7 +36,7 @@ abstract class SqlTable<T>(
     fun update(id: Int): Nothing = Unreachable()
 
     protected fun update(id: Key, filter: SqlFilter) {
-        update("UPDATE $table SET ${filter.where} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
+        update("UPDATE $table SET ${filter.sql} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
     }
 
     protected fun update(sql: String, vararg parameters: Any?) {
@@ -54,7 +54,7 @@ abstract class SqlTable<T>(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table $actualWhere", *arguments, runnable = runnable)
     }
 
-    protected fun single(filter: SqlFilter) = single(filter.where, arguments = filter.parameters.toTypedArray())
+    protected fun single(filter: SqlFilter) = single(filter.sql, arguments = filter.parameters.toTypedArray())
     protected fun single(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             when (it.count) {
@@ -69,6 +69,7 @@ abstract class SqlTable<T>(
         }
     }
 
+    protected fun first(filter: SqlFilter) = first(filter.sql, arguments = filter.parameters.toTypedArray())
     protected fun first(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             when (it.count) {
@@ -96,7 +97,7 @@ abstract class SqlTable<T>(
         moveToFirst(); return getInt(0)
     }
 
-    protected fun all(filter: SqlFilter) = all(filter.where, *filter.parameters.toTypedArray())
+    protected fun all(filter: SqlFilter) = all(filter.sql, *filter.parameters.toTypedArray())
     protected fun all(@Language("SQL") where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }

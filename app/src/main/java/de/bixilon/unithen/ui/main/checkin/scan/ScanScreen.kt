@@ -26,9 +26,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.fast.CHECKIN_EARLY_DURATION
-import de.bixilon.unithen.ui.fast.FastCheckinNoAppointments
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.ui.main.checkin.present.FastCheckinNoAppointments
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.UiUtil.format

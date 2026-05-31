@@ -67,7 +67,6 @@ fun AboutScreen() {
 
         Card(
             modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium
         ) {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Version: ${BuildConfig.VERSION} (${BuildConfig.VERSION_CODE})", textAlign = TextAlign.Center)

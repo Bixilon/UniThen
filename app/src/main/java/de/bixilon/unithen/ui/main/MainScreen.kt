@@ -27,8 +27,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
-import de.bixilon.unithen.ui.fast.FastCheckInInScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
+import de.bixilon.unithen.ui.main.checkin.present.FastCheckInInScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.Settings

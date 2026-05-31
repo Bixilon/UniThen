@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.fast
+package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

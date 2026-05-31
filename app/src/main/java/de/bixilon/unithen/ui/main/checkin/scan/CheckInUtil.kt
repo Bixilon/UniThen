@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.minutes
 object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
 
-    private suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
+    suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
         val now = Clock.System.now()
 
         storage.checkInAttempts.add(appointment, user, now, sync = now)
@@ -100,7 +100,7 @@ object CheckInUtil {
             val appointment = storage.appointments[attempt.appointment]!!
             val course = storage.courses[appointment.course]!!
             val site = storage.sites[course.site]!!
-            val account = storage.accounts.get(course).firstOrNull() ?: continue // TODO: only tutor accounts
+            val account = storage.accounts.getTutorAccount(course) ?: continue
 
 
             fetch(storage, site, account, appointment, user)

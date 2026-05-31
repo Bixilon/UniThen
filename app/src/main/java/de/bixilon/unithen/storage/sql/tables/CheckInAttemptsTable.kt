@@ -21,6 +21,7 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getEnum
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
@@ -47,7 +48,7 @@ class CheckInAttemptsTable(
     fun update(appointment: Appointment, user: User, uuid: UUID? = null, time: Instant? = null, message: String? = null, sync: Instant? = null, status: CheckInAttempt.Status? = null) {
         val filter = SqlFilter.comma("uuid" to uuid, "time" to time, "message" to message, "sync" to sync, "status" to status)
 
-        update("UPDATE $table SET ${filter.where} WHERE appointment=? AND user=?", parameters = arrayOf(*filter.parameters.toTypedArray(), appointment.id, user.id))
+        update("UPDATE $table SET ${filter.sql} WHERE appointment=? AND user=?", parameters = arrayOf(*filter.parameters.toTypedArray(), appointment.id, user.id))
     }
 
 
@@ -63,16 +64,20 @@ class CheckInAttemptsTable(
         return this[appointment, user]!!
     }
 
-    fun getPendingSyncCount(): Int {
-        return storage.query("SELECT COUNT(*) FROM $table WHERE status=?", CheckInAttempt.Status.PENDING) { it.collectIntAggregation() }
+    fun getPendingSyncCount(appointment: Appointment?=null): Int {
+        val _appointment = appointment?.let { CheckInAttempt::appointment eq appointment.id }
+        return storage.query(SqlFilter("SELECT COUNT(*) FROM $table") where (SqlFilter("status=?", CheckInAttempt.Status.PENDING) and _appointment)) { it.collectIntAggregation() }
     }
 
-    fun takePendingSync(): CheckInAttempt? {
+
+    fun takePendingSync(appointment: Appointment?=null): CheckInAttempt? {
         val time = Clock.System.now()
         val last = time - SYNC_BACKOFF
 
+        val _appointment = appointment?.let { CheckInAttempt::appointment eq appointment.id }
+
         return storage.transaction {
-            val entry = first("status=? AND sync<?", CheckInAttempt.Status.PENDING, last) ?: return@transaction null
+            val entry = first(SqlFilter("status=? AND sync<?", CheckInAttempt.Status.PENDING, last) and _appointment) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 

@@ -35,7 +35,7 @@ fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizon
 @Composable
 fun ScreenTitle(text: String, modifier: Modifier = Modifier) {
     Text(
-        text = "$text: ",
+        text = "$text:",
         style = MaterialTheme.typography.headlineLarge,
         modifier = modifier.padding(bottom = 8.dp)
     )

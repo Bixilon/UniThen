@@ -16,20 +16,24 @@ import org.intellij.lang.annotations.Language
 import kotlin.reflect.KProperty1
 
 data class SqlFilter(
-    @param:Language("SQL") val where: String,
+    @param:Language("SQL") val sql: String,
     val parameters: List<Any> = emptyList(),
 ) {
 
-    private fun connect(@Language("SQL") conjunction: String, other: SqlFilter?): SqlFilter {
-        if (other == null || other.where.isBlank()) return this
+    constructor(sql: String, vararg parameters: Any):this(sql, parameters.toList())
 
-        return SqlFilter("($where) $conjunction (${other.where})", parameters + other.parameters)
+    private fun connect(@Language("SQL") conjunction: String, other: SqlFilter?): SqlFilter {
+        if (other == null || other.sql.isBlank()) return this
+
+        return SqlFilter("($sql) $conjunction (${other.sql})", parameters + other.parameters)
     }
 
     infix fun and(other: SqlFilter?) = connect("AND", other)
     infix fun or(other: SqlFilter?) = connect("OR", other)
 
-    operator fun plus(where: String?) = if (where == null) this else SqlFilter(this.where + " " + where, this.parameters)
+    operator fun plus(other: String?) = if (other == null) this else SqlFilter(this.sql + " " + other, this.parameters)
+
+    infix fun where(where: SqlFilter?) = if (where == null) this else SqlFilter(this.sql + " WHERE " + where.sql, this.parameters + where.parameters)
 
 
 

@@ -23,6 +23,7 @@ import androidx.core.database.sqlite.transaction
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.*
+import de.bixilon.unithen.storage.sql.util.SqlFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,6 +76,10 @@ class SqlStorage(context: Context) : Closeable {
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
             }
         }
+    }
+
+    fun <T> query(@Language("SQL") filter: SqlFilter, runnable: (Cursor) -> T): T {
+        return query(filter.sql, parameters = filter.parameters.toTypedArray(), runnable)
     }
 
     fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {

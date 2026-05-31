@@ -24,7 +24,7 @@ class SqlFilterTest {
     fun `complex building`() {
         val filter = (Appointment::id eq "v") and ((Appointment::canceled neq "x") or (Appointment::location eq "y"))
 
-        assertEquals(filter.where, "(id=?) AND ((canceled!=?) OR (location=?))")
+        assertEquals(filter.sql, "(id=?) AND ((canceled!=?) OR (location=?))")
         assertEquals(filter.parameters, listOf("v", "x", "y"))
     }
 

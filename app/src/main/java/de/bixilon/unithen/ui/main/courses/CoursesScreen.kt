@@ -120,7 +120,7 @@ fun CoursesScreen() {
                     if (courses.isEmpty()) continue
 
                     item {
-                        val site = remember { storage.sites[event.site]!! }
+                        val site = remember { storage.sites[event.site]!! } // TODO: Section?
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
 

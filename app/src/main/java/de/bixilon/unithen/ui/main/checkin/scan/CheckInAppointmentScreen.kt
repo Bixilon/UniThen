@@ -15,10 +15,8 @@ package de.bixilon.unithen.ui.main.checkin.scan
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,12 +24,17 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
 import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.fetch
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import kotlinx.coroutines.delay
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun CheckInAppointmentScreen(appointment: Appointment) {
@@ -39,15 +42,18 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
     val storage = LocalStorage.current
 
     val course = storage.courses[appointment.course]!!
-    val account = storage.accounts.get(course).firstOrNull() // TODO: get only tutor accounts
+    val account = storage.accounts.getTutorAccount(course)
+
 
     if (account == null) {
         SimpleErrorScreen("No account", "No account who can perform check in?")
         return
     }
 
+    val pending by remember { storage.stateOf { storage.checkInAttempts.getPendingSyncCount(appointment) } }
 
     var refreshing by remember { mutableStateOf(false) }
+    var syncing by remember { mutableStateOf(false) }
 
 
     val _refresh = useAsyncNetwork<Boolean>(account) {
@@ -70,33 +76,83 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         }
     }
 
-    Box {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-        ) {
-            Text(
-                course.name,
-                style = MaterialTheme.typography.headlineLarge,
-            )
 
-            Spacer(Modifier.height(16.dp))
+    if (syncing) {
+        var done by remember { mutableIntStateOf(0) }
 
+        LaunchedEffect(Unit) {
+            val site = storage.sites[course.site]!!
+
+            while (true) {
+                val attempt = storage.checkInAttempts.takePendingSync(appointment) ?: break
+                done++
+
+                val user = storage.users[attempt.user]!!
+
+                try {
+                    fetch(storage, site, account, appointment, user)
+                } catch (error: Throwable) {
+                    done--
+                    error.printStackTrace()
+                }
+            }
+
+            syncing = false
+        }
+
+
+        AlertDialog(
+            confirmButton = {},
+            dismissButton = { Button({ syncing = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
+            onDismissRequest = { syncing = false },
+            icon = { Icon(Icons.Default.Sync, "") },
+            title = { Text("Synchronizing...") },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("$done / $pending")
+                }
+            },
+        )
+    }
+
+
+    Screen {
+        ScreenTitle(course.name)
+
+        Box {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(account, course, appointment),
             ) {
                 ScanAttendeeList(refreshing) { refresh(it) }
             }
-        }
 
-        FloatingActionButton(
-            { navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(-15.dp, -15.dp),
-        ) {
-            Icon(Icons.Filled.QrCodeScanner, "scan")
+            Column(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .offset(x = -15.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                var showSync by remember(Unit) { mutableStateOf(pending > 0) }
+
+                LaunchedEffect(pending > 0) {
+                    if (pending == 0) {
+                        showSync = false
+                    } else {
+                        delay(2.seconds)
+                        showSync = true
+                    }
+                }
+                if (showSync) {
+                    FloatingActionButton({ syncing = true }) {
+                        Icon(Icons.Filled.Sync, "sync")
+                    }
+                }
+                FloatingActionButton({ navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }) {
+                    Icon(Icons.Filled.QrCodeScanner, "scan")
+                }
+            }
         }
     }
 }

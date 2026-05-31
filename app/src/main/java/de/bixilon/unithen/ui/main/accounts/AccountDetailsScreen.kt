@@ -37,7 +37,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 fun AccountDetailsScreen(account: Account) {
     val storage = LocalStorage.current
     val site = remember { storage.sites[account.site]!! }
-    val courses by remember { storage.courses.stateOf { this[account] } }
+    val courses by remember { storage.courses.stateOf { this[account].sortedBy { it.name } } } // TODO: better sort
 
     Column(modifier = Modifier.padding(16.dp)) {
         InfoContainer {
@@ -52,7 +52,6 @@ fun AccountDetailsScreen(account: Account) {
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-
 
 
         Spacer(modifier = Modifier.height(16.dp))

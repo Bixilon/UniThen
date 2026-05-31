@@ -31,12 +31,12 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
-import de.bixilon.unithen.ui.fast.FastCheckinAppointment
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.checkin.present.CheckInQrPresentScreen
+import de.bixilon.unithen.ui.main.checkin.present.FastCheckinAppointment
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.QrScanAppointmentScreen

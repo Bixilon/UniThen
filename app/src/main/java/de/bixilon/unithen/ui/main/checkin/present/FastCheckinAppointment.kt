@@ -10,28 +10,25 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.containers
+package de.bixilon.unithen.ui.main.checkin.present
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.error.SimpleErrorScreen
+import de.bixilon.unithen.ui.storage.LocalStorage
 
 @Composable
-fun Section(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Column(modifier = modifier.fillMaxWidth(), content = content)
-}
+fun FastCheckinAppointment(course: Course, appointment: Appointment) {
+    val storage = LocalStorage.current
+    val accounts by remember { storage.accounts.stateOf { this[course] } }
 
-@Composable
-fun SectionTitle(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "$text:",
-        style = MaterialTheme.typography.titleLarge,
-        modifier = modifier.padding(bottom = 8.dp)
-    )
+    when (accounts.size) {
+        0 -> SimpleErrorScreen("No account available")
+        1 -> CheckInQrPresentScreen(accounts[0], course, appointment)
+        else -> FastCheckinAccountSelector(course, appointment, accounts)
+    }
 }

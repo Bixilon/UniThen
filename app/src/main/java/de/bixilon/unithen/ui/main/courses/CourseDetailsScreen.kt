@@ -32,9 +32,9 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.containers.InfoContainer
-import de.bixilon.unithen.ui.fast.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useTime
