@@ -23,7 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.QrCodeView
 import de.bixilon.kutil.cast.CastUtil.nullCast
+import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -50,7 +50,7 @@ import java.util.*
 @Composable
 fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appointment) {
     val visible = LocalVisibility.current
-    var fakeName by rememberSetting(Settings.QR_CODE_FAKE_NAME)
+    val name by rememberSetting(Settings.QR_CODE_REMOVE_NAME)
 
     val context = LocalContext.current
     DisposableEffect(visible) {
@@ -91,7 +91,8 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(Modifier.padding(4.dp)) {
-            val (firstname, lastname) = if (fakeName) Pair("Max", "Muster") else Pair(account.firstname, account.lastname)
+            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
+
             QrCodeView(
                 data = createQrCode(account.uuid, appointment.uuid, firstname, lastname),
                 modifier = Modifier
