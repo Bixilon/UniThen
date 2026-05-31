@@ -44,7 +44,13 @@ class AppointmentTable(
     fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null, member: Boolean? = null, tutor: Boolean? = null): List<Appointment> {
         val _canceled = canceled?.let { if (it) Appointment::canceled.isNotNull() else Appointment::canceled.isNull() }
         val _member = member?.let { val not = if (it) "" else "NOT"; SqlFilter("$not EXISTS (SELECT 1 FROM account_courses WHERE $table.course = account_courses.course)") }
-        val _tutor = tutor?.let { val not = if (it) "" else "NOT"; SqlFilter("$not EXISTS (SELECT 1 FROM account_courses JOIN tutor_courses ON tutor_courses.user = account_courses.account AND tutor_courses.course = account_courses.course WHERE account_courses.course = $table.course)") }
+        val _tutor = tutor?.let {
+            if(it) {
+                SqlFilter("EXISTS (SELECT 1 FROM account_courses JOIN tutor_courses ON tutor_courses.user = account_courses.account AND tutor_courses.course = account_courses.course WHERE account_courses.course = $table.course)")
+            }else {
+                SqlFilter("EXISTS (SELECT 1 FROM account_courses WHERE account_courses.course = appointments.course AND NOT EXISTS (SELECT 1 FROM tutor_courses WHERE tutor_courses.user = account_courses.account AND tutor_courses.course = account_courses.course))")
+            }
+        }
 
         val filter = SqlFilter("NOT (end < ? OR start > ?)", listOf(from, to)) and _canceled and _tutor and _member
 
