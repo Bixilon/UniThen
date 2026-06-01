@@ -12,6 +12,4 @@
 
 package de.bixilon.unithen.storage
 
-interface DbKeyed : DbObject {
-    val id: Key
-}
+interface DbObject

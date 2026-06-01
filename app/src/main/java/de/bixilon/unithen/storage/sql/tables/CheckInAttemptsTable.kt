@@ -20,6 +20,7 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getEnum
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.types.Appointment
@@ -64,13 +65,14 @@ class CheckInAttemptsTable(
         return this[appointment, user]!!
     }
 
-    fun getPendingSyncCount(appointment: Appointment?=null): Int {
-        val _appointment = appointment?.let { CheckInAttempt::appointment eq appointment.id }
-        return storage.query(SqlFilter("SELECT COUNT(*) FROM $table") where (SqlFilter("status=?", CheckInAttempt.Status.PENDING) and _appointment)) { it.collectIntAggregation() }
+    fun getPendingSyncCount(appointment: Appointment? = null): Int {
+        return storage.query(
+            SqlBuilder.select(SqlBuilder.Aggregations.Count) from this where (CheckInAttempt::status eq CheckInAttempt.Status.PENDING and appointment?.let { CheckInAttempt::appointment eq appointment.id }))
+        { it.collectIntAggregation() }
     }
 
 
-    fun takePendingSync(appointment: Appointment?=null): CheckInAttempt? {
+    fun takePendingSync(appointment: Appointment? = null): CheckInAttempt? {
         val time = Clock.System.now()
         val last = time - SYNC_BACKOFF
 

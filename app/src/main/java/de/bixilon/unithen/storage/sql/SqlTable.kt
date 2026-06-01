@@ -25,7 +25,7 @@ abstract class SqlTable<T>(
 ) {
     val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.collectIntAggregation() }
 
-    protected abstract val columns: List<String>
+    abstract val columns: List<String>
 
     protected abstract fun map(cursor: Cursor): T
 

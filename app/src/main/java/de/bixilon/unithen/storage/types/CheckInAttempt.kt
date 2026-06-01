@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
 import java.util.*
 import kotlin.time.Instant
@@ -26,7 +27,7 @@ data class CheckInAttempt(
     val message: String?,
     val sync: Instant?,
     val status: Status,
-) {
+) : DbObject {
 
     enum class Status {
         OK,

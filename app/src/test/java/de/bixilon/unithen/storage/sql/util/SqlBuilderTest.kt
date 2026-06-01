@@ -10,8 +10,20 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage
+package de.bixilon.unithen.storage.sql.util
 
-interface DbKeyed : DbObject {
-    val id: Key
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.types.CheckInAttempt
+import junit.framework.TestCase.assertEquals
+import org.junit.Test
+
+class SqlBuilderTest {
+
+    @Test
+    fun `sample query`() {
+        val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInAttempt::status eq CheckInAttempt.Status.PENDING) and (CheckInAttempt::appointment eq 1)
+
+        assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((status=?) AND (appointment=?))", listOf(CheckInAttempt.Status.PENDING, 1)))
+    }
+
 }

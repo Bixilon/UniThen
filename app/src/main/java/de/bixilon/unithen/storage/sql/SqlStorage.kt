@@ -23,7 +23,7 @@ import androidx.core.database.sqlite.transaction
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.*
-import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -78,9 +78,8 @@ class SqlStorage(context: Context) : Closeable {
         }
     }
 
-    fun <T> query(@Language("SQL") filter: SqlFilter, runnable: (Cursor) -> T): T {
-        return query(filter.sql, parameters = filter.parameters.toTypedArray(), runnable)
-    }
+    fun <T> query(statement: SqlBuilder.Executable, runnable: (Cursor) -> T) = query(statement.toSql(), runnable)
+    fun <T> query(statement: SqlBuilder.SqlStatement, runnable: (Cursor) -> T) = query(statement.sql, parameters = statement.parameters.toTypedArray(), runnable)
 
     fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
         return helper.readableDatabase.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
