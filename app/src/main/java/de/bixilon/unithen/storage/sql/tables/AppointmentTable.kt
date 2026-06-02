@@ -19,6 +19,7 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNotNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
@@ -71,6 +72,19 @@ class AppointmentTable(
 
         return insert(course, uuid, start, end, canceled, location)
     }
+
+    fun clearAttendees(appointment: Appointment) = update("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
+    fun addAttendee(user: User, appointment: Appointment, attempt: UUID) {
+        insert("INSERT INTO appointment_attendees(user, course, attempt) VALUES (?,?,?) ON CONFLICT(user, course) DO NOTHING", user.id, appointment.id, attempt)
+    }
+    fun removeAttendee(user: User, appointment: Appointment) {
+        insert("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)
+    }
+
+    fun getAttemptId(appointment: Appointment, user: User): UUID? {
+        return storage.query("SELECT attempt FROM $table WHERE appointment=? AND user=?", appointment.id, user.id) { it.getUUIDOrNull(0) }
+    }
+
 
 
     fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)

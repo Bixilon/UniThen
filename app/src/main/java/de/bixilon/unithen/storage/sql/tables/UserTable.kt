@@ -64,6 +64,10 @@ class UserTable(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ?", course.id) { it.collectAll() }
     }
 
+    fun getAttendees(appointment: Appointment): List<User> {
+        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN appointment_attendees ON appointment_attendees.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
+    }
+
     fun getEnrolledNotCheckedIn(appointment: Appointment, course: Course, search: String, sort: AttendeeSort, order: Order): List<User> {
         val query = SqlBuilder.select(UserTable)
             .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
@@ -85,6 +89,9 @@ class UserTable(
 
     fun isEnrolled(course: Course, user: User): Boolean {
         return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.count > 0 } // TODO: verify
+    }
+    fun isAttendee(appointment: Appointment, user: User): Boolean {
+        return storage.query("SELECT 1 FROM appointment_attendees WHERE course=? AND user=?", appointment.id, user.id) { it.count > 0 } // TODO: verify
     }
 
     companion object : SqlSchema<User> {

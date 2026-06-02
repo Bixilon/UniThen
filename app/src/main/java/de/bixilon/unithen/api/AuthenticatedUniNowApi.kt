@@ -16,6 +16,7 @@ import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
+import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
@@ -37,7 +38,7 @@ open class AuthenticatedUniNowApi(
     }
 
     fun getCourses(userId: UUID): List<CourseQl>? {
-        return graphql<Queries>("courses", "userID" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
+        return graphql<Queries>("courses", "user" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
     }
 
     fun getCourse(courseId: UUID): CourseQl? {
@@ -48,20 +49,15 @@ open class AuthenticatedUniNowApi(
         return graphql<Queries>("enrolled", "course" to courseId).course?.enrolled
     }
 
-    fun getCheckInAttempts(appointmentId: UUID): List<CheckInAttemptQl>? {
-        return graphql<Queries>("attempts", "appointment" to appointmentId).appointment?.checkInAttempts
+    fun getCheckInAttempts(appointmentId: UUID): AppointmentQl? {
+        return graphql<Queries>("attempts", "appointment" to appointmentId).appointment
     }
 
-    fun checkInUser(appointmentId: UUID, userId: UUID, expectedAppointmentId: UUID): CheckInAttemptQl? {
-        val variables = arrayOf(
-            "appointmentId" to appointmentId,
-            "userId" to userId,
-            "expectedAppointmentId" to expectedAppointmentId,
-        )
-        return graphql<Mutations>("checkin", *variables).appointmentCheckin
+    fun checkInUser(appointment: UUID, userId: UUID): CheckInAttemptQl? {
+        return graphql<Mutations>("checkin", "appointment" to appointment, "user" to userId).appointmentCheckin
     }
 
     fun deleteCheckinAttempt(attemptId: UUID): CheckInAttemptQl? {
-        return graphql<Mutations>("delete_checkin", "checkinAttemptID" to attemptId).appointmentCheckin
+        return graphql<Mutations>("delete_checkin", "attempt" to attemptId).appointmentCheckin
     }
 }

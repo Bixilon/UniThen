@@ -22,13 +22,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.sync
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
@@ -40,9 +39,8 @@ import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-private fun Sync(account: Account, appointment: Appointment, pending: Int, onFinish: () -> Unit) {
+private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
     val storage = LocalStorage.current
-    val course = storage.courses[appointment.course]!!
 
     var done by remember { mutableIntStateOf(0) }
 
@@ -53,17 +51,13 @@ private fun Sync(account: Account, appointment: Appointment, pending: Int, onFin
 
     // TODO: Show errors
     LaunchedEffect(Unit) {
-        val site = storage.sites[course.site]!!
-
         while (true) {
             if (abort.value) break
-            val attempt = storage.checkInAttempts.takePendingSync(appointment) ?: break
+            val item = storage.checkInQueue.take(appointment) ?: break
             done++
 
-            val user = storage.users[attempt.user]!!
-
             try {
-                sync(storage, site, account, appointment, user)
+                syncQueue(storage, item)
             } catch (error: Throwable) {
                 error.printStackTrace()
             }
@@ -105,7 +99,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         return
     }
 
-    val pending = rememberStorage { checkInAttempts.getPendingSyncCount(appointment) }
+    val pending = rememberStorage { checkInQueue.getCount(appointment) }
 
     var syncing by remember { mutableStateOf(false) }
 
@@ -116,7 +110,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
 
 
     if (syncing) {
-        Sync(account, appointment, pending) { syncing = false }
+        Sync(appointment, pending) { syncing = false }
     }
 
 

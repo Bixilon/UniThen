@@ -28,8 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
-import de.bixilon.unithen.storage.types.CheckInAttempt
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
+import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
@@ -37,7 +37,6 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.verticalScroll
 import java.util.*
@@ -45,9 +44,10 @@ import kotlin.time.Clock
 
 
 @Composable
-private fun AttendeeCard(attempt: CheckInAttempt) {
+private fun AttendeeCard(user: User) {
     val storage = LocalStorage.current
-    val user = rememberStorage { users[attempt.user]!! }
+
+    var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -62,31 +62,38 @@ private fun AttendeeCard(attempt: CheckInAttempt) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                if (attempt.time != null) {
-                    Text(
-                        text = attempt.time.format(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                // TODO: Show time (no data)
+            }
+            val (account, _, appointment) = LocalScanContext.current
+
+            val checkout = useAsyncNetwork<Unit>(account) {
+                try {
+                    loading = true
+                    CheckInUtil.checkOut(storage, appointment, user)
+                } finally {
+                    loading = false
                 }
             }
-            val (_, _, appointment) = LocalScanContext.current
-            Checkbox(true, enabled = false, onCheckedChange = { CheckInUtil.checkOut(storage, appointment, user) })
+
+            Checkbox(true, enabled = !loading, onCheckedChange = {
+                if (loading) return@Checkbox
+                checkout.invoke(Unit)
+            })
         }
     }
 }
 
 @Composable
-private fun AttemptCard(attempt: CheckInAttempt) {
-    val color = when (attempt.status) {
-        CheckInAttempt.Status.FAILED -> MaterialTheme.colorScheme.errorContainer
-        CheckInAttempt.Status.PENDING -> MaterialTheme.colorScheme.tertiaryContainer
-        else -> return
+private fun AttemptCard(item: CheckInQueue) {
+    val color = when {
+        item.attempt != null -> MaterialTheme.colorScheme.secondaryContainer
+        item.message != null -> MaterialTheme.colorScheme.errorContainer
+        else -> MaterialTheme.colorScheme.tertiaryContainer
     }
 
     val storage = LocalStorage.current
-    val user = rememberStorage { users[attempt.user]!! }
-    val appointment = rememberStorage { appointments[attempt.appointment]!! }
+    val user = rememberStorage { users[item.user]!! }
+    val appointment = rememberStorage { appointments[item.appointment]!! }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
@@ -101,8 +108,13 @@ private fun AttemptCard(attempt: CheckInAttempt) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val text = when {
+                    item.attempt != null -> "Checkout pending..."
+                    item.message != null -> "Failed: " + item.message
+                    else -> "Checkin pending..."
+                }
                 Text(
-                    text = if (attempt.status == CheckInAttempt.Status.PENDING) "Synchronization pending..." else "Synchronization failed: " + (attempt.message ?: ""),
+                    text = text,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -110,12 +122,15 @@ private fun AttemptCard(attempt: CheckInAttempt) {
             Row {
                 if (BuildConfig.DEBUG) {
                     IconButton({
-                        storage.checkInAttempts.update(appointment, user, uuid = UUID.randomUUID(), sync = Clock.System.now(), status = CheckInAttempt.Status.OK)
+                        storage.transaction {
+                            storage.checkInQueue.delete(appointment, user)
+                            storage.appointments.addAttendee(user, appointment, UUID.randomUUID())
+                        }
                     }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
                 }
-                if (attempt.status == CheckInAttempt.Status.PENDING) {
+                if (item.message != null) {
                     IconButton({
-                        storage.checkInAttempts.delete(appointment, user)
+                        storage.checkInQueue.delete(appointment, user)
                     }) { Icon(Icons.Filled.Clear, "remove") }
                 }
             }
@@ -127,7 +142,7 @@ private fun AttemptCard(attempt: CheckInAttempt) {
 private fun EnrolledCard(user: User) {
     val storage = LocalStorage.current
 
-    var loading by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -144,7 +159,7 @@ private fun EnrolledCard(user: User) {
                 )
             }
             val (account, _, appointment) = LocalScanContext.current
-            val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, account, appointment, user) }
+            val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, appointment, user) }
 
             Checkbox(false, enabled = !loading, onCheckedChange = {
                 if (loading) return@Checkbox
@@ -163,9 +178,8 @@ fun ScanAttendeeList() {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attempts = rememberStorage { checkInAttempts[appointment, filter.search, filter.sort, filter.order] }
-    val ok = remember(attempts) { attempts.filter { it.status == CheckInAttempt.Status.OK } }
-    val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
+    val attendees = rememberStorage { users.getAttendees(appointment) } // TODO: Filter
+    val queue = rememberStorage { checkInQueue[appointment, filter.search, filter.sort, filter.order] }
 
     val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course, filter.search, filter.sort, filter.order) }
 
@@ -175,7 +189,7 @@ fun ScanAttendeeList() {
     val _refresh = useAsyncNetwork<Boolean>(account) {
         try {
             refreshing = true
-            storage.fetchCheckInAttempts(account, appointment, it)
+            storage.fetchAttendees(account, appointment, it)
         } finally {
             refreshing = false
         }
@@ -194,7 +208,7 @@ fun ScanAttendeeList() {
 
 
     Section {
-        SectionTitle("Attendees (${ok.size}/${enrolled})")
+        SectionTitle("Attendees (${attendees.size}/${enrolled})")
 
         val state = rememberLazyListState()
 
@@ -210,8 +224,8 @@ fun ScanAttendeeList() {
                 state = state,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(items = ok, key = { it.user }) { AttendeeCard(it) }
-                items(items = other, key = { it.user }) { AttemptCard(it) }
+                items(items = attendees, key = User::id) { AttendeeCard(it) }
+                items(items = queue, key = { it.user }) { AttemptCard(it) }
                 items(items = not, key = User::id) { EnrolledCard(it) }
             }
         }

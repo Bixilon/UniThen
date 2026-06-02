@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.Account
-import de.bixilon.unithen.storage.types.CheckInAttempt
+import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.InfoContainer
@@ -32,9 +32,10 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUnknownUserException
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -47,7 +48,7 @@ import kotlin.time.Clock
 
 
 @Composable
-private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attempt: CheckInAttempt?, message: String?) {
+private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attendee: Boolean, attempt: CheckInQueue?, message: String?) {
     val size = Modifier
         .height(200.dp)
         .width(200.dp)
@@ -60,21 +61,22 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attempt
     when {
         user == null -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
         !enrolled -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
-        attempt != null && attempt.status == CheckInAttempt.Status.FAILED -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
+        (attempt != null && attempt.message != null) || attendee -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
         attempt != null -> Icon(Icons.Filled.Warning, "", tint = Color.Yellow, modifier = size)
 
         else -> Icon(Icons.Filled.CheckCircle, "", tint = Color(0xFF00A000), modifier = size) // dark green
     }
 
-    if (message != null) {
-        return ErrorBox(message)
+    if (message != null || attempt?.message != null) {
+        return ErrorBox(message ?: attempt?.message ?: "Error")
     }
 
     val warning = when {
         user == null -> "Unknown user!"
         !enrolled -> "User is not enrolled in course!"
-        attempt != null && attempt.status == CheckInAttempt.Status.FAILED -> "Server did not accept previous check in (User might not be enrolled)!"
-        attempt != null -> "User is already checked in${if (attempt.status == CheckInAttempt.Status.PENDING) " (synchronization pending)" else ""}!"
+        attempt != null && attempt.attempt == null -> "User is already checked in (checkout pending)"
+        attendee -> "User is already checked in"
+        attempt != null -> "User is already checked in (synchronization pending)"
         else -> null
     }
 
@@ -116,7 +118,8 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
     val (account, course, appointment) = LocalScanContext.current
 
     val enrolled = user?.let { rememberStorage { users.isEnrolled(course, user) } } ?: false
-    val attempt = rememberStorage { user?.let { checkInAttempts[appointment, user] } }
+    val attendee = rememberStorage { user?.let { users.isAttendee(appointment, user) } } ?: false
+    val queue = rememberStorage { user?.let { checkInQueue[appointment, user] } }
 
     var message by remember { mutableStateOf<String?>(null) }
     var confirming by remember { mutableStateOf(false) }
@@ -124,7 +127,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
 
-        Warning(confirming, user, enrolled, attempt, message)
+        Warning(confirming, user, enrolled, attendee, queue, message)
         Spacer(Modifier.height(16.dp))
 
 
@@ -147,16 +150,13 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
         val checkin = useAsyncNetwork<Unit>(account) {
             try {
                 confirming = true
-                val attempt = if (user == null) {
-                    CheckInUtil.checkIn(storage, account, appointment, userId) // TODO: Show message?
+                if (user == null) {
+                    CheckInUtil.checkIn(storage, account, appointment, userId)
                 } else {
-                    CheckInUtil.checkIn(storage, account, appointment, user)
+                    CheckInUtil.checkIn(storage, appointment, user)
                 }
-                if (attempt == null) return@useAsyncNetwork // TODO: How can that happen
 
-                if (attempt.status == CheckInAttempt.Status.OK) {
-                    navigation.pop()
-                }
+                navigation.pop()
             } catch (error: IOException) {
                 if (user == null) {
                     message = "Network error"
@@ -166,6 +166,8 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 throw error
             } catch (error: CheckInUnknownUserException) {
                 message = "Unknown user: " + (error.message ?: "")
+            } catch (error: CheckInError) {
+                message = "Error: " + (error.message ?: "")
             } finally {
                 confirming = false
             }
@@ -179,14 +181,14 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 Text("Cancel")
             }
 
-            if (attempt != null && attempt.status == CheckInAttempt.Status.PENDING) {
+            if (queue != null && queue.message == null) {
                 Button({ checkin.invoke(Unit) }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
                     Icon(Icons.Filled.Sync, "synchronize")
                     Text("Try synchronize")
                 }
             }
 
-            Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && attempt == null, modifier = Modifier.fillMaxWidth()) {
+            Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
                     Text("Try anyways")

@@ -62,7 +62,7 @@ private fun getErrorReason(storage: SqlStorage, course: Course, appointment: App
 
     val enrolled = storage.users.isEnrolled(course, user)
     if (!enrolled) return QrErrorReasons.NOT_ENROLLED
-    val attempt = storage.checkInAttempts[appointment, user]
+    val attempt = storage.checkInQueue[appointment, user]
     if (attempt != null) return QrErrorReasons.ALREADY_CHECKED_IN
 
     return null

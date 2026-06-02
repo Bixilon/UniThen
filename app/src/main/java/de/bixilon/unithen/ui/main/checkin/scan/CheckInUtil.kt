@@ -17,6 +17,8 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -26,36 +28,51 @@ import kotlin.time.Duration.Companion.minutes
 object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
 
-    suspend fun sync(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
-        val now = Clock.System.now()
+    suspend fun syncQueue(storage: SqlStorage, item: CheckInQueue) {
+        val user = storage.users[item.user]!!
 
-        if (storage.checkInAttempts[appointment, user] == null) {
-            storage.checkInAttempts.add(appointment, user, now, sync = now)
-        } else {
-            storage.checkInAttempts.update(appointment, user, sync = now)
-        }
+        val appointment = storage.appointments[item.appointment]!!
+        val course = storage.courses[appointment.course]!!
+        val site = storage.sites[course.site]!!
+        val account = storage.accounts.getTutorAccount(course) ?: return
 
 
         val attemptQl = withContext(Dispatchers.IO) {
             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
 
-            return@withContext api.checkInUser(appointment.uuid, user.uuid, appointment.uuid)
+            return@withContext api.checkInUser(appointment.uuid, user.uuid)
         }
 
         if (attemptQl == null) throw IllegalStateException("Null attempt?")
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
-        storage.checkInAttempts.update(appointment, user, uuid = attemptQl.id, message = attemptQl.message, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+        if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
+            storage.checkInQueue.update(appointment, user, message = attemptQl.message ?: "Unknown")
+
+            throw CheckInError(attemptQl.message)
+        }
+        storage.appointments.addAttendee(user, appointment, attemptQl.id) // TODO: Add to enrolled?
+        storage.checkInQueue.delete(appointment, user)
     }
 
-    suspend fun sync(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
+    private suspend fun sync(storage: SqlStorage, appointment: Appointment, user: User) {
         val now = Clock.System.now()
 
+        if (storage.checkInQueue[appointment, user] == null) {
+            storage.checkInQueue.addPending(appointment, user, now)
+        } else {
+            storage.checkInQueue.update(appointment, user, sync = now)
+        }
+
+        syncQueue(storage, storage.checkInQueue[appointment, user] ?: return)
+    }
+
+    private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
         val attemptQl = withContext(Dispatchers.IO) {
             val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
 
-            return@withContext api.checkInUser(appointment.uuid, userId, appointment.uuid)
+            return@withContext api.checkInUser(appointment.uuid, userId)
         }
         if (attemptQl == null) return
         if (attemptQl.user == null) {
@@ -64,51 +81,66 @@ object CheckInUtil {
 
         val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
-        storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
+        if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
+            throw CheckInError(attemptQl.message)
+        }
+
+        storage.appointments.addAttendee(user, appointment, attemptQl.id)  // TODO: Add to enrolled?
     }
 
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
+    suspend fun checkIn(storage: SqlStorage, appointment: Appointment, user: User) {
+        sync(storage, appointment, user)
+    }
+
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: UUID) {
         val site = storage.sites[account.site]!!
 
-        sync(storage, site, account, appointment, user)
-
-        return storage.checkInAttempts[appointment, user]!!
+        syncUnknownUser(storage, site, account, appointment, userId)
     }
 
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: UUID): CheckInAttempt? {
-        val site = storage.sites[account.site]!!
+    suspend fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
+        val course = storage.courses[appointment.course]!!
+        val site = storage.sites[course.site]!!
+        val account = storage.accounts.getTutorAccount(course) ?: return
 
-        sync(storage, site, account, appointment, userId)
-        val user = storage.users[site, userId] ?: return null
+        val attempt = storage.appointments.getAttemptId(appointment, user) ?: return
 
-        return storage.checkInAttempts[appointment, user]
-    }
+        storage.transaction {
+            storage.appointments.removeAttendee(user, appointment)
+            storage.checkInQueue.addCheckout(appointment, user, attempt, Clock.System.now())
+        }
 
-    fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
-        TODO("Implement")
+
+        val attemptQl = withContext(Dispatchers.IO) {
+            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+
+            return@withContext api.deleteCheckinAttempt(attempt)
+        }
+
+        if (attemptQl == null) throw IllegalStateException("Null attempt?")
+
+        attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
+
+        storage.checkInQueue.delete(appointment, user)
+
+        if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
+            throw CheckInError(attemptQl.message)
+        }
     }
 
 
     suspend fun synchronizeDatabase(storage: SqlStorage, progress: (current: Int, total: Int) -> Unit) {
-        val count = storage.checkInAttempts.getPendingSyncCount()
+        val count = storage.checkInQueue.count
 
         if (count == 0) return
 
         var done = 0
         while (true) {
-            val attempt = storage.checkInAttempts.takePendingSync() ?: break
+            val item = storage.checkInQueue.take() ?: break
 
             progress.invoke(done++, count)
 
-            val user = storage.users[attempt.user]!!
-
-            val appointment = storage.appointments[attempt.appointment]!!
-            val course = storage.courses[appointment.course]!!
-            val site = storage.sites[course.site]!!
-            val account = storage.accounts.getTutorAccount(course) ?: continue
-
-
-            sync(storage, site, account, appointment, user)
+            syncQueue(storage, item)
         }
     }
 }

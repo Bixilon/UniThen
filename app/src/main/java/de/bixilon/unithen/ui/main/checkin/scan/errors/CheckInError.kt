@@ -10,25 +10,8 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types.checkin
+package de.bixilon.unithen.ui.main.checkin.scan.errors
 
-import com.fasterxml.jackson.annotation.JsonProperty
-import de.bixilon.unithen.api.graphql.types.IdentifiedQl
-import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
-import java.util.*
+import de.bixilon.kutil.exception.FastException
 
-data class CheckInAttemptQl(
-    override val id: UUID,
-    val status: Status,
-    val message: String?,
-    val user: CourseUserQl?,
-) : IdentifiedQl {
-
-
-    enum class Status {
-        @JsonProperty("Success")
-        SUCCESS,
-        @JsonProperty("Error")
-        ERROR, // TODO
-    }
-}
+open class CheckInError(message: String?) : FastException(message)

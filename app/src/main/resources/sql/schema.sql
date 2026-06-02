@@ -120,24 +120,31 @@ CREATE TABLE course_enrolled (
   FOREIGN KEY (course) REFERENCES courses(id)
 );
 
-CREATE TABLE appointment_checkins (
+CREATE TABLE appointment_attendees (
   user INTEGER,
   appointment INTEGER,
 
-  uuid VARCHAR(36) NULL,
-  time INTEGER,
+  attempt VARCHAR(36) NULL,
 
-  message VARCHAR(1024) NULL,
+  PRIMARY KEY (user, appointment),
+  FOREIGN KEY (user) REFERENCES users(id),
+  FOREIGN KEY (appointment) REFERENCES appointments(id)
+);
+
+CREATE TABLE checkin_queue (
+  user INTEGER,
+  appointment INTEGER,
+
+  time INTEGER,
+  attempt VARCHAR(36) NULL, -- If attempt is set, we check out the user again
+  message VARCHAR(1024) NULL, -- If message is set, it failed
 
   sync INTEGER NULL,
-
-  status TEXT CHECK(status IN ('OK', 'FAILED', 'PENDING')),
 
 
   PRIMARY KEY (user, appointment),
   FOREIGN KEY (user) REFERENCES users(id),
-  FOREIGN KEY (appointment) REFERENCES appointments(id),
-  UNIQUE (appointment, uuid)
+  FOREIGN KEY (appointment) REFERENCES appointments(id)
 );
 
 CREATE VIRTUAL TABLE users_fts USING fts4(fullname, tokenize=unicode61);

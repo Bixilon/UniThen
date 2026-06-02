@@ -1,4 +1,4 @@
-query List_Postings($course: ID!) {
+query ($course: ID!) {
     courses_pk(id: $course) {
         __typename
         id

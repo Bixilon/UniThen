@@ -35,7 +35,7 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
     companion object {
         const val NAME = "uninow"
-        const val VERSION = 7
+        const val VERSION = 8
 
         fun SQLiteDatabase.executeBatch(path: String) {
             val raw = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString()

@@ -12,32 +12,16 @@
 
 package de.bixilon.unithen.storage.types
 
-import de.bixilon.kutil.enums.ValuesEnum
-import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
 import java.util.*
 import kotlin.time.Instant
 
-data class CheckInAttempt(
+data class CheckInQueue(
     val user: Key,
     val appointment: Key,
-    val uuid: UUID?,
     val time: Instant?,
-    val message: String?,
+    val attempt: UUID?, // If attempt is set, we check out the user again
+    val message: String?, //  If message is set, it failed
     val sync: Instant?,
-    val status: Status,
-) : DbObject {
-
-    enum class Status {
-        OK,
-        FAILED,
-        PENDING,
-        ;
-
-        companion object : ValuesEnum<Status> {
-            override val VALUES = values()
-            override val NAME_MAP = names()
-        }
-    }
-}
+) : DbObject

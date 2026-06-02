@@ -1,12 +1,11 @@
-mutation Appointment_checkin(
-    $actualAppointmentId: ID!
-    $userId: ID!
-    $expectedAppointmentId: ID!
+mutation(
+    $appointment: ID!
+    $user: ID!
 ) {
     appointment_checkin(
-        actualAppointmentID: $actualAppointmentId
-        userID: $userId
-        expectedAppointmentID: $expectedAppointmentId
+        actualAppointmentID: $appointment
+        userID: $user
+        expectedAppointmentID: $appointment
     ) {
         id
         message

@@ -26,7 +26,7 @@ fun useForeground(): Boolean {
         val lifecycle = lifecycleOwner.lifecycle
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_START -> state = false
+                Lifecycle.Event.ON_START -> state = true
                 Lifecycle.Event.ON_PAUSE -> state = false
                 Lifecycle.Event.ON_RESUME -> state = true
                 Lifecycle.Event.ON_DESTROY -> state = false

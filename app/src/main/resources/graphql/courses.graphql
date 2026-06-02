@@ -1,5 +1,5 @@
-query List_Postings($userID: ID!) {
-    user_pk(userID: $userID) {
+query ($user: ID!) {
+    user_pk(userID: $user) {
         id
         postings {
             id

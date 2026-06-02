@@ -43,7 +43,7 @@ class SqlStorage(context: Context) : Closeable {
     val accounts = AccountTable(this)
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
-    val checkInAttempts = CheckInAttemptsTable(this)
+    val checkInQueue = CheckInQueueTable(this)
 
     init {
         if (sites.count == 0) {
