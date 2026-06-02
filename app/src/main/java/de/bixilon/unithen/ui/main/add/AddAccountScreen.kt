@@ -74,7 +74,7 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
             }
 
             Text(
-                text = site.url.toString(),
+                text = site.host,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,

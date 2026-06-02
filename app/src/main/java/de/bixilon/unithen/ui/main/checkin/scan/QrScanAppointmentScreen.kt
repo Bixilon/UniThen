@@ -13,6 +13,8 @@
 package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +57,31 @@ fun getInvalidReason(storage: SqlStorage, course: Course, appointment: Appointme
     if (attempt != null) return "Already checked in"
 
     return null
+}
+
+@Composable
+private fun ScanInstructions(course: Course?) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .padding(top = 50.dp),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+
+            if (course != null) {
+                Text(
+                    text = course.name,
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+            }
+            Text("Please scan the QR code")
+        }
+    }
 }
 
 @Composable
@@ -152,6 +179,8 @@ fun QrScanAppointmentScreen() {
             }
         }
     }
+
+    ScanInstructions(course)
 
     ErrorOverlay(errors)
 }

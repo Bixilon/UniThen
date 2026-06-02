@@ -21,7 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.kutil.enums.ValuesEnum
@@ -34,7 +36,7 @@ import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.main.settings.types.Labeled
-import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.main.setup.SetupScreen
 import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import de.bixilon.unithen.ui.navigation.Navigator
@@ -59,19 +61,10 @@ enum class MainScreens(
     }
 }
 
-
 @Composable
-fun MainScreen() {
-    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
+fun ActualMainScreen() {
+    val entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
     val navigator = remember { Navigator(entrypoint.route, NavigationMode.SINGLE) }
-    val accounts = rememberStorage { accounts.count }
-
-    val _navigator = LocalNavigation.current
-    LaunchedEffect(accounts) {
-        if (accounts == 0) {
-            _navigator.navigate(SetupRoute)
-        }
-    }
 
 
     navigator.routes {
@@ -102,4 +95,16 @@ fun MainScreen() {
             }
         }
     }
+}
+
+
+@Composable
+fun MainScreen() {
+    val accounts = rememberStorage { accounts.count }
+
+    if (accounts == 0) {
+        return SetupScreen()
+    }
+
+    ActualMainScreen()
 }

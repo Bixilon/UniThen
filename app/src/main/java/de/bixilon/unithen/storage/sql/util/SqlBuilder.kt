@@ -38,7 +38,7 @@ object SqlBuilder {
     class Select internal constructor(val fields: List<String>) {
 
         infix fun from(table: String) = From(fields, listOf(table))
-        infix fun from(table: SqlTable<*>) = From(fields, table.columns)
+        infix fun from(table: SqlTable<*>) = from(table.table)
     }
 
     class From internal constructor(

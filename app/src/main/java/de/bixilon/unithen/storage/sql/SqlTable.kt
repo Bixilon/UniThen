@@ -20,7 +20,7 @@ import org.intellij.lang.annotations.Language
 
 abstract class SqlTable<T>(
     protected val storage: SqlStorage,
-    protected val table: String,
+    val table: String,
 ) {
     val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.collectIntAggregation() }
 
