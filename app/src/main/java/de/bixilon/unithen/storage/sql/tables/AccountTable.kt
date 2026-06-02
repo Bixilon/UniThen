@@ -23,7 +23,9 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlSchema
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
@@ -33,10 +35,10 @@ import kotlin.time.Instant
 
 class AccountTable(
     storage: SqlStorage,
-) : SqlTable<Account>(storage, "accounts") {
-    override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key", "fetched")
+) : SqlTable<Account>(storage, table) {
+    override val columns get() = AccountTable.columns
 
-    override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
+    override fun map(cursor: Cursor) = AccountTable.map(cursor)
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
@@ -66,7 +68,15 @@ class AccountTable(
     }
 
     fun getTutorAccount(course: Course): Account? {
-        return storage.accounts.get(course).firstOrNull() // TODO: Implement
+        val query = SqlBuilder.select(AccountTable)
+            .innerJoin("users", "users.uuid = accounts.uuid")
+            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .innerJoin("tutor_courses", "tutor_courses.user = users.id")
+            .where(SqlFilter("account_courses.course=?", listOf(course.id)))
+            .and(SqlFilter("tutor_courses.course=?", listOf(course.id)))
+            .limit(1)
+
+        return storage.query(query) { it.collectAll() }.firstOrNull()
     }
 
     fun logout(account: Account) {
@@ -75,5 +85,12 @@ class AccountTable(
 
     fun addToCourse(account: Account, course: Course) {
         insert("INSERT INTO account_courses(account, course) VALUES (?,?) ON CONFLICT(account, course) DO NOTHING", account.id, course.id)
+    }
+
+    companion object : SqlSchema<Account> {
+        override val table = "accounts"
+        override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key", "fetched")
+
+        override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
     }
 }

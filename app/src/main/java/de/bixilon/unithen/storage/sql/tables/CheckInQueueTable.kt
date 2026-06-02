@@ -66,7 +66,7 @@ class CheckInQueueTable(
     }
 
     fun addCheckout(appointment: Appointment, user: User, attempt: UUID, sync: Instant) {
-        insert("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, sync, attempt, attempt, sync)
+        insert("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
     }
 
     operator fun get(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<CheckInQueue> {
@@ -99,7 +99,7 @@ class CheckInQueueTable(
         val _appointment = appointment?.let { CheckInQueue::appointment eq appointment.id }
 
         return storage.transaction {
-            val entry = first(SqlFilter("sync<?", last) and _appointment) ?: return@transaction null
+            val entry = first(SqlFilter("sync<? LIMIT 1", last) and _appointment) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 
@@ -111,6 +111,6 @@ class CheckInQueueTable(
         override val table get() = "checkin_queue"
         override val columns = listOf("user", "appointment", "time", "attempt", "message", "sync")
 
-        override fun map(cursor: Cursor) = CheckInQueue(cursor.getInt(0), cursor.getInt(1), cursor.getInstantOrNull(3), cursor.getUUIDOrNull(2), cursor.getStringOrNull(4), cursor.getInstantOrNull(5))
+        override fun map(cursor: Cursor) = CheckInQueue(cursor.getInt(0), cursor.getInt(1), cursor.getInstantOrNull(2), cursor.getUUIDOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5))
     }
 }

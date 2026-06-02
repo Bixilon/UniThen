@@ -84,9 +84,9 @@ private fun AttendeeCard(user: User) {
 }
 
 @Composable
-private fun AttemptCard(item: CheckInQueue) {
+private fun QueueCard(item: CheckInQueue) {
     val color = when {
-        item.attempt != null -> MaterialTheme.colorScheme.secondaryContainer
+        item.attempt != null -> MaterialTheme.colorScheme.surfaceContainer
         item.message != null -> MaterialTheme.colorScheme.errorContainer
         else -> MaterialTheme.colorScheme.tertiaryContainer
     }
@@ -124,11 +124,13 @@ private fun AttemptCard(item: CheckInQueue) {
                     IconButton({
                         storage.transaction {
                             storage.checkInQueue.delete(appointment, user)
-                            storage.appointments.addAttendee(user, appointment, UUID.randomUUID())
+                            if (item.attempt == null) {
+                                storage.appointments.addAttendee(user, appointment, UUID.randomUUID())
+                            }
                         }
                     }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
                 }
-                if (item.message != null) {
+                if (item.message == null) {
                     IconButton({
                         storage.checkInQueue.delete(appointment, user)
                     }) { Icon(Icons.Filled.Clear, "remove") }
@@ -225,7 +227,7 @@ fun ScanAttendeeList() {
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(items = attendees, key = User::id) { AttendeeCard(it) }
-                items(items = queue, key = { it.user }) { AttemptCard(it) }
+                items(items = queue, key = { it.user }) { QueueCard(it) }
                 items(items = not, key = User::id) { EnrolledCard(it) }
             }
         }

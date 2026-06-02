@@ -46,9 +46,9 @@ class AppointmentTable(
         val _canceled = canceled?.let { if (it) Appointment::canceled.isNotNull() else Appointment::canceled.isNull() }
         val _member = member?.let { val not = if (it) "" else "NOT"; SqlFilter("$not EXISTS (SELECT 1 FROM account_courses WHERE $table.course = account_courses.course)") }
         val _tutor = tutor?.let {
-            if(it) {
+            if (it) {
                 SqlFilter("EXISTS (SELECT 1 FROM account_courses JOIN tutor_courses ON tutor_courses.user = account_courses.account AND tutor_courses.course = account_courses.course WHERE account_courses.course = $table.course)")
-            }else {
+            } else {
                 SqlFilter("EXISTS (SELECT 1 FROM account_courses WHERE account_courses.course = appointments.course AND NOT EXISTS (SELECT 1 FROM tutor_courses WHERE tutor_courses.user = account_courses.account AND tutor_courses.course = account_courses.course))")
             }
         }
@@ -77,14 +77,14 @@ class AppointmentTable(
     fun addAttendee(user: User, appointment: Appointment, attempt: UUID) {
         insert("INSERT INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id, attempt)
     }
+
     fun removeAttendee(user: User, appointment: Appointment) {
         insert("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)
     }
 
     fun getAttemptId(appointment: Appointment, user: User): UUID? {
-        return storage.query("SELECT attempt FROM $table WHERE appointment=? AND user=?", appointment.id, user.id) { it.getUUIDOrNull(0) }
+        return storage.query("SELECT attempt FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { if (it.moveToNext()) it.getUUIDOrNull(0) else null }
     }
-
 
 
     fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)

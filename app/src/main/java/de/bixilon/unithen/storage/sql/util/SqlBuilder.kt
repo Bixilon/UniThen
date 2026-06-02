@@ -49,7 +49,7 @@ object SqlBuilder {
     class From internal constructor(
         private val fields: List<String>,
         private val from: List<String>,
-    ) : Whereable, Executable, Joinable, Orderable {
+    ) : Whereable, Executable, Joinable, Orderable, Limitable {
 
         override fun toSql() = SqlStatement("SELECT ${fields.joinToString(",")} FROM ${from.joinToString(",")}", listOf()) // TODO: SQL injection possible?
     }
@@ -58,7 +58,7 @@ object SqlBuilder {
         private val executable: Executable,
         private val table: String,
         private val on: SqlFilter,
-    ) : Whereable, Executable, Joinable, Orderable {
+    ) : Whereable, Executable, Joinable, Orderable, Limitable {
         override fun toSql() = executable + SqlStatement("INNER JOIN $table ON", listOf()) + SqlStatement(on.sql, on.parameters)
     }
 
@@ -70,7 +70,7 @@ object SqlBuilder {
     class Where internal constructor(
         private val executable: Executable,
         private val where: SqlFilter,
-    ) : Executable, Orderable {
+    ) : Executable, Orderable, Limitable {
 
         override fun toSql() = executable + SqlStatement("WHERE (" + where.sql + ")", where.parameters)
 
@@ -86,13 +86,28 @@ object SqlBuilder {
     class Order internal constructor(
         private val executable: Executable,
         private val sort: List<Pair<String, Order>>,
-    ) : Executable {
+    ) : Executable, Limitable {
 
         override fun toSql() = executable + SqlStatement("ORDER BY " + sort.joinToString(",") { it.first + " " + it.second.name }, listOf())
 
         enum class Order {
             ASC,
             DESC,
+        }
+    }
+
+    interface Limitable : Executable {
+        fun limit(count: Int) = Limit(this, count)
+    }
+
+    class Limit internal constructor(
+        private val executable: Executable,
+        private val limit: Int,
+    ) : Executable {
+        override fun toSql() = executable + SqlStatement("LIMIT ?", listOf(limit))
+
+        init {
+            assert(limit > 0)
         }
     }
 
