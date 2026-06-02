@@ -21,6 +21,7 @@ object Settings {
     val FAKE_TIME = Setting("fake_time", false)
 
     val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
+    val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", false)
 
     val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
 

@@ -30,7 +30,10 @@ import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.sync
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import kotlinx.coroutines.delay
@@ -104,6 +107,10 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
 
     var syncing by remember { mutableStateOf(false) }
 
+    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    val visible = LocalVisibility.current
+
+    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }
 
 
     if (syncing) {

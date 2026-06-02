@@ -40,8 +40,7 @@ import kotlin.time.Instant
 
 @Composable
 fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
-    val visible = LocalVisibility.current
-    if (!visible) return
+    if (!LocalVisibility.current || !useForeground()) return
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) return

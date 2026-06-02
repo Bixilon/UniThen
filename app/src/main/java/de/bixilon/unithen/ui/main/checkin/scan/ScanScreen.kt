@@ -19,6 +19,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,7 +32,10 @@ import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.present.FastCheckinNoAppointments
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
@@ -78,6 +83,12 @@ fun AppointmentCard(appointment: Appointment) {
 
 @Composable
 private fun ChooseAppointment(appointments: List<Appointment>) {
+    val navigation = LocalNavigation.current
+    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    val visible = LocalVisibility.current
+
+    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanAnyRoute) }
+
     Screen {
         ScreenTitle("Please choose appointment")
 
@@ -95,7 +106,6 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
                     .align(Alignment.BottomEnd),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val navigation = LocalNavigation.current
                 FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")
                 }

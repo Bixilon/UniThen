@@ -13,28 +13,32 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.*
-import de.bixilon.unithen.ui.main.settings.Settings
-import de.bixilon.unithen.ui.main.settings.rememberSetting
-import kotlinx.coroutines.delay
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
-
-fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else Clock.System.now()
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
-fun useTime(): Instant {
-    val fakeTime by rememberSetting(Settings.FAKE_TIME)
-    var time by remember { mutableStateOf(getTime(fakeTime)) }
+fun useForeground(): Boolean {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var state by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            time = getTime(fakeTime)
-            delay(10.seconds)
+    DisposableEffect(lifecycleOwner) {
+        val lifecycle = lifecycleOwner.lifecycle
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> state = false
+                Lifecycle.Event.ON_PAUSE -> state = false
+                Lifecycle.Event.ON_RESUME -> state = true
+                Lifecycle.Event.ON_DESTROY -> state = false
+                else -> Unit
+            }
+        }
+        lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycle.removeObserver(observer)
         }
     }
 
-    LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
-
-    return time
+    return state
 }
