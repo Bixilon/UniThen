@@ -59,14 +59,13 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            val update = useAsyncNetwork<Unit>(account) { storage.fetch(account, true) }
+            val update = useAsyncNetwork<Unit>(account) { refreshing = true; storage.fetch(account, true) }
             DropdownMenuItem(
                 text = { Text(if (refreshing) "Updating..." else "Update") },
                 enabled = !refreshing,
                 onClick = {
-                    refreshing = true
-                    update.invoke(Unit)
                     expanded = false
+                    update.invoke(Unit)
                 }
             )
             // TODO: Remove account
@@ -77,8 +76,8 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
     if (refreshing) {
         AlertDialog(
             confirmButton = {},
-            onDismissRequest = {},
-            title = { Text("Refreshing account...") },
+            onDismissRequest = { refreshing = false },
+            title = { Text("Updating...") },
             text = {
                 Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator()

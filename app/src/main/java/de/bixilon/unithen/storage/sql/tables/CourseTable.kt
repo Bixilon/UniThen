@@ -18,6 +18,7 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.types.*
 import java.util.*
@@ -62,11 +63,24 @@ class CourseTable(
     }
 
     fun isTutor(): Boolean {
-        return storage.query("SELECT 1 FROM account_courses INNER JOIN tutor_courses ON account_courses.course = tutor_courses.course") { it.count > 0 }
+        val query = SqlBuilder.select("1").from("accounts")
+            .innerJoin("users", "users.uuid = accounts.uuid")
+            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .innerJoin("tutor_courses", "tutor_courses.user = users.id")
+            .limit(1)
+
+        return storage.query(query) { it.count > 0 }
     }
 
     fun isMember(): Boolean {
-        return storage.query("SELECT 1 FROM account_courses LEFT JOIN tutor_courses ON account_courses.course = tutor_courses.course WHERE tutor_courses.user IS NULL") { it.count > 0 }
+        val query = SqlBuilder.select("1").from("accounts")
+            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .leftJoin("users", "users.uuid = accounts.uuid")
+            .leftJoin("tutor_courses", "tutor_courses.user = users.id")
+            .where(SqlFilter("tutor_courses.user IS NULL"))
+            .limit(1)
+
+        return storage.query(query) { it.count > 0 }
     }
 
     operator fun get(account: Account): List<Course> {

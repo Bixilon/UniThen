@@ -44,6 +44,9 @@ object SqlBuilder {
     interface Joinable : Executable {
         fun innerJoin(table: String, on: SqlFilter) = InnerJoin(this, table, on)
         fun innerJoin(table: String, on: String) = InnerJoin(this, table, SqlFilter(on, listOf()))
+
+        fun leftJoin(table: String, on: SqlFilter) = LeftJoin(this, table, on)
+        fun leftJoin(table: String, on: String) = LeftJoin(this, table, SqlFilter(on, listOf()))
     }
 
     class From internal constructor(
@@ -60,6 +63,14 @@ object SqlBuilder {
         private val on: SqlFilter,
     ) : Whereable, Executable, Joinable, Orderable, Limitable {
         override fun toSql() = executable + SqlStatement("INNER JOIN $table ON", listOf()) + SqlStatement(on.sql, on.parameters)
+    }
+
+    class LeftJoin internal constructor(
+        private val executable: Executable,
+        private val table: String,
+        private val on: SqlFilter,
+    ) : Whereable, Executable, Joinable, Orderable, Limitable {
+        override fun toSql() = executable + SqlStatement("LEFT JOIN $table ON", listOf()) + SqlStatement(on.sql, on.parameters)
     }
 
     interface Whereable : Executable {
