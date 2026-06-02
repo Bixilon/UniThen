@@ -32,7 +32,7 @@ fun Modifier.verticalScroll(
 
     val size = indicator.viewportSize
     val content = indicator.contentSize
-    if (size > indicator.contentSize) return@drawWithContent
+    if (size >= indicator.contentSize) return@drawWithContent
 
 
     val height = ((size.toFloat() / content) * size)
