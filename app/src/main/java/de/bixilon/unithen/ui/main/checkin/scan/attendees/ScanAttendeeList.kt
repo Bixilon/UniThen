@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui.main.checkin.scan.attendees
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
@@ -37,6 +38,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.verticalScroll
 import java.util.*
 import kotlin.time.Clock
 
@@ -151,11 +153,11 @@ fun ScanAttendeeList() {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attempts = rememberStorage { checkInAttempts[appointment, filter.search.value, filter.sort.value, filter.order.value] }
+    val attempts = rememberStorage { checkInAttempts[appointment, filter.search, filter.sort, filter.order] }
     val ok = remember(attempts) { attempts.filter { it.status == CheckInAttempt.Status.OK } }
     val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
 
-    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course, filter.search.value, filter.sort.value, filter.order.value) }
+    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course, filter.search, filter.sort, filter.order) }
 
 
     val storage = LocalStorage.current
@@ -184,12 +186,18 @@ fun ScanAttendeeList() {
     Section {
         SectionTitle("Attendees (${ok.size}/${enrolled})")
 
+        val state = rememberLazyListState()
+
+        LaunchedEffect(filter.search) { state.animateScrollToItem(0, 0) }
 
         UserFilterX(filter)
 
         PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(state),
+                state = state,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 items(items = ok, key = { it.user }) { AttendeeCard(it) }

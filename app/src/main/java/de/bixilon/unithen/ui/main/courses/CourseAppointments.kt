@@ -37,6 +37,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useTime
+import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.flow.first
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -108,6 +109,7 @@ fun CourseAppointments(course: Course) {
         SectionTitle("Appointments (+${appointments.filter { it.start > now && it.canceled == null }.size}/${appointments.size})")
 
         LazyColumn(
+            modifier = Modifier.verticalScroll(state),
             state = state,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {

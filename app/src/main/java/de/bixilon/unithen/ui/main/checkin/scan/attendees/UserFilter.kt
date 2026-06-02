@@ -34,7 +34,11 @@ import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 
 
-data class UserFilter(val search: MutableState<String>, val sort: MutableState<AttendeeSort>, val order: MutableState<Order>)
+class UserFilter(_search: MutableState<String>, _sort: MutableState<AttendeeSort>, _order: MutableState<Order>) {
+    var search by _search
+    var sort by _sort
+    var order by _order
+}
 
 @Composable
 fun rememberUserFilter(): UserFilter {
@@ -48,7 +52,7 @@ fun rememberUserFilter(): UserFilter {
 fun UserFilterX(filter: UserFilter) {
     val search = rememberTextFieldState()
 
-    LaunchedEffect(search.text) { filter.search.value = search.text.toString().trimWhitespaces() }
+    LaunchedEffect(search.text) { filter.search = search.text.toString().trimWhitespaces() }
 
     Row(modifier = Modifier
         .fillMaxWidth()
@@ -57,7 +61,7 @@ fun UserFilterX(filter: UserFilter) {
             search,
             lineLimits = TextFieldLineLimits.SingleLine,
             modifier = Modifier.weight(1.0f, true),
-            placeholder = { Text("Search...") }, label = { Text("Search") },
+            placeholder = { Text("Search...") },
             trailingIcon = {
                 if (search.text.isNotBlank()) {
                     IconButton({ search.clearText() }) { Icon(Icons.Default.Clear, "clear") }
@@ -76,20 +80,20 @@ fun UserFilterX(filter: UserFilter) {
             ) {
                 for (item in AttendeeSort) {
                     var color = MenuDefaults.itemColors()
-                    if (filter.sort.value == item) {
+                    if (filter.sort == item) {
                         color = color.copy(textColor = MaterialTheme.colorScheme.onTertiaryContainer)
                     }
                     DropdownMenuItem(
                         text = { Text(item.label) },
                         colors = color,
-                        onClick = { filter.sort.value = item; expanded = false },
+                        onClick = { filter.sort = item; expanded = false },
                     )
                 }
             }
         }
 
-        IconButton({ filter.order.value = if (filter.order.value == Order.ASC) Order.DESC else Order.ASC }) {
-            Icon(if (filter.order.value == Order.DESC) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown, "order")
+        IconButton({ filter.order = if (filter.order == Order.ASC) Order.DESC else Order.ASC }) {
+            Icon(if (filter.order == Order.DESC) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown, "order")
         }
     }
 }

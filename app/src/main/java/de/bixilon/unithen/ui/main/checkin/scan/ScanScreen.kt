@@ -83,7 +83,10 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 
 
         Box {
-            LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 items(appointments) { AppointmentCard(it) }
             }
 

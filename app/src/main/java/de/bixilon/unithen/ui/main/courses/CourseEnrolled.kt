@@ -15,7 +15,9 @@ package de.bixilon.unithen.ui.main.courses
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
@@ -23,6 +25,7 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.verticalScroll
 
 
 @Composable
@@ -31,11 +34,13 @@ fun CourseEnrolled(course: Course) {
 
     if (users.isEmpty()) return
 
-    // TODO: scrollbar
     Section {
         SectionTitle("Enrolled (${users.size})")
 
+        val state = rememberLazyListState()
         LazyColumn(
+            modifier = Modifier.verticalScroll(state),
+            state = state,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(items = users, key = User::id) { TextCard(it.firstname + " " + it.lastname) }

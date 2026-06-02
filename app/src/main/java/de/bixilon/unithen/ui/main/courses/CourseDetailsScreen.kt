@@ -86,8 +86,6 @@ fun CourseDetailsScreen(course: Course) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(site, event, course, accounts)
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             var refreshing by remember { mutableStateOf(false) }
 
             val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull()
@@ -106,7 +104,7 @@ fun CourseDetailsScreen(course: Course) {
             }
 
             PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
-                Column(modifier = Modifier.fillMaxHeight()) {
+                Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     CourseAppointments(course)
                     CourseEnrolled(course)
                 }
