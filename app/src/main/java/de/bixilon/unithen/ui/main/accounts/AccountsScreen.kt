@@ -168,8 +168,7 @@ fun AccountsScreen() {
             }
 
             FloatingActionButton({ navigator.navigate(AddAccountRoute) }, modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = -15.dp)) {
+                .align(Alignment.BottomEnd)) {
                 Icon(Icons.Filled.Add, "add")
             }
         }

@@ -19,6 +19,8 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import zxingcpp.BarcodeReader
@@ -46,21 +50,33 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
     val reader = remember { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
 
     var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
+    val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
     val request by requests.collectAsState(initial = null)
 
     LaunchedEffect(Unit) {
         provider = ProcessCameraProvider.awaitInstance(context)
     }
 
-    DisposableEffect(provider) {
+    DisposableEffect(provider, highResolution) {
         val provider = provider ?: return@DisposableEffect onDispose {}
 
         val preview = Preview.Builder().build().apply {
             setSurfaceProvider { requests.value = it }
         }
 
+
+        val resolution = ResolutionSelector.Builder()
+
+        if (highResolution) {
+            resolution
+                .setAllowedResolutionMode(ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
+                .setResolutionStrategy(ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY)
+        }
+
+
         val analyzer = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setResolutionSelector(resolution.build())
             .build()
             .apply {
                 setAnalyzer(ContextCompat.getMainExecutor(context)) { imageProxy ->

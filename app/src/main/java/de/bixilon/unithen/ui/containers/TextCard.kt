@@ -32,7 +32,7 @@ fun TextCard(text: String, modifier: Modifier = Modifier, color: Color = Materia
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = color)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,

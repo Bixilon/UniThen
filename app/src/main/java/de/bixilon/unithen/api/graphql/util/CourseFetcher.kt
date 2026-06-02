@@ -84,7 +84,7 @@ object CourseFetcher {
 
         courses.clearTutors(course)
         for (tutorQl in courseQl.tutors!!) {
-            val tutor = users.add(site, tutorQl.id, tutorQl.firstName!!, tutorQl.lastName!!)
+            val tutor = users.add(site, tutorQl.id, tutorQl.firstname!!, tutorQl.lastname!!)
             courses.addTutor(tutor, course)
         }
 
@@ -108,7 +108,7 @@ object CourseFetcher {
     private fun SqlStorage.store(site: Site, course: Course, enrolled: List<CourseUserQl>) = transaction {
         courses.clearEnrolled(course)
         for (enrolledQl in enrolled) {
-            val enrolled = users.add(site, enrolledQl.id, enrolledQl.firstName!!, enrolledQl.lastName!!)
+            val enrolled = users.add(site, enrolledQl.id, enrolledQl.firstname!!, enrolledQl.lastname!!)
 
             courses.addEnrolled(enrolled, course)
         }
@@ -118,7 +118,7 @@ object CourseFetcher {
         val now = Clock.System.now()
         for (attemptQl in attempts) {
             val userQl = attemptQl.user ?: continue
-            val user = users.add(site, userQl.id, userQl.firstName!!, userQl.lastName!!)
+            val user = users.add(site, userQl.id, userQl.firstname!!, userQl.lastname!!)
 
             checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
         }

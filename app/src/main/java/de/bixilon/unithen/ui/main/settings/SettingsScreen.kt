@@ -48,7 +48,7 @@ fun SettingsScreen() {
         ScreenTitle("Settings")
 
         if (BuildConfig.DEBUG) {
-            Section {
+            Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionTitle("Debug")
 
                 BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
@@ -56,14 +56,15 @@ fun SettingsScreen() {
             HorizontalDivider()
         }
 
-        Section {
+        Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle("General")
             EnumSetting(Settings.ENTRYPOINT, MainScreens, "Entrypoint", "Choose what screen should open when starting the app.")
         }
         HorizontalDivider()
-        Section {
+        Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle("Advanced")
             BooleanSetting(Settings.QR_CODE_REMOVE_NAME, "Remove name (QR code)", "Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might still break scaning.")
+            BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, "High resolution scanning", "Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning qr codes.")
         }
         HorizontalDivider()
         SettingsLink("About", Icons.Default.Info, AboutRoute)

@@ -94,14 +94,14 @@ fun CourseDetailsScreen(course: Course) {
             val present = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
 
             if (present != null) {
-                FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present!!)) }) {
+                FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present)) }) {
                     Icon(Icons.Filled.QrCode, "present")
                 }
             }
 
             val scan = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
             if (scan != null) {
-                FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan!!)) }) {
+                FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan)) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")
                 }
             }

@@ -18,5 +18,7 @@ object Settings {
     val QR_CODE_REMOVE_NAME = Setting("qr_code_fake_name", false)
     val FAKE_TIME = Setting("fake_time", false)
 
+    val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
+
     val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
 }

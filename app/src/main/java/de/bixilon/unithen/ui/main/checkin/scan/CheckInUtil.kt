@@ -39,7 +39,7 @@ object CheckInUtil {
         }
         if (attemptQl == null) throw IllegalStateException("Null attempt?")
 
-        attemptQl.user?.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
+        attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
         storage.checkInAttempts.update(appointment, user, uuid = attemptQl.id, message = attemptQl.message, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
     }
@@ -57,7 +57,7 @@ object CheckInUtil {
             throw CheckInUnknownUserException(attemptQl.message)
         }
 
-        val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstName!!, it.lastName!!) }
+        val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
         storage.checkInAttempts.add(appointment, user, uuid = attemptQl.id, message = attemptQl.message, sync = now, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
     }

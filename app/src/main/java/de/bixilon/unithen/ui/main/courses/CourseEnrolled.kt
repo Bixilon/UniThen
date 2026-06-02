@@ -38,7 +38,7 @@ fun CourseEnrolled(course: Course) {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(items = users, key = User::id) { TextCard(it.lastname + " " + it.lastname) }
+            items(items = users, key = User::id) { TextCard(it.firstname + " " + it.lastname) }
         }
     }
 }
