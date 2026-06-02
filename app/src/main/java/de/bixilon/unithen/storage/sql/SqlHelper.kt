@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.sqlite.transaction
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
+import java.io.IOException
 
 class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION) {
     var created = false
@@ -29,7 +30,11 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
     override fun onUpgrade(database: SQLiteDatabase, start: Int, end: Int) = database.transaction {
         for (version in (start + 1)..end) {
-            database.executeBatch("migrations/${version}")
+            try {
+                database.executeBatch("migrations/${version}")
+            } catch (error: Throwable) {
+                throw IOException("Error during database migration $version: ${error.message}", error)
+            }
         }
     }
 
