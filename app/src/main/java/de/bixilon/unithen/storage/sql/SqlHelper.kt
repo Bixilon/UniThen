@@ -35,12 +35,37 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
 
     companion object {
         const val NAME = "uninow"
-        const val VERSION = 6
+        const val VERSION = 7
 
         fun SQLiteDatabase.executeBatch(path: String) {
-            val schema = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString().split(";").map { it.removeSuffix("\n") }.filter { it.isNotBlank() }
+            val raw = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString()
 
-            transaction { schema.forEach { execSQL(it) } }
+            val statements = mutableListOf<String>()
+            val builder = StringBuilder()
+            var begin = false
+
+            raw.lines().forEach { line ->
+                val trimmed = line.trim()
+
+                if (trimmed.startsWith("BEGIN")) {
+                    begin = true
+                }
+
+                builder.append(line).append("\n")
+
+                if (begin) {
+                    if (trimmed.startsWith("END")) {
+                        begin = false
+                        statements.add(builder.toString().trim())
+                        builder.clear()
+                    }
+                } else if (trimmed.endsWith(";")) {
+                    statements.add(builder.toString().removeSuffix(";"))
+                    builder.clear()
+                }
+            }
+
+            transaction { statements.forEach { execSQL(it) } }
         }
     }
 }

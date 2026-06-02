@@ -17,19 +17,22 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlSchema
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import java.util.*
 
 class UserTable(
     storage: SqlStorage,
 ) : SqlTable<User>(storage, "users") {
-    override val columns = listOf("id", "site", "uuid", "firstname", "lastname")
-
-    override fun map(cursor: Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
+    override val columns get() = UserTable.columns
+    override fun map(cursor: Cursor) = UserTable.map(cursor)
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
@@ -61,8 +64,19 @@ class UserTable(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ?", course.id) { it.collectAll() }
     }
 
-    fun getEnrolledNotCheckedIn(appointment: Appointment, course: Course): List<User> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN course_enrolled ON course_enrolled.user = $table.id WHERE course = ? AND NOT EXISTS (SELECT 1 FROM appointment_checkins WHERE appointment_checkins.appointment = ? AND appointment_checkins.user = $table.id)", course.id, appointment.id) { it.collectAll() }
+    fun getEnrolledNotCheckedIn(appointment: Appointment, course: Course, search: String, sort: AttendeeSort, order: Order): List<User> {
+        val query = SqlBuilder.select(UserTable)
+            .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
+            .applyIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
+            .where(SqlFilter("course = ?", course.id))
+            .and(SqlFilter("NOT EXISTS (SELECT 1 FROM appointment_checkins WHERE appointment_checkins.appointment = ? AND appointment_checkins.user = $table.id)", appointment.id))
+            .applyIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
+            .order(
+                sort.field to order.sql,
+                (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
+            )
+
+        return storage.query(query) { it.collectAll() }
     }
 
     fun getEnrolledCount(course: Course): Int {
@@ -71,5 +85,18 @@ class UserTable(
 
     fun isEnrolled(course: Course, user: User): Boolean {
         return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.count > 0 } // TODO: verify
+    }
+
+    companion object : SqlSchema<User> {
+        override val table get() = "users"
+        override val columns = listOf("id", "site", "uuid", "firstname", "lastname")
+
+        override fun map(cursor: Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
+
+        fun ftsEscape(input: String) = input // TODO: Improve?
+            .replace("-", "")
+            .replace("\"", "")
+
+        inline fun <I> I.applyIf(enabled: Boolean, block: I.() -> I) = if (enabled) block.invoke(this) else this
     }
 }

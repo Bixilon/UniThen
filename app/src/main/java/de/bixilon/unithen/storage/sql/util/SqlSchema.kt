@@ -10,20 +10,13 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.settings
+package de.bixilon.unithen.storage.sql.util
 
-import de.bixilon.unithen.ui.main.MainScreens
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
+import android.database.Cursor
 
-object Settings {
-    val QR_CODE_REMOVE_NAME = Setting("qr_code_fake_name", false)
-    val FAKE_TIME = Setting("fake_time", false)
+interface SqlSchema<T> {
+    val table: String
+    val columns: List<String>
 
-    val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
-
-    val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
-
-    val ATTENDEE_ORDER = Setting("attendee_order", Order.ASC)
-    val ATTENDEE_SORT = Setting("attendee_sort", AttendeeSort.LASTNAME)
+    fun map(cursor: Cursor): T
 }

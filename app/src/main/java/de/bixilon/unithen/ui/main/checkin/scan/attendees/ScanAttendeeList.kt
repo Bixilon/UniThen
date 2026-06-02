@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan
+package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,6 +31,8 @@ import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
+import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
@@ -141,18 +143,19 @@ private fun EnrolledCard(user: User) {
     }
 }
 
-
 @Composable
 fun ScanAttendeeList() {
     val (account, course, appointment) = LocalScanContext.current
 
+    val filter = rememberUserFilter()
+
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attempts = rememberStorage { checkInAttempts[appointment] }
+    val attempts = rememberStorage { checkInAttempts[appointment, filter.search.value, filter.sort.value, filter.order.value] }
     val ok = remember(attempts) { attempts.filter { it.status == CheckInAttempt.Status.OK } }
     val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
 
-    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course) }
+    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course, filter.search.value, filter.sort.value, filter.order.value) }
 
 
     val storage = LocalStorage.current
@@ -181,6 +184,8 @@ fun ScanAttendeeList() {
     Section {
         SectionTitle("Attendees (${ok.size}/${enrolled})")
 
+
+        UserFilterX(filter)
 
         PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
             LazyColumn(

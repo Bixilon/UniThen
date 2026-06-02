@@ -20,13 +20,18 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getEnum
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
+import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.applyIf
+import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.ftsEscape
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlSchema
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -34,10 +39,10 @@ import kotlin.time.Instant
 
 class CheckInAttemptsTable(
     storage: SqlStorage,
-) : SqlTable<CheckInAttempt>(storage, "appointment_checkins") {
-    override val columns = listOf("user", "appointment", "uuid", "time", "message", "sync", "status")
+) : SqlTable<CheckInAttempt>(storage, table) {
+    override val columns get() = CheckInAttemptsTable.columns
 
-    override fun map(cursor: Cursor) = CheckInAttempt(cursor.getInt(0), cursor.getInt(1), cursor.getUUIDOrNull(2), cursor.getInstantOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5), cursor.getEnum(6, CheckInAttempt.Status))
+    override fun map(cursor: Cursor) = CheckInAttemptsTable.map(cursor)
 
     operator fun get(appointment: Appointment, uuid: UUID) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
     operator fun get(appointment: Appointment, user: User) = single(SqlFilter.and("appointment" to appointment.id, "user" to user.id))
@@ -65,6 +70,22 @@ class CheckInAttemptsTable(
         return this[appointment, user]!!
     }
 
+    operator fun get(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<CheckInAttempt> {
+        val query = SqlBuilder.select(CheckInAttemptsTable)
+            .innerJoin("users", "appointment_checkins.user = users.id")
+            .applyIf(search.isNotBlank()) { innerJoin("users_fts", "users.id = users_fts.docid") }
+            .where(CheckInAttempt::appointment eq appointment.id)
+            .applyIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
+            .order(
+                sort.field to order.sql,
+                (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
+            )
+
+        return storage.query(query) { it.collectAll() }
+
+    }
+
+
     fun getPendingSyncCount(appointment: Appointment? = null): Int {
         return storage.query(
             SqlBuilder.select(SqlBuilder.Aggregations.Count) from this where (CheckInAttempt::status eq CheckInAttempt.Status.PENDING and appointment?.let { CheckInAttempt::appointment eq appointment.id }))
@@ -85,5 +106,12 @@ class CheckInAttemptsTable(
 
             return@transaction entry
         }
+    }
+
+    companion object : SqlSchema<CheckInAttempt> {
+        override val table get() = "appointment_checkins"
+        override val columns = listOf("user", "appointment", "uuid", "time", "message", "sync", "status")
+
+        override fun map(cursor: Cursor) = CheckInAttempt(cursor.getInt(0), cursor.getInt(1), cursor.getUUIDOrNull(2), cursor.getInstantOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5), cursor.getEnum(6, CheckInAttempt.Status))
     }
 }

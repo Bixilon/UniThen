@@ -10,20 +10,19 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.settings
+package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
-import de.bixilon.unithen.ui.main.MainScreens
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
+import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 
-object Settings {
-    val QR_CODE_REMOVE_NAME = Setting("qr_code_fake_name", false)
-    val FAKE_TIME = Setting("fake_time", false)
+enum class Order(val sql: SqlBuilder.Order.Order) {
+    ASC(SqlBuilder.Order.Order.ASC),
+    DESC(SqlBuilder.Order.Order.DESC),
+    ;
 
-    val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
-
-    val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
-
-    val ATTENDEE_ORDER = Setting("attendee_order", Order.ASC)
-    val ATTENDEE_SORT = Setting("attendee_sort", AttendeeSort.LASTNAME)
+    companion object : ValuesEnum<Order> {
+        override val VALUES = values()
+        override val NAME_MAP = names()
+    }
 }

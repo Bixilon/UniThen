@@ -106,8 +106,10 @@ fun CourseDetailsScreen(course: Course) {
             }
 
             PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
-                CourseAppointments(course)
-                CourseEnrolled(course)
+                Column(modifier = Modifier.fillMaxHeight()) {
+                    CourseAppointments(course)
+                    CourseEnrolled(course)
+                }
             }
         }
 

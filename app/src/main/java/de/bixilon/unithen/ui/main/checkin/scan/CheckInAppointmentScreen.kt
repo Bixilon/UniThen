@@ -29,6 +29,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.fetch
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
