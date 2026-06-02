@@ -54,9 +54,9 @@ private fun AppointmentCard(appointment: Appointment) {
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
+            .padding(16.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column {
             Text(
                 text = "${appointment.start.format()} - ${appointment.end.format()}",
                 style = MaterialTheme.typography.labelLarge,

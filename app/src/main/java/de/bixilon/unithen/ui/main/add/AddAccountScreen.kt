@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui.main.add
 import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -40,11 +41,10 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 fun ByteArray.toBitmap() = BitmapFactory.decodeByteArray(this, 0, this.size)
 
 @Composable
-private fun SiteCard(site: Site, onClick: () -> Unit) {
+private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
-        onClick = onClick,
     ) {
         Box(
             modifier = Modifier
@@ -102,7 +102,7 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
         ScreenTitle("Please choose your booking site")
 
         LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(items = sites, key = Site::id) { site -> SiteCard(site) { callback.invoke(site) } }
+            items(items = sites, key = Site::id) { site -> SiteCard(site, Modifier.clickable { callback.invoke(site) }) }
         }
 
         Spacer(Modifier.height(16.dp))
