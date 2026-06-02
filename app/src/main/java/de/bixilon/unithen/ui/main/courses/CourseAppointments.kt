@@ -23,15 +23,18 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.flow.first
@@ -85,8 +88,7 @@ private fun AppointmentCard(appointment: Appointment) {
 
 @Composable
 fun CourseAppointments(course: Course) {
-    val storage = LocalStorage.current
-    val appointments by remember { storage.appointments.stateOf { this[course].sortedByDescending { it.start } } }
+    val appointments = rememberStorage { appointments[course].sortedByDescending { it.start } }
 
     if (appointments.isEmpty()) return
 

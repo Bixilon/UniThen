@@ -21,19 +21,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 
 
@@ -65,7 +62,6 @@ fun AppointmentCard(course: Course, appointment: Appointment, modifier: Modifier
 
 @Composable
 fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
-    val storage = LocalStorage.current
     Screen {
         ScreenTitle("Please choose appointment")
 
@@ -75,7 +71,7 @@ fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(appointments, key = Appointment::id) { item ->
-                val course by remember { storage.courses.stateOf { this[item.course]!! } }
+                val course = rememberStorage { courses[item.course]!! }
                 val navigator = LocalNavigation.current
                 AppointmentCard(course, item, Modifier.clickable { navigator.navigate(PresentQrAppointmentRoute(course, item)) })
             }

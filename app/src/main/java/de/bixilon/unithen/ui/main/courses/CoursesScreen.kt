@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -42,6 +41,7 @@ import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,8 +54,8 @@ fun CoursesScreen() {
     val navigation = LocalNavigation.current
     var refreshing by remember { mutableStateOf(false) }
 
-    val courseCount by remember { storage.courses.stateOf { count } }
-    val events by remember { storage.events.stateOf { all().sortedByDescending { it.start } } }
+    val courseCount = rememberStorage { courses.count }
+    val events = rememberStorage { events.all().sortedByDescending { it.start } }
 
     val context = LocalContext.current
     Screen {
@@ -95,7 +95,7 @@ fun CoursesScreen() {
                     if (courses.isEmpty()) continue
 
                     item {
-                        val site = remember { storage.sites[event.site]!! } // TODO: Section?
+                        val site = rememberStorage { sites[event.site]!! } // TODO: Section?
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
 

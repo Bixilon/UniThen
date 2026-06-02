@@ -13,7 +13,6 @@
 package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
-import androidx.compose.runtime.State
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -101,15 +100,5 @@ abstract class SqlTable<T>(
     protected fun all(@Language("SQL") where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }
-
     fun all(): List<T> = all("TRUE")
-
-    companion object {
-
-        @Deprecated("SqlStorage::stateOf")
-        fun <S : SqlTable<*>, T> S.stateOf(block: S.() -> T): State<T> {
-            val table = this
-            return storage.stateOf { block.invoke(table) }
-        }
-    }
 }

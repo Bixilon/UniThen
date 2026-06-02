@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -39,6 +38,7 @@ import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlin.time.Clock
 
@@ -90,8 +90,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
 
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
-    val storage = LocalStorage.current
-    val site = remember { storage.sites[account.site]!! }
+    val site = rememberStorage { sites[account.site]!! }
 
 
     val color = when {
@@ -157,8 +156,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 @Composable
 fun AccountsScreen() {
-    val storage = LocalStorage.current
-    val accounts by remember { storage.accounts.stateOf { all() } }
+    val accounts = rememberStorage { accounts.all() }
 
     Screen {
         ScreenTitle("Accounts (${accounts.size})")

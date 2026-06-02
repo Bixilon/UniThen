@@ -30,12 +30,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 
 
 fun ByteArray.toBitmap() = BitmapFactory.decodeByteArray(this, 0, this.size)
@@ -90,8 +89,7 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
 
 @Composable
 fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
-    val storage = LocalStorage.current
-    val sites by remember { storage.sites.stateOf { all() } }
+    val sites = rememberStorage { sites.all() }
 
     if (sites.isEmpty()) {
         AddSiteDialog(null, callback)

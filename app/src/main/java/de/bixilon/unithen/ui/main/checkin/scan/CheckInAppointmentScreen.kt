@@ -31,6 +31,7 @@ import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.fetch
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlinx.coroutines.delay
 import kotlin.time.Clock
@@ -50,7 +51,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         return
     }
 
-    val pending by remember { storage.stateOf { storage.checkInAttempts.getPendingSyncCount(appointment) } }
+    val pending = rememberStorage { storage.checkInAttempts.getPendingSyncCount(appointment) }
 
     var refreshing by remember { mutableStateOf(false) }
     var syncing by remember { mutableStateOf(false) }

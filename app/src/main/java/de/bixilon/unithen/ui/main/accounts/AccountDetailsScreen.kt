@@ -19,11 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
@@ -32,13 +29,12 @@ import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 
 @Composable
 fun AccountDetailsScreen(account: Account) {
-    val storage = LocalStorage.current
-    val site = remember { storage.sites[account.site]!! }
-    val courses by remember { storage.courses.stateOf { this[account].sortedBy { it.name } } } // TODO: better sort
+    val site = rememberStorage { sites[account.site]!! }
+    val courses = rememberStorage { courses[account].sortedBy { it.name } } // TODO: better sort
 
     Column(modifier = Modifier.padding(16.dp)) {
         InfoContainer {

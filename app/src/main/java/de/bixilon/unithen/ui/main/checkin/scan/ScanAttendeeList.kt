@@ -25,12 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import java.util.*
@@ -40,7 +40,7 @@ import kotlin.time.Clock
 @Composable
 private fun AttendeeCard(attempt: CheckInAttempt) {
     val storage = LocalStorage.current
-    val user = storage.users[attempt.user]!!
+    val user = rememberStorage { users[attempt.user]!! }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -142,17 +142,15 @@ private fun EnrolledCard(user: User) {
 
 @Composable
 fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
-    val storage = LocalStorage.current
-
     val (_, course, appointment) = LocalScanContext.current
 
-    val enrolled by remember { storage.users.stateOf { this.getEnrolledCount(course) } }
+    val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attempts by remember { storage.checkInAttempts.stateOf { this[appointment] } }
+    val attempts = rememberStorage { checkInAttempts[appointment] }
     val ok = remember(attempts) { attempts.filter { it.status == CheckInAttempt.Status.OK } }
     val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
 
-    val not by remember { storage.stateOf { users.getEnrolledNotCheckedIn(appointment, course) } }
+    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course) }
 
     Section {
         SectionTitle("Attendees (${ok.size}/${enrolled})")

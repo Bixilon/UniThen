@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.InfoContainer
@@ -29,6 +28,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
@@ -43,9 +43,8 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
 
-    val enrolled = user?.let { storage.users.isEnrolled(course, user) } ?: false
-    val _attempt by remember { storage.checkInAttempts.stateOf { user?.let { this[appointment, user] } } }
-    val attempt = _attempt
+    val enrolled = user?.let { rememberStorage { users.isEnrolled(course, user) } } ?: false
+    val attempt = rememberStorage { user?.let { checkInAttempts[appointment, user] } }
 
     var message by remember { mutableStateOf<String?>(null) }
     var confirming by remember { mutableStateOf(false) }

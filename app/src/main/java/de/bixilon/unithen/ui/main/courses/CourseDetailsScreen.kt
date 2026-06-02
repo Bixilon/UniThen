@@ -21,12 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
@@ -36,7 +33,7 @@ import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useTime
 
 
@@ -70,11 +67,10 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
-    val storage = LocalStorage.current
     val navigator = LocalNavigation.current
-    val event = remember { storage.events[course.event]!! }
-    val site = remember { storage.sites[event.site]!! }
-    val accounts by remember { storage.accounts.stateOf { this[course].sortedBy { it.lastname } } }
+    val event = rememberStorage { events[course.event]!! }
+    val site = rememberStorage { sites[event.site]!! }
+    val accounts = rememberStorage { accounts[course].sortedBy { it.lastname } }
 
 
     Box {
@@ -95,7 +91,7 @@ fun CourseDetailsScreen(course: Course) {
         ) {
             val time = useTime()
 
-            val present by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } } }
+            val present = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
 
             if (present != null) {
                 FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present!!)) }) {
@@ -103,7 +99,7 @@ fun CourseDetailsScreen(course: Course) {
                 }
             }
 
-            val scan by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } } }
+            val scan = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
             if (scan != null) {
                 FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan!!)) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")

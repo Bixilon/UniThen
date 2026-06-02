@@ -19,18 +19,16 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.present.FastCheckinNoAppointments
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.useTime
 
@@ -96,11 +94,9 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 
 @Composable
 fun CheckInScreen() {
-    val storage = LocalStorage.current
-
     val time = useTime()
 
-    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) } }
+    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments() // TODO: proper error message

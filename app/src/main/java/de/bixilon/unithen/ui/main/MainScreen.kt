@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.checkin.present.FastCheckInInScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
@@ -39,7 +38,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import de.bixilon.unithen.ui.navigation.Navigator
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 
 
 enum class MainScreens(
@@ -63,10 +62,9 @@ enum class MainScreens(
 
 @Composable
 fun MainScreen() {
-    val storage = LocalStorage.current
     var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
     val navigator = remember { Navigator(entrypoint.route, NavigationMode.SINGLE) }
-    val accounts by remember { storage.accounts.stateOf { count } }
+    val accounts = rememberStorage { accounts.count }
 
     val _navigator = LocalNavigation.current
     LaunchedEffect(accounts) {
@@ -90,8 +88,8 @@ fun MainScreen() {
         NavigationBar {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
-                    MainScreens.CHECKIN_PRESENT -> storage.stateOf { storage.courses.isMember() }.value
-                    MainScreens.CHECKIN_SCAN -> storage.stateOf { storage.courses.isTutor() }.value
+                    MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isMember() }
+                    MainScreens.CHECKIN_SCAN -> rememberStorage { courses.isTutor() }
                     else -> true
                 }
                 NavigationBarItem(

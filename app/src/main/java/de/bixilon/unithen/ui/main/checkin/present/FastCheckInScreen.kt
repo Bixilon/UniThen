@@ -13,10 +13,7 @@
 package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import de.bixilon.unithen.storage.sql.SqlTable.Companion.stateOf
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useTime
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -26,15 +23,14 @@ val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically p
 
 @Composable
 fun FastCheckInInScreen() {
-    val storage = LocalStorage.current
     val time = useTime()
 
-    val appointments by remember { storage.appointments.stateOf { this.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) } }
+    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
 
 
     when (appointments.size) {
         0 -> FastCheckinNoAppointments()
-        1 -> FastCheckinAppointment(remember { storage.courses[appointments[0].course]!! }, appointments[0])
+        1 -> FastCheckinAppointment(rememberStorage { courses[appointments[0].course]!! }, appointments[0])
         else -> FastCheckinAppointmentSelector(appointments)
     }
 }
