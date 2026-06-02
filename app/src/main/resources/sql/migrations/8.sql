@@ -1,4 +1,5 @@
-DROP TABLE appointment_checkins; -- TODO: Not correct, but data is cached and no release was made.
+ -- TODO: Not correct, but data is cached and no release was made.
+DROP TABLE appointment_checkins;
 
 CREATE TABLE appointment_attendees (
   user INTEGER,

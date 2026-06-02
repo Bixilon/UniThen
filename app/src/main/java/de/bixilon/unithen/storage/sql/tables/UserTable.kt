@@ -68,12 +68,28 @@ class UserTable(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN appointment_attendees ON appointment_attendees.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
     }
 
-    fun getEnrolledNotCheckedIn(appointment: Appointment, course: Course, search: String, sort: AttendeeSort, order: Order): List<User> {
+    fun getAttendees(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<User> {
+        val query = SqlBuilder.select(UserTable)
+            .innerJoin("appointment_attendees", "appointment_attendees.user = $table.id")
+            .applyIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
+            .where(SqlFilter("appointment = ?", appointment.id))
+            .and(SqlFilter("NOT EXISTS (SELECT 1 FROM checkin_queue WHERE checkin_queue.appointment = ? AND checkin_queue.user = $table.id)", appointment.id))
+            .applyIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
+            .order(
+                sort.field to order.sql,
+                (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
+            )
+
+        return storage.query(query) { it.collectAll() }
+    }
+
+    fun getEnrolledNotCheckedIn(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<User> {
         val query = SqlBuilder.select(UserTable)
             .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
             .applyIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
-            .where(SqlFilter("course = ?", course.id))
-            .and(SqlFilter("NOT EXISTS (SELECT 1 FROM appointment_checkins WHERE appointment_checkins.appointment = ? AND appointment_checkins.user = $table.id)", appointment.id))
+            .where(SqlFilter("course = ?", appointment.course))
+            .and(SqlFilter("NOT EXISTS (SELECT 1 FROM checkin_queue WHERE checkin_queue.appointment = ? AND checkin_queue.user = $table.id)", appointment.id))
+            .and(SqlFilter("NOT EXISTS (SELECT 1 FROM appointment_attendees WHERE appointment_attendees.appointment = ? AND appointment_attendees.user = $table.id)", appointment.id))
             .applyIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
                 sort.field to order.sql,
@@ -90,8 +106,9 @@ class UserTable(
     fun isEnrolled(course: Course, user: User): Boolean {
         return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.count > 0 } // TODO: verify
     }
+
     fun isAttendee(appointment: Appointment, user: User): Boolean {
-        return storage.query("SELECT 1 FROM appointment_attendees WHERE course=? AND user=?", appointment.id, user.id) { it.count > 0 } // TODO: verify
+        return storage.query("SELECT 1 FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { it.count > 0 } // TODO: verify
     }
 
     companion object : SqlSchema<User> {

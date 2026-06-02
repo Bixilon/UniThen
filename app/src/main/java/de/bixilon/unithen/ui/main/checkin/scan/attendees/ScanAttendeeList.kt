@@ -178,10 +178,10 @@ fun ScanAttendeeList() {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attendees = rememberStorage { users.getAttendees(appointment) } // TODO: Filter
+    val attendees = rememberStorage { users.getAttendees(appointment, filter.search, filter.sort, filter.order) }
     val queue = rememberStorage { checkInQueue[appointment, filter.search, filter.sort, filter.order] }
 
-    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course, filter.search, filter.sort, filter.order) }
+    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) }
 
 
     val storage = LocalStorage.current

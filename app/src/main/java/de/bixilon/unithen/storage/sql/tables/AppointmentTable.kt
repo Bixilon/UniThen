@@ -75,7 +75,7 @@ class AppointmentTable(
 
     fun clearAttendees(appointment: Appointment) = update("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
     fun addAttendee(user: User, appointment: Appointment, attempt: UUID) {
-        insert("INSERT INTO appointment_attendees(user, course, attempt) VALUES (?,?,?) ON CONFLICT(user, course) DO NOTHING", user.id, appointment.id, attempt)
+        insert("INSERT INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id, attempt)
     }
     fun removeAttendee(user: User, appointment: Appointment) {
         insert("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)

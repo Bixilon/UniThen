@@ -74,6 +74,7 @@ class Navigator(
         }
     }
 
+    @Synchronized
     fun navigate(route: NavigationRoute) {
         val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
 
@@ -96,6 +97,7 @@ class Navigator(
         stack += Frame(route, composable)
     }
 
+    @Synchronized
     fun pop() {
         assert(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)

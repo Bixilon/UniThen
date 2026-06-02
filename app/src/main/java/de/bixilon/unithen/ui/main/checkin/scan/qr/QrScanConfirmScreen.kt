@@ -188,7 +188,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 }
             }
 
-            Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && queue == null, modifier = Modifier.fillMaxWidth()) {
+            Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
                     Text("Try anyways")
