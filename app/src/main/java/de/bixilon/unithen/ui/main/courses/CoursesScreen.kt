@@ -76,6 +76,7 @@ fun CoursesScreen() {
                         storage.accounts.logout(it)
                         loginSite = it.site
                     } catch (error: Throwable) {
+                        error.printStackTrace()
                         caught = error
                     }
                 }

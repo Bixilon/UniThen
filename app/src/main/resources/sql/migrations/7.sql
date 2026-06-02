@@ -4,23 +4,21 @@ INSERT INTO users_fts(docid, fullname)
 SELECT id, firstname || ' ' || lastname
 FROM users;
 
-CREATE TRIGGER users_fts_insert AFTER INSERT ON users
+
+CREATE TRIGGER users_fts_bu BEFORE UPDATE ON users
 BEGIN
-    INSERT INTO users_fts(docid, fullname)
-    VALUES (new.id, new.firstname || ' ' || new.lastname);
+  DELETE FROM users_fts WHERE docid=old.id;
+END;
+CREATE TRIGGER users_fts_bd BEFORE DELETE ON users
+BEGIN
+  DELETE FROM users_fts WHERE docid=old.id;
 END;
 
-CREATE TRIGGER users_fts_update AFTER UPDATE ON users
+CREATE TRIGGER users_fts_au AFTER UPDATE ON users
 BEGIN
-    INSERT INTO users_fts(users_fts, docid, fullname)
-    VALUES('delete', old.id, old.firstname || ' ' || old.lastname);
-
-    INSERT INTO users_fts(docid, fullname)
-    VALUES(new.id, new.firstname || ' ' || new.lastname);
+  INSERT INTO users_fts(docid, fullname) VALUES (new.id, new.firstname || ' ' || new.lastname);
 END;
-
-CREATE TRIGGER users_fts_delete AFTER DELETE ON users
+CREATE TRIGGER users_fts_ai AFTER INSERT ON users
 BEGIN
-    INSERT INTO users_fts(users_fts, docid, fullname)
-    VALUES('delete', old.id, old.firstname || ' ' || old.lastname);
+  INSERT INTO users_fts(docid, fullname) VALUES (new.id, new.firstname || ' ' || new.lastname);
 END;
