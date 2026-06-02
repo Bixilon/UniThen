@@ -10,19 +10,19 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.sql.util
+package de.bixilon.unithen.ui.main.checkin.scan.qr
 
-import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
-import de.bixilon.unithen.storage.types.CheckInAttempt
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import de.bixilon.unithen.ui.main.settings.types.Labeled
 
-class SqlBuilderTest {
+enum class QrErrorReasons(override val label: String) : Labeled {
+    INVALID_FORMAT("Invalid QR code format!"),
+    INVALID_DATA("Invalid QR code data!"),
 
-    @Test
-    fun `sample query`() {
-        val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInAttempt::status eq CheckInAttempt.Status.PENDING) and (CheckInAttempt::appointment eq 1)
+    INVALID_APPOINTMENT("Invalid appointment (wrong course?)!"),
+    UNKNOWN_USER("Unknown user!"),
+    NOT_ENROLLED("User not enrolled in course!"),
+    ALREADY_CHECKED_IN("User is already checked in"),
 
-        assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((status=?) AND (appointment=?))", listOf(CheckInAttempt.Status.PENDING, 1)))
-    }
+
+    OTHER("Unknown error")
 }

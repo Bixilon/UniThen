@@ -49,7 +49,7 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
             .padding(end = 16.dp)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
 
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(modifier = Modifier.padding(start = 4.dp), text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
         Switch(value, { value = it })

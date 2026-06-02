@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.util
 
+import de.bixilon.kutil.unit.UnitFormatter.format
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -20,6 +21,8 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration
 import kotlin.time.Instant
 
 object UiUtil {
@@ -31,4 +34,10 @@ object UiUtil {
     val DATE_FORMAT = if (Locale.getDefault() == Locale.GERMAN) DATE_FORMAT_GERMAN else DATE_FORMAT_ENGLISH
 
     fun Instant.format() = this.toLocalDateTime(TimeZone.currentSystemDefault()).format(DATE_FORMAT)
+    fun Instant.formatNow(): String {
+        if (this.epochSeconds == 0L) return "never"
+        val delta = Clock.System.now() - this
+
+        return (if (delta > Duration.ZERO) "in " else "") + delta.absoluteValue.format() + (if (delta < Duration.ZERO) " ago" else "")
+    }
 }

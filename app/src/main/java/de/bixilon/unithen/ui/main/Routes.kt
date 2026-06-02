@@ -17,6 +17,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
+import java.util.*
 
 object MainRoute : NavigationRoute
 object SetupRoute : NavigationRoute
@@ -36,6 +37,8 @@ data class PresentQrAppointmentRoute(val course: Course, val appointment: Appoin
 data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
 data class ScanScanAppointmentRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute
 object ScanAnyRoute : NavigationRoute
+
+data class ScanConfirmRoute(val account: Account, val course: Course, val appointment: Appointment, val userId: UUID) : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 

@@ -34,6 +34,9 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import kotlinx.coroutines.flow.MutableStateFlow
 import zxingcpp.BarcodeReader
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
 
 @Composable
 fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
@@ -47,11 +50,13 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
     val owner = LocalLifecycleOwner.current
 
     val requests = remember { MutableStateFlow<SurfaceRequest?>(null) }
-    val reader = remember { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
+    val reader = remember { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
 
     var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
     val request by requests.collectAsState(initial = null)
+
+    var last by remember { mutableStateOf(Instant.DISTANT_PAST) }
 
     LaunchedEffect(Unit) {
         provider = ProcessCameraProvider.awaitInstance(context)
@@ -86,6 +91,13 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                         val rect = Rect(0, 0, bitmap.width, bitmap.height)
 
                         val results = reader.read(bitmap, rect)
+                        val now = Clock.System.now()
+                        if (results.isNotEmpty()) {
+                            last = now
+                        }
+                        if (results.isEmpty() && now - last > 200.milliseconds) {
+                            return@use
+                        }
 
                         onResult(results)
                     }

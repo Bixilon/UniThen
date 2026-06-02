@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main.courses
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCode
@@ -20,10 +21,13 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
@@ -33,8 +37,12 @@ import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -67,6 +75,7 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
+    val storage = LocalStorage.current
     val navigator = LocalNavigation.current
     val event = rememberStorage { events[course.event]!! }
     val site = rememberStorage { sites[event.site]!! }
@@ -79,8 +88,27 @@ fun CourseDetailsScreen(course: Course) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            CourseAppointments(course)
-            CourseEnrolled(course)
+            var refreshing by remember { mutableStateOf(false) }
+
+            val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull()
+            val context = LocalContext.current
+            val refresh = tutor?.let {
+                useAsyncNetwork<Unit>(tutor) {
+                    try {
+                        refreshing = true
+                        storage.fetch(tutor, course)
+
+                        withContext(Dispatchers.Main) { Toast.makeText(context, "Course refreshed!", Toast.LENGTH_SHORT).show() }
+                    } finally {
+                        refreshing = false
+                    }
+                }
+            }
+
+            PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
+                CourseAppointments(course)
+                CourseEnrolled(course)
+            }
         }
 
         Column(

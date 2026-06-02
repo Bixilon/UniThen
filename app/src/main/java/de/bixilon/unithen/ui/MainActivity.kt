@@ -37,7 +37,12 @@ import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.checkin.present.CheckInQrPresentScreen
 import de.bixilon.unithen.ui.main.checkin.present.FastCheckinAppointment
-import de.bixilon.unithen.ui.main.checkin.scan.*
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAnyScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanConfirmScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
@@ -76,6 +81,13 @@ fun MainNavigator() {
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
             ) {
                 QrScanAppointmentScreen()
+            }
+        }
+        composable<ScanConfirmRoute> {
+            CompositionLocalProvider(
+                LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
+            ) {
+                QrScanConfirmScreen(it.userId)
             }
         }
 

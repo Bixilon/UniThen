@@ -72,6 +72,27 @@ object CourseFetcher {
         accounts.update(account.id, fetched = now)
     }
 
+    suspend fun SqlStorage.fetch(account: Account, course: Course) {
+        val now = Clock.System.now()
+        val site = sites[account.site]!!
+        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+
+        if ((now - course.fetched) < COURSE_FETCH_INTERVAL) {
+            return
+        }
+
+
+        val detailsQl = api.getCourse(course.uuid)!!
+
+
+        if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
+            val enrolled = api.getEnrolled(course.uuid)
+            store(site, course, enrolled!!)
+        }
+
+        accounts.addToCourse(account, course)
+    }
+
 
     private fun SqlStorage.store(site: Site, courseQl: CourseQl) = transaction {
         if (courseQl.name == null) throw NullPointerException("Course details not fetched, wrong query?")
@@ -125,7 +146,22 @@ object CourseFetcher {
     }
 
 
-    fun SqlStorage.fetchCheckInAttempts(account: Account, appointment: Appointment, force: Boolean) {
+    suspend fun SqlStorage.fetchEnrolled(account: Account, course: Course, force: Boolean) {
+        val now = Clock.System.now()
+        if (!force && now - course.fetched < ATTENDEES_FETCH_INTERVAL) return
+
+        val site = sites[account.site]!!
+        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+
+
+        val enrolled = api.getEnrolled(course.uuid)
+
+        store(site, course, enrolled!!)
+
+        courses.update(course.id, fetched = Clock.System.now()) // TODO: Only fetchedEnrolled
+    }
+
+    suspend fun SqlStorage.fetchCheckInAttempts(account: Account, appointment: Appointment, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))

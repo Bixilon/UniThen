@@ -48,7 +48,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
             .padding(end = 16.dp)) {
             Text(title, style = MaterialTheme.typography.bodyLarge)
 
-            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(modifier = Modifier.padding(start = 4.dp), text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
         ExposedDropdownMenuBox(expanded = expanded, modifier = Modifier.fillMaxWidth(0.4f), onExpandedChange = { expanded = it }) {

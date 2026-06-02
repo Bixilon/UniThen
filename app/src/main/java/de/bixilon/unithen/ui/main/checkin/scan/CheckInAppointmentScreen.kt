@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -21,8 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
+import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -32,10 +32,59 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.fetch
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlinx.coroutines.delay
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+
+@Composable
+private fun Sync(account: Account, appointment: Appointment, pending: Int, onFinish: () -> Unit) {
+    val storage = LocalStorage.current
+    val course = storage.courses[appointment.course]!!
+
+    var done by remember { mutableIntStateOf(0) }
+
+    val abort = remember { mutableStateOf(false) }
+
+    LaunchedEffect(abort) { onFinish() }
+
+    LaunchedEffect(Unit) {
+        val site = storage.sites[course.site]!!
+
+        while (true) {
+            if (abort.value) break
+            val attempt = storage.checkInAttempts.takePendingSync(appointment) ?: break
+            done++
+
+            val user = storage.users[attempt.user]!!
+
+            try {
+                fetch(storage, site, account, appointment, user)
+            } catch (error: Throwable) {
+                done--
+                error.printStackTrace()
+            }
+        }
+
+        onFinish()
+    }
+
+    BackHandler { onFinish() }
+
+
+    AlertDialog(
+        confirmButton = {},
+        dismissButton = { Button({ abort.value = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
+        onDismissRequest = { abort.value = true },
+        icon = { Icon(Icons.Default.Sync, "") },
+        title = { Text("Synchronizing...") },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("$done / $pending")
+            }
+        },
+    )
+}
 
 @Composable
 fun CheckInAppointmentScreen(appointment: Appointment) {
@@ -51,71 +100,14 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
         return
     }
 
-    val pending = rememberStorage { storage.checkInAttempts.getPendingSyncCount(appointment) }
+    val pending = rememberStorage { checkInAttempts.getPendingSyncCount(appointment) }
 
-    var refreshing by remember { mutableStateOf(false) }
     var syncing by remember { mutableStateOf(false) }
 
 
-    val _refresh = useAsyncNetwork<Boolean>(account) {
-        try {
-            storage.fetchCheckInAttempts(account, appointment, it)
-        } finally {
-            refreshing = false
-        }
-    }
-
-    fun refresh(force: Boolean) {
-        if (refreshing) return
-        refreshing = true
-        _refresh.invoke(force)
-    }
-
-    LaunchedEffect(Unit) {
-        if (appointment.attendeesFetched == null || Clock.System.now() - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL) {
-            refresh(false)
-        }
-    }
-
 
     if (syncing) {
-        var done by remember { mutableIntStateOf(0) }
-
-        LaunchedEffect(Unit) {
-            val site = storage.sites[course.site]!!
-
-            while (true) {
-                val attempt = storage.checkInAttempts.takePendingSync(appointment) ?: break
-                done++
-
-                val user = storage.users[attempt.user]!!
-
-                try {
-                    fetch(storage, site, account, appointment, user)
-                } catch (error: Throwable) {
-                    done--
-                    error.printStackTrace()
-                }
-            }
-
-            syncing = false
-        }
-
-
-        AlertDialog(
-            confirmButton = {},
-            dismissButton = { Button({ syncing = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
-            onDismissRequest = { syncing = false },
-            icon = { Icon(Icons.Default.Sync, "") },
-            title = { Text("Synchronizing...") },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text("$done / $pending")
-                }
-            },
-        )
+        Sync(account, appointment, pending) { syncing = false }
     }
 
 
@@ -126,7 +118,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(account, course, appointment),
             ) {
-                ScanAttendeeList(refreshing) { refresh(it) }
+                ScanAttendeeList()
             }
 
             Column(

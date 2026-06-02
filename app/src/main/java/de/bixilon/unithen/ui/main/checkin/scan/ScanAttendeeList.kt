@@ -25,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCheckInAttempts
 import de.bixilon.unithen.storage.types.CheckInAttempt
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
@@ -141,8 +143,8 @@ private fun EnrolledCard(user: User) {
 
 
 @Composable
-fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
-    val (_, course, appointment) = LocalScanContext.current
+fun ScanAttendeeList() {
+    val (account, course, appointment) = LocalScanContext.current
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
@@ -151,6 +153,30 @@ fun ScanAttendeeList(refreshing: Boolean, refresh: (force: Boolean) -> Unit) {
     val other = remember(attempts) { attempts.filter { it.status != CheckInAttempt.Status.OK } }
 
     val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, course) }
+
+
+    val storage = LocalStorage.current
+    var refreshing by remember { mutableStateOf(false) }
+    val _refresh = useAsyncNetwork<Boolean>(account) {
+        try {
+            refreshing = true
+            storage.fetchCheckInAttempts(account, appointment, it)
+        } finally {
+            refreshing = false
+        }
+    }
+
+    fun refresh(force: Boolean) {
+        if (refreshing) return
+        _refresh.invoke(force)
+    }
+
+    LaunchedEffect(Unit) {
+        if (appointment.attendeesFetched == null || Clock.System.now() - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL) {
+            refresh(false)
+        }
+    }
+
 
     Section {
         SectionTitle("Attendees (${ok.size}/${enrolled})")
