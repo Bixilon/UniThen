@@ -48,8 +48,10 @@ private fun Sync(account: Account, appointment: Appointment, pending: Int, onFin
 
     val abort = remember { mutableStateOf(false) }
 
-    LaunchedEffect(abort) { onFinish() }
+    LaunchedEffect(abort) { if (abort.value) onFinish() }
+    DisposableEffect(abort) { onDispose { abort.value = true } }
 
+    // TODO: Show errors
     LaunchedEffect(Unit) {
         val site = storage.sites[course.site]!!
 
@@ -70,7 +72,7 @@ private fun Sync(account: Account, appointment: Appointment, pending: Int, onFin
         onFinish()
     }
 
-    BackHandler { onFinish() }
+    BackHandler { abort.value = true }
 
 
     AlertDialog(

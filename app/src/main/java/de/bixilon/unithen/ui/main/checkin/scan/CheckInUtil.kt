@@ -18,7 +18,6 @@ import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.time.Clock
@@ -28,7 +27,6 @@ object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
 
     suspend fun sync(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
-        delay(1000L)
         val now = Clock.System.now()
 
         if (storage.checkInAttempts[appointment, user] == null) {
