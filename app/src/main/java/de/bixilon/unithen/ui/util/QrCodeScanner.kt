@@ -95,7 +95,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                         if (results.isNotEmpty()) {
                             last = now
                         }
-                        if (results.isEmpty() && now - last > 200.milliseconds) {
+                        if (results.isEmpty() && now - last > 600.milliseconds) {
                             return@use
                         }
 
