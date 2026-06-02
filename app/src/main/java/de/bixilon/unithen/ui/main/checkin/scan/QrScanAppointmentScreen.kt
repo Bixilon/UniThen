@@ -26,8 +26,11 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.error.ErrorBox
+import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
+import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.util.json.Jackson
 import kotlinx.coroutines.delay
 import java.util.*
@@ -38,6 +41,12 @@ import kotlin.time.Duration.Companion.seconds
 data class ScannedQrCode(
     @field:JsonProperty("appointment_id") val appointmentId: UUID,
     @field:JsonProperty("user_id") val userId: UUID,
+)
+
+data class ScanResult(
+    val course: Course,
+    val appointment: Appointment,
+    val userId: UUID,
 )
 
 data class ErrorResult(
@@ -60,7 +69,7 @@ fun getInvalidReason(storage: SqlStorage, course: Course, appointment: Appointme
 }
 
 @Composable
-private fun ScanInstructions(course: Course?) {
+private fun ScanInstructions(courses: List<Course>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -73,11 +82,22 @@ private fun ScanInstructions(course: Course?) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
 
-            if (course != null) {
+            if (courses.size == 1) {
                 Text(
-                    text = course.name,
+                    text = courses.first().name,
                     style = MaterialTheme.typography.headlineMedium,
                 )
+            } else {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.heightIn(max = 300.dp),
+                ) {
+                    Text(
+                        text = courses.first().name,
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
+                }
             }
             Text("Please scan the QR code")
         }
@@ -108,18 +128,24 @@ private fun ErrorOverlay(errors: List<ErrorResult>) {
 }
 
 @Composable
-fun QrScanAppointmentScreen() {
+private fun QrScanScreen(appointments: List<Appointment>) {
     val storage = LocalStorage.current
-    val (_, course, appointment) = LocalScanContext.current
 
     val errors = remember { mutableStateListOf<ErrorResult>() }
 
-    var delayedUserId by remember { mutableStateOf<UUID?>(null) }
+    var delayedUserId by remember { mutableStateOf<ScanResult?>(null) }
 
-    var userId by remember { mutableStateOf<UUID?>(null) }
+    var userId by remember { mutableStateOf<ScanResult?>(null) }
 
     if (userId != null) {
-        QrScanConfirmScreen(userId!!)
+        val userId = userId!!
+        val account = storage.accounts.getTutorAccount(userId.course)!!
+
+        CompositionLocalProvider(
+            LocalScanContext provides ScanContextValue(account, userId.course, userId.appointment),
+        ) {
+            QrScanConfirmScreen(userId.userId)
+        }
         return
     }
 
@@ -156,20 +182,23 @@ fun QrScanAppointmentScreen() {
 
                     val scanned = Jackson.MAPPER.readValue<ScannedQrCode>(text)
 
-                    if (scanned.appointmentId != appointment.uuid) {
+                    val appointment = appointments.find { it.uuid == scanned.appointmentId }
+                    if (appointment == null) {
                         errors += ErrorResult("Mismatching appointment (wrong course?)!")
                         continue
                     }
+                    val course = storage.courses[appointment.course]!!
 
                     val result = getInvalidReason(storage, course, appointment, scanned.userId)
 
+                    val _result = ScanResult(course, appointment, scanned.userId)
 
                     if (result == null) {
-                        userId = scanned.userId
+                        userId = _result
                         delayedUserId = null
                     } else {
                         errors += ErrorResult(result)
-                        delayedUserId = scanned.userId
+                        delayedUserId = _result
                     }
                 } catch (_: JacksonException) {
                     errors += ErrorResult("Invalid QR code data!")
@@ -180,7 +209,23 @@ fun QrScanAppointmentScreen() {
         }
     }
 
-    ScanInstructions(course)
+    val courses = rememberStorage { appointments.map { storage.courses[it.course]!! } }
+    ScanInstructions(courses)
 
     ErrorOverlay(errors)
+}
+
+@Composable
+fun QrScanAppointmentScreen() {
+    val (_, _, appointment) = LocalScanContext.current
+
+    QrScanScreen(listOf(appointment))
+}
+
+@Composable
+fun QrScanAnyScreen() {
+    val time = useTime()
+    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+
+    QrScanScreen(appointments)
 }

@@ -35,6 +35,7 @@ data class PresentQrAppointmentRoute(val course: Course, val appointment: Appoin
 
 data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
 data class ScanScanAppointmentRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute
+object ScanAnyRoute : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 
