@@ -18,7 +18,7 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 - QR Code Check in (presenting and scanning)
 - List courses/appointments
 - Really fast, no ads, no trackers
-- Simple and small (~10MB; most of it is due to qr code scanning from `zxing-cpp`)
+- Simple and small (~10MB; most of it is due to qr code scanning from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp))
 - Completely offline (authenticate once)
 
 ## Download
@@ -52,7 +52,7 @@ And I don't want anything on my phone that I don't essentially need and that is 
 - Fetch user and page details and extract them from html (this could be improved with a dedicated api endpoint, did not touch the app yet)
 - Get courses and appointments with GraphQL ([Schema](./doc/UniNow.graphql))
 - Store everything locally in SQL database
-- QR code scanning: Local copy of all enrolled users and a queue for offline synchronization of attendees (actually kinda complex)
+- QR code scanning: Local copy of all enrolled users, queue for offline synchronization and [fts4](https://www.sqlite.org/fts3.html) for searching (actually kinda complex)
 
 ## Something is broken
 Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`

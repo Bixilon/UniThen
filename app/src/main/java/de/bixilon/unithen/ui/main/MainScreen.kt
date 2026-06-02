@@ -81,7 +81,7 @@ fun ActualMainScreen() {
         NavigationBar {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
-                    MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isMember() } // TODO: broken
+                    MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isMember() }
                     MainScreens.CHECKIN_SCAN -> rememberStorage { courses.isTutor() }
                     else -> true
                 }

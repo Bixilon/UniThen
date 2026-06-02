@@ -103,6 +103,14 @@ android {
         versionName = version
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "x86_64")
+        }
+        packaging {
+            // jniLibs.useLegacyPackaging = false
+            // dex.useLegacyPackaging = false
+        }
     }
 
     buildTypes {
@@ -116,7 +124,6 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             resValue("string", "app_name", "Debug: UniThen")
-            resValue("string", "app_name_fast_checkin", "Debug: UniThen Fast Check In")
         }
     }
     compileOptions {

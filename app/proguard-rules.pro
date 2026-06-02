@@ -25,6 +25,6 @@
 -keepnames class com.fasterxml.jackson.** { *; }
 -dontwarn com.fasterxml.jackson.databind.**
 -dontwarn java.awt.**
--keep class de.bixilon.** {*; }
--keep enum de.bixilon.**
--keep interface de.bixilon.**
+-keep class de.bixilon.unithen.** {*; }
+-keep enum de.bixilon.unithen.**
+-keep interface de.bixilon.unithen.**
