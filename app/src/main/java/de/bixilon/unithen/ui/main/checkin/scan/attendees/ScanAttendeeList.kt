@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -84,7 +85,8 @@ private fun AttemptCard(attempt: CheckInAttempt) {
     }
 
     val storage = LocalStorage.current
-    val user = storage.users[attempt.user]!!
+    val user = rememberStorage { users[attempt.user]!! }
+    val appointment = rememberStorage { appointments[attempt.appointment]!! }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
@@ -105,11 +107,17 @@ private fun AttemptCard(attempt: CheckInAttempt) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            if (BuildConfig.DEBUG) {
-                IconButton({
-                    val appointment = storage.appointments[attempt.appointment]!!
-                    storage.checkInAttempts.update(appointment, user, uuid = UUID.randomUUID(), sync = Clock.System.now(), status = CheckInAttempt.Status.OK)
-                }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
+            Row {
+                if (BuildConfig.DEBUG) {
+                    IconButton({
+                        storage.checkInAttempts.update(appointment, user, uuid = UUID.randomUUID(), sync = Clock.System.now(), status = CheckInAttempt.Status.OK)
+                    }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
+                }
+                if (attempt.status == CheckInAttempt.Status.PENDING) {
+                    IconButton({
+                        storage.checkInAttempts.delete(appointment, user)
+                    }) { Icon(Icons.Filled.Clear, "remove") }
+                }
             }
         }
     }
@@ -137,7 +145,9 @@ private fun EnrolledCard(user: User) {
             }
             val (account, _, appointment) = LocalScanContext.current
             val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, account, appointment, user) }
+
             Checkbox(false, enabled = !loading, onCheckedChange = {
+                if (loading) return@Checkbox
                 loading = true
                 checkin.invoke(Unit)
             })

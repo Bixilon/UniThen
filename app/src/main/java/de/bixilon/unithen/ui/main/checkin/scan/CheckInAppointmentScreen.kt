@@ -28,7 +28,7 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.fetch
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.sync
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -58,9 +58,8 @@ private fun Sync(account: Account, appointment: Appointment, pending: Int, onFin
             val user = storage.users[attempt.user]!!
 
             try {
-                fetch(storage, site, account, appointment, user)
+                sync(storage, site, account, appointment, user)
             } catch (error: Throwable) {
-                done--
                 error.printStackTrace()
             }
         }

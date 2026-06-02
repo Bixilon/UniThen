@@ -58,10 +58,10 @@ open class AuthenticatedUniNowApi(
             "userId" to userId,
             "expectedAppointmentId" to expectedAppointmentId,
         )
-        return graphql<Mutations>("checkin", *variables).appointment_checkin
+        return graphql<Mutations>("checkin", *variables).appointmentCheckin
     }
 
     fun deleteCheckinAttempt(attemptId: UUID): CheckInAttemptQl? {
-        return graphql<Mutations>("delete_checkin", "checkinAttemptID" to attemptId).appointment_checkin
+        return graphql<Mutations>("delete_checkin", "checkinAttemptID" to attemptId).appointmentCheckin
     }
 }

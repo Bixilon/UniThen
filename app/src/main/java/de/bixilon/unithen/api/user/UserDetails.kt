@@ -30,7 +30,7 @@ data class UserDetails(
 
 
     companion object {
-        private val USER_ID_REGEX = "id: \"([\\w-]{36})\"".toRegex() // TODO: extractable with get_buyer, but that sucks.
+        private val USER_ID_REGEX = "id: \"([\\w-]{36})\"".toRegex() // TODO: extractable with get_payer, but that sucks.
         private val FIRSTNAME_REGEX = "first_name: \"(.+)\"".toRegex() // TODO: extract via user_pk->first_name
         private val LASTNAME_REGEX = "last_name: \"(.+)\"".toRegex() // TODO: extract via user_pk->last_name
         private val EMAIL_REGEX = "email: \"(.+@.+\\..+)\"".toRegex() // TODO: extract via user_pk->email

@@ -18,6 +18,7 @@ import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.time.Clock
@@ -26,10 +27,15 @@ import kotlin.time.Duration.Companion.minutes
 object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
 
-    suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
+    suspend fun sync(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, user: User) {
+        delay(1000L)
         val now = Clock.System.now()
 
-        storage.checkInAttempts.add(appointment, user, now, sync = now)
+        if (storage.checkInAttempts[appointment, user] == null) {
+            storage.checkInAttempts.add(appointment, user, now, sync = now)
+        } else {
+            storage.checkInAttempts.update(appointment, user, sync = now)
+        }
 
 
         val attemptQl = withContext(Dispatchers.IO) {
@@ -37,6 +43,7 @@ object CheckInUtil {
 
             return@withContext api.checkInUser(appointment.uuid, user.uuid, appointment.uuid)
         }
+
         if (attemptQl == null) throw IllegalStateException("Null attempt?")
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
@@ -44,7 +51,7 @@ object CheckInUtil {
         storage.checkInAttempts.update(appointment, user, uuid = attemptQl.id, message = attemptQl.message, status = if (attemptQl.status == CheckInAttemptQl.Status.SUCCESS) CheckInAttempt.Status.OK else CheckInAttempt.Status.FAILED)
     }
 
-    suspend fun fetch(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
+    suspend fun sync(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
         val now = Clock.System.now()
 
         val attemptQl = withContext(Dispatchers.IO) {
@@ -65,7 +72,7 @@ object CheckInUtil {
     suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, user: User): CheckInAttempt {
         val site = storage.sites[account.site]!!
 
-        fetch(storage, site, account, appointment, user)
+        sync(storage, site, account, appointment, user)
 
         return storage.checkInAttempts[appointment, user]!!
     }
@@ -73,7 +80,7 @@ object CheckInUtil {
     suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: UUID): CheckInAttempt? {
         val site = storage.sites[account.site]!!
 
-        fetch(storage, site, account, appointment, userId)
+        sync(storage, site, account, appointment, userId)
         val user = storage.users[site, userId] ?: return null
 
         return storage.checkInAttempts[appointment, user]
@@ -103,7 +110,7 @@ object CheckInUtil {
             val account = storage.accounts.getTutorAccount(course) ?: continue
 
 
-            fetch(storage, site, account, appointment, user)
+            sync(storage, site, account, appointment, user)
         }
     }
 }

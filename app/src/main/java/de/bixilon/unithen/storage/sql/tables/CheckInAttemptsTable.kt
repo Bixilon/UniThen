@@ -57,6 +57,10 @@ class CheckInAttemptsTable(
         update("UPDATE $table SET ${filter.sql} WHERE appointment=? AND user=?", parameters = arrayOf(*filter.parameters.toTypedArray(), appointment.id, user.id))
     }
 
+    fun delete(appointment: Appointment, user: User) {
+        update("DELETE FROM $table WHERE appointment=? AND user=?", appointment.id, user.id)
+    }
+
 
     fun add(appointment: Appointment, user: User, uuid: UUID, message: String?, sync: Instant, status: CheckInAttempt.Status) {
         this[appointment, user]?.let { update(appointment, user, uuid, null, message, sync, status); return }

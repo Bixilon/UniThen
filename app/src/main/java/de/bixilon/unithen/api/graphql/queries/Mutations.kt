@@ -17,5 +17,5 @@ import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 
 data class Mutations(
     @field:JsonProperty("delete_checkin_attempt") val deleteCheckinAttempt: CheckInAttemptQl?,
-    @field:JsonProperty("appointmentCheckin") val appointment_checkin: CheckInAttemptQl?,
+    @field:JsonProperty("appointment_checkin") val appointmentCheckin: CheckInAttemptQl?,
 )
