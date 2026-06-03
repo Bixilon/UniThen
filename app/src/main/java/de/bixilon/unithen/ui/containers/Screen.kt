@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier = modifier
         .fillMaxSize()
-        .padding(vertical = 16.dp, horizontal = 8.dp),
+        .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
         horizontalAlignment = horizontalAlignment,
         content = content)
 }

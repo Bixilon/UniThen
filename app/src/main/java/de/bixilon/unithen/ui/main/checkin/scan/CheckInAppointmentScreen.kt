@@ -128,7 +128,8 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
 
             Column(
                 modifier = Modifier
-                    .align(Alignment.BottomEnd),
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 var showSync by remember(Unit) { mutableStateOf(pending > 0) }
