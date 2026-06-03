@@ -69,7 +69,6 @@ fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
 
 
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(appointments, key = Appointment::id) { item ->
