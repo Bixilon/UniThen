@@ -46,7 +46,7 @@ enum class AuthenticationState {
 fun AuthenticationProgress(state: AuthenticationState) {
     val text = when (state) {
         AuthenticationState.FETCH_USER_DETAILS -> "Fetching user details..."
-        AuthenticationState.FETCH_COURSES -> "Fetching courses..."
+        AuthenticationState.FETCH_COURSES -> "Synchronizing courses..."
         AuthenticationState.DONE -> Broken()
     }
     AlertDialog(

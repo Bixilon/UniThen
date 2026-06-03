@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,13 +21,16 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
@@ -42,14 +46,113 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.verticalScroll
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 
 
 @Composable
-private fun AccountOptions(account: Account, modifier: Modifier) {
+private fun Sync(account: Account): (() -> Unit)? {
     val storage = LocalStorage.current
+    var synchronizing by remember { mutableStateOf(false) }
+    val update = useAsyncNetwork<Unit>(account) {
+        try {
+            synchronizing = true
+            storage.fetch(account, true)
+        } finally {
+            synchronizing = false
+        }
+    }
+
+    if (!synchronizing) return { update.invoke(Unit) }
+
+
+
+
+    AlertDialog(
+        confirmButton = {},
+        onDismissRequest = { synchronizing = false },
+        title = { Text("Synchronizing...") },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Synchronizing account...")
+            }
+        },
+    )
+
+    return null
+}
+
+@Composable
+private fun Remove(account: Account): (() -> Unit)? {
+    var show by remember { mutableStateOf(false) }
+    var deleting by remember { mutableStateOf(false) }
+
+    if (!show) return { show = true }
+
+
+
+    if (!deleting) {
+        AlertDialog(
+            confirmButton = {
+                Button({ deleting = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.onErrorContainer)
+                        Text("Remove", color = MaterialTheme.colorScheme.onErrorContainer)
+                    }
+                }
+            },
+            dismissButton = { Button({ show = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
+            onDismissRequest = { show = false },
+            title = { Text("Are you sure?") },
+            text = { Text("This will remove the account, you will need to log in again.") },
+        )
+        return null
+    }
+    val storage = LocalStorage.current
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                storage.accounts.remove(account)
+                storage.cleanup()
+                withContext(Dispatchers.Main) { Toast.makeText(context, "Account removed!", Toast.LENGTH_SHORT).show() }
+            } finally {
+                show = false
+                deleting = false
+            }
+        }
+    }
+
+
+    AlertDialog(
+        confirmButton = {},
+        onDismissRequest = {},
+        title = { Text("Removing...") },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Removing account...")
+            }
+        },
+    )
+
+
+    return null
+}
+
+@Composable
+private fun AccountOptions(account: Account, modifier: Modifier) {
     var expanded by remember { mutableStateOf(false) }
-    var refreshing by remember { mutableStateOf(false) }
+
+    val sync = Sync(account)
+    val remove = Remove(account)
 
     Box(modifier = modifier) {
         IconButton(onClick = { expanded = !expanded }) {
@@ -59,33 +162,25 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            val update = useAsyncNetwork<Unit>(account) { refreshing = true; storage.fetch(account, true) }
             DropdownMenuItem(
-                text = { Text(if (refreshing) "Updating..." else "Update") },
-                enabled = !refreshing,
-                onClick = {
-                    expanded = false
-                    update.invoke(Unit)
-                }
+                text = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Sync, "")
+                        Text("Synchronize")
+                    }
+                },
+                onClick = { expanded = false; sync?.invoke() }
             )
-            // TODO: Remove account
+            DropdownMenuItem(
+                text = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.errorContainer)
+                        Text("Remove", color = MaterialTheme.colorScheme.errorContainer)
+                    }
+                },
+                onClick = { expanded = false; remove?.invoke() }
+            )
         }
-    }
-
-
-    if (refreshing) {
-        AlertDialog(
-            confirmButton = {},
-            onDismissRequest = { refreshing = false },
-            title = { Text("Updating...") },
-            text = {
-                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text("Fetching courses...")
-                }
-            },
-        )
     }
 }
 

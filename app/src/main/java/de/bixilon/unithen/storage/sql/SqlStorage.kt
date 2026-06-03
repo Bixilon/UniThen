@@ -114,6 +114,21 @@ class SqlStorage(context: Context) : Closeable {
     }
 
 
+    fun cleanup() {
+        transaction {
+            // TODO: Remove courses that are not referenced
+        }
+        insert("VACUUM")
+    }
+
+    fun clearCache() {
+        transaction {
+            insert("DELETE FROM appointment_attendees")
+            insert("UPDATE appointments SET attendees_fetched=0")
+        }
+        insert("VACUUM")
+    }
+
     companion object {
         val TRANSACTIONS = ThreadLocal<MutableSet<MutableIntState>>()
     }

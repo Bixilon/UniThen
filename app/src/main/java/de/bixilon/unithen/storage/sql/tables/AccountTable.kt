@@ -87,6 +87,11 @@ class AccountTable(
         insert("INSERT INTO account_courses(account, course) VALUES (?,?) ON CONFLICT(account, course) DO NOTHING", account.id, course.id)
     }
 
+    fun remove(account: Account) = storage.transaction {
+        insert("DELETE FROM account_courses WHERE account=?", account.id)
+        insert("DELETE FROM accounts WHERE id=?", account.id)
+    }
+
     companion object : SqlSchema<Account> {
         override val table = "accounts"
         override val columns = listOf("id", "site", "uuid", "firstname", "lastname", "session_key", "fetched")
