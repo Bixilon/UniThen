@@ -45,7 +45,7 @@ fun CourseEnrolled(course: Course) {
             state = state,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(items = users, key = User::id) { TextCard(it.firstname + " " + it.lastname) }
+            items(items = users, key = User::id) { TextCard(it.fullname) }
         }
     }
 }

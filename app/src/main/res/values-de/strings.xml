@@ -59,6 +59,7 @@
     <string name="scan_try_synchronize">Versuche Synchronisation</string>
     <string name="scan_try_anyways">Trotzdem versuchen</string>
     <string name="scan_confirm">Bestätigen</string>
+    <string name="scan_confirm_contributor">Sag Danke🎉 (Bestätigen)</string>
     <string name="network_error">Netzwerk Fehler</string>
     <string name="scan_qr_instruction">Bitte den Teilnehmer QR-Code scannen</string>
     <string name="setup_2">Diese App wurde von Moritz Zwerger entwickelt und ist unter der GPLv3 Lizenz verfügbar. Der App Entwickler ist nicht verantwortlich für jeglichen Schaden (an deinem Account). Diese App kommt mit absolut KEINER Garantie!</string>

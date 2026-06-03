@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.ui.main.checkin.scan.qr.isMajorContributor
 import java.util.*
 
 data class User(
@@ -22,4 +23,7 @@ data class User(
     val uuid: UUID,
     val firstname: String,
     val lastname: String,
-) : DbKeyed
+) : DbKeyed {
+
+    val fullname get() = "$firstname $lastname" + if (isMajorContributor(this)) "\uD83C\uDF89" else ""
+}

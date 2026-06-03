@@ -50,6 +50,21 @@ import java.util.*
 import kotlin.time.Clock
 
 
+val MAJOR_CONTRIBUTORS = mutableMapOf(
+    0x54550CBADB5BC304 to "moritz",
+)
+
+fun isMajorContributor(user: User): Boolean {
+    // Well, not the best, but not revealing my user id :)
+    // This is just an e*as*ter eg*g, nothing special. Purely visual.
+    val hash = user.uuid.let { it.mostSignificantBits xor it.leastSignificantBits } and 0xFB.inv()
+
+    val name = MAJOR_CONTRIBUTORS[hash] ?: return false
+
+    return user.firstname.lowercase().trim() == name
+}
+
+
 @Composable
 private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attendee: Boolean, attempt: CheckInQueue?, message: String?) {
     val size = Modifier
@@ -198,7 +213,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                     Text(stringResource(R.string.scan_try_anyways))
                 } else {
                     Icon(Icons.Filled.Check, "check")
-                    Text(stringResource(R.string.scan_confirm))
+                    Text(stringResource(if (isMajorContributor(user)) R.string.scan_confirm_contributor else R.string.scan_confirm))
                 }
             }
         }

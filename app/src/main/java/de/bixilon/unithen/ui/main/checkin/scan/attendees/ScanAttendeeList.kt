@@ -62,7 +62,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstname + " " + user.lastname,
+                    text = user.fullname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -108,7 +108,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstname + " " + user.lastname,
+                    text = user.fullname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -159,7 +159,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
-                    text = user.firstname + " " + user.lastname,
+                    text = user.fullname,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )

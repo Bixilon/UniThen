@@ -65,6 +65,7 @@
     <string name="scan_try_synchronize">Try synchronize</string>
     <string name="scan_try_anyways">Try anyways</string>
     <string name="scan_confirm">Confirm</string>
+    <string name="scan_confirm_contributor">Say thanks🎉 (Confirm)</string>
     <string name="network_error">Network error</string>
     <string name="scan_qr_instruction">Please scan the QR code</string>
     <string name="course_enrolled_title">Enrolled (%1$d)</string>

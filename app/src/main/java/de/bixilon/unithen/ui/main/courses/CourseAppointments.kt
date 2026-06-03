@@ -79,7 +79,7 @@ private fun AppointmentCard(appointment: Appointment) {
             val tutors = remember { storage.users.getTutors(appointment) }
             if (tutors.isNotEmpty()) {
                 Text(
-                    text = tutors.joinToString(", ") { it.firstname + " " + it.lastname },
+                    text = tutors.joinToString(", ") { it.fullname },
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
