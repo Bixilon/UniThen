@@ -35,7 +35,9 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -139,7 +141,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
                         showSync = true
                     }
                 }
-                if (showSync) {
+                if (showSync && (useTime() - appointment.end) < Duration.ZERO) {
                     FloatingActionButton({ syncing = true }) {
                         Icon(Icons.Filled.Sync, "sync")
                     }

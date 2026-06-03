@@ -38,13 +38,15 @@ import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
 import java.util.*
 import kotlin.time.Clock
+import kotlin.time.Duration
 
 
 @Composable
-private fun AttendeeCard(user: User) {
+private fun AttendeeCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
     var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
@@ -75,7 +77,7 @@ private fun AttendeeCard(user: User) {
                 }
             }
 
-            Checkbox(true, enabled = !loading, onCheckedChange = {
+            Checkbox(true, enabled = !readonly && !loading, onCheckedChange = {
                 if (loading) return@Checkbox
                 checkout.invoke(Unit)
             })
@@ -84,7 +86,7 @@ private fun AttendeeCard(user: User) {
 }
 
 @Composable
-private fun QueueCard(item: CheckInQueue) {
+private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
     val color = when {
         item.attempt != null -> MaterialTheme.colorScheme.surfaceContainer
         item.message != null -> MaterialTheme.colorScheme.errorContainer
@@ -133,7 +135,7 @@ private fun QueueCard(item: CheckInQueue) {
                 if (item.message == null) {
                     IconButton({
                         storage.checkInQueue.delete(appointment, user)
-                    }) { Icon(Icons.Filled.Clear, "remove") }
+                    }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
                 }
             }
         }
@@ -141,7 +143,7 @@ private fun QueueCard(item: CheckInQueue) {
 }
 
 @Composable
-private fun EnrolledCard(user: User) {
+private fun EnrolledCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
     var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
@@ -163,7 +165,7 @@ private fun EnrolledCard(user: User) {
             val (account, _, appointment) = LocalScanContext.current
             val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, appointment, user) }
 
-            Checkbox(false, enabled = !loading, onCheckedChange = {
+            Checkbox(false, enabled = !readonly && !loading, onCheckedChange = {
                 if (loading) return@Checkbox
                 loading = true
                 checkin.invoke(Unit)
@@ -218,6 +220,8 @@ fun ScanAttendeeList() {
 
         UserFilterX(filter)
 
+        val readonly = (useTime() - appointment.end) > Duration.ZERO
+
         PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
             LazyColumn(
                 modifier = Modifier
@@ -226,9 +230,9 @@ fun ScanAttendeeList() {
                 state = state,
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                items(items = attendees, key = User::id) { AttendeeCard(it) }
-                items(items = queue, key = { it.user }) { QueueCard(it) }
-                items(items = not, key = User::id) { EnrolledCard(it) }
+                items(items = attendees, key = User::id) { AttendeeCard(it, readonly) }
+                items(items = queue, key = { it.user }) { QueueCard(it, readonly) }
+                items(items = not, key = User::id) { EnrolledCard(it, readonly) }
             }
         }
     }

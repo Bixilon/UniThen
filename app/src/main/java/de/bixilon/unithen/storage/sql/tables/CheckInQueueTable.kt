@@ -99,7 +99,8 @@ class CheckInQueueTable(
         val _appointment = appointment?.let { CheckInQueue::appointment eq appointment.id }
 
         return storage.transaction {
-            val entry = first(SqlFilter("sync<? LIMIT 1", last) and _appointment) ?: return@transaction null
+            // TODO: Only sync if appointment end is still ahead of us
+            val entry = first((SqlFilter("sync<?", last) and _appointment) + "LIMIT 1") ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 
