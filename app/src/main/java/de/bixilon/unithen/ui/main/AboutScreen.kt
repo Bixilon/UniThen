@@ -172,8 +172,8 @@ fun AboutScreen() {
 
         if (!BuildConfig.DEBUG) {
             UpdateChecker()
+            Spacer(modifier = Modifier.height(24.dp))
         }
-        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "Licensed under the GNU General Public License v3 or later.\nThis app comes with absolutely NO WARRANTY.",
