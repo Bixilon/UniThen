@@ -28,12 +28,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.QrCodeView
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.string.StringUtil.truncate
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -82,10 +84,10 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         InfoContainer(modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(0.8f)) {
-            InfoPair("Name", "${account.firstname} ${account.lastname}")
-            InfoPair("Start", appointment.start.format())
-            InfoPair("End", appointment.end.format())
-            InfoPair("Location", appointment.location)
+            InfoPair(stringResource(R.string.course_name), "${account.firstname} ${account.lastname}")
+            InfoPair(stringResource(R.string.appointment_start), appointment.start.format())
+            InfoPair(stringResource(R.string.appointment_end), appointment.end.format())
+            InfoPair(stringResource(R.string.appointment_location), appointment.location)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -105,7 +107,7 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         }
 
         Text(
-            text = "Present this QR code at the entrance",
+            text = stringResource(R.string.present_show_entrance),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
         )

@@ -24,10 +24,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AddAccountRoute
@@ -45,22 +47,22 @@ fun SetupScreen() {
     var accepted by rememberSaveable { mutableStateOf(false) }
 
     Screen {
-        ScreenTitle("Setup")
+        ScreenTitle(stringResource(R.string.setup_title))
 
         Column(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(buildAnnotatedString {
-                append("This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at ")
+                append(stringResource(R.string.setup_1))
 
                 withLink(LinkAnnotation.Url("https://gitlab.bixilon.de/bixilon/unithen")) { append("gitlab.bixilon.de/bixilon/unithen") }
 
                 append(".")
             })
 
-            Note("This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.")
+            Note(stringResource(R.string.setup_2))
 
-            Note("An access token (generated with your credentials) will be saved securely on this device.")
+            Note(stringResource(R.string.setup_3))
 
-            Note("The servers are operated by UniNow GmbH, please check their website for their privacy policy.")
+            Note(stringResource(R.string.setup_4))
 
             Spacer(modifier = Modifier.weight(1.0f))
 
@@ -69,7 +71,7 @@ fun SetupScreen() {
 
                 Spacer(Modifier.width(4.dp))
 
-                Text("I understand and accept these terms")
+                Text(stringResource(R.string.set_accept))
             }
         }
 
@@ -80,7 +82,7 @@ fun SetupScreen() {
             enabled = accepted,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Continue to login")
+            Text(stringResource(R.string.setup_login))
         }
     }
 }

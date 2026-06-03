@@ -29,7 +29,7 @@ fun FastCheckInInScreen() {
 
 
     when (appointments.size) {
-        0 -> FastCheckinNoAppointments()
+        0 -> PresentNoAppointments()
         1 -> FastCheckinAppointment(rememberStorage { courses[appointments[0].course]!! }, appointments[0])
         else -> FastCheckinAppointmentSelector(appointments)
     }

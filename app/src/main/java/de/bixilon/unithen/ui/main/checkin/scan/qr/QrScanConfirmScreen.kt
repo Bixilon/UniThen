@@ -20,7 +20,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.Account
@@ -72,11 +75,11 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
     }
 
     val warning = when {
-        user == null -> "Unknown user!"
-        !enrolled -> "User is not enrolled in course!"
-        attempt != null && attempt.attempt == null -> "User is already checked in (checkout pending)"
-        attendee -> "User is already checked in"
-        attempt != null -> "User is already checked in (synchronization pending)"
+        user == null -> stringResource(R.string.scan_error_unknown_user)
+        !enrolled -> stringResource(R.string.scan_error_not_enrolled)
+        attempt != null && attempt.attempt == null -> stringResource(R.string.scan_error_already_checked_in_pending_checkout)
+        attendee -> stringResource(R.string.scan_error_already_checked_in)
+        attempt != null -> stringResource(R.string.scan_error_already_checked_in_pending)
         else -> null
     }
 
@@ -103,9 +106,9 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         if (updating) {
-            CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text("Updating enrolled list...")
+            CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(stringResource(R.string.scan_updating_enrolled))
         } else {
-            Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text("Enrolled list was last updated ${course.fetched.formatNow()}")
+            Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(stringResource(R.string.scan_enrolled_outdated, course.fetched.formatNow()))
         }
     }
 }
@@ -137,16 +140,17 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
         }
 
         InfoContainer(modifier = Modifier.fillMaxWidth(0.8f)) {
-            user?.let { InfoPair("Name", "${user.firstname} ${user.lastname}") }
-            InfoPair("Start", appointment.start.format())
-            InfoPair("End", appointment.end.format())
-            InfoPair("Location", appointment.location)
+            user?.let { InfoPair(stringResource(R.string.user_name), "${user.firstname} ${user.lastname}") }
+            InfoPair(stringResource(R.string.appointment_start), appointment.start.format())
+            InfoPair(stringResource(R.string.appointment_end), appointment.end.format())
+            InfoPair(stringResource(R.string.appointment_location), appointment.location)
         }
 
         Spacer(Modifier
             .weight(1.0f)
             .defaultMinSize(minHeight = 16.dp))
 
+        val resources = LocalResources.current
         val checkin = useAsyncNetwork<Unit>(account) {
             try {
                 confirming = true
@@ -159,7 +163,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 navigation.pop()
             } catch (error: IOException) {
                 if (user == null) {
-                    message = "Network error"
+                    message = resources.getString(R.string.network_error)
                 } else {
                     navigation.pop()
                 }
@@ -178,23 +182,23 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 navigation.pop()
             }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
                 Icon(Icons.Filled.Close, "cancel")
-                Text("Cancel")
+                Text(stringResource(R.string.cancel))
             }
 
             if (queue != null && queue.message == null) {
                 Button({ checkin.invoke(Unit) }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
                     Icon(Icons.Filled.Sync, "synchronize")
-                    Text("Try synchronize")
+                    Text(stringResource(R.string.scan_try_synchronize))
                 }
             }
 
             Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
-                    Text("Try anyways")
+                    Text(stringResource(R.string.scan_try_anyways))
                 } else {
                     Icon(Icons.Filled.Check, "check")
-                    Text("Confirm")
+                    Text(stringResource(R.string.scan_confirm))
                 }
             }
         }

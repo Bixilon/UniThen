@@ -31,9 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.Screen
@@ -255,7 +257,7 @@ fun AccountsScreen() {
     val accounts = rememberStorage { accounts.all() }
 
     Screen {
-        ScreenTitle("Accounts (${accounts.size})")
+        ScreenTitle(stringResource(R.string.accounts_title, accounts.size))
 
         Box {
             val navigator = LocalNavigation.current

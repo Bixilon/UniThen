@@ -19,7 +19,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -37,7 +39,7 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
     val site = storage.sites[course.site]!!
 
     Screen {
-        ScreenTitle("Please choose account")
+        ScreenTitle(stringResource(R.string.present_choose_account_title))
 
         InfoContainer {
             InfoPair("Course", course.name)

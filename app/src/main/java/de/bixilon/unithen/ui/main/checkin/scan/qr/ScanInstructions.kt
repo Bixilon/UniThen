@@ -19,7 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
 
@@ -51,7 +53,7 @@ fun ScanInstructions(courses: List<Course>) {
                     )
                 }
             }
-            Text("Please scan the QR code")
+            Text(stringResource(R.string.scan_qr_instruction))
         }
     }
 }

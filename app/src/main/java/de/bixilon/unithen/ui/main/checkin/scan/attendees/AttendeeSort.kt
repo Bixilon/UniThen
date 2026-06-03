@@ -14,11 +14,12 @@ package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.types.Labeled
 
-enum class AttendeeSort(val field: String, override val label: String) : Labeled {
-    FIRSTNAME("firstname", "Firstname"),
-    LASTNAME("lastname", "Lastname"),
+enum class AttendeeSort(val field: String, override val label: Int) : Labeled {
+    FIRSTNAME("firstname", R.string.sort_firstname),
+    LASTNAME("lastname", R.string.sort_lastname),
     ;
 
     companion object : ValuesEnum<AttendeeSort> {

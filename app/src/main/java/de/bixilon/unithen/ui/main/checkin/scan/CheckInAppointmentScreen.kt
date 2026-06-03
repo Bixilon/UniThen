@@ -21,7 +21,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -76,7 +78,7 @@ private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
         dismissButton = { Button({ abort.value = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
         onDismissRequest = { abort.value = true },
         icon = { Icon(Icons.Default.Sync, "") },
-        title = { Text("Synchronizing...") },
+        title = { Text(stringResource(R.string.scan_synchronizing_attendees)) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
@@ -97,7 +99,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
 
 
     if (account == null) {
-        SimpleErrorScreen("No account", "No account who can perform check in?")
+        SimpleErrorScreen(stringResource(R.string.scan_no_account_message), stringResource(R.string.scan_no_account_title))
         return
     }
 

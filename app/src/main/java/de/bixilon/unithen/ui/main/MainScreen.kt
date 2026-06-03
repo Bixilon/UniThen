@@ -26,8 +26,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.checkin.present.FastCheckInInScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
@@ -45,14 +47,14 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 
 enum class MainScreens(
     val icon: ImageVector,
-    override val label: String,
+    override val label: Int,
     val route: NavigationRoute,
 ) : Labeled {
-    COURSES(Icons.Default.DateRange, "Courses", CoursesRoute),
-    ACCOUNTS(Icons.Default.AccountCircle, "Accounts", AccountsRoute),
-    CHECKIN_PRESENT(Icons.Default.QrCode, "Check In (Show)", CheckInPresentRoute),
-    CHECKIN_SCAN(Icons.Default.QrCodeScanner, "Check In (Scan)", CheckInScanRoute),
-    SETTINGS(Icons.Default.Settings, "Settings", SettingsRoute),
+    COURSES(Icons.Default.DateRange, R.string.main_navigation_courses, CoursesRoute),
+    ACCOUNTS(Icons.Default.AccountCircle, R.string.main_navigation_accounts, AccountsRoute),
+    CHECKIN_PRESENT(Icons.Default.QrCode, R.string.main_navigation_checkin_present, CheckInPresentRoute),
+    CHECKIN_SCAN(Icons.Default.QrCodeScanner, R.string.main_navigation_checkin_scan, CheckInScanRoute),
+    SETTINGS(Icons.Default.Settings, R.string.main_navigation_settings, SettingsRoute),
     ;
 
     companion object : ValuesEnum<MainScreens> {
@@ -89,7 +91,7 @@ fun ActualMainScreen() {
                     selected = navigator.current().route == destination.route,
                     onClick = { navigator.navigate(destination.route) },
                     icon = { Icon(destination.icon, contentDescription = "") },
-                    label = { Text(destination.label) },
+                    label = { Text(stringResource(destination.label)) },
                     enabled = enabled,
                 )
             }

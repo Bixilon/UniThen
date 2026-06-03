@@ -28,8 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.containers.Screen
@@ -97,7 +99,7 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
     }
 
     Screen {
-        ScreenTitle("Please choose your booking site")
+        ScreenTitle(stringResource(R.string.add_account_title))
 
         LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(items = sites, key = Site::id) { site -> SiteCard(site, Modifier.clickable { callback.invoke(site) }) }

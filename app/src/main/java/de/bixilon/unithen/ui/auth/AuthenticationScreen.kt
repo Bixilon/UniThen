@@ -23,8 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.Broken
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.api.user.UserDetails
@@ -45,14 +47,14 @@ enum class AuthenticationState {
 @Composable
 fun AuthenticationProgress(state: AuthenticationState) {
     val text = when (state) {
-        AuthenticationState.FETCH_USER_DETAILS -> "Fetching user details..."
-        AuthenticationState.FETCH_COURSES -> "Synchronizing courses..."
+        AuthenticationState.FETCH_USER_DETAILS -> stringResource(R.string.authenticatin_fetching_user_details)
+        AuthenticationState.FETCH_COURSES -> stringResource(R.string.authentication_fetching_courses)
         AuthenticationState.DONE -> Broken()
     }
     AlertDialog(
         confirmButton = {},
         onDismissRequest = {},
-        title = { Text("Logging in...") },
+        title = { Text(stringResource(R.string.authentication_loading)) },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),

@@ -12,17 +12,18 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.types.Labeled
 
-enum class QrErrorReasons(override val label: String) : Labeled {
-    INVALID_FORMAT("Invalid QR code format!"),
-    INVALID_DATA("Invalid QR code data!"),
+enum class QrErrorReasons(override val label: Int) : Labeled {
+    INVALID_FORMAT(R.string.scan_error_invalid_format),
+    INVALID_DATA(R.string.scan_error_invalid_data),
 
-    INVALID_APPOINTMENT("Invalid appointment (wrong course?)!"),
-    UNKNOWN_USER("Unknown user!"),
-    NOT_ENROLLED("User not enrolled in course!"),
-    ALREADY_CHECKED_IN("User is already checked in!"),
+    INVALID_APPOINTMENT(R.string.scan_error_invalid_appointment),
+    UNKNOWN_USER(R.string.scan_error_unknown_user),
+    NOT_ENROLLED(R.string.scan_error_not_enrolled),
+    ALREADY_CHECKED_IN(R.string.scan_error_already_checked_in),
 
 
-    OTHER("Unknown error!")
+    OTHER(R.string.scan_error_other),
 }

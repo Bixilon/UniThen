@@ -28,6 +28,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.string.WhitespaceUtil.trimWhitespaces
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -84,7 +85,7 @@ fun UserFilterX(filter: UserFilter) {
                         color = color.copy(textColor = MaterialTheme.colorScheme.onTertiaryContainer)
                     }
                     DropdownMenuItem(
-                        text = { Text(item.label) },
+                        text = { Text(stringResource(item.label)) },
                         colors = color,
                         onClick = { filter.sort = item; expanded = false },
                     )

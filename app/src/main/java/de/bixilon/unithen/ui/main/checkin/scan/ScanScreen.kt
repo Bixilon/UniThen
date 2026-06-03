@@ -23,15 +23,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
-import de.bixilon.unithen.ui.main.checkin.present.FastCheckinNoAppointments
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -90,7 +91,7 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
     LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanAnyRoute) }
 
     Screen {
-        ScreenTitle("Please choose appointment")
+        ScreenTitle(stringResource(R.string.scan_choose_appointment_title))
 
 
         Box {
@@ -121,7 +122,7 @@ fun CheckInScreen() {
     val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
     when (appointments.size) {
-        0 -> FastCheckinNoAppointments() // TODO: proper error message
+        0 -> ScanNoAppointments()
         1 -> CheckInAppointmentScreen(appointments.first())
         else -> ChooseAppointment(appointments)
     }

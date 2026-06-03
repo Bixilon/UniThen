@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.error.ErrorBox
 
@@ -36,7 +37,7 @@ fun ErrorOverlay(errors: List<ErrorResult>) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (error in errors) {
-                ErrorBox(error.reason.label, error.details)
+                ErrorBox(stringResource(error.reason.label), error.details)
             }
         }
     }

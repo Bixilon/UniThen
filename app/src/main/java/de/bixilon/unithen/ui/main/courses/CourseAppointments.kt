@@ -28,7 +28,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Section
@@ -106,7 +108,7 @@ fun CourseAppointments(course: Course) {
     }
 
     Section {
-        SectionTitle("Appointments (+${appointments.filter { it.start > now && it.canceled == null }.size}/${appointments.size})")
+        SectionTitle(stringResource(R.string.appointments_title, appointments.filter { it.start > now && it.canceled == null }.size, appointments.size))
 
         LazyColumn(
             modifier = Modifier.verticalScroll(state),

@@ -20,6 +20,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.enums.ValuesEnum
@@ -28,7 +29,7 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 
 
 interface Labeled {
-    val label: String
+    val label: Int
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -53,7 +54,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
 
         ExposedDropdownMenuBox(expanded = expanded, modifier = Modifier.fillMaxWidth(0.4f), onExpandedChange = { expanded = it }) {
             TextField( // TODO: This is buggy (selection possible)
-                value = value.nullCast<Labeled>()?.label ?: value.name.lowercase(),
+                value = value.nullCast<Labeled>()?.label?.let { stringResource(it) } ?: value.name.lowercase(),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -62,7 +63,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 for (option in values) {
                     DropdownMenuItem(
-                        text = { Text(if (option is Labeled) option.label else option.name.lowercase()) },
+                        text = { Text(option.nullCast<Labeled>()?.label?.let { stringResource(it) } ?: option.name.lowercase()) },
                         onClick = {
                             value = option
                             expanded = false
