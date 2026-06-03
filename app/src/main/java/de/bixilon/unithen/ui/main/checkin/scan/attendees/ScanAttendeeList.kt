@@ -25,8 +25,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_AUTO_REFRESH
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -111,9 +113,9 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 val text = when {
-                    item.attempt != null -> "Checkout pending..."
-                    item.message != null -> "Failed: " + item.message
-                    else -> "Checkin pending..."
+                    item.attempt != null -> stringResource(R.string.scan_queue_pending_checkout)
+                    item.message != null -> stringResource(R.string.scan_queue_failed, item.message)
+                    else -> stringResource(R.string.scan_queue_pending)
                 }
                 Text(
                     text = text,
@@ -212,7 +214,7 @@ fun ScanAttendeeList() {
 
 
     Section {
-        SectionTitle("Attendees (${attendees.size}/${enrolled})")
+        SectionTitle(stringResource(R.string.appointment_attendees_title, attendees.size, enrolled))
 
         val state = rememberLazyListState()
 

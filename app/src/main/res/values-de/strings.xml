@@ -64,4 +64,9 @@
     <string name="setup_2">Diese App wurde von Moritz Zwerger entwickelt und ist unter der GPLv3 Lizenz verfügbar. Der App Entwickler ist nicht verantwortlich für jeglichen Schaden (an deinem Account). Diese App kommt mit absolut KEINER Garantie!</string>
     <string name="setup_3">Der Zugangstoken wird sicher auf diesem Gerät gespeichert.</string>
     <string name="setup_4">Die Server des Buchungssystems werden von UniNow GmbH betrieben, bitte prüfe deren Webseite für deren Impressum/Datenschutzerklärung.</string>
+    <string name="course_enrolled_title">Teilnehmer (%1$d)</string>
+    <string name="appointment_attendees_title">Teilnehmer (%1$d/%2$d)</string>
+    <string name="scan_queue_pending_checkout">Synchronisierung ausstehend (Check Out)...</string>
+    <string name="scan_queue_failed">Fehler: %1$d</string>
+    <string name="scan_queue_pending">Synchronisierung ausstehend (Check In)...</string>
 </resources>
