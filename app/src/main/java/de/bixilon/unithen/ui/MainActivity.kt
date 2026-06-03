@@ -17,18 +17,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
+import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.main.*
@@ -52,6 +55,11 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import de.bixilon.unithen.util.AndroidUtil.activity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -111,6 +119,69 @@ fun MainNavigator() {
     }
 }
 
+@Composable
+fun Loader(content: @Composable () -> Unit) {
+    val storage = LocalStorage.current
+
+    var error by remember { mutableStateOf<Throwable?>(null) }
+    var loaded by remember { mutableStateOf(false) }
+    var loader by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) { // don't flash loader
+        if (!loaded) {
+            delay(100.milliseconds)
+            loader = true
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                storage.helper.writableDatabase
+            } catch (thrown: Throwable) {
+                error = thrown
+            } finally {
+                loaded = true
+                loader = false
+            }
+        }
+    }
+
+    if (!loaded && loader) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription = "logo",
+                    modifier = Modifier
+                        .size(300.dp)
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator()
+                    Spacer(Modifier.width(16.dp))
+                    Text("Loading database...")
+                }
+            }
+        }
+        return
+    }
+
+    error?.let { CrashScreen("Error during database loading", it); return }
+
+    if (!loaded) return
+
+    LaunchedEffect(Unit) {
+        if (storage.sites.count == 0) {
+            // TODO: sync ui with this?
+            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { storage.sites.add(it) } }
+        }
+    }
+
+    content.invoke()
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -131,7 +202,9 @@ class MainActivity : ComponentActivity() {
                         CompositionLocalProvider(
                             LocalStorage provides UniThen.STORAGE,
                         ) {
-                            MainNavigator()
+                            Loader {
+                                MainNavigator()
+                            }
                         }
                     }
                 }

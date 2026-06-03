@@ -20,7 +20,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.core.database.sqlite.transaction
-import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.*
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
@@ -44,13 +43,6 @@ class SqlStorage(context: Context) : Closeable {
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
     val checkInQueue = CheckInQueueTable(this)
-
-    init {
-        if (sites.count == 0) {
-            // TODO: sync ui with this?
-            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { sites.add(it) } }
-        }
-    }
 
 
     fun notifyState() {
