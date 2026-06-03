@@ -24,7 +24,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-val jacksonVersion = "2.21.3"
+val jacksonVersion = "2.21.4"
 
 
 buildscript {
@@ -133,7 +133,7 @@ android {
     kotlin {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
-            languageVersion.set(KotlinVersion.KOTLIN_2_2)
+            languageVersion.set(KotlinVersion.KOTLIN_2_4)
             freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
             optIn.add("kotlin.time.ExperimentalTime")
         }
