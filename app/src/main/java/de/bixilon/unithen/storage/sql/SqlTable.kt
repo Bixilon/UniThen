@@ -56,34 +56,26 @@ abstract class SqlTable<T>(
     protected fun single(filter: SqlFilter) = single(filter.sql, arguments = filter.parameters.toTypedArray())
     protected fun single(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
-            when (it.count) {
-                0 -> null
-                1 -> {
-                    it.moveToNext()
-                    map(it)
-                }
-
-                else -> throw IllegalStateException("More than one result found: $where")
+            if (!it.moveToNext()) return@select null
+            val value = map(it)
+            if (it.moveToNext()) {
+                throw IllegalStateException("More than one result found: $where")
             }
+            return@select value
         }
     }
 
     protected fun first(filter: SqlFilter) = first(filter.sql, arguments = filter.parameters.toTypedArray())
     protected fun first(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
-            when (it.count) {
-                0 -> null
-                else -> {
-                    it.moveToNext()
-                    map(it)
-                }
-            }
+            if (!it.moveToNext()) return@select null
+            return@select map(it)
         }
     }
 
 
     protected fun Cursor.collectAll(): List<T> {
-        val result = ArrayList<T>(count)
+        val result = ArrayList<T>()
 
         while (moveToNext()) {
             result += map(this)
@@ -93,12 +85,22 @@ abstract class SqlTable<T>(
     }
 
     protected fun Cursor.collectIntAggregation(): Int {
-        moveToFirst(); return getInt(0)
+        moveToNext(); return getInt(0)
     }
+
+    protected fun Cursor.isEmpty(): Boolean {
+        if (!moveToNext()) return true
+
+        moveToPrevious()
+        return false
+    }
+
+    protected fun Cursor.isNotEmpty() = !isEmpty()
 
     protected fun all(filter: SqlFilter) = all(filter.sql, *filter.parameters.toTypedArray())
     protected fun all(@Language("SQL") where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }
+
     fun all(): List<T> = all("TRUE")
 }

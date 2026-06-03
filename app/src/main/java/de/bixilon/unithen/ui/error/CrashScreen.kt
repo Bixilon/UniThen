@@ -94,5 +94,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
                 )
             }
         }
+
+        Text("You might want to check for updates, this issue is probably fixed in the latest release.")
     }
 }

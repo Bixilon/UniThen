@@ -21,8 +21,8 @@ enum class QrErrorReasons(override val label: String) : Labeled {
     INVALID_APPOINTMENT("Invalid appointment (wrong course?)!"),
     UNKNOWN_USER("Unknown user!"),
     NOT_ENROLLED("User not enrolled in course!"),
-    ALREADY_CHECKED_IN("User is already checked in"),
+    ALREADY_CHECKED_IN("User is already checked in!"),
 
 
-    OTHER("Unknown error")
+    OTHER("Unknown error!")
 }

@@ -69,7 +69,7 @@ class CourseTable(
             .innerJoin("tutor_courses", "tutor_courses.user = users.id")
             .limit(1)
 
-        return storage.query(query) { it.count > 0 }
+        return storage.query(query) { it.isNotEmpty() }
     }
 
     fun isMember(): Boolean {
@@ -80,7 +80,7 @@ class CourseTable(
             .where(SqlFilter("tutor_courses.user IS NULL"))
             .limit(1)
 
-        return storage.query(query) { it.count > 0 }
+        return storage.query(query) { it.isNotEmpty() }
     }
 
     operator fun get(account: Account): List<Course> {

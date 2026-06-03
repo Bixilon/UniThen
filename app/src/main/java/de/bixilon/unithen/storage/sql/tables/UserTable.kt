@@ -104,11 +104,11 @@ class UserTable(
     }
 
     fun isEnrolled(course: Course, user: User): Boolean {
-        return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.count > 0 } // TODO: verify
+        return storage.query("SELECT 1 FROM course_enrolled WHERE course=? AND user=?", course.id, user.id) { it.isNotEmpty() }
     }
 
     fun isAttendee(appointment: Appointment, user: User): Boolean {
-        return storage.query("SELECT 1 FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { it.count > 0 } // TODO: verify
+        return storage.query("SELECT 1 FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { it.isNotEmpty() }
     }
 
     companion object : SqlSchema<User> {
@@ -121,6 +121,7 @@ class UserTable(
             .replace("-", "")
             .replace("\"", "")
 
+        @Deprecated("kutil 1.31")
         inline fun <I> I.applyIf(enabled: Boolean, block: I.() -> I) = if (enabled) block.invoke(this) else this
     }
 }

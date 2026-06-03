@@ -136,7 +136,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
             Spacer(Modifier.height(16.dp))
         }
 
-        InfoContainer {
+        InfoContainer(modifier = Modifier.fillMaxWidth(0.8f)) {
             user?.let { InfoPair("Name", "${user.firstname} ${user.lastname}") }
             InfoPair("Start", appointment.start.format())
             InfoPair("End", appointment.end.format())
