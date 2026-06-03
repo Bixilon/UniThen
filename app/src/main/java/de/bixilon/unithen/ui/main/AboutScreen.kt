@@ -12,17 +12,19 @@
 
 package de.bixilon.unithen.ui.main
 
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
@@ -31,10 +33,76 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import de.bixilon.kutil.primitive.IntUtil.toInt
+import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
+import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.util.rememberIsFdroid
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 
+
+@Composable
+fun UpdateChecker() {
+    val navigation = LocalNavigation.current
+    val context = LocalContext.current
+    var checking by remember { mutableStateOf(false) }
+    var next by remember { mutableIntStateOf(-1) }
+
+    LaunchedEffect(next) {
+        if (next > 0 && next > BuildConfig.VERSION_CODE) {
+            context.startActivity(Intent(Intent.ACTION_VIEW, "https://gitlab.bixilon.de/bixilon/unithen/-/releases".toUri()))
+        }
+    }
+
+    LaunchedEffect(checking) {
+        if (!checking) return@LaunchedEffect
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val request = HttpUtil.create("https://gitlab.bixilon.de".toURI(), "/bixilon/unithen/-/raw/master/fdroid.txt")
+                .get()
+                .build()
+
+            val client = OkHttpClient().newBuilder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .build()
+
+            try {
+                val response = client.newCall(request).execute()
+
+                if (response.code != 200) throw IllegalStateException("Request is not OK")
+
+                // Same regex as for fdroid: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/de.bixilon.unithen.yml
+                next = Regex("(\\d+)$").find(response.body.string())!!.groups[1]!!.value.toInt()
+            } catch (error: Throwable) {
+                navigation.navigate(CrashRoute(error))
+                error.printStackTrace()
+            } finally {
+                checking = false
+            }
+        }
+    }
+
+
+    Button({ checking = true }, enabled = !checking && next < 0) {
+        Icon(Icons.Default.Update, "")
+        Spacer(Modifier.width(8.dp))
+        Text(when {
+            checking -> "Checking for updates"
+            next > 0 && next <= BuildConfig.VERSION_CODE -> "No update available"
+            next > BuildConfig.VERSION_CODE -> "Update available!"
+            else -> "Check for updates"
+        })
+    }
+}
 
 @Composable
 @Preview(showBackground = true)
@@ -75,6 +143,11 @@ fun AboutScreen() {
                     Text("This is a DEBUG build!", color = Color.Red)
                 }
 
+
+                if (rememberIsFdroid()) {
+                    Text("Installed from F-Droid\uD83C\uDF89", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+
                 Text(buildAnnotatedString {
                     append("Commit: ")
 
@@ -95,6 +168,11 @@ fun AboutScreen() {
             }
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        if (!BuildConfig.DEBUG) {
+            UpdateChecker()
+        }
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(

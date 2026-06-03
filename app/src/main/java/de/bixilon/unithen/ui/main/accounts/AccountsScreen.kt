@@ -102,10 +102,9 @@ private fun Remove(account: Account): (() -> Unit)? {
         AlertDialog(
             confirmButton = {
                 Button({ deleting = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.onErrorContainer)
-                        Text("Remove", color = MaterialTheme.colorScheme.onErrorContainer)
-                    }
+                    Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.onErrorContainer)
+                    Spacer(Modifier.width(8.dp))
+                    Text("Remove", color = MaterialTheme.colorScheme.onErrorContainer)
                 }
             },
             dismissButton = { Button({ show = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
