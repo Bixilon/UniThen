@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -30,8 +31,11 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AboutRoute
 import de.bixilon.unithen.ui.main.MainScreens
+import de.bixilon.unithen.ui.main.settings.dialog.DatabaseCleanupDialog
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.main.settings.types.EnumSetting
+import de.bixilon.unithen.ui.main.settings.types.SettingsDialog
+import de.bixilon.unithen.ui.main.settings.types.SettingsLink
 
 
 @Composable
@@ -75,6 +79,7 @@ fun SettingsScreen() {
         }
         HorizontalDivider()
 
+        SettingsDialog("Cleanup database", Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
         SettingsLink("About", Icons.Default.Info, AboutRoute)
     }
 }

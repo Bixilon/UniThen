@@ -13,45 +13,36 @@
 package de.bixilon.unithen.ui.main.settings.types
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.ui.main.settings.Setting
-import de.bixilon.unithen.ui.main.settings.rememberSetting
-
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 @Composable
-fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String) {
-    var value by rememberSetting(setting)
+fun SettingsLink(name: String, icon: ImageVector, route: NavigationRoute) {
+    val navigator = LocalNavigation.current
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable { value = !value }
+            .clickable { navigator.navigate(route) }
             .padding(horizontal = 8.dp, vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(modifier = Modifier
-            .weight(1.0f)
-            .padding(end = 16.dp)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
+        Text(text = name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1.0f))
 
-            Text(modifier = Modifier.padding(start = 4.dp), text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-
-        Switch(value, { value = it })
+        Icon(icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

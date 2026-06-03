@@ -10,33 +10,41 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.settings
+package de.bixilon.unithen.ui.main.settings.types
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.navigation.NavigationRoute
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun SettingsLink(name: String, icon: ImageVector, route: NavigationRoute) {
-    val navigator = LocalNavigation.current
+fun SettingsDialog(name: String, icon: ImageVector, component: @Composable (dismiss: () -> Unit) -> Unit) {
+    var visible by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { navigator.navigate(route) },
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { visible = true }
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(text = name, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1.0f))
 
         Icon(icon, contentDescription = "", tint = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+
+    if (visible) {
+        component.invoke { visible = false }
     }
 }

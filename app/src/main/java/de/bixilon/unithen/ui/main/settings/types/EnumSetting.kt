@@ -40,7 +40,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier
