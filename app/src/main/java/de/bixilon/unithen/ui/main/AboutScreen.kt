@@ -96,8 +96,8 @@ fun UpdateChecker() {
         Icon(Icons.Default.Update, "")
         Spacer(Modifier.width(8.dp))
         Text(when {
-            checking -> "Checking for updates"
-            next > 0 && next <= BuildConfig.VERSION_CODE -> "No update available"
+            checking -> "Checking for updates..."
+            next > 0 && next <= BuildConfig.VERSION_CODE -> "No update available!"
             next > BuildConfig.VERSION_CODE -> "Update available!"
             else -> "Check for updates"
         })
