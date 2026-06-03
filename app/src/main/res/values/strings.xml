@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="app_name">UniThen</string>
+    <string name="app_name" translatable="false">UniThen</string>
     <string name="setup_1">"This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at "</string>
     <string name="setup_title">Setup</string>
     <string name="setup_2">This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.</string>

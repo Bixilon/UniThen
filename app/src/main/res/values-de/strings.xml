@@ -1,0 +1,67 @@
+<!--
+  ~ UniThen
+  ~ Copyright (C) 2026 Moritz Zwerger
+  ~
+  ~ This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+  ~
+  ~ This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
+  -->
+
+<resources>
+    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter</string>
+    <string name="setup_title">Einrichtung</string>
+    <string name="set_accept">Ich akzeptiere diese Bedingungen</string>
+    <string name="setup_login">Weiter zur Anmeldung</string>
+    <string name="add_account_title">Bitte wähle deine Buchungsseite</string>
+    <string name="add_account_help">Ich finde meine Seite nicht.</string>
+    <string name="authenticatin_fetching_user_details">Lade Benutzer Informationen...</string>
+    <string name="authentication_fetching_courses">Lade Kurse...</string>
+    <string name="authentication_loading">Anmelden...</string>
+    <string name="courses_title">Kurse (%1$d)</string>
+    <string name="appointments_title">Termine (+%1$d/%2$d)</string>
+    <string name="main_navigation_courses">Kurse</string>
+    <string name="main_navigation_accounts">Benutzer</string>
+    <string name="main_navigation_settings">Einstellungen</string>
+    <string name="accounts_title">Benutzer (%1$d)</string>
+    <string name="present_no_appointments_message">Keine kommenden Kurse!</string>
+    <string name="present_no_appointments_details">Bist du sicher, dass du zur richtigen Zeit da bist?</string>
+    <string name="scan_no_appointments_message">Keine kommenden Kurse!</string>
+    <string name="scan_no_appointments_details">Bist du sicher, dass du zur richtigen Zeit da bist?</string>
+    <string name="course_name">Name</string>
+    <string name="appointment_start">Beginn</string>
+    <string name="appointment_end">Ende</string>
+    <string name="appointment_location">Ort</string>
+    <string name="present_show_entrance">Zeige den QR-Code am Eingang</string>
+    <string name="present_choose_account_title">Bitte wähle deinen Account</string>
+    <string name="present_choose_appointment_title">Bitte wähle den Termin</string>
+    <string name="scan_choose_appointment_title">Bitte wähle den Termin</string>
+    <string name="scan_no_account_message">Kein Account!</string>
+    <string name="scan_no_account_title">Kein Account, der den Check In machen kann?</string>
+    <string name="scan_synchronizing_attendees">Synchronisiere...</string>
+    <string name="sort_firstname">Vorname</string>
+    <string name="sort_lastname">Nachname</string>
+    <string name="scan_error_invalid_format">Ungültiges Format!</string>
+    <string name="scan_error_invalid_data">Ungültige Daten!</string>
+    <string name="scan_error_invalid_appointment">Ungültiger Termin (Falscher Kurs?)!</string>
+    <string name="scan_error_unknown_user">Unbekannter Benutzer!</string>
+    <string name="scan_error_not_enrolled">Benutzer ist nicht im Kurs angemeldet!</string>
+    <string name="scan_error_already_checked_in">Benutzer ist bereits eingecheckt!</string>
+    <string name="scan_error_already_checked_in_pending">Benutzer ist bereits eingecheckt (Synchronisierung ausstehend)!</string>
+    <string name="scan_error_already_checked_in_pending_checkout">Benutzer ist bereits eingecheckt (Checkout ausstehend)!</string>
+    <string name="scan_error_other">Unbekannter Fehler!</string>
+    <string name="scan_updating_enrolled">Synchronisiere Teilnehmerliste...</string>
+    <string name="scan_enrolled_outdated">Teilnehmerliste wurde zuletzt %1$s aktualisiert</string>
+    <string name="user_name">Name</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="scan_try_synchronize">Versuche Synchronisation</string>
+    <string name="scan_try_anyways">Trotzdem versuchen</string>
+    <string name="scan_confirm">Bestätigen</string>
+    <string name="network_error">Netzwerk Fehler</string>
+    <string name="scan_qr_instruction">Bitte den Teilnehmer QR-Code scannen</string>
+    <string name="setup_2">Diese App wurde von Moritz Zwerger entwickelt und ist unter der GPLv3 Lizenz verfügbar. Der App Entwickler ist nicht verantwortlich für jeglichen Schaden (an deinem Account). Diese App kommt mit absolut KEINER Garantie!</string>
+    <string name="setup_3">Der Zugangstoken wird sicher auf diesem Gerät gespeichert.</string>
+    <string name="setup_4">Die Server des Buchungssystems werden von UniNow GmbH betrieben, bitte prüfe deren Webseite für deren Impressum/Datenschutzerklärung.</string>
+</resources>
