@@ -14,6 +14,8 @@ package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -45,8 +47,11 @@ fun FastCheckinAccountSelector(course: Course, appointment: Appointment, account
             InfoPair("Site", site.name)
         }
 
+        Spacer(Modifier.height(8.dp))
+
+
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(accounts, key = Account::id) { item ->
                 TextCard(item.firstname + " " + item.lastname, Modifier.clickable { navigation.navigate(PresentQrRoute(item, course, appointment)) })
