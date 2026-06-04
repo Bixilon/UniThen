@@ -12,8 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.*
@@ -38,7 +36,7 @@ object CheckInUtil {
 
 
         val attemptQl = withContext(Dispatchers.IO) {
-            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+            val api = account.api(site)
 
             return@withContext api.checkInUser(appointment.uuid, user.uuid)
         }
@@ -70,7 +68,7 @@ object CheckInUtil {
 
     private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
         val attemptQl = withContext(Dispatchers.IO) {
-            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+            val api = account.api(site)
 
             return@withContext api.checkInUser(appointment.uuid, userId)
         }
@@ -112,7 +110,7 @@ object CheckInUtil {
 
 
         val attemptQl = withContext(Dispatchers.IO) {
-            val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+            val api = account.api(site)
 
             return@withContext api.deleteCheckinAttempt(attempt)
         }

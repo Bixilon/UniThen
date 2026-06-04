@@ -12,8 +12,6 @@
 
 package de.bixilon.unithen.api.graphql.util
 
-import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
@@ -41,7 +39,7 @@ object CourseFetcher {
     suspend fun SqlStorage.fetch(account: Account, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+        val api = account.api(site)
         if (!force && now - account.fetched < ACCOUNT_FETCH_INTERVAL) return
 
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
@@ -79,7 +77,7 @@ object CourseFetcher {
     suspend fun SqlStorage.fetch(account: Account, course: Course) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+        val api = account.api(site)
 
         if ((now - course.fetched) < COURSE_FETCH_INTERVAL) {
             return
@@ -157,7 +155,7 @@ object CourseFetcher {
         if (!force && now - course.fetched < ATTENDEES_FETCH_INTERVAL) return
 
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+        val api = account.api(site)
 
 
         val enrolled = api.getEnrolled(course.uuid)
@@ -170,7 +168,7 @@ object CourseFetcher {
     suspend fun SqlStorage.fetchAttendees(account: Account, appointment: Appointment, force: Boolean) {
         val now = Clock.System.now()
         val site = sites[account.site]!!
-        val api = AuthenticatedUniNowApi(site.url, CookieAuthentication(account.session ?: ""))
+        val api = account.api(site)
 
         if (appointment.attendeesFetched != null && now - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL && !force) return
 
