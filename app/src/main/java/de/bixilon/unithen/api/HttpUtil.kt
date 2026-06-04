@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.api
 
+import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.util.KUtil.with
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import java.net.URI

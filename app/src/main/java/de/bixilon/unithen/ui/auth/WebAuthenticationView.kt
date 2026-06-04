@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.uri.URIUtil.toURI
+import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.util.KUtil.with
 import java.net.URI
 
 

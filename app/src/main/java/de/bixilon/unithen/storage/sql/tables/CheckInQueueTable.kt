@@ -15,6 +15,7 @@ package de.bixilon.unithen.storage.sql.tables
 import android.database.Cursor
 import androidx.core.database.getStringOrNull
 import de.bixilon.kutil.exception.Broken
+import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
@@ -30,7 +31,6 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
-import de.bixilon.unithen.util.KUtil.applyIf
 import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -72,9 +72,9 @@ class CheckInQueueTable(
     operator fun get(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<CheckInQueue> {
         val query = SqlBuilder.select(CheckInQueueTable)
             .innerJoin("users", "checkin_queue.user = users.id")
-            .applyIf(search.isNotBlank()) { innerJoin("users_fts", "users.id = users_fts.docid") }
+            .letIf(search.isNotBlank()) { innerJoin("users_fts", "users.id = users_fts.docid") }
             .where(CheckInQueue::appointment eq appointment.id)
-            .applyIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
+            .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
                 sort.field to order.sql,
                 (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
