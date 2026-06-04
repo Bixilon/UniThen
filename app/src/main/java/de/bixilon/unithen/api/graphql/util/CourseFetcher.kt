@@ -140,6 +140,7 @@ object CourseFetcher {
     }
 
     private fun SqlStorage.store(site: Site, appointment: Appointment, attendees: List<CourseUserQl>, attempts: List<CheckInAttemptQl>) = transaction {
+        appointments.clearAttendees(appointment)
         for (userQl in attendees) {
             val user = users.add(site, userQl.id, userQl.firstname!!, userQl.lastname!!)
             checkInQueue.delete(appointment, user)
