@@ -12,8 +12,9 @@
 
 package de.bixilon.unithen.storage.types
 
-import com.fasterxml.jackson.core.JsonParseException
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
 import java.util.*
@@ -34,6 +35,8 @@ data class Account(
 ) : DbKeyed {
 
     fun api(site: Site): AuthenticatedUniNowApi {
-        throw JsonParseException("Hello")
+        if (session.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
+
+        return AuthenticatedUniNowApi(site.url, CookieAuthentication(session))
     }
 }
