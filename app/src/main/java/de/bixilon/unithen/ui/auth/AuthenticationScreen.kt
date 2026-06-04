@@ -33,6 +33,9 @@ import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.error.CrashScreen
+import de.bixilon.unithen.ui.main.MainScreens
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -92,12 +95,22 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
     var state by remember { mutableStateOf(AuthenticationState.FETCH_USER_DETAILS) }
     var error: Throwable? by remember { mutableStateOf(null) }
 
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
+
     LaunchedEffect(authentication) {
         val authentication = authentication ?: return@LaunchedEffect
 
         withContext(Dispatchers.IO) {
             try {
+                val count = storage.accounts.count
                 fetchUserDetails(storage, site, authentication) { state = it }
+
+                when {
+                    count > 0 -> Unit
+                    storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
+                    storage.courses.isMember() -> entrypoint = MainScreens.CHECKIN_PRESENT
+                }
+
                 callback.invoke(authentication)
             } catch (_error: Throwable) {
                 Log.e("Auth", "Error fetching user details: $_error")
