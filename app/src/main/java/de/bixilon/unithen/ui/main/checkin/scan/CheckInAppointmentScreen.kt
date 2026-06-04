@@ -24,10 +24,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -36,10 +39,10 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -90,7 +93,7 @@ private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
 }
 
 @Composable
-fun CheckInAppointmentScreen(appointment: Appointment) {
+fun CheckInAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
 
@@ -121,6 +124,14 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
     Screen {
         ScreenTitle(course.name)
 
+        if (info) {
+            InfoContainer {
+                InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
+                InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
+                InfoPair(R.string.appointment_location.i18n(), appointment.location)
+            }
+        }
+
         Box {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(account, course, appointment),
@@ -134,23 +145,27 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
                     .padding(bottom = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                var showSync by remember(Unit) { mutableStateOf(pending > 0) }
 
-                LaunchedEffect(pending > 0) {
-                    if (pending == 0) {
-                        showSync = false
-                    } else {
-                        delay(2.seconds)
-                        showSync = true
+                if (useTime() in (appointment.start - CHECKIN_EARLY_DURATION)..appointment.end) {
+                    var showSync by remember(Unit) { mutableStateOf(pending > 0) }
+
+                    LaunchedEffect(pending > 0) {
+                        if (pending == 0) {
+                            showSync = false
+                        } else {
+                            delay(2.seconds)
+                            showSync = true
+                        }
                     }
-                }
-                if (showSync && (useTime() - appointment.end) < Duration.ZERO) {
-                    FloatingActionButton({ syncing = true }) {
-                        Icon(Icons.Filled.Sync, "sync")
+
+                    if (showSync) {
+                        FloatingActionButton({ syncing = true }) {
+                            Icon(Icons.Filled.Sync, "sync")
+                        }
                     }
-                }
-                FloatingActionButton({ navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }) {
-                    Icon(Icons.Filled.QrCodeScanner, "scan")
+                    FloatingActionButton({ navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }) {
+                        Icon(Icons.Filled.QrCodeScanner, "scan")
+                    }
                 }
             }
         }

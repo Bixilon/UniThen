@@ -10,8 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.courses
+package de.bixilon.unithen.ui.main.courses.appointments
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,6 +35,8 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
+import de.bixilon.unithen.ui.main.AppointmentDetailsRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
@@ -46,7 +49,7 @@ import kotlin.time.Duration.Companion.hours
 
 
 @Composable
-private fun AppointmentCard(appointment: Appointment) {
+private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modifier) {
     val now = remember { Clock.System.now() }
 
     val color = when {
@@ -58,7 +61,7 @@ private fun AppointmentCard(appointment: Appointment) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     ) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -90,9 +93,11 @@ private fun AppointmentCard(appointment: Appointment) {
 
 @Composable
 fun CourseAppointments(course: Course) {
+    val navigator = LocalNavigation.current
     val appointments = rememberStorage { appointments[course].sortedByDescending { it.start } }
 
     if (appointments.isEmpty()) return
+    val isTutor = rememberStorage { accounts.getTutorAccount(course) != null }
 
     val state = rememberLazyListState()
     val now = useTime()
@@ -115,7 +120,10 @@ fun CourseAppointments(course: Course) {
             state = state,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(items = appointments, key = Appointment::id) { appointment -> AppointmentCard(appointment) }
+            items(items = appointments, key = Appointment::id) {
+                val modifier = Modifier.clickable(isTutor) { navigator.navigate(AppointmentDetailsRoute(it)) }
+                AppointmentCard(it, modifier)
+            }
         }
     }
 }

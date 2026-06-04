@@ -36,6 +36,7 @@ import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.ui.main.courses.appointments.CourseAppointments
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage

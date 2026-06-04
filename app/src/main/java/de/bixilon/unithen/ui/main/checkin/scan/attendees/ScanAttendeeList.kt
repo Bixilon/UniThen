@@ -34,6 +34,7 @@ import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
+import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -44,7 +45,6 @@ import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
 import java.util.*
 import kotlin.time.Clock
-import kotlin.time.Duration
 
 
 @Composable
@@ -222,7 +222,8 @@ fun ScanAttendeeList() {
 
         UserFilterX(filter)
 
-        val readonly = (useTime() - appointment.end) > Duration.ZERO
+        val time = useTime()
+        val readonly = time > appointment.end || time + CHECKIN_EARLY_DURATION < appointment.start
 
         PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
             LazyColumn(

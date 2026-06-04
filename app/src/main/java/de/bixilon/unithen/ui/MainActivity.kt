@@ -48,6 +48,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanConfirmScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
+import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.setup.SetupScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -79,6 +80,7 @@ fun MainNavigator() {
 
         composable<CoursesRoute> { CoursesScreen() }
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
+        composable<AppointmentDetailsRoute> { AppointmentDetailsScreen(it.appointment) }
 
         composable<PresentQrAppointmentRoute> { FastCheckinAppointment(it.course, it.appointment) }
         composable<PresentQrRoute> { CheckInQrPresentScreen(it.account, it.course, it.appointment) }

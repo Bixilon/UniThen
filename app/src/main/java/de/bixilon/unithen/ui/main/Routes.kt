@@ -44,6 +44,7 @@ data class AccountDetailsRoute(val account: Account) : NavigationRoute
 
 object CoursesRoute : NavigationRoute
 data class CourseDetailsRoute(val course: Course) : NavigationRoute
+data class AppointmentDetailsRoute(val appointment: Appointment) : NavigationRoute
 
 
 object DebugRoute : NavigationRoute
