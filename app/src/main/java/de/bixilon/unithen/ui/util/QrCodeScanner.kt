@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
@@ -39,11 +40,16 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
 @Composable
-fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
-    if (!LocalVisibility.current || !useForeground()) return
+fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List<BarcodeReader.Result>) -> Unit) {
+    if (!LocalVisibility.current) return
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
-    if (!permission) return
+    if (!permission) {
+        CameraMessage(modifier, R.string.scan_camera_permission.i18n())
+        return
+    }
+
+    if (!rememberForeground()) return
 
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
@@ -112,10 +118,15 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
         }
     }
 
-    request?.let {
-        CameraXViewfinder(
-            surfaceRequest = it,
-            modifier = modifier.fillMaxSize()
-        )
+    val _request = request
+
+    if (_request == null) {
+        CameraMessage(modifier, R.string.scan_starting_camera.i18n())
+        return
     }
+
+    CameraXViewfinder(
+        surfaceRequest = _request,
+        modifier = modifier
+    )
 }

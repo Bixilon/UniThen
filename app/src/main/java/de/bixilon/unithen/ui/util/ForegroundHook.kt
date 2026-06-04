@@ -18,7 +18,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
-fun useForeground(): Boolean {
+fun rememberForeground(): Boolean {
     val lifecycleOwner = LocalLifecycleOwner.current
     var state by remember { mutableStateOf(true) }
 

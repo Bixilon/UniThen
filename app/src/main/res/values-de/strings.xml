@@ -70,4 +70,6 @@
     <string name="scan_queue_pending_checkout">Synchronisierung ausstehend (Check Out)...</string>
     <string name="scan_queue_failed">Fehler: %1$d</string>
     <string name="scan_queue_pending">Synchronisierung ausstehend (Check In)...</string>
+    <string name="scan_starting_camera">Kamera wird gestartet...</string>
+    <string name="scan_camera_permission">Kamera Berechtigung wurde (noch) nicht erlaubt. Bitte erlaube den Zugriff auf deine Kamera, um QR-Codes scannen zu können!</string>
 </resources>

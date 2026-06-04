@@ -73,4 +73,6 @@
     <string name="scan_queue_pending_checkout">Checkout pending...</string>
     <string name="scan_queue_failed">Failed: %1$d</string>
     <string name="scan_queue_pending">Checkin pending...</string>
+    <string name="scan_starting_camera">Starting camera...</string>
+    <string name="scan_camera_permission">Camera permission was not granted (yet). Please grant the permission for QR code scanning!</string>
 </resources>
