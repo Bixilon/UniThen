@@ -28,3 +28,5 @@
 -keep class de.bixilon.unithen.** {*; }
 -keep enum de.bixilon.unithen.**
 -keep interface de.bixilon.unithen.**
+
+-keep class kotlin.time.Instant
