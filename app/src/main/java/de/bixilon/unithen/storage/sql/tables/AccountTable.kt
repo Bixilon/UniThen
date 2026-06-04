@@ -83,6 +83,11 @@ class AccountTable(
         update(account.id, sessionKey = "")
     }
 
+
+    fun clearCourses(account: Account) {
+        insert("DELETE FROM account_courses WHERE account=?", account.id)
+    }
+
     fun addToCourse(account: Account, course: Course) {
         insert("INSERT INTO account_courses(account, course) VALUES (?,?) ON CONFLICT(account, course) DO NOTHING", account.id, course.id)
     }

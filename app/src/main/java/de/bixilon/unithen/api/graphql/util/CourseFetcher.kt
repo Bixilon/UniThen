@@ -30,6 +30,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 object CourseFetcher {
+    const val MAX_PARALLEL_REQUESTS = 6
     val ACCOUNT_FETCH_INTERVAL = 5.minutes
     val COURSE_FETCH_INTERVAL = 1.hours
     val ATTENDEES_FETCH_INTERVAL = 15.minutes
@@ -44,21 +45,28 @@ object CourseFetcher {
 
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
 
-        val semaphore = Semaphore(4)
+        val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
+
+        transaction {
+            accounts.clearCourses(account)
+
+            for (courseQl in coursesQl) {
+                val course = courses[site, courseQl.id] ?: continue
+                accounts.addToCourse(account, course)
+            }
+        }
+
         coroutineScope {
-            coursesQl.map { courseQl ->
+            coursesQl.mapNotNull { courseQl ->
+                val course = this@fetch.courses[site, courseQl.id]
+
+                if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
+                    return@mapNotNull null
+                }
                 async {
-                    var course = this@fetch.courses[site, courseQl.id]
-
-                    if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
-                        accounts.addToCourse(account, course)
-                        return@async
-                    }
-
-
                     val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
 
-                    course = store(site, detailsQl)
+                    val course = store(site, detailsQl)
 
                     if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
                         val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
