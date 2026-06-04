@@ -23,4 +23,8 @@ object KUtil {
     fun URI.with(scheme: String? = this.scheme, userInfo: String? = this.userInfo, host: String? = this.host, port: Int = this.port, path: String? = this.path, query: String? = this.query, fragment: String? = this.fragment): URI {
         return URI(scheme, userInfo, host, port, path, query, fragment)
     }
+
+
+    @Deprecated("kutil 1.31")
+    inline fun <I> I.applyIf(enabled: Boolean, block: I.() -> I) = if (enabled) block.invoke(this) else this
 }

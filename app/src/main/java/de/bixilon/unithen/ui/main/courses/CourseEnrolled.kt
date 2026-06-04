@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Course
@@ -27,6 +26,7 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.verticalScroll
 
 
@@ -37,7 +37,7 @@ fun CourseEnrolled(course: Course) {
     if (users.isEmpty()) return
 
     Section {
-        SectionTitle(stringResource(R.string.course_enrolled_title, users.size))
+        SectionTitle(R.string.course_enrolled_title.i18n(users.size))
 
         val state = rememberLazyListState()
         LazyColumn(

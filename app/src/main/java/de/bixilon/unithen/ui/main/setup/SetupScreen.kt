@@ -24,7 +24,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withLink
@@ -34,6 +33,7 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.util.i18n
 
 
 @Composable
@@ -47,22 +47,22 @@ fun SetupScreen() {
     var accepted by rememberSaveable { mutableStateOf(false) }
 
     Screen {
-        ScreenTitle(stringResource(R.string.setup_title))
+        ScreenTitle(R.string.setup_title.i18n())
 
         Column(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(buildAnnotatedString {
-                append(stringResource(R.string.setup_1))
+                append(R.string.setup_1.i18n())
 
                 withLink(LinkAnnotation.Url("https://gitlab.bixilon.de/bixilon/unithen")) { append("gitlab.bixilon.de/bixilon/unithen") }
 
                 append(".")
             })
 
-            Note(stringResource(R.string.setup_2))
+            Note(R.string.setup_2.i18n())
 
-            Note(stringResource(R.string.setup_3))
+            Note(R.string.setup_3.i18n())
 
-            Note(stringResource(R.string.setup_4))
+            Note(R.string.setup_4.i18n())
 
             Spacer(modifier = Modifier.weight(1.0f))
 
@@ -71,7 +71,7 @@ fun SetupScreen() {
 
                 Spacer(Modifier.width(4.dp))
 
-                Text(stringResource(R.string.set_accept))
+                Text(R.string.set_accept.i18n())
             }
         }
 
@@ -82,7 +82,7 @@ fun SetupScreen() {
             enabled = accepted,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(stringResource(R.string.setup_login))
+            Text(R.string.setup_login.i18n())
         }
     }
 }

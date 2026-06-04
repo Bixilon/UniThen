@@ -21,7 +21,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
@@ -37,6 +36,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
@@ -78,7 +78,7 @@ private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
         dismissButton = { Button({ abort.value = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
         onDismissRequest = { abort.value = true },
         icon = { Icon(Icons.Default.Sync, "") },
-        title = { Text(stringResource(R.string.scan_synchronizing_attendees)) },
+        title = { Text(R.string.scan_synchronizing_attendees.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
@@ -99,7 +99,7 @@ fun CheckInAppointmentScreen(appointment: Appointment) {
 
 
     if (account == null) {
-        SimpleErrorScreen(stringResource(R.string.scan_no_account_message), stringResource(R.string.scan_no_account_title))
+        SimpleErrorScreen(R.string.scan_no_account_message.i18n(), R.string.scan_no_account_title.i18n())
         return
     }
 

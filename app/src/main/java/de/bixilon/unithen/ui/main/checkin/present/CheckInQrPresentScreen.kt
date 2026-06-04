@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -45,6 +44,7 @@ import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.util.json.Jackson
 import java.util.*
 
@@ -84,10 +84,10 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         InfoContainer(modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(0.8f)) {
-            InfoPair(stringResource(R.string.course_name), "${account.firstname} ${account.lastname}")
-            InfoPair(stringResource(R.string.appointment_start), appointment.start.format())
-            InfoPair(stringResource(R.string.appointment_end), appointment.end.format())
-            InfoPair(stringResource(R.string.appointment_location), appointment.location)
+            InfoPair(R.string.course_name.i18n(), "${account.firstname} ${account.lastname}")
+            InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
+            InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
+            InfoPair(R.string.appointment_location.i18n(), appointment.location)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -107,7 +107,7 @@ fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appoin
         }
 
         Text(
-            text = stringResource(R.string.present_show_entrance),
+            text = R.string.present_show_entrance.i18n(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface,
         )

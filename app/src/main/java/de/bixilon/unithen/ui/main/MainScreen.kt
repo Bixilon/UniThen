@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.R
@@ -43,6 +42,7 @@ import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 
 
 enum class MainScreens(
@@ -91,7 +91,7 @@ fun ActualMainScreen() {
                     selected = navigator.current().route == destination.route,
                     onClick = { navigator.navigate(destination.route) },
                     icon = { Icon(destination.icon, contentDescription = "") },
-                    label = { Text(stringResource(destination.label)) },
+                    label = { Text(destination.label.i18n()) },
                     enabled = enabled,
                 )
             }

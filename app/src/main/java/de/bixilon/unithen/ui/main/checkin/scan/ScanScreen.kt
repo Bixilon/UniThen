@@ -23,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
@@ -40,6 +39,7 @@ import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 
 @Composable
@@ -91,7 +91,7 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
     LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanAnyRoute) }
 
     Screen {
-        ScreenTitle(stringResource(R.string.scan_choose_appointment_title))
+        ScreenTitle(R.string.scan_choose_appointment_title.i18n())
 
 
         Box {

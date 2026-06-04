@@ -12,35 +12,16 @@
 
 package de.bixilon.unithen.ui.util
 
-import android.os.Build
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.platform.LocalContext
-
-private val FDROID = setOf(
-    "org.fdroid.fdroid",
-    "org.fdroid.basic",
-    "org.gdroid.gdroid",
-)
+import androidx.compose.ui.platform.LocalResources
 
 @Composable
 @ReadOnlyComposable
-fun rememberIsFdroid(): Boolean {
-    val context = LocalContext.current.applicationContext
-    try {
-        val packageManager = context.packageManager
-        val name = context.packageName
+fun @receiver:StringRes Int.i18n() = LocalResources.current.getString(this)
 
-        val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            packageManager.getInstallSourceInfo(name).installingPackageName
-        } else {
-            packageManager.getInstallerPackageName(name)
-        }
-        if (installer == null) return false
 
-        return installer in FDROID
-    } catch (_: Exception) {
-    }
-
-    return false
-}
+@Composable
+@ReadOnlyComposable
+fun @receiver:StringRes Int.i18n(vararg formatArgs: Any) = LocalResources.current.getString(this, *formatArgs)

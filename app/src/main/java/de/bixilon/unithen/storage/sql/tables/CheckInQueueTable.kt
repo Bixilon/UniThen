@@ -19,7 +19,6 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
-import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.applyIf
 import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.ftsEscape
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -31,6 +30,7 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
+import de.bixilon.unithen.util.KUtil.applyIf
 import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Instant

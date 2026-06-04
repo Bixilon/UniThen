@@ -22,13 +22,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.i18n
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -147,7 +147,7 @@ fun AddSiteButton(callback: (Site) -> Unit) {
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = stringResource(R.string.add_account_help),
+            text = R.string.add_account_help.i18n(),
             modifier = Modifier.padding(vertical = 15.dp),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant

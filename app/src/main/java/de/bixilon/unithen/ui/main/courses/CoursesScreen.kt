@@ -28,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -45,6 +44,7 @@ import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +63,7 @@ fun CoursesScreen() {
 
     val context = LocalContext.current
     Screen {
-        ScreenTitle(stringResource(R.string.courses_title, courseCount))
+        ScreenTitle(R.string.courses_title.i18n(courseCount))
 
         PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
             refreshing = true

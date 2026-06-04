@@ -26,6 +26,7 @@ import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
+import de.bixilon.unithen.util.KUtil.applyIf
 import java.util.*
 
 class UserTable(
@@ -120,8 +121,5 @@ class UserTable(
         fun ftsEscape(input: String) = input // TODO: Improve?
             .replace("-", "")
             .replace("\"", "")
-
-        @Deprecated("kutil 1.31")
-        inline fun <I> I.applyIf(enabled: Boolean, block: I.() -> I) = if (enabled) block.invoke(this) else this
     }
 }

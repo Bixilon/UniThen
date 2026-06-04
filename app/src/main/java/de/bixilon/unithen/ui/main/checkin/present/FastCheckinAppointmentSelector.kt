@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
@@ -34,6 +33,7 @@ import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.i18n
 
 
 @Composable
@@ -65,7 +65,7 @@ fun AppointmentCard(course: Course, appointment: Appointment, modifier: Modifier
 @Composable
 fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
     Screen {
-        ScreenTitle(stringResource(R.string.present_choose_appointment_title))
+        ScreenTitle(R.string.present_choose_appointment_title.i18n())
 
 
         LazyColumn(

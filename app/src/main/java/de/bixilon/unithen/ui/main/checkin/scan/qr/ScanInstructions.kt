@@ -19,11 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.util.i18n
 
 @Composable
 fun ScanInstructions(courses: List<Course>) {
@@ -53,7 +53,7 @@ fun ScanInstructions(courses: List<Course>) {
                     )
                 }
             }
-            Text(stringResource(R.string.scan_qr_instruction))
+            Text(R.string.scan_qr_instruction.i18n())
         }
     }
 }

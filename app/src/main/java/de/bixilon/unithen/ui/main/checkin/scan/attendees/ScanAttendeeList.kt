@@ -25,7 +25,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
@@ -39,6 +38,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
@@ -113,9 +113,9 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 val text = when {
-                    item.attempt != null -> stringResource(R.string.scan_queue_pending_checkout)
-                    item.message != null -> stringResource(R.string.scan_queue_failed, item.message)
-                    else -> stringResource(R.string.scan_queue_pending)
+                    item.attempt != null -> R.string.scan_queue_pending_checkout.i18n()
+                    item.message != null -> R.string.scan_queue_failed.i18n(item.message)
+                    else -> R.string.scan_queue_pending.i18n()
                 }
                 Text(
                     text = text,
@@ -214,7 +214,7 @@ fun ScanAttendeeList() {
 
 
     Section {
-        SectionTitle(stringResource(R.string.appointment_attendees_title, attendees.size, enrolled))
+        SectionTitle(R.string.appointment_attendees_title.i18n(attendees.size, enrolled))
 
         val state = rememberLazyListState()
 

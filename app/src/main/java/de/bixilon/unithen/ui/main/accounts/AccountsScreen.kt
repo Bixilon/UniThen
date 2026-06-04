@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
@@ -46,6 +45,7 @@ import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.CoroutineScope
@@ -120,6 +120,7 @@ private fun Remove(account: Account): (() -> Unit)? {
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
+                // TODO: Revoke token
                 storage.accounts.remove(account)
                 storage.cleanup()
                 withContext(Dispatchers.Main) { Toast.makeText(context, "Account removed!", Toast.LENGTH_SHORT).show() }
@@ -256,7 +257,7 @@ fun AccountsScreen() {
     val accounts = rememberStorage { accounts.all() }
 
     Screen {
-        ScreenTitle(stringResource(R.string.accounts_title, accounts.size))
+        ScreenTitle(R.string.accounts_title.i18n(accounts.size))
 
         Box {
             val navigator = LocalNavigation.current

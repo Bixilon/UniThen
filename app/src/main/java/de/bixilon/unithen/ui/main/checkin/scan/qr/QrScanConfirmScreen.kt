@@ -44,6 +44,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.UiUtil.formatNow
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
 import java.util.*
@@ -90,11 +91,11 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
     }
 
     val warning = when {
-        user == null -> stringResource(R.string.scan_error_unknown_user)
-        !enrolled -> stringResource(R.string.scan_error_not_enrolled)
-        attempt != null && attempt.attempt == null -> stringResource(R.string.scan_error_already_checked_in_pending_checkout)
-        attendee -> stringResource(R.string.scan_error_already_checked_in)
-        attempt != null -> stringResource(R.string.scan_error_already_checked_in_pending)
+        user == null -> R.string.scan_error_unknown_user.i18n()
+        !enrolled -> R.string.scan_error_not_enrolled.i18n()
+        attempt != null && attempt.attempt == null -> R.string.scan_error_already_checked_in_pending_checkout.i18n()
+        attendee -> R.string.scan_error_already_checked_in.i18n()
+        attempt != null -> R.string.scan_error_already_checked_in_pending.i18n()
         else -> null
     }
 
@@ -121,9 +122,9 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         if (updating) {
-            CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(stringResource(R.string.scan_updating_enrolled))
+            CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(R.string.scan_updating_enrolled.i18n())
         } else {
-            Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(stringResource(R.string.scan_enrolled_outdated, course.fetched.formatNow()))
+            Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(R.string.scan_enrolled_outdated.i18n(course.fetched.formatNow()))
         }
     }
 }
@@ -155,10 +156,10 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
         }
 
         InfoContainer(modifier = Modifier.fillMaxWidth(0.8f)) {
-            user?.let { InfoPair(stringResource(R.string.user_name), "${user.firstname} ${user.lastname}") }
-            InfoPair(stringResource(R.string.appointment_start), appointment.start.format())
-            InfoPair(stringResource(R.string.appointment_end), appointment.end.format())
-            InfoPair(stringResource(R.string.appointment_location), appointment.location)
+            user?.let { InfoPair(R.string.user_name.i18n(), "${user.firstname} ${user.lastname}") }
+            InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
+            InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
+            InfoPair(R.string.appointment_location.i18n(), appointment.location)
         }
 
         Spacer(Modifier
@@ -197,20 +198,20 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                 navigation.pop()
             }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
                 Icon(Icons.Filled.Close, "cancel")
-                Text(stringResource(R.string.cancel))
+                Text(R.string.cancel.i18n())
             }
 
             if (queue != null && queue.message == null) {
                 Button({ checkin.invoke(Unit) }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
                     Icon(Icons.Filled.Sync, "synchronize")
-                    Text(stringResource(R.string.scan_try_synchronize))
+                    Text(R.string.scan_try_synchronize.i18n())
                 }
             }
 
             Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
-                    Text(stringResource(R.string.scan_try_anyways))
+                    Text(R.string.scan_try_anyways.i18n())
                 } else {
                     Icon(Icons.Filled.Check, "check")
                     Text(stringResource(if (isMajorContributor(user)) R.string.scan_confirm_contributor else R.string.scan_confirm))
