@@ -100,7 +100,7 @@ fun CoursesScreen() {
                     .fillMaxSize()
                     .verticalScroll(state),
                 state = state,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 for (event in events) {
                     val courses = storage.courses.get(event = event).sortedBy { it.name } // TODO: Cache

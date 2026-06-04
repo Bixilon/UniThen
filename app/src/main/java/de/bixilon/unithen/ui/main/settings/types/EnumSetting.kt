@@ -58,7 +58,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
+                modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.SecondaryEditable, true)
             )
             ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 for (option in values) {

@@ -19,7 +19,7 @@ import java.util.*
 
 data class UserQl(
     override val id: UUID,
-    @field:JsonProperty("first_name") val firstName: String? = null,
-    @field:JsonProperty("last_name") val lastName: String? = null,
+    @field:JsonProperty("first_name") val firstname: String? = null,
+    @field:JsonProperty("last_name") val lastname: String? = null,
     val postings: List<PostingQl>? = null,
 ) : IdentifiedQl

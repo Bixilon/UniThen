@@ -12,10 +12,7 @@
 
 package de.bixilon.unithen.ui.containers
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, content: @Composable ColumnScope.() -> Unit) {
+fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, verticalArrangement: Arrangement.Vertical = Arrangement.Top, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier = modifier
         .fillMaxSize()
         .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
         horizontalAlignment = horizontalAlignment,
+        verticalArrangement = verticalArrangement,
         content = content)
 }
 
