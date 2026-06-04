@@ -24,11 +24,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fasterxml.jackson.core.JacksonException
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.main.UpdateChecker
 import java.io.IOException
 
 
@@ -42,18 +46,17 @@ fun formatDetails(error: Throwable): String? = when (error) {
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
-    Column(
+    Screen(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-            .padding(top = 50.dp),
+            .padding(bottom = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ErrorBox(message ?: "Something went wrong!", "This should not have happened. Please contact the app developer if you don't know further.")
 
         val details = formatDetails(exception)
         if (details != null) {
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -73,13 +76,12 @@ fun CrashScreen(message: String?, exception: Throwable) {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
                 .horizontalScroll(rememberScrollState())
+                .weight(1.0f)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                 )
@@ -95,6 +97,9 @@ fun CrashScreen(message: String?, exception: Throwable) {
             }
         }
 
-        Text("You might want to check for updates, this issue is probably fixed in the latest release.")
+        if (!BuildConfig.DEBUG) {
+            Text("You can try checking for updates below, the crash is most likely fixed in the latest realease.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            UpdateChecker()
+        }
     }
 }
