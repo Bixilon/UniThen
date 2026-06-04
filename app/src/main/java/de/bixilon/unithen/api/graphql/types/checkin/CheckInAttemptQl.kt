@@ -20,8 +20,8 @@ import java.util.*
 data class CheckInAttemptQl(
     override val id: UUID,
     val status: Status,
-    val message: String?,
-    val user: CourseUserQl?,
+    val message: String? = null,
+    val user: CourseUserQl? = null,
 ) : IdentifiedQl {
 
 

@@ -21,11 +21,11 @@ const val COURSE_TYPE = "Course"
 
 data class CourseQl(
     override val id: UUID,
-    val name: String?,
-    val event: EventQl?,
-    val tutors: List<CourseUserQl>?,
-    val appointments: List<AppointmentQl>?,
-    val enrolled: List<CourseUserQl>?,
+    val name: String? = null,
+    val event: EventQl? = null,
+    val tutors: List<CourseUserQl>? = null,
+    val appointments: List<AppointmentQl>? = null,
+    val enrolled: List<CourseUserQl>? = null,
 ) : ResourceQl {
     override val __typename get() = COURSE_TYPE
 }

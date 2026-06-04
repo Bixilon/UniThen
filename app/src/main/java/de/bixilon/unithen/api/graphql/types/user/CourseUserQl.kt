@@ -18,6 +18,6 @@ import java.util.*
 
 data class CourseUserQl(
     override val id: UUID,
-    @JsonProperty("first_name") val firstname: String?,
-    @JsonProperty("last_name") val lastname: String?,
+    @JsonProperty("first_name") val firstname: String? = null,
+    @JsonProperty("last_name") val lastname: String? = null,
 ) : IdentifiedQl
