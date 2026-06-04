@@ -39,6 +39,8 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -143,6 +145,8 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
     var message by remember { mutableStateOf<String?>(null) }
     var confirming by remember { mutableStateOf(false) }
 
+    val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
 
@@ -176,12 +180,12 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
                     CheckInUtil.checkIn(storage, appointment, user)
                 }
 
-                navigation.pop()
+                navigation.pop(); if (!auto) navigation.pop() // close scanner too
             } catch (error: IOException) {
                 if (user == null) {
                     message = resources.getString(R.string.network_error)
                 } else {
-                    navigation.pop()
+                    navigation.pop(); if (!auto) navigation.pop() // close scanner too
                 }
                 throw error
             } catch (error: CheckInUnknownUserException) {

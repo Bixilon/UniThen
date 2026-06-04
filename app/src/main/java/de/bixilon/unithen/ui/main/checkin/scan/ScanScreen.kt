@@ -12,18 +12,22 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
-import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
@@ -31,6 +35,7 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.present.AppointmentCard
 import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
@@ -38,52 +43,12 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 
 @Composable
-fun AppointmentCard(appointment: Appointment) {
-    val storage = LocalStorage.current
-    val navigator = LocalNavigation.current
-    val course = storage.courses[appointment.course]!!
-
-    Card(
-        modifier = Modifier
-            .fillMaxWidth(),
-        onClick = { navigator.navigate(ScanAppointmentRoute(appointment)) },
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        ) {
-            Column {
-                Text(
-                    text = course.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "${appointment.start.format()} - ${appointment.end.format()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                if (appointment.location.isNotBlank()) {
-                    Text(
-                        text = appointment.location,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
 private fun ChooseAppointment(appointments: List<Appointment>) {
+    val storage = LocalStorage.current
     val navigation = LocalNavigation.current
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     val visible = LocalVisibility.current
@@ -99,7 +64,11 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                items(appointments) { AppointmentCard(it) }
+                items(appointments) {
+                    val course = storage.courses[it.course]!!
+
+                    AppointmentCard(course, it, Modifier.clickable { navigation.navigate(ScanAppointmentRoute(it)) })
+                }
             }
 
             Column(

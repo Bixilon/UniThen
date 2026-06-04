@@ -30,7 +30,7 @@ fun InfoContainer(modifier: Modifier = Modifier, horizontalAlignment: Alignment.
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = modifier
-            .padding(4.dp)
+            .padding(vertical = 4.dp)
             .fillMaxWidth(),
     ) {
         Column(
