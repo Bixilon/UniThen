@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.3"
+agp = "9.0.1"
 zxing = "3.0.2"
 composeQrCode = "1.0.1"
 datastorePreferences = "1.2.1"
@@ -58,6 +58,5 @@ zxingcpp = { group = "io.github.zxing-cpp", name = "android", version.ref = "zxi
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

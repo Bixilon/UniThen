@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
 
@@ -124,23 +123,27 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             resValue("string", "app_name", "Debug: UniThen")
+
+            buildFeatures {
+                resValues = true
+            }
         }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-            languageVersion.set(KotlinVersion.KOTLIN_2_4)
-            freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
-            optIn.add("kotlin.time.ExperimentalTime")
-        }
-    }
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+}
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_11)
+        languageVersion.set(KotlinVersion.KOTLIN_2_4)
+        freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
+        optIn.add("kotlin.time.ExperimentalTime")
     }
 }
 
