@@ -15,6 +15,9 @@ package de.bixilon.unithen.storage.types
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class Appointment(
@@ -26,5 +29,15 @@ data class Appointment(
     val canceled: Instant?,
     val location: String,
 
-    val attendeesFetched: Instant?,
-) : DbKeyed
+    val fetchedAttendees: Instant?,
+) : DbKeyed {
+
+    fun isAttendeesStale(now: Instant = Clock.System.now()) = fetchedAttendees == null || now - fetchedAttendees > ATTENDEES_CACHE_TTL
+
+    fun canPerformCheckIn(now: Instant = Clock.System.now()) = now in (start - CHECKIN_EARLY_DURATION..end)
+
+    companion object {
+        val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically provides that
+        val ATTENDEES_CACHE_TTL = 1.hours
+    }
+}

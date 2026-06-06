@@ -15,6 +15,9 @@ package de.bixilon.unithen.storage.types
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class Course(
@@ -23,5 +26,17 @@ data class Course(
     val event: Key,
     val uuid: UUID,
     val name: String,
+
     val fetched: Instant,
-) : DbKeyed
+    val enrolledFetched: Instant?,
+) : DbKeyed {
+
+
+    fun isDataStale(now: Instant = Clock.System.now()) = now - fetched > COURSE_CACHE_TTL
+    fun isEnrolledStale(now: Instant = Clock.System.now()) = enrolledFetched == null || now - enrolledFetched > ENROLLED_CACHE_TTL
+
+    companion object {
+        val COURSE_CACHE_TTL = 1.hours
+        val ENROLLED_CACHE_TTL = 15.minutes
+    }
+}

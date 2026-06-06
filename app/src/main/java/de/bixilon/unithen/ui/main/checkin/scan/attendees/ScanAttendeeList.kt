@@ -28,13 +28,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_AUTO_REFRESH
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
-import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -44,7 +43,6 @@ import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
 import java.util.*
-import kotlin.time.Clock
 
 
 @Composable
@@ -195,6 +193,9 @@ fun ScanAttendeeList() {
     val _refresh = useAsyncNetwork<Boolean>(account) {
         try {
             refreshing = true
+            if (it) {
+                storage.fetchEnrolled(account, course, true)
+            }
             storage.fetchAttendees(account, appointment, it)
         } finally {
             refreshing = false
@@ -207,7 +208,7 @@ fun ScanAttendeeList() {
     }
 
     LaunchedEffect(Unit) {
-        if (appointment.attendeesFetched == null || Clock.System.now() - appointment.attendeesFetched < ATTENDEES_AUTO_REFRESH) {
+        if (appointment.isAttendeesStale()) {
             refresh(false)
         }
     }
@@ -223,7 +224,7 @@ fun ScanAttendeeList() {
         UserFilterX(filter)
 
         val time = useTime()
-        val readonly = time > appointment.end || time + CHECKIN_EARLY_DURATION < appointment.start
+        val readonly = !appointment.canPerformCheckIn(time)
 
         PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
             LazyColumn(

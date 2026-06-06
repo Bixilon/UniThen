@@ -18,6 +18,8 @@ import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
 import java.util.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
 data class Account(
@@ -38,5 +40,12 @@ data class Account(
         if (session.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
 
         return AuthenticatedUniNowApi(site.url, CookieAuthentication(session))
+    }
+
+
+    fun isStale(now: Instant = Clock.System.now()) = now - fetched > ACCOUNT_CACHE_TTL
+
+    companion object {
+        val ACCOUNT_CACHE_TTL = 5.minutes
     }
 }

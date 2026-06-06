@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.ATTENDEES_FETCH_INTERVAL
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -50,7 +49,6 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
 import java.util.*
-import kotlin.time.Clock
 
 
 val MAJOR_CONTRIBUTORS = mutableMapOf(
@@ -108,7 +106,7 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
 private fun EnrolledListWarning(account: Account, course: Course) {
     val storage = LocalStorage.current
 
-    if ((Clock.System.now() - course.fetched) < ATTENDEES_FETCH_INTERVAL) return
+    if (!course.isEnrolledStale()) return
 
     var updating by remember { mutableStateOf(false) }
     val refresh = useAsyncNetwork<Unit>(account) {

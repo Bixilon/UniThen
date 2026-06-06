@@ -30,7 +30,6 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
-import de.bixilon.unithen.ui.main.checkin.present.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -146,7 +145,7 @@ fun CheckInAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                if (useTime() in (appointment.start - CHECKIN_EARLY_DURATION)..appointment.end) {
+                if (appointment.canPerformCheckIn(useTime())) {
                     var showSync by remember(Unit) { mutableStateOf(pending > 0) }
 
                     LaunchedEffect(pending > 0) {

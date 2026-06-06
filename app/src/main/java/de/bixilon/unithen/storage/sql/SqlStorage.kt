@@ -124,7 +124,7 @@ class SqlStorage(context: Context) : Closeable {
     fun clearCache() {
         transaction {
             insert("DELETE FROM appointment_attendees")
-            insert("UPDATE appointments SET attendees_fetched=NULL")
+            insert("UPDATE appointments SET fetched_attendees=NULL")
         }
         insert("VACUUM")
     }

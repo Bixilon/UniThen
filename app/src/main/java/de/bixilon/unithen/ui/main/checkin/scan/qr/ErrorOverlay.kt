@@ -13,6 +13,8 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,12 +29,14 @@ fun ErrorOverlay(errors: List<ErrorResult>) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .heightIn(max = 300.dp)
             .padding(24.dp)
             .padding(bottom = 50.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Column(
+            modifier = Modifier
+                .heightIn(max = 300.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

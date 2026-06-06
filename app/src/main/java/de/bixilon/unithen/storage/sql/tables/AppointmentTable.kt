@@ -32,7 +32,7 @@ import kotlin.time.Instant
 class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, "appointments") {
-    override val columns = listOf("id", "course", "uuid", "start", "end", "canceled", "location", "attendees_fetched")
+    override val columns = listOf("id", "course", "uuid", "start", "end", "canceled", "location", "fetched_attendees")
 
 
     override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getInstantOrNull(5), cursor.getString(6), cursor.getInstantOrNull(7))
@@ -58,7 +58,7 @@ class AppointmentTable(
         return all(filter + "ORDER BY start DESC")
     }
 
-    fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant? = null, location: String? = null, attendeesFetched: Instant? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location, "attendees_fetched" to attendeesFetched))
+    fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant? = null, location: String? = null, fetchedAttendees: Instant? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location, "fetched_attendees" to fetchedAttendees))
 
 
     fun insert(course: Course, uuid: UUID, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {

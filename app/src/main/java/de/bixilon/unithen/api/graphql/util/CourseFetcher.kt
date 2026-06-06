@@ -26,22 +26,15 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Clock
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 
 object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
-    val ACCOUNT_FETCH_INTERVAL = 5.minutes
-    val COURSE_FETCH_INTERVAL = 1.hours
-    val ATTENDEES_FETCH_INTERVAL = 15.minutes
-    val ATTENDEES_AUTO_REFRESH = 1.hours
 
 
     suspend fun SqlStorage.fetch(account: Account, force: Boolean) {
-        val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = account.api(site)
-        if (!force && now - account.fetched < ACCOUNT_FETCH_INTERVAL) return
+        if (!force && !account.isStale()) return
 
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
 
@@ -60,9 +53,8 @@ object CourseFetcher {
             coursesQl.mapNotNull { courseQl ->
                 val course = this@fetch.courses[site, courseQl.id]
 
-                if (course != null && (now - course.fetched) < COURSE_FETCH_INTERVAL) {
-                    return@mapNotNull null
-                }
+                if (course != null && !course.isDataStale()) return@mapNotNull null
+
                 async {
                     val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
 
@@ -79,20 +71,17 @@ object CourseFetcher {
         }
 
 
-        accounts.update(account.id, fetched = now)
+        accounts.update(account.id, fetched = Clock.System.now())
     }
 
     suspend fun SqlStorage.fetch(account: Account, course: Course) {
-        val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        if ((now - course.fetched) < COURSE_FETCH_INTERVAL) {
-            return
-        }
-
+        if (!course.isDataStale()) return
 
         val detailsQl = api.getCourse(course.uuid)!!
+        store(site, detailsQl)
 
 
         if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
@@ -143,6 +132,7 @@ object CourseFetcher {
 
             courses.addEnrolled(enrolled, course)
         }
+        courses.update(course.id, fetchedEnrolled = Clock.System.now())
     }
 
     private fun SqlStorage.store(site: Site, appointment: Appointment, attendees: List<CourseUserQl>, attempts: List<CheckInAttemptQl>) = transaction {
@@ -155,12 +145,12 @@ object CourseFetcher {
 
             appointments.addAttendee(user, appointment, attempt.id)
         }
+        appointments.update(appointment.id, fetchedAttendees = Clock.System.now())
     }
 
 
     suspend fun SqlStorage.fetchEnrolled(account: Account, course: Course, force: Boolean) {
-        val now = Clock.System.now()
-        if (!force && now - course.fetched < ATTENDEES_FETCH_INTERVAL) return
+        if (!force && !course.isEnrolledStale()) return
 
         val site = sites[account.site]!!
         val api = account.api(site)
@@ -169,20 +159,15 @@ object CourseFetcher {
         val enrolled = api.getEnrolled(course.uuid)
 
         store(site, course, enrolled!!)
-
-        courses.update(course.id, fetched = Clock.System.now()) // TODO: Only fetchedEnrolled
     }
 
     suspend fun SqlStorage.fetchAttendees(account: Account, appointment: Appointment, force: Boolean) {
-        val now = Clock.System.now()
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        if (appointment.attendeesFetched != null && now - appointment.attendeesFetched < ATTENDEES_FETCH_INTERVAL && !force) return
+        if (!force && !appointment.isAttendeesStale()) return
 
         val attemptsQl = api.getCheckInAttempts(appointment.uuid) ?: return
         store(site, appointment, attemptsQl.attendees!!, attemptsQl.checkInAttempts!!)
-
-        appointments.update(appointment.id, attendeesFetched = now)
     }
 }

@@ -13,13 +13,10 @@
 package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.runtime.Composable
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useTime
-import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.minutes
 
-
-val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically provides that
 
 @Composable
 fun FastCheckInInScreen() {

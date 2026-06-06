@@ -78,7 +78,7 @@ class UserTable(
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
                 sort.field to order.sql,
-                (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
+                AttendeeSort.next(sort).field to order.sql,
             )
 
         return storage.query(query) { it.collectAll() }
@@ -94,7 +94,7 @@ class UserTable(
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
                 sort.field to order.sql,
-                (if (sort == AttendeeSort.FIRSTNAME) AttendeeSort.LASTNAME else AttendeeSort.FIRSTNAME).field to order.sql, // TODO: Enum::next (kutil 1.32)
+                AttendeeSort.next(sort).field to order.sql,
             )
 
         return storage.query(query) { it.collectAll() }

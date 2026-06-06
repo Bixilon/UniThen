@@ -60,6 +60,7 @@ CREATE TABLE courses (
   name VARCHAR(1024) NOT NULL,
 
   fetched INTEGER,
+  fetched_enrolled INTEGER NULL
 
   FOREIGN KEY (site) REFERENCES sites(id),
   FOREIGN KEY (event) REFERENCES events(id),
@@ -76,7 +77,7 @@ CREATE TABLE appointments (
 
   canceled INTEGER NULL,
 
-  attendees_fetched INTEGER NULL,
+  fetched_attendees INTEGER NULL,
 
   location VARCHAR(255),
 

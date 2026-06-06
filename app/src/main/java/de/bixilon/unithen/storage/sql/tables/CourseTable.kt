@@ -17,6 +17,7 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
+import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -27,16 +28,16 @@ import kotlin.time.Instant
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, "courses") {
-    override val columns = listOf("id", "site", "event", "uuid", "name", "fetched")
+    override val columns = listOf("id", "site", "event", "uuid", "name", "fetched", "fetched_enrolled")
 
-    override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5))
+    override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5), cursor.getInstantOrNull(6))
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
 
-    fun update(id: Key, name: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("name" to name, "fetched" to fetched))
+    fun update(id: Key, name: String? = null, fetched: Instant? = null, fetchedEnrolled: Instant? = null) = update(id, SqlFilter.comma("name" to name, "fetched" to fetched, "fetched_enrolled" to fetchedEnrolled))
 
 
     fun insert(site: Site, event: Event, uuid: UUID, name: String, fetched: Instant): Course {
