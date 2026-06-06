@@ -22,11 +22,7 @@
 -dontwarn com.google.re2j.**
 
 -keepattributes *Annotation*,EnclosingMethod,Signature
--keepnames class com.fasterxml.jackson.** { *; }
--dontwarn com.fasterxml.jackson.databind.**
 -dontwarn java.awt.**
 -keep class de.bixilon.unithen.** {*; }
 -keep enum de.bixilon.unithen.**
 -keep interface de.bixilon.unithen.**
-
--keep class kotlin.time.Instant
