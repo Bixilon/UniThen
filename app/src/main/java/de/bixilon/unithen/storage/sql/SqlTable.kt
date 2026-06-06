@@ -40,11 +40,10 @@ abstract class SqlTable<T : DbObject>(
 
     protected fun update(sql: String, vararg parameters: Any?) {
         storage.update(sql, parameters = parameters)
-        storage.notifyState()
     }
 
     protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        return storage.insert(sql, *parameters).apply { storage.notifyState() }
+        return storage.insert(sql, *parameters)
     }
 
 

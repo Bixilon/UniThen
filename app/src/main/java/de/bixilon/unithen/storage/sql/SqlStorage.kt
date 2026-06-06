@@ -82,7 +82,7 @@ class SqlStorage(context: Context) : Closeable {
 
         statement.bind(*parameters)
 
-        return statement.use { it.executeInsert().toInt() }
+        return statement.use { it.executeInsert().toInt() }.apply { notifyState() }
     }
 
     fun update(@Language("SQL") sql: String, vararg parameters: Any?): Int {
@@ -90,7 +90,7 @@ class SqlStorage(context: Context) : Closeable {
 
         statement.bind(*parameters)
 
-        return statement.use { it.executeUpdateDelete() }
+        return statement.use { it.executeUpdateDelete() }.apply { notifyState() }
     }
 
     inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T {
