@@ -12,7 +12,12 @@
 
 package de.bixilon.unithen.api.graphql.http
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+
+
+@Serializable
 data class GraphQlRequest(
     val query: String,
-    val variables: Map<String, Any>,
+    val variables: JsonObject,
 )

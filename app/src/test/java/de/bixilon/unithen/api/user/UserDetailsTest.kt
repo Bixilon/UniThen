@@ -14,8 +14,8 @@ package de.bixilon.unithen.api.user
 
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.kutil.uri.URIUtil.toURI
-import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.util.Kutil.toUuid
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import kotlin.uuid.Uuid
@@ -28,7 +28,7 @@ class UserDetailsTest {
 
 
         val details = UserDetails.fetch("https://kurse.zhs-muenchen.de".toURI(), authentication)
-        assertEquals(details.uuid, "10000000-0003-0000-0000-000000000001".toUUID())
+        assertEquals(details.uuid, "10000000-0003-0000-0000-000000000001".toUuid())
     }
 
     @Test

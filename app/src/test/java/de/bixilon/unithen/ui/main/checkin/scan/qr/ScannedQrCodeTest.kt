@@ -12,8 +12,7 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
-import com.fasterxml.jackson.module.kotlin.readValue
-import de.bixilon.unithen.util.json.Jackson
+import de.bixilon.unithen.util.Jackson
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import kotlin.uuid.Uuid
@@ -25,7 +24,7 @@ class ScannedQrCodeTest {
     fun `read scanned data no username`() {
         val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}"""
 
-        val read = Jackson.MAPPER.readValue<ScannedQrCode>(text)
+        val read = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
 
         assertEquals(read, ScannedQrCode(Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2"), Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2")))
     }
@@ -34,7 +33,7 @@ class ScannedQrCodeTest {
     fun `read scanned data with username`() {
         val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}"""
 
-        val read = Jackson.MAPPER.readValue<ScannedQrCode>(text)
+        val read = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
 
         assertEquals(read, ScannedQrCode(Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2"), Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2")))
     }

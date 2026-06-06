@@ -12,13 +12,13 @@
 
 package de.bixilon.unithen.graphql
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.kutil.cast.CastUtil.cast
-import de.bixilon.kutil.uuid.UUIDUtil.toUUID
+import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
-import de.bixilon.unithen.util.json.Jackson
+import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.util.Kutil.toUuid
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
@@ -33,7 +33,7 @@ class GraphQlQueryTest {
         val resource = GraphQlQueryTest::class.java.getResourceAsStream("/graphql/$name.json") ?: throw FileNotFoundException("Can not find resource $name")
 
 
-        return Jackson.GRAPH_QL.readValue<T>(resource)
+        return Jackson.GRAPHQL.decodeFromString<T>(resource.readAsString())
     }
 
     @Test
@@ -47,7 +47,7 @@ class GraphQlQueryTest {
     fun `read posting`() {
         val response = readResponse<PostingQl>("posting")
 
-        assertEquals(response.id, "b2583378-fbdd-48ab-81c6-ab3ddfb0236c".toUUID())
+        assertEquals(response.id, "b2583378-fbdd-48ab-81c6-ab3ddfb0236c".toUuid())
 
         val course = response.product.resource.cast<CourseQl>()
 
@@ -55,7 +55,7 @@ class GraphQlQueryTest {
 
         val appointment = course.appointments!!.first()
 
-        assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUUID())
+        assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUuid())
         assertEquals(appointment.start, LocalDateTime(2026, Month.MARCH, 11, 17, 30, 0).toInstant(UtcOffset.ZERO))
     }
 

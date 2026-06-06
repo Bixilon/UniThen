@@ -12,6 +12,9 @@
 
 package de.bixilon.unithen.api.graphql.http
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class GraphQlResponse<T>(
     val data: T,
     val errors: List<GraphQlError>? = null,

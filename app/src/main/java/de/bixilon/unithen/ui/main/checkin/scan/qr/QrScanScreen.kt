@@ -16,9 +16,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.core.JacksonException
-import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
@@ -30,16 +27,20 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.ui.util.useTime
-import de.bixilon.unithen.util.json.Jackson
+import de.bixilon.unithen.util.Jackson
 import kotlinx.coroutines.delay
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.SerializationException
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
+@Serializable
 data class ScannedQrCode(
-    @field:JsonProperty("appointment_id") val appointmentId: Uuid,
-    @field:JsonProperty("user_id") val userId: Uuid,
+    @SerialName("appointment_id") val appointmentId: Uuid,
+    @SerialName("user_id") val userId: Uuid,
 )
 
 private data class AcceptedResult(
@@ -112,7 +113,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         continue
                     }
 
-                    val scanned = Jackson.MAPPER.readValue<ScannedQrCode>(text)
+                    val scanned = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
 
                     val appointment = appointments.find { it.uuid == scanned.appointmentId }
                     if (appointment == null) {
@@ -130,7 +131,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         errors += ErrorResult(invalid)
                         delayed = AcceptedResult(course, appointment, scanned.userId)
                     }
-                } catch (_: JacksonException) {
+                } catch (_: SerializationException) {
                     errors += ErrorResult(QrErrorReasons.INVALID_DATA)
                 } catch (error: Throwable) {
                     errors += ErrorResult(QrErrorReasons.OTHER, error.message)

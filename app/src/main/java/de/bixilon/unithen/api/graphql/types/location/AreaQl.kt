@@ -12,8 +12,13 @@
 
 package de.bixilon.unithen.api.graphql.types.location
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 const val AREA_TYPE = "Area"
 
+@Serializable
+@SerialName(AREA_TYPE)
 class AreaQl(
    override val name: String,
     // TODO: floor, building

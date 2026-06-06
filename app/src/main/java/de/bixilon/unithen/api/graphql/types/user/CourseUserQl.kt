@@ -12,12 +12,14 @@
 
 package de.bixilon.unithen.api.graphql.types.user
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
+@Serializable
 data class CourseUserQl(
     override val id: Uuid,
-    @JsonProperty("first_name") val firstname: String? = null,
-    @JsonProperty("last_name") val lastname: String? = null,
+    @SerialName("first_name") val firstname: String? = null,
+    @SerialName("last_name") val lastname: String? = null,
 ) : IdentifiedQl

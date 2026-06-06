@@ -12,11 +12,12 @@
 
 package de.bixilon.unithen.api.graphql.types.checkin
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
+@Serializable
 data class CheckInAttemptQl(
     override val id: Uuid,
     val status: Status,
@@ -26,10 +27,8 @@ data class CheckInAttemptQl(
 
 
     enum class Status {
-        @JsonProperty("Success")
         SUCCESS,
 
-        @JsonProperty("Error")
         ERROR, // TODO
     }
 }

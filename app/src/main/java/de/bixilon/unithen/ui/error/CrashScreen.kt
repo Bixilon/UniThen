@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.fasterxml.jackson.core.JacksonException
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
@@ -37,7 +36,7 @@ import java.io.IOException
 
 
 fun formatDetails(error: Throwable): String? = when (error) {
-    is IOException if error !is JacksonException -> error.message + "\nDo you have internet?"
+    is IOException -> error.message + "\nDo you have internet?"
     is AuthenticationException -> "Unauthenticated!"
     is GraphQlException -> error.format()
     else -> null

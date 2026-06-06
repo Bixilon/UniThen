@@ -13,8 +13,10 @@
 package de.bixilon.unithen.api.graphql.types
 
 import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
+@Serializable
 data class ProductQl(
     override val id: Uuid,
     val resource: ResourceQl,

@@ -12,15 +12,17 @@
 
 package de.bixilon.unithen.api.graphql.queries
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.UserQl
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Queries(
-    @field:JsonProperty("user_pk") val userPk: UserQl?,
-    @field:JsonProperty("appointments_pk") val appointment: AppointmentQl?,
-    @field:JsonProperty("appointments") val appointments: List<AppointmentQl>?,
+    @SerialName("user_pk") val userPk: UserQl?,
+    @SerialName("appointments_pk") val appointment: AppointmentQl?,
+    @SerialName("appointments") val appointments: List<AppointmentQl>?,
 
-    @field:JsonProperty("courses_pk") val course: CourseQl?,
+    @SerialName("courses_pk") val course: CourseQl?,
 )

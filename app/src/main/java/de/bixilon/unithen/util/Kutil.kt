@@ -10,15 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.queries
+package de.bixilon.unithen.util
 
-import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
+object Kutil {
 
-@Serializable
-data class Mutations(
-    @SerialName("delete_checkin_attempt") val deleteCheckinAttempt: CheckInAttemptQl?,
-    @SerialName("appointment_checkin") val appointmentCheckin: CheckInAttemptQl?,
-)
+    fun String.toUuid() = Uuid.parse(this)
+}

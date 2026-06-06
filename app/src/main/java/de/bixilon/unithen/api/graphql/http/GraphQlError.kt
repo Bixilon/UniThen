@@ -12,8 +12,14 @@
 
 package de.bixilon.unithen.api.graphql.http
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+
+
+@Serializable
 data class GraphQlError(
     val message: String,
-    val path: Any,
-    val extensions: Map<String, Any>?,
+    val path: JsonElement,
+    val extensions: JsonObject?,
 )

@@ -12,9 +12,11 @@
 
 package de.bixilon.unithen.api.graphql.types
 
+import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
+@Serializable
 data class EventQl(
     override val id: Uuid,
     val name: String,

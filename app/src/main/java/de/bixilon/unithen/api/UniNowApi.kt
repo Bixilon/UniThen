@@ -12,14 +12,15 @@
 
 package de.bixilon.unithen.api
 
-import com.fasterxml.jackson.module.kotlin.readValue
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
-import de.bixilon.unithen.util.json.Jackson
+import de.bixilon.unithen.util.Jackson
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -33,7 +34,7 @@ open class UniNowApi(
     protected open fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
 
     fun postJson(endpoint: String, payload: Any?): String {
-        val body = payload?.let { Jackson.MAPPER.writeValueAsBytes(it).toRequestBody(HttpUtil.JSON) } ?: RequestBody.EMPTY
+        val body = payload?.let { Jackson.MAPPER.encodeToString(it).toRequestBody(HttpUtil.JSON) } ?: RequestBody.EMPTY
         val request = buildRequest(endpoint)
             .post(body)
             .build()
@@ -52,14 +53,14 @@ open class UniNowApi(
         return response.body.string()
     }
 
-    inline fun <reified T> graphql(name: String, vararg variables: Pair<String, Any>) = graphql<T>(QueryLoader[name], *variables)
-    inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, Any>): T {
-        val request = GraphQlRequest(query.query, variables.toMap())
+    inline fun <reified T> graphql(name: String, vararg variables: Pair<String, JsonElement>) = graphql<T>(QueryLoader[name], *variables)
+    inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, JsonElement>): T {
+        val request = GraphQlRequest(query.query, JsonObject(variables.toMap()))
 
         // Log.i("TEST", Jackson.MAPPER.writeValueAsString(request))
         val response = postJson("/api/query", request)
 
-        val graphql = Jackson.GRAPH_QL.readValue<GraphQlResponse<T>>(response)
+        val graphql = Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)
 
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {
             if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {

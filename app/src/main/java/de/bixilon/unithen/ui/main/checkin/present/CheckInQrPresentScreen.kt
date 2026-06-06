@@ -45,7 +45,8 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.util.json.Jackson
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.uuid.Uuid
 
 
@@ -121,14 +122,14 @@ private fun setBrightness(context: Context, level: Float) {
 }
 
 fun createQrCode(user: Uuid, appointment: Uuid, firstname: String, lastname: String): String {
-    val node = Jackson.MAPPER.createObjectNode().apply {
-        put("appointment_id", appointment.toString())
-        put("user_id", user.toString())
-        replace("userName", Jackson.MAPPER.createObjectNode().apply {
-            put("last", lastname)
-            put("first", firstname)
-        })
-    }
+    val node = JsonObject(mapOf(
+        "appointment_id" to JsonPrimitive(appointment.toString()),
+        "user_id" to JsonPrimitive(user.toString()),
+        "userName" to JsonObject(mapOf(
+            "last" to JsonPrimitive(lastname),
+            "first" to JsonPrimitive(firstname),
+        )),
+    ))
 
     return node.toString()
 }

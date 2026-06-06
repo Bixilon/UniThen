@@ -20,6 +20,7 @@ import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.Request
 import java.net.URI
 import kotlin.uuid.Uuid
@@ -38,26 +39,26 @@ open class AuthenticatedUniNowApi(
     }
 
     fun getCourses(userId: Uuid): List<CourseQl>? {
-        return graphql<Queries>("courses", "user" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
+        return graphql<Queries>("courses", "user" to JsonPrimitive(userId.toString())).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
     }
 
     fun getCourse(courseId: Uuid): CourseQl? {
-        return graphql<Queries>("course", "course" to courseId).course
+        return graphql<Queries>("course", "course" to JsonPrimitive(courseId.toString())).course
     }
 
     fun getEnrolled(courseId: Uuid): List<CourseUserQl>? {
-        return graphql<Queries>("enrolled", "course" to courseId).course?.enrolled
+        return graphql<Queries>("enrolled", "course" to JsonPrimitive(courseId.toString())).course?.enrolled
     }
 
     fun getCheckInAttempts(appointmentId: Uuid): AppointmentQl? {
-        return graphql<Queries>("attempts", "appointment" to appointmentId).appointment
+        return graphql<Queries>("attempts", "appointment" to JsonPrimitive(appointmentId.toString())).appointment
     }
 
     fun checkInUser(appointment: Uuid, userId: Uuid): CheckInAttemptQl? {
-        return graphql<Mutations>("checkin", "appointment" to appointment, "user" to userId).appointmentCheckin
+        return graphql<Mutations>("checkin", "appointment" to JsonPrimitive(appointment.toString()), "user" to JsonPrimitive(userId.toString())).appointmentCheckin
     }
 
     fun deleteCheckinAttempt(attemptId: Uuid): CheckInAttemptQl? {
-        return graphql<Mutations>("delete_checkin", "attempt" to attemptId).appointmentCheckin
+        return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attemptId.toString())).appointmentCheckin
     }
 }

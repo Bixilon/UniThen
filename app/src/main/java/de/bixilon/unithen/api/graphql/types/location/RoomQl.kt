@@ -12,8 +12,13 @@
 
 package de.bixilon.unithen.api.graphql.types.location
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
 const val ROOM_TYPE = "Room"
 
+@Serializable
+@SerialName(ROOM_TYPE)
 class RoomQl(
     override val name: String,
     // TODO: floor, building

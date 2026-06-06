@@ -15,10 +15,14 @@ package de.bixilon.unithen.api.graphql.types.resource
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.EventQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 const val COURSE_TYPE = "Course"
 
+@Serializable
+@SerialName(COURSE_TYPE)
 data class CourseQl(
     override val id: Uuid,
     val name: String? = null,

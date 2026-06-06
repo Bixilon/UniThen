@@ -12,15 +12,8 @@
 
 package de.bixilon.unithen.api.graphql.types.resource
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
-@JsonSubTypes(
-    JsonSubTypes.Type(value = CourseQl::class, name = COURSE_TYPE),
-    JsonSubTypes.Type(value = UnknownQl::class, names = arrayOf("Fee", "Room", "Location", "BookingSlotResource", "Appointment", "Equipment")),
-)
 interface ResourceQl : IdentifiedQl {
     val __typename: String
 }

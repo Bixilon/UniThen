@@ -15,9 +15,11 @@ package de.bixilon.unithen.api.graphql.types
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.location.FacilityQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import kotlinx.serialization.Serializable
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
+@Serializable
 data class AppointmentQl(
     override val id: Uuid,
     val start: Instant? = null,
