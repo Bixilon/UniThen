@@ -37,7 +37,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
-private data class ScannedQrCode(
+data class ScannedQrCode(
     @field:JsonProperty("appointment_id") val appointmentId: UUID,
     @field:JsonProperty("user_id") val userId: UUID,
 )

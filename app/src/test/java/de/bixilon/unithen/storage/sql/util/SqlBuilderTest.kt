@@ -23,6 +23,6 @@ class SqlBuilderTest {
     fun `sample query`() {
         val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInQueueTable.user eq 4) and (CheckInQueueTable.appointment eq 1)
 
-        assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((user=?) AND (appointment=?))", listOf(4, 1)))
+        assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((checkin_queue.user=?) AND (checkin_queue.appointment=?))", listOf(4, 1)))
     }
 }

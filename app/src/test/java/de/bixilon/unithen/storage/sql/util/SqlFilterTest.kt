@@ -26,7 +26,7 @@ class SqlFilterTest {
         val now = Clock.System.now()
         val filter = (AppointmentTable.id eq 1) and ((AppointmentTable.canceled neq now) or (AppointmentTable.location eq "y"))
 
-        assertEquals(filter.sql, "(id=?) AND ((canceled!=?) OR (location=?))")
+        assertEquals(filter.sql, "(appointments.id=?) AND ((appointments.canceled!=?) OR (appointments.location=?))")
         assertEquals(filter.parameters, listOf(1, now, "y"))
     }
 
