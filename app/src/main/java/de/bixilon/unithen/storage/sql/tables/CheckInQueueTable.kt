@@ -60,10 +60,12 @@ class CheckInQueueTable(
 
 
     fun addPending(appointment: Appointment, user: User, sync: Instant) {
+        // TODO: This only works in android 9+
         insert("INSERT INTO $table(appointment, user, sync) VALUES (?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET sync=?", appointment.id, user.id, sync, sync)
     }
 
     fun addCheckout(appointment: Appointment, user: User, attempt: UUID, sync: Instant) {
+        // TODO: This only works in android 9+
         insert("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
     }
 

@@ -73,7 +73,7 @@ class AppointmentTable(
 
     fun clearAttendees(appointment: Appointment) = update("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
     fun addAttendee(user: User, appointment: Appointment, attempt: UUID) {
-        insert("INSERT INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id, attempt)
+        insert("INSERT OR REPLACE INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?)", user.id, appointment.id, attempt)
     }
 
     fun removeAttendee(user: User, appointment: Appointment) {
@@ -87,7 +87,7 @@ class AppointmentTable(
 
     fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)
     fun addTutor(user: User, appointment: Appointment) {
-        insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?) ON CONFLICT(user, appointment) DO NOTHING", user.id, appointment.id)
+        insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?)", user.id, appointment.id)
     }
 
     companion object : SqlTableSchema<Appointment> {

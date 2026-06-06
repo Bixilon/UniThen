@@ -53,12 +53,12 @@ class CourseTable(
 
     fun clearTutors(course: Course) = update("DELETE FROM tutor_courses WHERE course = ?", course.id)
     fun addTutor(user: User, course: Course) {
-        insert("INSERT INTO tutor_courses(user, course) VALUES (?,?) ON CONFLICT(user, course) DO NOTHING", user.id, course.id)
+        insert("INSERT INTO tutor_courses(user, course) VALUES (?,?)", user.id, course.id)
     }
 
     fun clearEnrolled(course: Course) = update("DELETE FROM course_enrolled WHERE course = ?", course.id)
     fun addEnrolled(user: User, course: Course) {
-        insert("INSERT INTO course_enrolled(user, course) VALUES (?,?) ON CONFLICT(user, course) DO NOTHING", user.id, course.id)
+        insert("INSERT INTO course_enrolled(user, course) VALUES (?,?)", user.id, course.id)
     }
 
     fun isTutor(): Boolean {

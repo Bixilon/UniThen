@@ -87,7 +87,7 @@ class AccountTable(
     }
 
     fun addToCourse(account: Account, course: Course) {
-        insert("INSERT INTO account_courses(account, course) VALUES (?,?) ON CONFLICT(account, course) DO NOTHING", account.id, course.id)
+        insert("INSERT OR REPLACE INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
     }
 
     fun remove(account: Account) = storage.transaction {
