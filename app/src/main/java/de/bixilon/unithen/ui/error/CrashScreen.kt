@@ -52,7 +52,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        ErrorBox(message ?: "Something went wrong!", "This should not have happened. Please contact the app developer if you don't know further.")
+        ErrorBox(message ?: "Something went wrong!", "This should not have happened. Please contact the app developer if you don't know further. Please include the full text below.")
 
         val details = formatDetails(exception)
         if (details != null) {
