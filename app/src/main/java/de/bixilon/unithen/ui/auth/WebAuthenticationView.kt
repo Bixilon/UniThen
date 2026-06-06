@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.auth
 
 import android.graphics.Bitmap
+import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import java.net.URI
 
 
@@ -41,6 +43,12 @@ fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
     var host by remember { mutableStateOf("") }
 
     BackHandler(enabled = canGoBack) { view?.goBack() }
+    val hasWebView = runCatching { CookieManager.getInstance() }.isSuccess
+
+    if (!hasWebView) {
+        SimpleErrorScreen("No webview found", "Please install android webview!")
+        return
+    }
 
     Column {
         if (host.isNotBlank()) {
@@ -55,6 +63,7 @@ fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
                 textAlign = TextAlign.Center,
             )
         }
+
 
         AndroidView(modifier = Modifier.fillMaxHeight(), factory = { context ->
             WebView(context).apply {
