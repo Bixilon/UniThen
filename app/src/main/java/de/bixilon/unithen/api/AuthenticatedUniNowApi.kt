@@ -22,7 +22,7 @@ import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import okhttp3.Request
 import java.net.URI
-import java.util.*
+import kotlin.uuid.Uuid
 
 open class AuthenticatedUniNowApi(
     url: URI,
@@ -37,27 +37,27 @@ open class AuthenticatedUniNowApi(
         return request
     }
 
-    fun getCourses(userId: UUID): List<CourseQl>? {
+    fun getCourses(userId: Uuid): List<CourseQl>? {
         return graphql<Queries>("courses", "user" to userId).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
     }
 
-    fun getCourse(courseId: UUID): CourseQl? {
+    fun getCourse(courseId: Uuid): CourseQl? {
         return graphql<Queries>("course", "course" to courseId).course
     }
 
-    fun getEnrolled(courseId: UUID): List<CourseUserQl>? {
+    fun getEnrolled(courseId: Uuid): List<CourseUserQl>? {
         return graphql<Queries>("enrolled", "course" to courseId).course?.enrolled
     }
 
-    fun getCheckInAttempts(appointmentId: UUID): AppointmentQl? {
+    fun getCheckInAttempts(appointmentId: Uuid): AppointmentQl? {
         return graphql<Queries>("attempts", "appointment" to appointmentId).appointment
     }
 
-    fun checkInUser(appointment: UUID, userId: UUID): CheckInAttemptQl? {
+    fun checkInUser(appointment: Uuid, userId: Uuid): CheckInAttemptQl? {
         return graphql<Mutations>("checkin", "appointment" to appointment, "user" to userId).appointmentCheckin
     }
 
-    fun deleteCheckinAttempt(attemptId: UUID): CheckInAttemptQl? {
+    fun deleteCheckinAttempt(attemptId: Uuid): CheckInAttemptQl? {
         return graphql<Mutations>("delete_checkin", "attempt" to attemptId).appointmentCheckin
     }
 }

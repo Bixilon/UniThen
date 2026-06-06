@@ -12,17 +12,16 @@
 
 package de.bixilon.unithen.api.user
 
-import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.HttpUtil.authenticate
 import de.bixilon.unithen.api.authentication.Authentication
 import okhttp3.OkHttpClient
 import org.jsoup.Jsoup
 import java.net.URI
-import java.util.*
+import kotlin.uuid.Uuid
 
 data class UserDetails(
-    val uuid: UUID,
+    val uuid: Uuid,
     val firstname: String,
     val lastname: String,
     @Deprecated("unused") val email: String,
@@ -60,7 +59,7 @@ data class UserDetails(
                 .find { it.data().contains("window.UniNow = ") }!!
                 .data()
 
-            val userId = USER_ID_REGEX.find(content)?.groupValues?.get(1)?.toUUID() ?: throw Error("Can not extract user id. Did UniNow change something in their response?")
+            val userId = USER_ID_REGEX.find(content)?.groupValues?.get(1)?.let { Uuid.parse(it) } ?: throw Error("Can not extract user id. Did UniNow change something in their response?")
             val firstname = FIRSTNAME_REGEX.find(content)!!.groupValues[1]
             val lastname = LASTNAME_REGEX.find(content)!!.groupValues[1]
             val email = EMAIL_REGEX.find(content)!!.groupValues[1]

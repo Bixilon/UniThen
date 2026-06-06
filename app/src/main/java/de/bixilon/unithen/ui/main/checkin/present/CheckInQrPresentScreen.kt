@@ -46,7 +46,7 @@ import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.UiUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.util.json.Jackson
-import java.util.*
+import kotlin.uuid.Uuid
 
 
 @Composable
@@ -120,7 +120,7 @@ private fun setBrightness(context: Context, level: Float) {
     window.attributes = window.attributes.apply { screenBrightness = level }
 }
 
-fun createQrCode(user: UUID, appointment: UUID, firstname: String, lastname: String): String {
+fun createQrCode(user: Uuid, appointment: Uuid, firstname: String, lastname: String): String {
     val node = Jackson.MAPPER.createObjectNode().apply {
         put("appointment_id", appointment.toString())
         put("user_id", user.toString())

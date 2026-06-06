@@ -15,12 +15,12 @@ package de.bixilon.unithen.storage.types
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.ui.main.checkin.scan.qr.isMajorContributor
-import java.util.*
+import kotlin.uuid.Uuid
 
 data class User(
     override val id: Key,
     val site: Key,
-    val uuid: UUID,
+    val uuid: Uuid,
     val firstname: String,
     val lastname: String,
 ) : DbKeyed {

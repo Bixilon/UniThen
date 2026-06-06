@@ -15,11 +15,11 @@ package de.bixilon.unithen.api.graphql.types
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.location.FacilityQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 data class AppointmentQl(
-    override val id: UUID,
+    override val id: Uuid,
     val start: Instant? = null,
     val end: Instant? = null,
     val canceledAt: Instant? = null,

@@ -13,9 +13,9 @@
 package de.bixilon.unithen.api.graphql.types
 
 import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
-import java.util.*
+import kotlin.uuid.Uuid
 
 data class ProductQl(
-    override val id: UUID,
+    override val id: Uuid,
     val resource: ResourceQl,
 ) : IdentifiedQl

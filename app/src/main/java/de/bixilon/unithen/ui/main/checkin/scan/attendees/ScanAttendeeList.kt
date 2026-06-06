@@ -42,7 +42,7 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
-import java.util.*
+import kotlin.uuid.Uuid
 
 
 @Composable
@@ -127,7 +127,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                         storage.transaction {
                             storage.checkInQueue.delete(appointment, user)
                             if (item.attempt == null) {
-                                storage.appointments.addAttendee(user, appointment, UUID.randomUUID())
+                                storage.appointments.addAttendee(user, appointment, Uuid.random())
                             }
                         }
                     }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }

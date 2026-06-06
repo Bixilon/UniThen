@@ -32,23 +32,23 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 
 class CheckInQueueTable(
     storage: SqlStorage,
 ) : SqlTable<CheckInQueue>(storage, CheckInQueueTable) {
 
-    operator fun get(appointment: Appointment, uuid: UUID) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
+    operator fun get(appointment: Appointment, uuid: Uuid) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
     operator fun get(appointment: Appointment, user: User) = single(SqlFilter.and("appointment" to appointment.id, "user" to user.id))
     operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) + " ORDER BY status")
 
     @Deprecated("data", level = DeprecationLevel.ERROR)
     fun update(appointment: Appointment, user: User): Nothing = Broken()
 
-    fun update(appointment: Appointment, user: User, time: Instant? = null, attempt: UUID? = null, message: String? = null, sync: Instant? = null) {
+    fun update(appointment: Appointment, user: User, time: Instant? = null, attempt: Uuid? = null, message: String? = null, sync: Instant? = null) {
         val filter = SqlFilter.comma("time" to time, "attempt" to attempt, "message" to message, "sync" to sync)
 
         update("UPDATE $table SET ${filter.sql} WHERE appointment=? AND user=?", parameters = arrayOf(*filter.parameters.toTypedArray(), appointment.id, user.id))
@@ -64,7 +64,7 @@ class CheckInQueueTable(
         insert("INSERT INTO $table(appointment, user, sync) VALUES (?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET sync=?", appointment.id, user.id, sync, sync)
     }
 
-    fun addCheckout(appointment: Appointment, user: User, attempt: UUID, sync: Instant) {
+    fun addCheckout(appointment: Appointment, user: User, attempt: Uuid, sync: Instant) {
         // TODO: This only works in android 9+
         insert("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
     }

@@ -19,9 +19,9 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.uuid.Uuid
 
 object CheckInUtil {
     val SYNC_BACKOFF = 5.minutes
@@ -66,7 +66,7 @@ object CheckInUtil {
         syncQueue(storage, storage.checkInQueue[appointment, user] ?: return)
     }
 
-    private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: UUID) {
+    private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: Uuid) {
         val attemptQl = withContext(Dispatchers.IO) {
             val api = account.api(site)
 
@@ -90,7 +90,7 @@ object CheckInUtil {
         sync(storage, appointment, user)
     }
 
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: UUID) {
+    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: Uuid) {
         val site = storage.sites[account.site]!!
 
         syncUnknownUser(storage, site, account, appointment, userId)

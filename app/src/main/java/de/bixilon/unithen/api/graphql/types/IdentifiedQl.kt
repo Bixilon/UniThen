@@ -12,8 +12,8 @@
 
 package de.bixilon.unithen.api.graphql.types
 
-import java.util.*
+import kotlin.uuid.Uuid
 
 interface IdentifiedQl {
-    val id : UUID
+    val id: Uuid
 }

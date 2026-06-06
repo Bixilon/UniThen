@@ -28,15 +28,15 @@ import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, AppointmentTable) {
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(course: Course, uuid: UUID) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
+    operator fun get(course: Course, uuid: Uuid) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
 
@@ -59,20 +59,20 @@ class AppointmentTable(
     fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant? = null, location: String? = null, fetchedAttendees: Instant? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location, "fetched_attendees" to fetchedAttendees))
 
 
-    fun insert(course: Course, uuid: UUID, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
+    fun insert(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
         val id = storage.insert("INSERT INTO $table(course, uuid, start, end, canceled, location) VALUES (?,?,?,?,?,?)", course.id, uuid, start, end, canceled, location)
 
         return this[id]!!
     }
 
-    fun add(course: Course, uuid: UUID, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
+    fun add(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
         this[course, uuid]?.let { update(it.id, start, end, canceled, location); return it }
 
         return insert(course, uuid, start, end, canceled, location)
     }
 
     fun clearAttendees(appointment: Appointment) = update("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
-    fun addAttendee(user: User, appointment: Appointment, attempt: UUID) {
+    fun addAttendee(user: User, appointment: Appointment, attempt: Uuid) {
         insert("INSERT OR REPLACE INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?)", user.id, appointment.id, attempt)
     }
 
@@ -80,7 +80,7 @@ class AppointmentTable(
         insert("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)
     }
 
-    fun getAttemptId(appointment: Appointment, user: User): UUID? {
+    fun getAttemptId(appointment: Appointment, user: User): Uuid? {
         return storage.query("SELECT attempt FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { if (it.moveToNext()) it.getUUIDOrNull(0) else null }
     }
 

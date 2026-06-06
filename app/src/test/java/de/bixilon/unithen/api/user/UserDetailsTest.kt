@@ -18,6 +18,7 @@ import de.bixilon.kutil.uuid.UUIDUtil.toUUID
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
+import kotlin.uuid.Uuid
 
 class UserDetailsTest {
 
@@ -33,7 +34,7 @@ class UserDetailsTest {
     @Test
     fun `parse zhs`() {
         val html = UserDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
-        val expected = UserDetails("10000000-0003-0000-0000-000000000001".toUUID(), "Max", "Muster", "mail@server.de")
+        val expected = UserDetails(Uuid.parse("10000000-0003-0000-0000-000000000001"), "Max", "Muster", "mail@server.de")
 
         val details = UserDetails.parse(html)
         assertEquals(details, expected)

@@ -23,27 +23,27 @@ import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class EventTable(
     storage: SqlStorage,
 ) : SqlTable<Event>(storage, EventTable) {
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
 
     fun update(id: Key, name: String? = null, start: Instant? = null, end: Instant? = null) = update(id, SqlFilter.comma("name" to name, "start" to start, "end" to end))
 
 
-    fun insert(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
+    fun insert(site: Site, uuid: Uuid, name: String, start: Instant, end: Instant): Event {
         val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?,?)", site.id, uuid, name, start, end)
 
         return this[id]!!
     }
 
-    fun add(site: Site, uuid: UUID, name: String, start: Instant, end: Instant): Event {
+    fun add(site: Site, uuid: Uuid, name: String, start: Instant, end: Instant): Event {
         this[site, uuid]?.let { update(it.id, name, start, end); return it }
 
         return insert(site, uuid, name, start, end)

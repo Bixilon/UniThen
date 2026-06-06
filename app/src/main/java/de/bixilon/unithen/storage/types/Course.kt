@@ -14,17 +14,17 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 data class Course(
     override val id: Key,
     val site: Key,
     val event: Key,
-    val uuid: UUID,
+    val uuid: Uuid,
     val name: String,
 
     val fetched: Instant,

@@ -17,7 +17,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.navigation.NavigationRoute
-import java.util.*
+import kotlin.uuid.Uuid
 
 object MainRoute : NavigationRoute
 object SetupRoute : NavigationRoute
@@ -38,7 +38,7 @@ data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
 data class ScanScanAppointmentRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute
 object ScanAnyRoute : NavigationRoute
 
-data class ScanConfirmRoute(val account: Account, val course: Course, val appointment: Appointment, val userId: UUID) : NavigationRoute
+data class ScanConfirmRoute(val account: Account, val course: Course, val appointment: Appointment, val userId: Uuid) : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 

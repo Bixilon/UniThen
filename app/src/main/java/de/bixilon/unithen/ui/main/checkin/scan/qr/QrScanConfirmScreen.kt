@@ -48,7 +48,7 @@ import de.bixilon.unithen.ui.util.UiUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
-import java.util.*
+import kotlin.uuid.Uuid
 
 
 val MAJOR_CONTRIBUTORS = mutableMapOf(
@@ -58,7 +58,7 @@ val MAJOR_CONTRIBUTORS = mutableMapOf(
 fun isMajorContributor(user: User): Boolean {
     // Well, not the best, but not revealing my user id :)
     // This is just an e*as*ter eg*g, nothing special. Purely visual.
-    val hash = user.uuid.let { it.mostSignificantBits xor it.leastSignificantBits } and 0xFB.inv()
+    val hash = user.uuid.toLongs { a, b -> a xor b } and 0xFB.inv()
 
     val name = MAJOR_CONTRIBUTORS[hash] ?: return false
 
@@ -131,7 +131,7 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
 
 @Composable
-fun QrScanConfirmScreen(user: User?, userId: UUID) {
+fun QrScanConfirmScreen(user: User?, userId: Uuid) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
@@ -224,7 +224,7 @@ fun QrScanConfirmScreen(user: User?, userId: UUID) {
 }
 
 @Composable
-fun QrScanConfirmScreen(userId: UUID) {
+fun QrScanConfirmScreen(userId: Uuid) {
     val (_, _, appointment) = LocalScanContext.current
 
     val storage = LocalStorage.current

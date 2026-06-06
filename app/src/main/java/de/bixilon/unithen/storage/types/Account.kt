@@ -17,15 +17,15 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 data class Account(
     override val id: Key,
     val site: Key,
-    val uuid: UUID,
+    val uuid: Uuid,
 
     val firstname: String,
     val lastname: String,

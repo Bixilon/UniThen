@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.api.graphql.types
 
-import java.util.*
+import kotlin.uuid.Uuid
 
 data class PostingQl(
-    override val id: UUID,
+    override val id: Uuid,
     val product: ProductQl,
 ) : IdentifiedQl

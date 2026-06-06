@@ -28,24 +28,24 @@ import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
-import java.util.*
+import kotlin.uuid.Uuid
 
 class UserTable(
     storage: SqlStorage,
 ) : SqlTable<User>(storage, UserTable) {
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
 
-    fun insert(site: Site, uuid: UUID, firstname: String, lastname: String): User {
+    fun insert(site: Site, uuid: Uuid, firstname: String, lastname: String): User {
         val id = insert("INSERT INTO $table(site, uuid, firstname, lastname) VALUES (?,?,?,?)", site.id, uuid, firstname, lastname)
 
         return this[id]!!
     }
 
-    fun add(site: Site, uuid: UUID, firstname: String, lastname: String): User {
+    fun add(site: Site, uuid: Uuid, firstname: String, lastname: String): User {
         this[site, uuid]?.let { update(it.id, firstname, lastname); return it }
 
         return insert(site, uuid, firstname, lastname)

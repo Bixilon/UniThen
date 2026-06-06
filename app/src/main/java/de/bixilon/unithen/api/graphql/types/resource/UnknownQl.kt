@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.api.graphql.types.resource
 
-import java.util.*
+import kotlin.uuid.Uuid
 
 class UnknownQl : ResourceQl {
-    override val id get() = UUID(0L, 0L)
+    override val id get() = Uuid.fromLongs(0L, 0L)
     override val __typename get() = ""
 }

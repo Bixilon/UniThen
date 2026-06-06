@@ -32,20 +32,20 @@ import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.util.json.Jackson
 import kotlinx.coroutines.delay
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 data class ScannedQrCode(
-    @field:JsonProperty("appointment_id") val appointmentId: UUID,
-    @field:JsonProperty("user_id") val userId: UUID,
+    @field:JsonProperty("appointment_id") val appointmentId: Uuid,
+    @field:JsonProperty("user_id") val userId: Uuid,
 )
 
 private data class AcceptedResult(
     val course: Course,
     val appointment: Appointment,
-    val userId: UUID,
+    val userId: Uuid,
 )
 
 data class ErrorResult(
@@ -55,7 +55,7 @@ data class ErrorResult(
     val time = Clock.System.now()
 }
 
-private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, userId: UUID): QrErrorReasons? {
+private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, userId: Uuid): QrErrorReasons? {
     val site = storage.sites[storage.courses[appointment.course]!!.site]!!
     val user = storage.users[site, userId] ?: return QrErrorReasons.UNKNOWN_USER
 

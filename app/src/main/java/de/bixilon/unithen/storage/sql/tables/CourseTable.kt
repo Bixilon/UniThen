@@ -24,27 +24,27 @@ import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.*
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, CourseTable) {
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun get(site: Site? = null, event: Event? = null, uuid: UUID? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
+    fun get(site: Site? = null, event: Event? = null, uuid: Uuid? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
 
     fun update(id: Key, name: String? = null, fetched: Instant? = null, fetchedEnrolled: Instant? = null) = update(id, SqlFilter.comma("name" to name, "fetched" to fetched, "fetched_enrolled" to fetchedEnrolled))
 
 
-    fun insert(site: Site, event: Event, uuid: UUID, name: String, fetched: Instant): Course {
+    fun insert(site: Site, event: Event, uuid: Uuid, name: String, fetched: Instant): Course {
         val id = insert("INSERT INTO $table(site, event, uuid, name, fetched) VALUES (?,?,?,?,?)", site.id, event.id, uuid, name, fetched)
 
         return this[id]!! // TODO: cleanup
     }
 
-    fun add(site: Site, event: Event, uuid: UUID, name: String, fetched: Instant): Course {
+    fun add(site: Site, event: Event, uuid: Uuid, name: String, fetched: Instant): Course {
         this[site, uuid]?.let { update(it.id, name, fetched); return it }
 
         return insert(site, event, uuid, name, fetched)

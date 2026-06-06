@@ -28,8 +28,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.Closeable
 import org.intellij.lang.annotations.Language
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class SqlStorage(context: Context) : Closeable {
     val helper = SqlHelper(context)
@@ -62,7 +62,7 @@ class SqlStorage(context: Context) : Closeable {
                 is Long -> bindLong(actual, parameter)
                 is String -> bindString(actual, parameter)
                 is Instant -> bindLong(actual, parameter.epochSeconds)
-                is UUID -> bindString(actual, parameter.toString())
+                is Uuid -> bindString(actual, parameter.toString())
                 is ByteArray -> bindBlob(actual, parameter)
                 is Enum<*> -> bindString(actual, parameter.name)
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")

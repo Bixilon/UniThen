@@ -14,14 +14,14 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 data class CheckInQueue(
     val user: Key,
     val appointment: Key,
     val time: Instant?,
-    val attempt: UUID?, // If attempt is set, we check out the user again
+    val attempt: Uuid?, // If attempt is set, we check out the user again
     val message: String?, //  If message is set, it failed
     val sync: Instant?,
 ) : DbObject

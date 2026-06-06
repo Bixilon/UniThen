@@ -15,12 +15,12 @@ package de.bixilon.unithen.api.graphql.types.resource
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.EventQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
-import java.util.*
+import kotlin.uuid.Uuid
 
 const val COURSE_TYPE = "Course"
 
 data class CourseQl(
-    override val id: UUID,
+    override val id: Uuid,
     val name: String? = null,
     val event: EventQl? = null,
     val tutors: List<CourseUserQl>? = null,

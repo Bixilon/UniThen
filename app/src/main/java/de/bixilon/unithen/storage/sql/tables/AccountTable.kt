@@ -30,18 +30,18 @@ import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
-import java.util.*
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 class AccountTable(
     storage: SqlStorage,
 ) : SqlTable<Account>(storage, AccountTable) {
 
     operator fun get(id: Key) = single("id=?", id)
-    operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun get(site: Site? = null, uuid: UUID? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
+    fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
     fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey, "fetched" to fetched))
 
 

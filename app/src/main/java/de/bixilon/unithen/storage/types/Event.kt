@@ -14,13 +14,13 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
-import java.util.*
 import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 data class Event(
     override val id: Key,
     val site: Key,
-    val uuid: UUID,
+    val uuid: Uuid,
     val name: String,
     val start: Instant,
     val end: Instant,

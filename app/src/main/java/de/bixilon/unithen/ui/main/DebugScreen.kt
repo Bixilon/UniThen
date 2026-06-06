@@ -23,13 +23,13 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import java.util.*
+import kotlin.uuid.Uuid
 
 
 private fun SqlStorage.insert1000Users() = transaction {
     for (i in 0 until 1000) {
         val userId = 930 + i
-        val uuid = UUID(userId.toLong(), userId.toLong())
+        val uuid = Uuid.fromLongs(userId.toLong(), userId.toLong())
         this.insert("INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(?, 901, ?,?,?)", userId, uuid, "User", "#${i}")
         this.insert("INSERT INTO course_enrolled(user, course) VALUES(?, 901)", userId)
     }
