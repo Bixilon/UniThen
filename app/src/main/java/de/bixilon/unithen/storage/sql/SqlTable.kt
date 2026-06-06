@@ -101,5 +101,5 @@ abstract class SqlTable<T : DbObject>(
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }
 
-    fun all(): List<T> = all("TRUE")
+    fun all(): List<T> = all("1")
 }
