@@ -193,9 +193,7 @@ fun ScanAttendeeList() {
     val _refresh = useAsyncNetwork<Boolean>(account) {
         try {
             refreshing = true
-            if (it) {
-                storage.fetchEnrolled(account, course, true)
-            }
+            storage.fetchEnrolled(account, course, it)
             storage.fetchAttendees(account, appointment, it)
         } finally {
             refreshing = false
@@ -208,7 +206,7 @@ fun ScanAttendeeList() {
     }
 
     LaunchedEffect(Unit) {
-        if (appointment.isAttendeesStale()) {
+        if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
             refresh(false)
         }
     }
