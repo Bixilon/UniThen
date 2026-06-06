@@ -1,5 +1,6 @@
 [versions]
 agp = "9.0.1"
+kotlinxSerializationJson = "1.11.0"
 zxing = "3.0.2"
 composeQrCode = "1.0.1"
 datastorePreferences = "1.2.1"
@@ -42,6 +43,9 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraCore" }
 androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", version.ref = "cameraCore" }
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCore" }
+
+
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
 compose-qr-code = { group = "com.lightspark", name = "compose-qr-code", version.ref = "composeQrCode" }
 

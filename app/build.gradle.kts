@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization") version "2.4.0"
 }
 
 val jacksonVersion = "2.21.4"
@@ -187,6 +188,9 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.camera2)
+
+    implementation(libs.kotlinx.serialization.json)
+
 
 
     jacksonCore("core")
