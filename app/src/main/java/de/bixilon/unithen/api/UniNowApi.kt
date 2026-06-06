@@ -33,10 +33,14 @@ open class UniNowApi(
 
     protected open fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
 
-    fun postJson(endpoint: String, payload: Any?): String {
-        val body = payload?.let { Jackson.MAPPER.encodeToString(it).toRequestBody(HttpUtil.JSON) } ?: RequestBody.EMPTY
+    inline fun <reified I> postJson(endpoint: String, payload: I): String {
+        val payload = Jackson.MAPPER.encodeToString(payload).toRequestBody(HttpUtil.JSON)
+        return postJson(endpoint, payload)
+    }
+
+    fun postJson(endpoint: String, payload: RequestBody = RequestBody.EMPTY): String {
         val request = buildRequest(endpoint)
-            .post(body)
+            .post(payload)
             .build()
 
 
@@ -57,7 +61,6 @@ open class UniNowApi(
     inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, JsonElement>): T {
         val request = GraphQlRequest(query.query, JsonObject(variables.toMap()))
 
-        // Log.i("TEST", Jackson.MAPPER.writeValueAsString(request))
         val response = postJson("/api/query", request)
 
         val graphql = Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)

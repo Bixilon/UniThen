@@ -12,13 +12,10 @@
 
 package de.bixilon.unithen.util
 
-import de.bixilon.unithen.api.graphql.types.location.AreaQl
-import de.bixilon.unithen.api.graphql.types.location.FacilityQl
-import de.bixilon.unithen.api.graphql.types.location.LocationQl
-import de.bixilon.unithen.api.graphql.types.location.RoomQl
+import de.bixilon.unithen.api.graphql.types.location.*
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
-import de.bixilon.unithen.api.graphql.types.resource.UnknownQl
+import de.bixilon.unithen.api.graphql.types.resource.UnknownResourceQl
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -29,7 +26,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 import kotlin.time.Instant
 
 object Jackson {
@@ -49,17 +45,17 @@ object Jackson {
                 subclass(LocationQl::class, LocationQl.serializer())
                 subclass(AreaQl::class, AreaQl.serializer())
                 subclass(RoomQl::class, RoomQl.serializer())
+                defaultDeserializer { UnknownFacilityQl.serializer() }
             }
             polymorphic(ResourceQl::class) {
                 subclass(CourseQl::class, CourseQl.serializer())
-                subclass(UnknownQl.serializer())
+                defaultDeserializer { UnknownResourceQl.serializer() }
             }
 
             contextual(InstantSerializer)
         }
-        classDiscriminator = "__typename"
 
-        // TODO:  .registerModule(InstantSerializer)
+        classDiscriminator = "__typename"
     }
 
     object InstantSerializer : KSerializer<Instant> {

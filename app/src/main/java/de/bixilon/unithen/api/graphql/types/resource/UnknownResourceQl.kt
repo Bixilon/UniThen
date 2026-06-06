@@ -17,7 +17,6 @@ import kotlin.uuid.Uuid
 
 
 @Serializable
-class UnknownQl : ResourceQl {
+class UnknownResourceQl(override val __typename: String = "") : ResourceQl {
     override val id get() = Uuid.fromLongs(0L, 0L)
-    override val __typename get() = ""
 }
