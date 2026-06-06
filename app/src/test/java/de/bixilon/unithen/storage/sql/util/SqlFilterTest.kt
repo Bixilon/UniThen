@@ -12,20 +12,22 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.neq
-import de.bixilon.unithen.storage.types.Appointment
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
+import kotlin.time.Clock
 
 class SqlFilterTest {
 
     @Test
     fun `complex building`() {
-        val filter = (Appointment::id eq "v") and ((Appointment::canceled neq "x") or (Appointment::location eq "y"))
+        val now = Clock.System.now()
+        val filter = (AppointmentTable.id eq 1) and ((AppointmentTable.canceled neq now) or (AppointmentTable.location eq "y"))
 
         assertEquals(filter.sql, "(id=?) AND ((canceled!=?) OR (location=?))")
-        assertEquals(filter.parameters, listOf("v", "x", "y"))
+        assertEquals(filter.parameters, listOf(1, now, "y"))
     }
 
     @Test

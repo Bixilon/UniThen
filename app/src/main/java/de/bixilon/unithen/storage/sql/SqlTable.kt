@@ -14,19 +14,19 @@ package de.bixilon.unithen.storage.sql
 
 import android.database.Cursor
 import de.bixilon.kutil.exception.Unreachable
+import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import org.intellij.lang.annotations.Language
 
-abstract class SqlTable<T>(
+abstract class SqlTable<T : DbObject>(
     protected val storage: SqlStorage,
-    val table: String,
+    val schema: SqlTableSchema<T>,
 ) {
+    val table get() = schema.table
+    val columns = schema.columns.map { it.quantifier }
     val count get() = storage.query("SELECT COUNT(*) FROM $table") { it.collectIntAggregation() }
-
-    abstract val columns: List<String>
-
-    protected abstract fun map(cursor: Cursor): T
 
     @Deprecated("", level = DeprecationLevel.ERROR)
     fun get(): Nothing = Unreachable()
@@ -57,7 +57,7 @@ abstract class SqlTable<T>(
     protected fun single(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             if (!it.moveToNext()) return@select null
-            val value = map(it)
+            val value = schema.map(it)
             if (it.moveToNext()) {
                 throw IllegalStateException("More than one result found: $where")
             }
@@ -69,7 +69,7 @@ abstract class SqlTable<T>(
     protected fun first(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             if (!it.moveToNext()) return@select null
-            return@select map(it)
+            return@select schema.map(it)
         }
     }
 
@@ -78,7 +78,7 @@ abstract class SqlTable<T>(
         val result = ArrayList<T>()
 
         while (moveToNext()) {
-            result += map(this)
+            result += schema.map(this)
         }
 
         return result

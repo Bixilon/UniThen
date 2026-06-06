@@ -20,16 +20,14 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
 
 class SiteTable(
     storage: SqlStorage,
-) : SqlTable<Site>(storage, "sites") {
-
-    override val columns = listOf("id", "host", "name", "icon", "fetched")
-
-    override fun map(cursor: Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
+) : SqlTable<Site>(storage, SiteTable) {
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(host: String) = single("host=?", host)
@@ -53,5 +51,19 @@ class SiteTable(
         val details = SiteDetails.fetch(url)
 
         return add(fixed, details.name, details.icon)
+    }
+
+    companion object : SqlTableSchema<Site> {
+        override val table get() = "sites"
+
+        val id = column(Site::id)
+        val host = column(Site::host)
+        val name = column(Site::name)
+        val icon = column(Site::icon)
+        val fetched = column(Site::fetched)
+
+        override val columns = listOf(id, host, name, icon, fetched)
+
+        override fun map(cursor: Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
     }
 }

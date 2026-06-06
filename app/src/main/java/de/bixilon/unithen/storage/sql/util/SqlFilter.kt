@@ -13,7 +13,6 @@
 package de.bixilon.unithen.storage.sql.util
 
 import org.intellij.lang.annotations.Language
-import kotlin.reflect.KProperty1
 
 data class SqlFilter(
     @param:Language("SQL") val sql: String,
@@ -69,20 +68,20 @@ data class SqlFilter(
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
 
 
-        private fun <T> KProperty1<*, T>.create(operator: String, other: T): SqlFilter {
-            return SqlFilter(this.name + operator + "?", listOf(other!!))
+        private fun <T> SqlTableSchema.SqlColumn<*, T>.create(operator: String, other: T): SqlFilter {
+            return SqlFilter(this.quantifier + operator + "?", listOf(other!!))
         }
 
-        infix fun <T> KProperty1<*, T>.eq(other: T) = create("=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.eq(other: T) = create("=", other)
 
-        infix fun <T> KProperty1<*, T>.neq(other: T) = create("!=", other)
-        infix fun <T> KProperty1<*, T>.gt(other: T) = create(">", other)
-        infix fun <T> KProperty1<*, T>.ge(other: T) = create(">=", other)
-        infix fun <T> KProperty1<*, T>.lt(other: T) = create("<", other)
-        infix fun <T> KProperty1<*, T>.le(other: T) = create("<=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.neq(other: T) = create("!=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.gt(other: T) = create(">", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.ge(other: T) = create(">=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.lt(other: T) = create("<", other)
+        infix fun <T> SqlTableSchema.SqlColumn<*, T>.le(other: T) = create("<=", other)
 
 
-        fun <T> KProperty1<*, T>.isNull() = SqlFilter(this.name + " IS NULL")
-        fun <T> KProperty1<*, T>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
+        fun <T> SqlTableSchema.SqlColumn<*, T>.isNull() = SqlFilter(this.name + " IS NULL")
+        fun <T> SqlTableSchema.SqlColumn<*, T>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
     }
 }

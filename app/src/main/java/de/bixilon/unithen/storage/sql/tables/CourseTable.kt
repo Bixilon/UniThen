@@ -21,17 +21,15 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.*
 import java.util.*
 import kotlin.time.Instant
 
 class CourseTable(
     storage: SqlStorage,
-) : SqlTable<Course>(storage, "courses") {
-    override val columns = listOf("id", "site", "event", "uuid", "name", "fetched", "fetched_enrolled")
-
-    override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5), cursor.getInstantOrNull(6))
-
+) : SqlTable<Course>(storage, CourseTable) {
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
@@ -86,5 +84,21 @@ class CourseTable(
 
     operator fun get(account: Account): List<Course> {
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
+    }
+
+    companion object : SqlTableSchema<Course> {
+        override val table get() = "courses"
+
+        val id = column(Course::id)
+        val site = column(Course::site)
+        val event = column(Course::event)
+        val uuid = column(Course::uuid)
+        val name = column(Course::name)
+        val fetched = column(Course::fetched)
+        val fetchedEnrolled = column(Course::fetchedEnrolled)
+
+        override val columns = listOf(id, site, event, uuid, name, fetched, fetchedEnrolled)
+
+        override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5), cursor.getInstantOrNull(6))
     }
 }

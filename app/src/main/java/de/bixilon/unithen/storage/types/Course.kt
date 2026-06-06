@@ -28,12 +28,12 @@ data class Course(
     val name: String,
 
     val fetched: Instant,
-    val enrolledFetched: Instant?,
+    val fetchedEnrolled: Instant?,
 ) : DbKeyed {
 
 
     fun isDataStale(now: Instant = Clock.System.now()) = now - fetched > COURSE_CACHE_TTL
-    fun isEnrolledStale(now: Instant = Clock.System.now()) = enrolledFetched == null || now - enrolledFetched > ENROLLED_CACHE_TTL
+    fun isEnrolledStale(now: Instant = Clock.System.now()) = fetchedEnrolled == null || now - fetchedEnrolled > ENROLLED_CACHE_TTL
 
     companion object {
         val COURSE_CACHE_TTL = 1.hours

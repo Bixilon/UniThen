@@ -31,15 +31,15 @@ data class Account(
     val lastname: String,
 
     @Deprecated("multiple authentication methods")
-    val session: String?,
+    val sessionKey: String?,
 
     val fetched: Instant,
 ) : DbKeyed {
 
     fun api(site: Site): AuthenticatedUniNowApi {
-        if (session.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
+        if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
 
-        return AuthenticatedUniNowApi(site.url, CookieAuthentication(session))
+        return AuthenticatedUniNowApi(site.url, CookieAuthentication(sessionKey))
     }
 
 

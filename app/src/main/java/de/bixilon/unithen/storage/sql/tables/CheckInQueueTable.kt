@@ -24,7 +24,8 @@ import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.ftsEscape
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
-import de.bixilon.unithen.storage.sql.util.SqlSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
@@ -38,10 +39,7 @@ import kotlin.time.Instant
 
 class CheckInQueueTable(
     storage: SqlStorage,
-) : SqlTable<CheckInQueue>(storage, table) {
-    override val columns get() = CheckInQueueTable.columns
-
-    override fun map(cursor: Cursor) = CheckInQueueTable.map(cursor)
+) : SqlTable<CheckInQueue>(storage, CheckInQueueTable) {
 
     operator fun get(appointment: Appointment, uuid: UUID) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
     operator fun get(appointment: Appointment, user: User) = single(SqlFilter.and("appointment" to appointment.id, "user" to user.id))
@@ -73,7 +71,7 @@ class CheckInQueueTable(
         val query = SqlBuilder.select(CheckInQueueTable)
             .innerJoin("users", "checkin_queue.user = users.id")
             .letIf(search.isNotBlank()) { innerJoin("users_fts", "users.id = users_fts.docid") }
-            .where(CheckInQueue::appointment eq appointment.id)
+            .where(CheckInQueueTable.appointment eq appointment.id)
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
                 sort.field to order.sql,
@@ -87,7 +85,7 @@ class CheckInQueueTable(
 
     fun getCount(appointment: Appointment): Int {
         return storage.query(
-            SqlBuilder.select(SqlBuilder.Aggregations.Count) from this where (CheckInQueue::appointment eq appointment.id))
+            SqlBuilder.select(SqlBuilder.Aggregations.Count) from this where (CheckInQueueTable.appointment eq appointment.id))
         { it.collectIntAggregation() }
     }
 
@@ -96,7 +94,7 @@ class CheckInQueueTable(
         val time = Clock.System.now()
         val last = time - SYNC_BACKOFF
 
-        val _appointment = appointment?.let { CheckInQueue::appointment eq appointment.id }
+        val _appointment = appointment?.let { CheckInQueueTable.appointment eq appointment.id }
 
         return storage.transaction {
             // TODO: Only sync if appointment end is still ahead of us
@@ -108,9 +106,17 @@ class CheckInQueueTable(
         }
     }
 
-    companion object : SqlSchema<CheckInQueue> {
+    companion object : SqlTableSchema<CheckInQueue> {
         override val table get() = "checkin_queue"
-        override val columns = listOf("user", "appointment", "time", "attempt", "message", "sync")
+
+        val user = column(CheckInQueue::user)
+        val appointment = column(CheckInQueue::appointment)
+        val time = column(CheckInQueue::time)
+        val attempt = column(CheckInQueue::attempt)
+        val message = column(CheckInQueue::message)
+        val sync = column(CheckInQueue::sync)
+
+        override val columns = listOf(user, appointment, time, attempt, message, sync)
 
         override fun map(cursor: Cursor) = CheckInQueue(cursor.getInt(0), cursor.getInt(1), cursor.getInstantOrNull(2), cursor.getUUIDOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5))
     }

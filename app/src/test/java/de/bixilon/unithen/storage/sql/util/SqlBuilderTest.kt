@@ -12,8 +12,8 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import de.bixilon.unithen.storage.sql.tables.CheckInQueueTable
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
-import de.bixilon.unithen.storage.types.CheckInQueue
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 
@@ -21,7 +21,7 @@ class SqlBuilderTest {
 
     @Test
     fun `sample query`() {
-        val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInQueue::user eq 4) and (CheckInQueue::appointment eq 1)
+        val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInQueueTable.user eq 4) and (CheckInQueueTable.appointment eq 1)
 
         assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((user=?) AND (appointment=?))", listOf(4, 1)))
     }

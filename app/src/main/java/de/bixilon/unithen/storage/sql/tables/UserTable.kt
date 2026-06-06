@@ -20,7 +20,8 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import de.bixilon.unithen.storage.sql.util.SqlSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
@@ -31,9 +32,7 @@ import java.util.*
 
 class UserTable(
     storage: SqlStorage,
-) : SqlTable<User>(storage, "users") {
-    override val columns get() = UserTable.columns
-    override fun map(cursor: Cursor) = UserTable.map(cursor)
+) : SqlTable<User>(storage, UserTable) {
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
@@ -112,9 +111,16 @@ class UserTable(
         return storage.query("SELECT 1 FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { it.isNotEmpty() }
     }
 
-    companion object : SqlSchema<User> {
+    companion object : SqlTableSchema<User> {
         override val table get() = "users"
-        override val columns = listOf("id", "site", "uuid", "firstname", "lastname")
+
+        val id = column(User::id)
+        val site = column(User::site)
+        val uuid = column(User::uuid)
+        val firstname = column(User::firstname)
+        val lastname = column(User::lastname)
+
+        override val columns = listOf(id, site, uuid, firstname, lastname)
 
         override fun map(cursor: Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
 

@@ -19,6 +19,8 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
 import java.util.*
@@ -26,11 +28,7 @@ import kotlin.time.Instant
 
 class EventTable(
     storage: SqlStorage,
-) : SqlTable<Event>(storage, "events") {
-
-    override val columns = listOf("id", "site", "uuid", "name", "start", "end")
-
-    override fun map(cursor: Cursor) = Event(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getInstant(4), cursor.getInstant(5))
+) : SqlTable<Event>(storage, EventTable) {
 
     operator fun get(id: Key) = single("id=?", id)
     operator fun get(site: Site, uuid: UUID) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
@@ -49,5 +47,20 @@ class EventTable(
         this[site, uuid]?.let { update(it.id, name, start, end); return it }
 
         return insert(site, uuid, name, start, end)
+    }
+
+    companion object : SqlTableSchema<Event> {
+        override val table get() = "events"
+
+        val id = column(Event::id)
+        val site = column(Event::site)
+        val uuid = column(Event::uuid)
+        val name = column(Event::name)
+        val start = column(Event::start)
+        val end = column(Event::end)
+
+        override val columns = listOf(id, site, uuid, name, start, end)
+
+        override fun map(cursor: Cursor) = Event(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getInstant(4), cursor.getInstant(5))
     }
 }
