@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.courses
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -27,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -45,6 +43,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.useToast
 import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +60,7 @@ fun CoursesScreen() {
     val courseCount = rememberStorage { courses.count }
     val events = rememberStorage { events.all().sortedByDescending { it.start } }
 
-    val context = LocalContext.current
+    val toast = useToast()
     Screen {
         ScreenTitle(R.string.courses_title.i18n(courseCount))
 
@@ -83,10 +82,10 @@ fun CoursesScreen() {
                     }
                 }
                 if (loginSite != null) {
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Please reauthenticate!", Toast.LENGTH_SHORT).show() }
+                    toast.invoke("Please reauthenticate!")
                     navigation.navigate(ReauthenticateRoute(storage.sites[loginSite]!!))
                 } else {
-                    withContext(Dispatchers.Main) { Toast.makeText(context, "Courses refreshed!", Toast.LENGTH_SHORT).show() }
+                    toast.invoke("Courses refreshed!")
                 }
                 if (caught != null) {
                     navigation.navigate(CrashRoute(caught))

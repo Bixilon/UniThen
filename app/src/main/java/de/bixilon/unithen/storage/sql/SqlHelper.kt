@@ -45,7 +45,7 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
         fun SQLiteDatabase.executeBatch(path: String) {
             val raw = SqlHelper::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString()
 
-            val statements = mutableListOf<String>()
+            val statements: MutableList<String> = mutableListOf()
             val builder = StringBuilder()
             var begin = false
 

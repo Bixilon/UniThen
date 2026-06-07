@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
@@ -47,11 +45,11 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.useToast
 import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 
 
@@ -115,7 +113,7 @@ private fun Remove(account: Account): (() -> Unit)? {
         return null
     }
     val storage = LocalStorage.current
-    val context = LocalContext.current
+    val toast = useToast()
 
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -123,7 +121,7 @@ private fun Remove(account: Account): (() -> Unit)? {
                 // TODO: Revoke token
                 storage.accounts.remove(account)
                 storage.cleanup()
-                withContext(Dispatchers.Main) { Toast.makeText(context, "Account removed!", Toast.LENGTH_SHORT).show() }
+                toast.invoke("Account removed!")
             } finally {
                 show = false
                 deleting = false

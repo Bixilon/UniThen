@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.settings.dialog
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,22 +26,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.useToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun DatabaseCleanupDialog(dismiss: () -> Unit) {
     val storage = LocalStorage.current
-    val context = LocalContext.current
+    val toast = useToast()
 
     LaunchedEffect(Unit) {
         try {
             storage.clearCache()
             storage.cleanup()
-            withContext(Dispatchers.Main) { Toast.makeText(context, "Database cleaned up!", Toast.LENGTH_SHORT).show() }
+            toast.invoke("Database cleaned up!")
+            // TODO: Restart app
         } finally {
             withContext(Dispatchers.Main) { dismiss.invoke() }
         }
