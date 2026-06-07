@@ -20,6 +20,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -132,6 +134,7 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
 @Composable
 fun QrScanConfirmScreen(user: User?, userId: Uuid) {
+    val haptic = LocalHapticFeedback.current
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
@@ -141,14 +144,41 @@ fun QrScanConfirmScreen(user: User?, userId: Uuid) {
     val queue = rememberStorage { user?.let { checkInQueue[appointment, user] } }
 
     var message by remember { mutableStateOf<String?>(null) }
-    var confirming by remember { mutableStateOf(false) }
 
     val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+
+
+    val resources = LocalResources.current
+    val checkin = useAsyncNetwork<Unit>(account) {
+        try {
+            if (user == null) {
+                CheckInUtil.checkIn(storage, account, appointment, userId)
+            } else {
+                CheckInUtil.checkIn(storage, appointment, user)
+            }
+
+            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            navigation.pop(); if (!auto) navigation.pop() // close scanner too
+        } catch (error: IOException) {
+            if (user == null) {
+                message = resources.getString(R.string.network_error)
+            } else {
+                navigation.pop(); if (!auto) navigation.pop() // close scanner too
+            }
+            throw error
+        } catch (_: CheckInUnknownUserException) {
+            message = resources.getString(R.string.scan_unknown_user_server)
+            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+        } catch (error: CheckInError) {
+            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            message = resources.getString(R.string.scan_unknown_error_server, error.message ?: "")
+        }
+    }
 
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
 
-        Warning(confirming, user, enrolled, attendee, queue, message)
+        Warning(checkin.active, user, enrolled, attendee, queue, message)
         Spacer(Modifier.height(16.dp))
 
 
@@ -168,49 +198,23 @@ fun QrScanConfirmScreen(user: User?, userId: Uuid) {
             .weight(1.0f)
             .defaultMinSize(minHeight = 16.dp))
 
-        val resources = LocalResources.current
-        val checkin = useAsyncNetwork<Unit>(account) {
-            try {
-                confirming = true
-                if (user == null) {
-                    CheckInUtil.checkIn(storage, account, appointment, userId)
-                } else {
-                    CheckInUtil.checkIn(storage, appointment, user)
-                }
-
-                navigation.pop(); if (!auto) navigation.pop() // close scanner too
-            } catch (error: IOException) {
-                if (user == null) {
-                    message = resources.getString(R.string.network_error)
-                } else {
-                    navigation.pop(); if (!auto) navigation.pop() // close scanner too
-                }
-                throw error
-            } catch (error: CheckInUnknownUserException) {
-                message = "Unknown user: " + (error.message ?: "")
-            } catch (error: CheckInError) {
-                message = "Error: " + (error.message ?: "")
-            } finally {
-                confirming = false
-            }
-        }
 
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Button({
                 navigation.pop()
-            }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
+            }, enabled = !checkin.active, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
                 Icon(Icons.Filled.Close, "cancel")
                 Text(R.string.cancel.i18n())
             }
 
             if (queue != null && queue.message == null) {
-                Button({ checkin.invoke(Unit) }, enabled = !confirming, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
+                Button({ checkin.invoke(Unit) }, enabled = !checkin.active, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
                     Icon(Icons.Filled.Sync, "synchronize")
                     Text(R.string.scan_try_synchronize.i18n())
                 }
             }
 
-            Button({ checkin.invoke(Unit) }, enabled = message == null && !confirming && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
+            Button({ checkin.invoke(Unit) }, enabled = message == null && !checkin.active && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
                     Text(R.string.scan_try_anyways.i18n())

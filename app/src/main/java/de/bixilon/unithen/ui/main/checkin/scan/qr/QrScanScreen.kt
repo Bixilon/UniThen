@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
@@ -71,6 +73,7 @@ private fun getErrorReason(storage: SqlStorage, course: Course, appointment: App
 
 @Composable
 private fun QrScanScreen(appointments: List<Appointment>) {
+    val haptic = LocalHapticFeedback.current
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 
@@ -82,6 +85,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         val _delayed = delayed ?: return@LaunchedEffect
         delay(1.seconds)
         if (delayedState.value == _delayed) {
+            haptic.performHapticFeedback(HapticFeedbackType.Reject)
             navigation.navigate(ScanConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
         delayed = null
@@ -127,6 +131,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     if (invalid == null) {
                         delayed = null
                         navigation.navigate(ScanConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
+                        haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                     } else {
                         errors += ErrorResult(invalid)
                         delayed = AcceptedResult(course, appointment, scanned.userId)
