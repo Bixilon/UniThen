@@ -12,11 +12,11 @@
 
 package de.bixilon.unithen.api.user
 
+import com.fleeksoft.ksoup.Ksoup
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.HttpUtil.authenticate
 import de.bixilon.unithen.api.authentication.Authentication
 import okhttp3.OkHttpClient
-import org.jsoup.Jsoup
 import java.net.URI
 import kotlin.uuid.Uuid
 
@@ -54,7 +54,7 @@ data class UserDetails(
 
         fun parse(html: String): UserDetails {
             // TODO: parse json, failover: user-nav
-            val content = Jsoup.parse(html).head()
+            val content = Ksoup.parse(html).head()
                 .getElementsByTag("script")
                 .find { it.data().contains("window.UniNow = ") }!!
                 .data()

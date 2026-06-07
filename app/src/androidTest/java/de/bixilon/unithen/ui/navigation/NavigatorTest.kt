@@ -18,7 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
 import org.junit.Rule
-import kotlin.test.Test
+import org.junit.Test
 
 
 object NoDateRoute : NavigationRoute

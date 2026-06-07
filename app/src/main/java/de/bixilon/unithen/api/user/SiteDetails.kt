@@ -12,12 +12,12 @@
 
 package de.bixilon.unithen.api.user
 
+import com.fleeksoft.ksoup.Ksoup
 import de.bixilon.kutil.stream.InputStreamUtil.readAll
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
 import okhttp3.OkHttpClient
-import org.jsoup.Jsoup
 import java.net.URI
 
 data class SiteDetails(
@@ -63,7 +63,7 @@ data class SiteDetails(
         }
 
         fun parse(html: String, fetcher: ((URI) -> ByteArray)?): SiteDetails {
-            val parsed = Jsoup.parse(html)
+            val parsed = Ksoup.parse(html)
 
             val name = parsed.head()
                 .getElementsByTag("title")

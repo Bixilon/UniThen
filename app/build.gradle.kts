@@ -163,7 +163,7 @@ dependencies {
     implementation(libs.compose.qr.code)
 
     implementation(libs.okhttp)
-    implementation(libs.jsoup)
+    implementation(libs.ksoup)
 
     implementation(libs.kotlinx.datetime)
 
