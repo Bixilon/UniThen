@@ -13,10 +13,10 @@
 package de.bixilon.unithen.api.graphql.http
 
 import de.bixilon.unithen.util.Jackson
-import junit.framework.TestCase.assertEquals
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class GraphQlResponseTest {
 

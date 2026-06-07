@@ -15,7 +15,7 @@ package de.bixilon.unithen.util
 import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
 import de.bixilon.unithen.api.graphql.types.resource.UnknownResourceQl
 import junit.framework.TestCase.assertTrue
-import org.junit.Test
+import kotlin.test.Test
 
 
 class JacksonTest {

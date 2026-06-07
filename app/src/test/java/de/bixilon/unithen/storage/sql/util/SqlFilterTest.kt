@@ -15,8 +15,8 @@ package de.bixilon.unithen.storage.sql.util
 import de.bixilon.unithen.storage.sql.tables.AppointmentTable
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.neq
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.time.Clock
 
 class SqlFilterTest {

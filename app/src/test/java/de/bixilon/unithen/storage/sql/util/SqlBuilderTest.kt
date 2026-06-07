@@ -14,8 +14,8 @@ package de.bixilon.unithen.storage.sql.util
 
 import de.bixilon.unithen.storage.sql.tables.CheckInQueueTable
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class SqlBuilderTest {
 

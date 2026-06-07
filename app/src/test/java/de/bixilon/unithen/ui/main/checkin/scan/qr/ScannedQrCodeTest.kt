@@ -13,8 +13,8 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import de.bixilon.unithen.util.Jackson
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
 
 

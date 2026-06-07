@@ -12,8 +12,8 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class CourseTableTest {
 

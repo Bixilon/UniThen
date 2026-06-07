@@ -19,13 +19,13 @@ import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
-import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
-import org.junit.Test
 import java.io.FileNotFoundException
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class GraphQlQueryTest {
 

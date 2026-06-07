@@ -15,8 +15,8 @@ package de.bixilon.unithen.api.user
 import de.bixilon.kutil.exception.Broken
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.kutil.uri.URIUtil.toURI
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class PageDetailsTest {
 
