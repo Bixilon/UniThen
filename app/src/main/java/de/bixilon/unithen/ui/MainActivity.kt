@@ -26,14 +26,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
-import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
+import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
@@ -155,7 +154,7 @@ fun Loader(content: @Composable () -> Unit) {
             .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    Logo,
                     contentDescription = "logo",
                     modifier = Modifier
                         .size(300.dp)

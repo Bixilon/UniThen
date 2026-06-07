@@ -25,7 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -37,9 +36,9 @@ import androidx.core.net.toUri
 import de.bixilon.kutil.primitive.IntUtil.toInt
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.BuildConfig
-import de.bixilon.unithen.R
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.rememberIsFdroid
 import kotlinx.coroutines.CoroutineScope
@@ -110,7 +109,7 @@ fun AboutScreen() {
     Screen(modifier = Modifier.verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
+            Logo,
             contentDescription = "logo",
             modifier = Modifier
                 .size(300.dp)
