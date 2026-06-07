@@ -21,7 +21,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,8 +49,9 @@ import kotlin.uuid.Uuid
 @Composable
 private fun AttendeeCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
+    val (account, _, appointment) = LocalScanContext.current
 
-    var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
+    val checkout = useAsyncNetwork<Unit>(account) { CheckInUtil.checkOut(storage, appointment, user) }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -66,21 +68,8 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
                 )
                 // TODO: Show time (no data)
             }
-            val (account, _, appointment) = LocalScanContext.current
 
-            val checkout = useAsyncNetwork<Unit>(account) {
-                try {
-                    loading = true
-                    CheckInUtil.checkOut(storage, appointment, user)
-                } finally {
-                    loading = false
-                }
-            }
-
-            Checkbox(true, enabled = !readonly && !loading, onCheckedChange = {
-                if (loading) return@Checkbox
-                checkout.invoke(Unit)
-            })
+            Checkbox(true, enabled = !readonly && !checkout.active, onCheckedChange = { checkout.invoke(Unit) })
         }
     }
 }
@@ -146,7 +135,8 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
 private fun EnrolledCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
-    var loading by remember { mutableStateOf(false) } // TODO: Why? Isn't it moved to the queue instantly?
+    val (account, _, appointment) = LocalScanContext.current
+    val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, appointment, user) }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
@@ -162,14 +152,8 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            val (account, _, appointment) = LocalScanContext.current
-            val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, appointment, user) }
 
-            Checkbox(false, enabled = !readonly && !loading, onCheckedChange = {
-                if (loading) return@Checkbox
-                loading = true
-                checkin.invoke(Unit)
-            })
+            Checkbox(false, enabled = !readonly && !checkin.active, onCheckedChange = { checkin.invoke(Unit) })
         }
     }
 }
@@ -189,25 +173,14 @@ fun ScanAttendeeList() {
 
 
     val storage = LocalStorage.current
-    var refreshing by remember { mutableStateOf(false) }
-    val _refresh = useAsyncNetwork<Boolean>(account) {
-        try {
-            refreshing = true
-            storage.fetchEnrolled(account, course, it)
-            storage.fetchAttendees(account, appointment, it)
-        } finally {
-            refreshing = false
-        }
-    }
-
-    fun refresh(force: Boolean) {
-        if (refreshing) return
-        _refresh.invoke(force)
+    val refresh = useAsyncNetwork<Boolean>(account) {
+        storage.fetchEnrolled(account, course, it)
+        storage.fetchAttendees(account, appointment, it)
     }
 
     LaunchedEffect(Unit) {
         if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
-            refresh(false)
+            refresh.invoke(false)
         }
     }
 
@@ -224,7 +197,7 @@ fun ScanAttendeeList() {
         val time = useTime()
         val readonly = !appointment.canPerformCheckIn(time)
 
-        PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh(true) }) {
+        PullToRefreshBox(refresh.active, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh.invoke(true) }) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

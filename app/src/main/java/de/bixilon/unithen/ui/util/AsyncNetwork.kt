@@ -13,6 +13,8 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
@@ -24,16 +26,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.IOException
 
+data class AsyncNetworkState<T>(
+    val active: Boolean,
+    val invoke: (T) -> Unit,
+)
+
 @Composable
-fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): (T) -> Unit {
+fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
     val toast = useToast()
+    val active = remember { mutableStateOf(false) }
 
+    if (active.value) return AsyncNetworkState(true, {})
 
     val invoke = { args: T ->
         CoroutineScope(Dispatchers.IO).launch {
+            if (active.value) return@launch
             try {
+                active.value = true
                 block.invoke(args)
             } catch (_: AuthenticationException) {
                 toast.invoke("Please reauthenticate!")
@@ -47,11 +58,13 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): (T) -> U
             } catch (error: Throwable) {
                 error.printStackTrace()
                 navigation.navigate(CrashRoute(error))
+            } finally {
+                active.value = false
             }
         }
 
         Unit
     }
 
-    return invoke
+    return AsyncNetworkState(active.value, invoke)
 }

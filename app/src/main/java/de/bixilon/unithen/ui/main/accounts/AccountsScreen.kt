@@ -56,24 +56,26 @@ import kotlin.time.Clock
 @Composable
 private fun Sync(account: Account): (() -> Unit)? {
     val storage = LocalStorage.current
-    var synchronizing by remember { mutableStateOf(false) }
-    val update = useAsyncNetwork<Unit>(account) {
+    val synchronize = useAsyncNetwork<Unit>(account) { storage.fetch(account, true) }
+
+    var running by remember { mutableStateOf(false) } // TODO: Abort actually
+
+
+    if (running || !synchronize.active) return {
         try {
-            synchronizing = true
-            storage.fetch(account, true)
+            running = true
+            synchronize.invoke(Unit)
         } finally {
-            synchronizing = false
+            running = false
         }
     }
-
-    if (!synchronizing) return { update.invoke(Unit) }
 
 
 
 
     AlertDialog(
         confirmButton = {},
-        onDismissRequest = { synchronizing = false },
+        onDismissRequest = { running = false },
         title = { Text("Synchronizing...") },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
