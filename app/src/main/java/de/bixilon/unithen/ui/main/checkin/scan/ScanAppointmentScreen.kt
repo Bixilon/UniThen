@@ -29,7 +29,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
-import de.bixilon.unithen.ui.main.ScanScanAppointmentRoute
+import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -92,7 +92,7 @@ private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
 }
 
 @Composable
-fun CheckInAppointmentScreen(appointment: Appointment, info: Boolean = false) {
+fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
 
@@ -112,7 +112,7 @@ fun CheckInAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     val visible = LocalVisibility.current
 
-    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }
+    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }
 
 
     if (syncing) {
@@ -162,7 +162,7 @@ fun CheckInAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                             Icon(Icons.Filled.Sync, "sync")
                         }
                     }
-                    FloatingActionButton({ navigation.navigate(ScanScanAppointmentRoute(account, course, appointment)) }) {
+                    FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
                         Icon(Icons.Filled.QrCodeScanner, "scan")
                     }
                 }

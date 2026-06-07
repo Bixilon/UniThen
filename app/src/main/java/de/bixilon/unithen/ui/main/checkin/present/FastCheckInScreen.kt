@@ -19,7 +19,7 @@ import de.bixilon.unithen.ui.util.useTime
 
 
 @Composable
-fun FastCheckInInScreen() {
+fun CheckInPresentScreen() {
     val time = useTime()
 
     val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
@@ -27,7 +27,7 @@ fun FastCheckInInScreen() {
 
     when (appointments.size) {
         0 -> PresentNoAppointments()
-        1 -> FastCheckinAppointment(rememberStorage { courses[appointments[0].course]!! }, appointments[0])
+        1 -> PresentQrAppointmentScreen(rememberStorage { courses[appointments[0].course]!! }, appointments[0])
         else -> FastCheckinAppointmentSelector(appointments)
     }
 }

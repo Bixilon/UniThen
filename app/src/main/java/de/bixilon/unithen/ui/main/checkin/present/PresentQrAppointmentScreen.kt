@@ -19,12 +19,12 @@ import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.storage.rememberStorage
 
 @Composable
-fun FastCheckinAppointment(course: Course, appointment: Appointment) {
+fun PresentQrAppointmentScreen(course: Course, appointment: Appointment) {
     val accounts = rememberStorage { accounts[course] }
 
     when (accounts.size) {
         0 -> SimpleErrorScreen("No account available")
-        1 -> CheckInQrPresentScreen(accounts[0], course, appointment)
+        1 -> PresentQrScreen(accounts[0], course, appointment)
         else -> FastCheckinAccountSelector(course, appointment, accounts)
     }
 }

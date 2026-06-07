@@ -14,9 +14,9 @@ package de.bixilon.unithen.ui.main.courses.appointments
 
 import androidx.compose.runtime.Composable
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
 
 @Composable
 fun AppointmentDetailsScreen(appointment: Appointment) {
-    CheckInAppointmentScreen(appointment, info = true)
+    ScanAppointmentScreen(appointment, info = true)
 }

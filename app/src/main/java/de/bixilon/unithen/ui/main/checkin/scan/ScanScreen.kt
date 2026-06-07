@@ -85,14 +85,14 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 }
 
 @Composable
-fun CheckInScreen() {
+fun CheckInScanScreen() {
     val time = useTime()
 
     val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
     when (appointments.size) {
         0 -> ScanNoAppointments()
-        1 -> CheckInAppointmentScreen(appointments.first())
+        1 -> ScanAppointmentScreen(appointments.first())
         else -> ChooseAppointment(appointments)
     }
 }

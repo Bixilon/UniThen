@@ -22,7 +22,7 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.ui.main.ScanConfirmRoute
+import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -86,7 +86,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         delay(1.seconds)
         if (delayedState.value == _delayed) {
             haptic.performHapticFeedback(HapticFeedbackType.Reject)
-            navigation.navigate(ScanConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
+            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
         delayed = null
     }
@@ -130,7 +130,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     if (invalid == null) {
                         delayed = null
-                        navigation.navigate(ScanConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
+                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                     } else {
                         errors += ErrorResult(invalid)
@@ -152,7 +152,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 }
 
 @Composable
-fun QrScanAppointmentScreen() {
+fun ScanQrAppointmentScreen() {
     val (_, _, appointment) = LocalScanContext.current
 
     QrScanScreen(listOf(appointment))

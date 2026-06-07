@@ -38,14 +38,14 @@ import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
-import de.bixilon.unithen.ui.main.checkin.present.CheckInQrPresentScreen
-import de.bixilon.unithen.ui.main.checkin.present.FastCheckinAppointment
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.present.PresentQrAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.present.PresentQrScreen
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAnyScreen
-import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAppointmentScreen
-import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanConfirmScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.ScanQrAppointmentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.ScanQrConfirmScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen
@@ -82,22 +82,22 @@ fun MainNavigator() {
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
         composable<AppointmentDetailsRoute> { AppointmentDetailsScreen(it.appointment) }
 
-        composable<PresentQrAppointmentRoute> { FastCheckinAppointment(it.course, it.appointment) }
-        composable<PresentQrRoute> { CheckInQrPresentScreen(it.account, it.course, it.appointment) }
+        composable<PresentQrAppointmentRoute> { PresentQrAppointmentScreen(it.course, it.appointment) }
+        composable<PresentQrRoute> { PresentQrScreen(it.account, it.course, it.appointment) }
 
-        composable<ScanAppointmentRoute> { CheckInAppointmentScreen(it.appointment) }
-        composable<ScanScanAppointmentRoute> {
+        composable<ScanAppointmentRoute> { ScanAppointmentScreen(it.appointment) }
+        composable<ScanQrAppointmentRoute> {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
             ) {
-                QrScanAppointmentScreen()
+                ScanQrAppointmentScreen()
             }
         }
-        composable<ScanConfirmRoute> {
+        composable<ScanQrConfirmRoute> {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
             ) {
-                QrScanConfirmScreen(it.userId)
+                ScanQrConfirmScreen(it.userId)
             }
         }
 

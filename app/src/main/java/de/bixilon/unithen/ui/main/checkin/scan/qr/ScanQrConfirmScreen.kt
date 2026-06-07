@@ -133,7 +133,7 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
 
 @Composable
-fun QrScanConfirmScreen(user: User?, userId: Uuid) {
+fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
     val haptic = LocalHapticFeedback.current
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
@@ -228,12 +228,12 @@ fun QrScanConfirmScreen(user: User?, userId: Uuid) {
 }
 
 @Composable
-fun QrScanConfirmScreen(userId: Uuid) {
+fun ScanQrConfirmScreen(userId: Uuid) {
     val (_, _, appointment) = LocalScanContext.current
 
     val storage = LocalStorage.current
     val site = storage.sites[storage.courses[appointment.course]!!.site]!!
     val user = storage.users[site, userId]
 
-    QrScanConfirmScreen(user, userId)
+    ScanQrConfirmScreen(user, userId)
 }

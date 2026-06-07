@@ -30,8 +30,8 @@ import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
-import de.bixilon.unithen.ui.main.checkin.present.FastCheckInInScreen
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInScreen
+import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInScanScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
@@ -73,8 +73,8 @@ fun ActualMainScreen() {
         composable<CoursesRoute> { CoursesScreen() }
         composable<AccountsRoute> { AccountsScreen() }
         composable<SettingsRoute> { SettingsScreen() }
-        composable<CheckInPresentRoute> { FastCheckInInScreen() }
-        composable<CheckInScanRoute> { CheckInScreen() }
+        composable<CheckInPresentRoute> { CheckInPresentScreen() }
+        composable<CheckInScanRoute> { CheckInScanScreen() }
     }
 
     Column(modifier = Modifier.fillMaxSize()) {

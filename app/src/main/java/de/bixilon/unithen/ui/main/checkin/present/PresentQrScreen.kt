@@ -51,7 +51,7 @@ import kotlin.uuid.Uuid
 
 
 @Composable
-fun CheckInQrPresentScreen(account: Account, course: Course, appointment: Appointment) {
+fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) {
     val visible = LocalVisibility.current
     val name by rememberSetting(Settings.QR_CODE_REMOVE_NAME)
 
