@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
@@ -32,6 +33,7 @@ import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.UpdateChecker
+import de.bixilon.unithen.ui.util.Copy2Clipboard
 import java.io.IOException
 
 
@@ -78,22 +80,26 @@ fun CrashScreen(message: String?, exception: Throwable) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .horizontalScroll(rememberScrollState())
                 .weight(1.0f)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                )
+                .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 .padding(8.dp)
         ) {
-            SelectionContainer {
-                Text(
-                    text = exception.stackTraceToString(),
-                    fontFamily = FontFamily.Monospace,
-                    fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            val trace = remember { exception.stackTraceToString() }
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .horizontalScroll(rememberScrollState())) {
+                SelectionContainer {
+                    Text(
+                        text = trace,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
+
+            Copy2Clipboard(trace, modifier = Modifier.align(Alignment.TopEnd))
         }
 
         if (!BuildConfig.DEBUG) {
