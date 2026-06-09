@@ -115,6 +115,8 @@ fun AboutScreen() {
                 .size(300.dp)
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             text = "UniThen",
             style = MaterialTheme.typography.headlineLarge,

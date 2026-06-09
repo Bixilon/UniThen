@@ -208,12 +208,18 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                 .fillMaxWidth()
                 .padding(16.dp),
         ) {
-            Text(
-                text = account.firstname + " " + account.lastname,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column {
+                Text(
+                    text = account.firstname + " " + account.lastname,
+                    style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                // if (BuildConfig.DEBUG) { // TODO: don't show in release builds
+                Spacer(Modifier.height(8.dp))
+                Text("ID: " + account.uuid.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                //   }
+            }
 
             AccountOptions(account, Modifier
                 .align(Alignment.TopEnd)

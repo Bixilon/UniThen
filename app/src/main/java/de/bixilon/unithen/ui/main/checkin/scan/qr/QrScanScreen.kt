@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
@@ -121,7 +122,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     val appointment = appointments.find { it.uuid == scanned.appointmentId }
                     if (appointment == null) {
-                        errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT)
+                        errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (BuildConfig.DEBUG) scanned.appointmentId.toString() else null)
                         continue
                     }
                     val course = storage.courses[appointment.course]!!
@@ -133,7 +134,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                     } else {
-                        errors += ErrorResult(invalid)
+                        errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         delayed = AcceptedResult(course, appointment, scanned.userId)
                     }
                 } catch (_: SerializationException) {
