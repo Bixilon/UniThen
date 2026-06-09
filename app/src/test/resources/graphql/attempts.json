@@ -1,0 +1,21 @@
+{
+  "appointments_pk": {
+    "id": "b1465faa-04de-4e69-9db4-b5e0433dcca0",
+    "attendees": [
+      {
+        "id": "3b451d02-2fc8-4bed-b8c5-50fb91280f30",
+        "first_name": "First tutor",
+        "last_name": "Lastname"
+      }
+    ],
+    "checkInAttempts": [
+      {
+        "id": "39b4858a-cb3a-42ff-9b6e-e6a4d54c2de2",
+        "status": "Error",
+        "user": {
+          "id": "3b451d02-2fc8-4bed-b8c5-50fb91280f30"
+        }
+      }
+    ]
+  }
+}

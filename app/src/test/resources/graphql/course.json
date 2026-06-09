@@ -1,0 +1,25 @@
+{
+  "courses_pk": {
+    "__typename": "Course",
+    "id": "f01f51da-e96d-4497-8d02-2e2fee344169",
+    "name": "AcroYoga - Open Level",
+    "event": {
+      "id": "56eea323-a427-4608-8b22-f78034a9b194",
+      "name": "Sommersemester 2026 München",
+      "start": "2026-04-12T22:00:00Z",
+      "end": "2026-09-29T22:00:00Z"
+    },
+    "tutors": [
+      {
+        "id": "dadbcf91-7a20-41dc-a9e8-9f591395531e",
+        "first_name": "First tutor",
+        "last_name": "Lastname"
+      },
+      {
+        "id": "4487d6ed-6947-405a-8404-334d65dd823e",
+        "first_name": "Second",
+        "last_name": "Tutor"
+      }
+    ]
+  }
+}

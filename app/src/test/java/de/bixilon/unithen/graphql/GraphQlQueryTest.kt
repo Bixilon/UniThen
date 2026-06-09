@@ -14,9 +14,12 @@ package de.bixilon.unithen.graphql
 
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
+import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.PostingQl
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.resource.CourseQl
+import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.datetime.LocalDateTime
@@ -64,5 +67,43 @@ class GraphQlQueryTest {
         val response = readResponse<Queries>("courses_response")
 
         assertEquals(response.userPk!!.postings!!.size, 1)
+    }
+
+    @Test
+    fun `read course response`() {
+        val response = readResponse<Queries>("course")
+
+        assertEquals(response.course?.name, "AcroYoga - Open Level")
+        assertEquals(response.course?.tutors, listOf(
+            CourseUserQl("dadbcf91-7a20-41dc-a9e8-9f591395531e".toUuid(), "First tutor", "Lastname"),
+            CourseUserQl("4487d6ed-6947-405a-8404-334d65dd823e".toUuid(), "Second", "Tutor"),
+        ))
+    }
+
+    @Test
+    fun `read attempts response`() {
+        val response = readResponse<Queries>("attempts")
+
+
+        assertEquals(response.appointment?.attendees, listOf(
+            CourseUserQl("3b451d02-2fc8-4bed-b8c5-50fb91280f30".toUuid(), "First tutor", "Lastname"),
+        ))
+        assertEquals(response.appointment?.checkInAttempts, listOf(
+            CheckInAttemptQl("39b4858a-cb3a-42ff-9b6e-e6a4d54c2de2".toUuid(), CheckInAttemptQl.Status.ERROR, user = CourseUserQl("3b451d02-2fc8-4bed-b8c5-50fb91280f30".toUuid())),
+        ))
+    }
+
+    @Test
+    fun `read checkin response`() {
+        val response = readResponse<Mutations>("checkin")
+
+        assertEquals(response.appointmentCheckin?.status, CheckInAttemptQl.Status.SUCCESS)
+    }
+
+    @Test
+    fun `read delete checkin response`() {
+        val response = readResponse<Mutations>("delete_checkin")
+
+        assertEquals(response.deleteCheckinAttempt?.status, CheckInAttemptQl.Status.SUCCESS)
     }
 }

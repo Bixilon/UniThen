@@ -1,0 +1,12 @@
+{
+  "delete_checkin_attempt": {
+    "id": "b1465faa-04de-4e69-9db4-b5e0433dcca0",
+    "message": null,
+    "status": "Success",
+    "user": {
+      "id": "3b451d02-2fc8-4bed-b8c5-50fb91280f30",
+      "first_name": "First tutor",
+      "last_name": "Lastname"
+    }
+  }
+}
