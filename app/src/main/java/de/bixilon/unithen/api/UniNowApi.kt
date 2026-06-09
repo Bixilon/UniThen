@@ -18,7 +18,9 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
+import de.bixilon.unithen.ui.error.SerializationCrash
 import de.bixilon.unithen.util.Jackson
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import okhttp3.OkHttpClient
@@ -63,7 +65,11 @@ open class UniNowApi(
 
         val response = postJson("/api/query", request)
 
-        val graphql = Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)
+        val graphql = try {
+            Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)
+        }catch (error: SerializationException) {
+            throw SerializationCrash(response, error)
+        }
 
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {
             if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {
