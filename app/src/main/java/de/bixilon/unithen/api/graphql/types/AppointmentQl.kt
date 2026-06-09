@@ -25,9 +25,9 @@ data class AppointmentQl(
     val start: Instant? = null,
     val end: Instant? = null,
     val canceledAt: Instant? = null,
-    val tutors: List<CourseUserQl>? = null,
+    @Serializable(with = CourseUserQl.NonNullListSerializer::class)val tutors: List<CourseUserQl>? = null,
     val location: FacilityQl? = null,
 
     val checkInAttempts: List<CheckInAttemptQl>? = null,
-    val attendees: List<CourseUserQl>? = null,
+    @Serializable(with = CourseUserQl.NonNullListSerializer::class)val attendees: List<CourseUserQl>? = null,
 ) : IdentifiedQl

@@ -1,0 +1,26 @@
+{
+  "courses_pk": {
+    "__typename": "Course",
+    "id": "1f7ac425-55fb-476a-ad71-729a4b4d0d80",
+    "name": "Golf - Freies Spiel",
+    "event": {
+      "id": "56eea323-a427-4608-8b22-f78034a9b194",
+      "name": "Sommersemester 2026 München",
+      "start": "2026-04-12T22:00:00Z",
+      "end": "2026-09-29T22:00:00Z"
+    },
+    "tutors": [
+      {
+        "id": "",
+        "first_name": null,
+        "last_name": null
+      },
+      {
+        "id": "4487d6ed-6947-405a-8404-334d65dd823e",
+        "first_name": "Second",
+        "last_name": "Tutor"
+      }
+    ],
+    "appointments": []
+  }
+}

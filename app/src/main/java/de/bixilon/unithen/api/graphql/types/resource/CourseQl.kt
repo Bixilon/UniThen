@@ -27,9 +27,9 @@ data class CourseQl(
     override val id: Uuid,
     val name: String? = null,
     val event: EventQl? = null,
-    val tutors: List<CourseUserQl>? = null,
+    @Serializable(with = CourseUserQl.NonNullListSerializer::class) val tutors: List<CourseUserQl>? = null,
     val appointments: List<AppointmentQl>? = null,
-    val enrolled: List<CourseUserQl>? = null,
+    @Serializable(with = CourseUserQl.NonNullListSerializer::class)val enrolled: List<CourseUserQl>? = null,
 ) : ResourceQl {
     override val __typename get() = COURSE_TYPE
 }

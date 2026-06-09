@@ -106,4 +106,15 @@ class GraphQlQueryTest {
 
         assertEquals(response.deleteCheckinAttempt?.status, CheckInAttemptQl.Status.SUCCESS)
     }
+
+    @Test
+    fun `read course with unknown tutor`() {
+        // That is the most dumb thing I have ever seen.
+        val response = readResponse<Queries>("course_unknown_tutor")
+
+        assertEquals(response.course?.name, "Golf - Freies Spiel")
+        assertEquals(response.course?.tutors, listOf(
+            CourseUserQl("4487d6ed-6947-405a-8404-334d65dd823e".toUuid(), "Second", "Tutor"),
+        ))
+    }
 }
