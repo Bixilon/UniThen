@@ -29,6 +29,7 @@ type User {
     courses: [Course!] # Unused
 }
 
+# There is a special "unknown" user with all fields set to null and id is a blank string
 type CourseUser {
     id: ID!
 
