@@ -78,6 +78,11 @@ class GraphQlQueryTest {
             CourseUserQl("dadbcf91-7a20-41dc-a9e8-9f591395531e".toUuid(), "First tutor", "Lastname"),
             CourseUserQl("4487d6ed-6947-405a-8404-334d65dd823e".toUuid(), "Second", "Tutor"),
         ))
+
+        val appointment = response.course!!.appointments!!.first()
+
+        assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUuid())
+        assertEquals(appointment.start, LocalDateTime(2026, Month.MARCH, 11, 17, 30, 0).toInstant(UtcOffset.ZERO))
     }
 
     @Test
