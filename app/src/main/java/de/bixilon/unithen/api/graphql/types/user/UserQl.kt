@@ -13,7 +13,7 @@
 package de.bixilon.unithen.api.graphql.types.user
 
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
-import de.bixilon.unithen.api.graphql.types.resource.CourseQl
+import de.bixilon.unithen.api.graphql.types.CourseQl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid

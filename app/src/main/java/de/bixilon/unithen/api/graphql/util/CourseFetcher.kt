@@ -13,7 +13,7 @@
 package de.bixilon.unithen.api.graphql.util
 
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
-import de.bixilon.unithen.api.graphql.types.resource.CourseQl
+import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Account

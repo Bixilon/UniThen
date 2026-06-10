@@ -10,19 +10,15 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.graphql.types.resource
+package de.bixilon.unithen.api.graphql.types
 
-import de.bixilon.unithen.api.graphql.types.AppointmentQl
-import de.bixilon.unithen.api.graphql.types.EventQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
-const val COURSE_TYPE = "Course"
 
 @Serializable
-@SerialName(COURSE_TYPE)
 data class CourseQl(
     override val id: Uuid,
     val name: String? = null,
@@ -30,6 +26,4 @@ data class CourseQl(
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val tutors: List<CourseUserQl>? = null,
     val appointments: List<AppointmentQl>? = null,
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val enrolled: List<CourseUserQl>? = null,
-) : ResourceQl {
-    override val __typename get() = COURSE_TYPE
-}
+): IdentifiedQl

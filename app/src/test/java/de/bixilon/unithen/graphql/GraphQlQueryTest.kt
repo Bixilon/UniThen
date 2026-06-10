@@ -16,9 +16,8 @@ import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
-import de.bixilon.unithen.api.graphql.types.PostingQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
-import de.bixilon.unithen.api.graphql.types.resource.CourseQl
+import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
@@ -45,22 +44,6 @@ class GraphQlQueryTest {
 
         assertEquals(response.userPk!!.courses!!.size, 2)
         assertEquals(response.userPk.courses.first().id, "d5892e33-37a7-41fa-b6c4-d83acdea6b05".toUuid())
-    }
-
-    @Test
-    fun `read posting`() {
-        val response = readResponse<PostingQl>("posting")
-
-        assertEquals(response.id, "b2583378-fbdd-48ab-81c6-ab3ddfb0236c".toUuid())
-
-        val course = response.product.resource.cast<CourseQl>()
-
-        assertEquals(course.name, "Yoga - Allround Yoga - Yogilates - Meditation")
-
-        val appointment = course.appointments!!.first()
-
-        assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUuid())
-        assertEquals(appointment.start, LocalDateTime(2026, Month.MARCH, 11, 17, 30, 0).toInstant(UtcOffset.ZERO))
     }
 
     @Test

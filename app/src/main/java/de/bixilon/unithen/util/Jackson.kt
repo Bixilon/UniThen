@@ -13,9 +13,6 @@
 package de.bixilon.unithen.util
 
 import de.bixilon.unithen.api.graphql.types.location.*
-import de.bixilon.unithen.api.graphql.types.resource.CourseQl
-import de.bixilon.unithen.api.graphql.types.resource.ResourceQl
-import de.bixilon.unithen.api.graphql.types.resource.UnknownResourceQl
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -46,10 +43,6 @@ object Jackson {
                 subclass(AreaQl::class, AreaQl.serializer())
                 subclass(RoomQl::class, RoomQl.serializer())
                 defaultDeserializer { UnknownFacilityQl.serializer() }
-            }
-            polymorphic(ResourceQl::class) {
-                subclass(CourseQl::class, CourseQl.serializer())
-                defaultDeserializer { UnknownResourceQl.serializer() }
             }
 
             contextual(InstantSerializer)
