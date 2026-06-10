@@ -4,6 +4,11 @@ scalar Date
 "@deprecated Unknown."
 scalar Unknown
 
+scalar UUID
+
+"A 36 digit UUID; can be blank in special cases"
+scalar ID
+
 enum CheckInAttemptStatus {
     Success,
     Failed, # TODO: Guessed
@@ -107,6 +112,7 @@ type Course {
     id: ID!
     name: String!
     description: String
+    tags: [Unknown] # Type: Tag (id, ?)
 
     offer: Offer!
     event: Event! # TODO !
@@ -177,6 +183,9 @@ type Appointment {
 
     checkInAttempts: [CheckInAttempt!]
     attendees: [CourseUser!]
+
+    visibilityBefore: Unknown
+    booking_configuration: Unknown # TODO (capacity, waitingListType, startedAt, endsAt)
 }
 
 union Facility = Area | Location | Room
@@ -333,7 +342,10 @@ type Query {
     course_groups: [CourseGroup!] # TODO
 
     courses: [Course!] # Timeout
+
     courses_pk(id: ID!): Course
+
+    get_course_single_appointments(course_id: UUID!, filters: [Filter]): Appointment # TODO: Type
 }
 
 type Mutation {
