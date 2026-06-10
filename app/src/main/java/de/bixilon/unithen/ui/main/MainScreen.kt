@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.R
@@ -91,7 +92,7 @@ fun ActualMainScreen() {
                     selected = navigator.current().route == destination.route,
                     onClick = { navigator.navigate(destination.route) },
                     icon = { Icon(destination.icon, contentDescription = "") },
-                    label = { Text(destination.label.i18n()) },
+                    label = { Text(destination.label.i18n(), textAlign = TextAlign.Center) },
                     enabled = enabled,
                 )
             }
