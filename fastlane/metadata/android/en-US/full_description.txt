@@ -10,6 +10,6 @@ Features:
 <li>QR Code Check in (presenting and scanning)</li>
 <li>List courses/appointments</li>
 <li>Really fast, no ads, no trackers</li>
-<li>Simple and small (~7MB)</li>
+<li>Simple and small (~6MB)</li>
 <li>Completely offline (authenticate once)</li>
 </ul>
