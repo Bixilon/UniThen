@@ -18,7 +18,7 @@
     <string name="add_account_title">Bitte wähle deine Buchungsseite</string>
     <string name="add_account_help">Ich finde meine Seite nicht.</string>
     <string name="authenticatin_fetching_user_details">Lade Benutzer Informationen...</string>
-    <string name="authentication_fetching_courses">Lade Kurse...</string>
+    <string name="authentication_fetching_courses">Lade Kurse...\nDas kann eine Weile dauern :)</string>
     <string name="authentication_loading">Anmelden...</string>
     <string name="courses_title">Kurse (%1$d)</string>
     <string name="appointments_title">Termine (+%1$d/%2$d)</string>

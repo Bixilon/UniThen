@@ -22,7 +22,7 @@
     <string name="add_account_title">Please choose your booking site</string>
     <string name="add_account_help">Can\'t find your site?</string>
     <string name="authenticatin_fetching_user_details">Fetching user details...</string>
-    <string name="authentication_fetching_courses">Synchronizing courses...</string>
+    <string name="authentication_fetching_courses">Synchronizing courses...\nThis might take a while :)</string>
     <string name="authentication_loading">Logging in...</string>
     <string name="courses_title">Courses (%1$d)</string>
     <string name="appointments_title">Appointments (+%1$d/%2$d)</string>
