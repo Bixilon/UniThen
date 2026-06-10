@@ -78,7 +78,7 @@ fun SetupScreen() {
 
         val navigation = LocalNavigation.current
         Button(
-            onClick = { navigation.pop(); navigation.navigate(AddAccountRoute) },
+            onClick = { navigation.navigate(AddAccountRoute) },
             enabled = accepted,
             modifier = Modifier.fillMaxWidth()
         ) {
