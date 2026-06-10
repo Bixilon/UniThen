@@ -81,7 +81,7 @@ fun ActualMainScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
 
-        NavigationBar {
+        NavigationBar(windowInsets = androidx.compose.foundation.layout.WindowInsets()) {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
                     MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isMember() }
