@@ -37,9 +37,8 @@ object CourseFetcher {
         val api = account.api(site)
         if (!force && !account.isStale()) return
 
-        progress?.invoke(CourseFetchProgress(0, 0))
-
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
+
         progress?.invoke(CourseFetchProgress(0, coursesQl.size))
 
         val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)

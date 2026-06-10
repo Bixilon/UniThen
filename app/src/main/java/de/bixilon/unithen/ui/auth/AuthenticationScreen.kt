@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +44,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
     val resources = LocalResources.current
     var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
 
-    var message by remember { mutableStateOf(resources.getString(R.string.authentication_loading)) }
+    var message by remember { mutableStateOf(resources.getString(R.string.authentication_fetching_user_details)) }
 
 
     val fetch = useAsyncNetwork<Unit>(null) {
@@ -52,7 +53,9 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
 
         val account = storage.transaction { it.accounts.add(site, details, authentication) }
 
-        storage.fetch(account, true) { resources.getString(R.string.authentication_fetching, it.course, it.courses) }
+        message = resources.getString(R.string.authentication_course_list)
+
+        storage.fetch(account, true) { message = resources.getString(R.string.authentication_fetching, it.course, it.courses) }
 
         when {
             !first -> Unit
@@ -69,7 +72,6 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
         confirmButton = {},
         onDismissRequest = {},
         title = { Text(R.string.authentication_loading.i18n()) },
-        icon = { Icon(Icons.Filled.Sync, "sync") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),

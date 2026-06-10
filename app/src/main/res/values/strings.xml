@@ -23,6 +23,7 @@
     <string name="add_account_help">Can\'t find your site?</string>
     <string name="authentication_fetching_user_details">Getting user details...</string>
     <string name="authentication_fetching">Synchronizing course %1$d of %2$d.</string>
+    <string name="authentication_course_list">Loading course list...</string>
     <string name="authentication_take_a_while">This might take a while...</string>
     <string name="authentication_loading">Logging in...</string>
     <string name="courses_synchronize_started">Synchronizing courses...This might take a while!</string>
