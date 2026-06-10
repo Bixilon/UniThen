@@ -1,6 +1,5 @@
 {
   "courses_pk": {
-    "__typename": "Course",
     "id": "f01f51da-e96d-4497-8d02-2e2fee344169",
     "name": "AcroYoga - Open Level",
     "event": {

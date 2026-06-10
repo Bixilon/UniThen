@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 
+@Deprecated("unused")
 @Serializable
 class UnknownResourceQl(override val __typename: String = "") : ResourceQl {
     override val id get() = Uuid.fromLongs(0L, 0L)

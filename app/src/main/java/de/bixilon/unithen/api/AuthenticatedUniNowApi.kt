@@ -39,7 +39,7 @@ open class AuthenticatedUniNowApi(
     }
 
     fun getCourses(userId: Uuid): List<CourseQl>? {
-        return graphql<Queries>("courses", "user" to JsonPrimitive(userId.toString())).userPk?.postings?.mapNotNull { it.product.resource.nullCast<CourseQl>() }
+        return graphql<Queries>("courses", "user" to JsonPrimitive(userId.toString())).userPk?.courses
     }
 
     fun getCourse(courseId: Uuid): CourseQl? {

@@ -43,7 +43,8 @@ class GraphQlQueryTest {
     fun `read courses slim`() {
         val response = readResponse<Queries>("courses")
 
-        assertEquals(response.userPk!!.postings!!.size, 2)
+        assertEquals(response.userPk!!.courses!!.size, 2)
+        assertEquals(response.userPk.courses.first().id, "d5892e33-37a7-41fa-b6c4-d83acdea6b05".toUuid())
     }
 
     @Test
@@ -60,13 +61,6 @@ class GraphQlQueryTest {
 
         assertEquals(appointment.id, "a648c0a1-aa4a-4484-a888-69aded7db109".toUuid())
         assertEquals(appointment.start, LocalDateTime(2026, Month.MARCH, 11, 17, 30, 0).toInstant(UtcOffset.ZERO))
-    }
-
-    @Test
-    fun `read courses response`() {
-        val response = readResponse<Queries>("courses_response")
-
-        assertEquals(response.userPk!!.postings!!.size, 1)
     }
 
     @Test

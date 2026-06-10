@@ -1,26 +1,11 @@
 {
   "user_pk": {
     "id": "00000000-6356-44ba-8896-7531da08685f",
-    "postings": [
+    "courses": [
       {
-        "id": "92f32022-6356-44ba-8896-7531da08685f",
-        "product": {
-          "id": "00000000-6356-44ba-8896-7531da08685f",
-          "resource": {
-            "__typename": "Course",
-            "id": "d5892e33-37a7-41fa-b6c4-d83acdea6b05"
-          }
-        }
-      },
-      {
-        "id": "e6b68ef9-61e2-47da-96ce-4a2a871ef4e2",
-        "product": {
-          "id": "10000000-6356-44ba-8896-7531da08685f",
-          "resource": {
-            "__typename": "Course",
-            "id": "d266cd24-bb8b-4714-97fe-cac8f8d2d209"
-          }
-        }
+        "id": "d5892e33-37a7-41fa-b6c4-d83acdea6b05"
+      }, {
+        "id": "d266cd24-bb8b-4714-97fe-cac8f8d2d209"
       }
     ]
   }

@@ -13,7 +13,7 @@
 package de.bixilon.unithen.api.graphql.types.user
 
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
-import de.bixilon.unithen.api.graphql.types.PostingQl
+import de.bixilon.unithen.api.graphql.types.resource.CourseQl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
@@ -23,5 +23,5 @@ data class UserQl(
     override val id: Uuid,
     @SerialName("first_name") val firstname: String? = null,
     @SerialName("last_name") val lastname: String? = null,
-    val postings: List<PostingQl>? = null,
+    val courses: List<CourseQl>?=null,
 ) : IdentifiedQl

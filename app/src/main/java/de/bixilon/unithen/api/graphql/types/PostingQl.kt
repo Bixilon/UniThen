@@ -16,6 +16,7 @@ import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Serializable
+@Deprecated("unused")
 data class PostingQl(
     override val id: Uuid,
     val product: ProductQl,

@@ -14,6 +14,7 @@ package de.bixilon.unithen.api.graphql.types.resource
 
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 
+@Deprecated("unused")
 interface ResourceQl : IdentifiedQl {
     val __typename: String
 }

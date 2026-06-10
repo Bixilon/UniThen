@@ -1,6 +1,5 @@
 {
   "courses_pk": {
-    "__typename": "Course",
     "id": "1f7ac425-55fb-476a-ad71-729a4b4d0d80",
     "name": "Golf - Freies Spiel",
     "event": {
