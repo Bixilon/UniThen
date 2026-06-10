@@ -29,9 +29,9 @@
     <string name="main_navigation_settings">Einstellungen</string>
     <string name="accounts_title">Benutzer (%1$d)</string>
     <string name="present_no_appointments_message">Keine kommenden Kurse!</string>
-    <string name="present_no_appointments_details">Bist du sicher, dass du zur richtigen Zeit da bist?</string>
+    <string name="present_no_appointments_details">Der Check In fängt 90 Minuten vor dem Anfang des Kurses an.</string>
     <string name="scan_no_appointments_message">Keine kommenden Kurse!</string>
-    <string name="scan_no_appointments_details">Bist du sicher, dass du zur richtigen Zeit da bist?</string>
+    <string name="scan_no_appointments_details">Der Check In fängt 90 Minuten vor dem Anfang des Kurses an.</string>
     <string name="course_name">Name</string>
     <string name="appointment_start">Beginn</string>
     <string name="appointment_end">Ende</string>
