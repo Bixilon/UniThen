@@ -25,6 +25,8 @@
     <string name="authentication_fetching">Synchronizing course %1$d of %2$d.</string>
     <string name="authentication_take_a_while">This might take a while...</string>
     <string name="authentication_loading">Logging in...</string>
+    <string name="courses_synchronize_started">Synchronizing courses...This might take a while!</string>
+    <string name="courses_synchronize_done">All courses synchronized!</string>
     <string name="courses_title">Courses (%1$d)</string>
     <string name="appointments_title">Appointments (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Courses</string>
@@ -78,4 +80,6 @@
     <string name="scan_queue_pending">Checkin pending...</string>
     <string name="scan_starting_camera">Starting camera...</string>
     <string name="scan_camera_permission">Camera permission was not granted (yet). Please grant the permission for QR code scanning!</string>
+    <string name="error_reauthenticate">Please authenticate again!</string>
+    <string name="error_network">Network error: %1$s</string>
 </resources>

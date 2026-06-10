@@ -19,6 +19,8 @@
     <string name="add_account_help">Ich finde meine Seite nicht.</string>
     <string name="authentication_take_a_while">Das kann eine Weile dauern...</string>
     <string name="authentication_loading">Anmelden...</string>
+    <string name="courses_synchronize_started">Synchronisiere Kurse...Das kann eine Weile dauern!</string>
+    <string name="courses_synchronize_done">Alle Kurse synchronisiert!</string>
     <string name="courses_title">Kurse (%1$d)</string>
     <string name="appointments_title">Termine (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Kurse</string>
@@ -75,4 +77,6 @@
     <string name="scan_unknown_user_server">Unbekannter Benutzer: %1$s</string>
     <string name="authentication_fetching_user_details">Lade Benutzerdetails...</string>
     <string name="authentication_fetching">Synchronisiere Kurs %1$d von %2$d.</string>
+    <string name="error_reauthenticate">Bitte melde dich erneut an!</string>
+    <string name="error_network">Netzwerkfehler: %1$s</string>
 </resources>

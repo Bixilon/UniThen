@@ -15,6 +15,8 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalResources
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
@@ -35,6 +37,7 @@ data class AsyncNetworkState<T>(
 fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
+    val resources = LocalResources.current
     val toast = useToast()
     val active = remember { mutableStateOf(false) }
 
@@ -47,14 +50,14 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
                 active.value = true
                 block.invoke(args)
             } catch (_: AuthenticationException) {
-                toast.invoke("Please reauthenticate!")
+                toast.invoke(resources.getString(R.string.error_reauthenticate))
                 if (account != null) {
                     storage.accounts.logout(account)
                     navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
                 }
             } catch (error: IOException) {
                 error.printStackTrace()
-                toast.invoke("Network error: " + error.message)
+                toast.invoke(resources.getString(R.string.error_network, error.message))
             } catch (error: Throwable) {
                 error.printStackTrace()
                 navigation.navigate(CrashRoute(error))
