@@ -12,128 +12,85 @@
 
 package de.bixilon.unithen.ui.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Sync
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.exception.Broken
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.i18n
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 
-
-enum class AuthenticationState {
-    FETCH_USER_DETAILS,
-    FETCH_COURSES,
-    DONE,
-}
 
 @Composable
-fun AuthenticationProgress(state: AuthenticationState) {
-    val text = when (state) {
-        AuthenticationState.FETCH_USER_DETAILS -> R.string.authenticatin_fetching_user_details.i18n()
-        AuthenticationState.FETCH_COURSES -> R.string.authentication_fetching_courses.i18n()
-        AuthenticationState.DONE -> Broken()
+fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
+    val storage = LocalStorage.current
+    val resources = LocalResources.current
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
+
+    var message by remember { mutableStateOf(resources.getString(R.string.authentication_loading)) }
+
+
+    val fetch = useAsyncNetwork<Unit>(null) {
+        val first = storage.accounts.count == 0
+        val details = UserDetails.fetch(site.url, authentication)
+
+        val account = storage.transaction { it.accounts.add(site, details, authentication) }
+
+        storage.fetch(account, true) { resources.getString(R.string.authentication_fetching, it.course, it.courses) }
+
+        when {
+            !first -> Unit
+            storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
+            storage.courses.isMember() -> entrypoint = MainScreens.CHECKIN_PRESENT
+        }
+
+        callback.invoke()
     }
+
+    LaunchedEffect(Unit) { fetch.invoke(Unit) }
+
     AlertDialog(
         confirmButton = {},
         onDismissRequest = {},
         title = { Text(R.string.authentication_loading.i18n()) },
+        icon = { Icon(Icons.Filled.Sync, "sync") },
         text = {
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text)
+                Text(message)
+                Text(R.string.authentication_take_a_while.i18n(), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
     )
 }
 
-private suspend fun fetchUserDetails(storage: SqlStorage, site: Site, authentication: Authentication, callback: (state: AuthenticationState) -> Unit) {
-    Log.i("Auth", "Fetching user details...")
-    val details = UserDetails.fetch(site.url, authentication)
-
-    Log.v("Auth", "Found user details: $details")
-
-    val account = storage.transaction { it.accounts.add(site, details, authentication) }
-
-    callback.invoke(AuthenticationState.FETCH_COURSES)
-
-    Log.i("Auth", "Fetching courses...")
-
-    storage.fetch(account, true)
-
-    Log.i("Auth", "Courses fetched")
-    callback.invoke(AuthenticationState.DONE)
-}
-
 @Composable
 fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
-    val storage = LocalStorage.current
     var authentication: Authentication? by remember { mutableStateOf(null) }
-    var state by remember { mutableStateOf(AuthenticationState.FETCH_USER_DETAILS) }
-    var error: Throwable? by remember { mutableStateOf(null) }
-
-    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
-
-    LaunchedEffect(authentication) {
-        val authentication = authentication ?: return@LaunchedEffect
-
-        withContext(Dispatchers.IO) {
-            try {
-                val count = storage.accounts.count
-                fetchUserDetails(storage, site, authentication) { state = it }
-
-                when {
-                    count > 0 -> Unit
-                    storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
-                    storage.courses.isMember() -> entrypoint = MainScreens.CHECKIN_PRESENT
-                }
-
-                callback.invoke(authentication)
-            } catch (_error: Throwable) {
-                Log.e("Auth", "Error fetching user details: $_error")
-                _error.printStackTrace()
-                error = _error
-            }
-        }
-    }
-
-
-    if (error != null) {
-        CrashScreen("Error fetching user details", error!!)
-        return
-    }
 
     if (authentication == null) {
         WebAuthenticationView(url = site.url) { authentication = it }
         return
     }
-    if (state == AuthenticationState.DONE) {
-        Text("Done")
-        return
-    }
 
-    AuthenticationProgress(state)
+    Fetch(site, authentication!!) { callback.invoke(authentication!!) }
 }

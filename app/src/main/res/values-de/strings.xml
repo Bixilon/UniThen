@@ -17,8 +17,7 @@
     <string name="setup_login">Weiter zur Anmeldung</string>
     <string name="add_account_title">Bitte wähle deine Buchungsseite</string>
     <string name="add_account_help">Ich finde meine Seite nicht.</string>
-    <string name="authenticatin_fetching_user_details">Lade Benutzer Informationen...</string>
-    <string name="authentication_fetching_courses">Lade Kurse...\nDas kann eine Weile dauern :)</string>
+    <string name="authentication_take_a_while">Das kann eine Weile dauern...</string>
     <string name="authentication_loading">Anmelden...</string>
     <string name="courses_title">Kurse (%1$d)</string>
     <string name="appointments_title">Termine (+%1$d/%2$d)</string>
@@ -74,4 +73,6 @@
     <string name="scan_starting_camera">Kamera wird gestartet...</string>
     <string name="scan_camera_permission">Kamerabenutzung wurde (noch) nicht erlaubt. Bitte erlaube den Zugriff auf deine Kamera, um QR-Codes scannen zu können!</string>
     <string name="scan_unknown_user_server">Unbekannter Benutzer: %1$s</string>
+    <string name="authentication_fetching_user_details">Lade Benutzerdetails...</string>
+    <string name="authentication_fetching">Synchronisiere Kurs %1$d von %2$d.</string>
 </resources>

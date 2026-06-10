@@ -12,14 +12,15 @@
 
 package de.bixilon.unithen.api.graphql.util
 
-import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -31,12 +32,15 @@ object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
 
 
-    suspend fun SqlStorage.fetch(account: Account, force: Boolean) {
+    suspend fun SqlStorage.fetch(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
         val site = sites[account.site]!!
         val api = account.api(site)
         if (!force && !account.isStale()) return
 
+        progress?.invoke(CourseFetchProgress(0, 0))
+
         val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
+        progress?.invoke(CourseFetchProgress(0, coursesQl.size))
 
         val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
 
@@ -49,11 +53,18 @@ object CourseFetcher {
             }
         }
 
+        var done = 0
+        var total = coursesQl.size
+
         coroutineScope {
             coursesQl.mapNotNull { courseQl ->
                 val course = this@fetch.courses[site, courseQl.id]
 
-                if (course != null && !course.isDataStale()) return@mapNotNull null
+                if (course != null && !course.isDataStale()) {
+                    total--
+                    progress?.invoke(CourseFetchProgress(done, total))
+                    return@mapNotNull null
+                }
 
                 async {
                     val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
@@ -65,6 +76,7 @@ object CourseFetcher {
                         store(site, course, enrolled!!)
                     }
 
+                    progress?.invoke(CourseFetchProgress(done++, total))
                     accounts.addToCourse(account, course)
                 }
             }.awaitAll()

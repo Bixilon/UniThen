@@ -10,20 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.auth
+package de.bixilon.unithen.ui.util.progress
 
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.authentication.CookieAuthentication
-import java.net.URI
-
-
-@Composable
-fun DummyAuthenticationView(modifier: Modifier = Modifier, base: URI, callback: (Authentication) -> Unit) {
-    Button({ callback.invoke(CookieAuthentication("dummy")) }, modifier = modifier) {
-        Text("Authenticate (dummy)")
-    }
-}
+class CourseFetchProgress(
+    val course: Int,
+    val courses: Int,
+)
