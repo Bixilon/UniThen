@@ -19,7 +19,7 @@ data class SqlFilter(
     val parameters: List<Any> = emptyList(),
 ) {
 
-    constructor(sql: String, vararg parameters: Any):this(sql, parameters.toList())
+    constructor(sql: String, vararg parameters: Any) : this(sql, parameters.toList())
 
     private fun connect(@Language("SQL") conjunction: String, other: SqlFilter?): SqlFilter {
         if (other == null || other.sql.isBlank()) return this
@@ -33,7 +33,6 @@ data class SqlFilter(
     operator fun plus(other: String?) = if (other == null) this else SqlFilter(this.sql + " " + other, this.parameters)
 
     infix fun where(where: SqlFilter?) = if (where == null) this else SqlFilter(this.sql + " WHERE " + where.sql, this.parameters + where.parameters)
-
 
 
     companion object {

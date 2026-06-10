@@ -20,7 +20,7 @@ const val AREA_TYPE = "Area"
 @Serializable
 @SerialName(AREA_TYPE)
 class AreaQl(
-   override val name: String,
+    override val name: String,
     // TODO: floor, building
 ) : FacilityQl {
     override val __typename get() = AREA_TYPE

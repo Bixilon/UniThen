@@ -29,7 +29,7 @@ data class CourseQl(
     val event: EventQl? = null,
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val tutors: List<CourseUserQl>? = null,
     val appointments: List<AppointmentQl>? = null,
-    @Serializable(with = CourseUserQl.NonNullListSerializer::class)val enrolled: List<CourseUserQl>? = null,
+    @Serializable(with = CourseUserQl.NonNullListSerializer::class) val enrolled: List<CourseUserQl>? = null,
 ) : ResourceQl {
     override val __typename get() = COURSE_TYPE
 }

@@ -67,7 +67,7 @@ open class UniNowApi(
 
         val graphql = try {
             Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)
-        }catch (error: SerializationException) {
+        } catch (error: SerializationException) {
             throw SerializationCrash(response, error)
         }
 

@@ -41,7 +41,7 @@ fun Modifier.verticalScroll(
 
     drawRoundRect(
         color = Color.Gray,
-        topLeft = Offset(x = this.size.width  + 2.dp.toPx(), y = offset),
+        topLeft = Offset(x = this.size.width + 2.dp.toPx(), y = offset),
         alpha = 0.6f,
         size = Size(width = width.toPx(), height = maxOf(height, 16.dp.toPx())),
         cornerRadius = CornerRadius(4f)

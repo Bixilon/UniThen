@@ -31,8 +31,6 @@ fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
     var copied by remember { mutableStateOf(false) }
 
 
-
-
     Button({
         copied = true
         CoroutineScope(Dispatchers.IO).launch {

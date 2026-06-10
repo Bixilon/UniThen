@@ -52,7 +52,7 @@ data class CourseUserQl(
 
             // This is very ugly, but somehow it is possible to pass invalid users (all fields null, except id, that is blank)
             val id = element["id"]?.jsonPrimitive?.contentOrNull
-            if(id.isNullOrEmpty()) return null
+            if (id.isNullOrEmpty()) return null
 
             return decoder.json.decodeFromJsonElement(defaultSerializer, element)
         }
