@@ -121,11 +121,11 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                         }
                     }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
                 }
-                if (item.message == null) {
-                    IconButton({
-                        storage.checkInQueue.delete(appointment, user)
-                    }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
-                }
+                //  if (item.message == null) { // TODO: Remove that, there is no use for it.
+                IconButton({
+                    storage.checkInQueue.delete(appointment, user)
+                }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
+                //     }
             }
         }
     }
