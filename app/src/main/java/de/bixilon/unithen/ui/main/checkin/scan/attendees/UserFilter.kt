@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -80,14 +81,10 @@ fun UserFilterX(filter: UserFilter) {
                 onDismissRequest = { expanded = false }
             ) {
                 for (item in AttendeeSort) {
-                    var color = MenuDefaults.itemColors()
-                    if (filter.sort == item) {
-                        color = color.copy(textColor = MaterialTheme.colorScheme.onTertiaryContainer)
-                    }
                     DropdownMenuItem(
                         text = { Text(item.label.i18n()) },
-                        colors = color,
                         onClick = { filter.sort = item; expanded = false },
+                        trailingIcon = { if (filter.sort == item) Icon(Icons.Filled.Star, "selected") }
                     )
                 }
             }
