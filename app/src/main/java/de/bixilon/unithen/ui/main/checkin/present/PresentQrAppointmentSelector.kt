@@ -63,7 +63,7 @@ fun AppointmentCard(course: Course, appointment: Appointment, modifier: Modifier
 
 
 @Composable
-fun FastCheckinAppointmentSelector(appointments: List<Appointment>) {
+fun PresentQrAppointmentSelector(appointments: List<Appointment>) {
     Screen {
         ScreenTitle(R.string.present_choose_appointment_title.i18n())
 

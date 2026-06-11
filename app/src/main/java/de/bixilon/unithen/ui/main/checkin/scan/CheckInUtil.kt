@@ -116,7 +116,7 @@ object CheckInUtil {
         val attemptQl = withContext(Dispatchers.IO) {
             val api = account.api(site)
 
-            return@withContext api.deleteCheckinAttempt(attempt)
+            return@withContext api.deleteCheckInAttempt(attempt)
         }
 
         if (attemptQl == null) throw IllegalStateException("Null attempt?")

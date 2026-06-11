@@ -25,6 +25,6 @@ fun PresentQrAppointmentScreen(course: Course, appointment: Appointment) {
     when (accounts.size) {
         0 -> SimpleErrorScreen("No account available")
         1 -> PresentQrScreen(accounts[0], course, appointment)
-        else -> FastCheckinAccountSelector(course, appointment, accounts)
+        else -> PresntQrAccountSelector(course, appointment, accounts)
     }
 }

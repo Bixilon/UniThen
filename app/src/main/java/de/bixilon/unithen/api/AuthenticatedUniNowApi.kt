@@ -37,27 +37,27 @@ open class AuthenticatedUniNowApi(
         return request
     }
 
-    fun getCourses(userId: Uuid): List<CourseQl>? {
-        return graphql<Queries>("courses", "user" to JsonPrimitive(userId.toString())).userPk?.courses
+    fun getCourses(user: Uuid): List<CourseQl>? {
+        return graphql<Queries>("courses", "user" to JsonPrimitive(user.toString())).userPk?.courses
     }
 
-    fun getCourse(courseId: Uuid): CourseQl? {
-        return graphql<Queries>("course", "course" to JsonPrimitive(courseId.toString())).course
+    fun getCourse(course: Uuid): CourseQl? {
+        return graphql<Queries>("course", "course" to JsonPrimitive(course.toString())).course
     }
 
-    fun getEnrolled(courseId: Uuid): List<CourseUserQl>? {
-        return graphql<Queries>("enrolled", "course" to JsonPrimitive(courseId.toString())).course?.enrolled
+    fun getEnrolled(course: Uuid): List<CourseUserQl>? {
+        return graphql<Queries>("enrolled", "course" to JsonPrimitive(course.toString())).course?.enrolled
     }
 
-    fun getCheckInAttempts(appointmentId: Uuid): AppointmentQl? {
-        return graphql<Queries>("attempts", "appointment" to JsonPrimitive(appointmentId.toString())).appointment
+    fun getCheckInAttempts(appointment: Uuid): AppointmentQl? {
+        return graphql<Queries>("attempts", "appointment" to JsonPrimitive(appointment.toString())).appointment
     }
 
-    fun checkInUser(appointment: Uuid, userId: Uuid): CheckInAttemptQl? {
-        return graphql<Mutations>("checkin", "appointment" to JsonPrimitive(appointment.toString()), "user" to JsonPrimitive(userId.toString())).appointmentCheckin
+    fun checkInUser(appointment: Uuid, user: Uuid): CheckInAttemptQl? {
+        return graphql<Mutations>("checkin", "appointment" to JsonPrimitive(appointment.toString()), "user" to JsonPrimitive(user.toString())).appointmentCheckin
     }
 
-    fun deleteCheckinAttempt(attemptId: Uuid): CheckInAttemptQl? {
-        return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attemptId.toString())).deleteCheckinAttempt
+    fun deleteCheckInAttempt(attempt: Uuid): CheckInAttemptQl? {
+        return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attempt.toString())).deleteCheckinAttempt
     }
 }
