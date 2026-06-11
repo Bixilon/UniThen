@@ -37,9 +37,8 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AppointmentDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
@@ -66,7 +65,7 @@ private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modif
     ) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
             Text(
-                text = "${appointment.start.format()} - ${appointment.end.format()}",
+                text = TimeFormatUtil.formatTimespam(appointment.start, appointment.end),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -78,8 +77,7 @@ private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modif
                 )
             }
 
-            val storage = LocalStorage.current
-            val tutors = remember { storage.users.getTutors(appointment) }
+            val tutors = rememberStorage { users.getTutors(appointment) }
             if (tutors.isNotEmpty()) {
                 Text(
                     text = tutors.joinToString(", ") { it.fullname },

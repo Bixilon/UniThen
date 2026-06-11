@@ -32,7 +32,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.i18n
 
 
@@ -53,7 +53,7 @@ fun AppointmentCard(course: Course, appointment: Appointment, modifier: Modifier
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "${appointment.start.format()} - ${appointment.end.format()}",
+                text = TimeFormatUtil.formatTimespam(appointment.start, appointment.end),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

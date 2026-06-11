@@ -43,7 +43,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
-import de.bixilon.unithen.ui.util.UiUtil.format
+import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive

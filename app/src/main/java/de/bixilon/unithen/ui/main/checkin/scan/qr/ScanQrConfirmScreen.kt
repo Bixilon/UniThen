@@ -45,8 +45,8 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.UiUtil.format
-import de.bixilon.unithen.ui.util.UiUtil.formatNow
+import de.bixilon.unithen.ui.util.TimeFormatUtil.format
+import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
