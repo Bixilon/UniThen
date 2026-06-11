@@ -11,7 +11,7 @@ scalar ID
 
 enum CheckInAttemptStatus {
     Success,
-    Failed, # TODO: Guessed
+    Failure,
 }
 
 type User {

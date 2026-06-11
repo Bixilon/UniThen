@@ -12,12 +12,10 @@
 
 package de.bixilon.unithen.graphql
 
-import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
-import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
@@ -71,7 +69,7 @@ class GraphQlQueryTest {
             CourseUserQl("3b451d02-2fc8-4bed-b8c5-50fb91280f30".toUuid(), "First tutor", "Lastname"),
         ))
         assertEquals(response.appointment?.checkInAttempts, listOf(
-            CheckInAttemptQl("39b4858a-cb3a-42ff-9b6e-e6a4d54c2de2".toUuid(), CheckInAttemptQl.Status.ERROR, user = CourseUserQl("3b451d02-2fc8-4bed-b8c5-50fb91280f30".toUuid())),
+            CheckInAttemptQl("39b4858a-cb3a-42ff-9b6e-e6a4d54c2de2".toUuid(), CheckInAttemptQl.Status.FAILURE, user = CourseUserQl("3b451d02-2fc8-4bed-b8c5-50fb91280f30".toUuid())),
         ))
     }
 

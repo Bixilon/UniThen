@@ -29,6 +29,6 @@ data class CheckInAttemptQl(
     enum class Status {
         SUCCESS,
 
-        ERROR, // TODO
+        FAILURE,
     }
 }

@@ -11,7 +11,7 @@
     "checkInAttempts": [
       {
         "id": "39b4858a-cb3a-42ff-9b6e-e6a4d54c2de2",
-        "status": "Error",
+        "status": "Failure",
         "user": {
           "id": "3b451d02-2fc8-4bed-b8c5-50fb91280f30"
         }
