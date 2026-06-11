@@ -16,8 +16,8 @@ import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
-import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.Request
@@ -58,6 +58,6 @@ open class AuthenticatedUniNowApi(
     }
 
     fun deleteCheckinAttempt(attemptId: Uuid): CheckInAttemptQl? {
-        return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attemptId.toString())).appointmentCheckin
+        return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attemptId.toString())).deleteCheckinAttempt
     }
 }
