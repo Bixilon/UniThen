@@ -171,11 +171,16 @@ fun ScanAttendeeList() {
 
     val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) }
 
+    val state = rememberLazyListState()
 
     val storage = LocalStorage.current
     val refresh = useAsyncNetwork<Boolean>(account) {
         storage.fetchEnrolled(account, course, it)
         storage.fetchAttendees(account, appointment, it)
+
+        if (appointment.fetchedAttendees == null) { // only on inital fetch
+            state.animateScrollToItem(0, 0)
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -188,14 +193,13 @@ fun ScanAttendeeList() {
     Section {
         SectionTitle(R.string.appointment_attendees_title.i18n(attendees.size, enrolled))
 
-        val state = rememberLazyListState()
 
         LaunchedEffect(filter.search, filter.sort, filter.order) { state.animateScrollToItem(0, 0) }
 
         UserFilterX(filter)
 
         val time = useTime()
-        val readonly = !appointment.canPerformCheckIn(time)
+        val readonly = !appointment.canPerformCheckIn(time) // TODO: Allow syncing the rest after the event has ended
 
         PullToRefreshBox(refresh.active, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh.invoke(true) }) {
             LazyColumn(
