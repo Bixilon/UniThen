@@ -39,6 +39,7 @@ class AppointmentTable(
     operator fun get(course: Course, uuid: Uuid) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
+    operator fun get(uuid: Uuid) = all(SqlFilter.and("uuid" to uuid))
 
     fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null, member: Boolean? = null, tutor: Boolean? = null): List<Appointment> {
         val _canceled = canceled?.let { if (it) AppointmentTable.canceled.isNotNull() else AppointmentTable.canceled.isNull() }

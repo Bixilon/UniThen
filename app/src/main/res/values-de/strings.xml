@@ -47,7 +47,8 @@
     <string name="sort_lastname">Nachname</string>
     <string name="scan_error_invalid_format">Ungültiges Format!</string>
     <string name="scan_error_invalid_data">Ungültige Daten!</string>
-    <string name="scan_error_invalid_appointment">Ungültiger Termin (Falscher Kurs?)!</string>
+    <string name="scan_error_invalid_appointment">Ungültiger Termin (Falscher Kurs?)</string>
+    <string name="scan_error_invalid_course">Ungültiger Kurs!</string>
     <string name="scan_error_unknown_user">Unbekannter Benutzer!</string>
     <string name="scan_error_not_enrolled">Benutzer ist nicht im Kurs angemeldet!</string>
     <string name="scan_error_already_checked_in">Benutzer ist bereits eingecheckt!</string>
@@ -80,4 +81,5 @@
     <string name="authentication_fetching">Synchronisiere Kurs %1$d von %2$d.</string>
     <string name="error_reauthenticate">Bitte melde dich erneut an!</string>
     <string name="error_network">Netzwerkfehler: %1$s</string>
+    <string name="scan_error_wrong_appointment">Falscher Termin (Alter QR-Code?)</string>
 </resources>

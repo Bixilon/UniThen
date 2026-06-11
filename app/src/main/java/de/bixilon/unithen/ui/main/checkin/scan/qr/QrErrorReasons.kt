@@ -20,6 +20,8 @@ enum class QrErrorReasons(override val label: Int) : Labeled {
     INVALID_DATA(R.string.scan_error_invalid_data),
 
     INVALID_APPOINTMENT(R.string.scan_error_invalid_appointment),
+    INVALID_COURSE(R.string.scan_error_invalid_course),
+    WRONG_APPOINTMENT(R.string.scan_error_wrong_appointment),
     UNKNOWN_USER(R.string.scan_error_unknown_user),
     NOT_ENROLLED(R.string.scan_error_not_enrolled),
     ALREADY_CHECKED_IN(R.string.scan_error_already_checked_in),

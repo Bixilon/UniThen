@@ -55,7 +55,9 @@
     <string name="sort_lastname">Lastname</string>
     <string name="scan_error_invalid_format">Invalid QR code format!</string>
     <string name="scan_error_invalid_data">Invalid QR code data!</string>
-    <string name="scan_error_invalid_appointment">Invalid appointment (wrong course?)!</string>
+    <string name="scan_error_invalid_appointment">Invalid appointment (wrong course?)</string>
+    <string name="scan_error_wrong_appointment">Wrong appointment (old QR code?)</string>
+    <string name="scan_error_invalid_course">Invalid course!</string>
     <string name="scan_error_unknown_user">Unknown user!</string>
     <string name="scan_error_not_enrolled">User not enrolled in course!</string>
     <string name="scan_error_already_checked_in">User is already checked in!</string>

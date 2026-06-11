@@ -83,7 +83,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
     var delayed by delayedState
 
-    LaunchedEffect(delayed) {
+    LaunchedEffect(delayed) { // TODO: Allow clicking on it?
         val _delayed = delayed ?: return@LaunchedEffect
         delay(1.seconds)
         if (delayedState.value == _delayed) {
@@ -123,9 +123,22 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     val appointment = appointments.find { it.uuid == scanned.appointmentId }
                     if (appointment == null) {
-                        errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (BuildConfig.DEBUG) scanned.appointmentId.toString() else null)
+                        val actual = storage.appointments[scanned.appointmentId]
+                        if (actual.size != 1) {
+                            errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (BuildConfig.DEBUG) scanned.appointmentId.toString() else null)
+                            continue
+                        }
+                        val course = storage.courses[actual.first().course]!!
+                        val expected = appointments.find { it.course == course.id }
+                        if (expected == null) {
+                            errors += ErrorResult(QrErrorReasons.INVALID_COURSE, course.name)
+                            continue
+                        }
+
+                        errors += ErrorResult(QrErrorReasons.WRONG_APPOINTMENT, expected.start.toString()) // TODO: format date
                         continue
                     }
+
                     val course = storage.courses[appointment.course]!!
 
                     val invalid = getErrorReason(storage, course, appointment, scanned.userId)
