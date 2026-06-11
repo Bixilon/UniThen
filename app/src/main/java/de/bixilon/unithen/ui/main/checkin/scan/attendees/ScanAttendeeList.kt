@@ -190,7 +190,7 @@ fun ScanAttendeeList() {
 
         val state = rememberLazyListState()
 
-        LaunchedEffect(filter.search) { state.animateScrollToItem(0, 0) }
+        LaunchedEffect(filter.search, filter.sort, filter.order) { state.animateScrollToItem(0, 0) }
 
         UserFilterX(filter)
 
