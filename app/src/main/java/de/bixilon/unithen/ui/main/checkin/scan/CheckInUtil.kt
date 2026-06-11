@@ -45,6 +45,8 @@ object CheckInUtil {
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
+        if (attemptQl.shouldIgnoreError()) return
+
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
             storage.checkInQueue.update(appointment, user, message = attemptQl.message ?: "Unknown")
 
@@ -78,6 +80,8 @@ object CheckInUtil {
         }
 
         val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
+
+        if (attemptQl.shouldIgnoreError()) return
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
             throw CheckInError(attemptQl.message)

@@ -26,6 +26,11 @@ data class CheckInAttemptQl(
 ) : IdentifiedQl {
 
 
+    fun shouldIgnoreError() = when (message?.lowercase()?.trim()) {
+        "checkin closed" -> true
+        else -> false
+    }
+
     enum class Status {
         SUCCESS,
 
