@@ -50,7 +50,7 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
                 active.value = true
                 block.invoke(args)
             } catch (_: AuthenticationException) {
-                toast.invoke(resources.getString(R.string.error_reauthenticate))
+                toast.invoke(R.string.error_reauthenticate)
                 if (account != null) {
                     storage.accounts.logout(account)
                     navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))

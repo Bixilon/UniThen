@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -60,7 +59,6 @@ fun CoursesScreen() {
     val courseCount = rememberStorage { courses.count }
     val events = rememberStorage { events.all().sortedByDescending { it.start } }
 
-    val resources = LocalResources.current
     val toast = useToast()
     Screen {
         ScreenTitle(R.string.courses_title.i18n(courseCount))
@@ -68,7 +66,7 @@ fun CoursesScreen() {
         PullToRefreshBox(refreshing, modifier = Modifier.weight(1.0f), onRefresh = {
             refreshing = true
             CoroutineScope(Dispatchers.IO).launch {
-                toast.invoke(resources.getString(R.string.courses_synchronize_started))
+                toast.invoke(R.string.courses_synchronize_started, true)
                 var loginSite: Key? = null
                 var caught: Throwable? = null
 
@@ -86,10 +84,10 @@ fun CoursesScreen() {
                 if (caught != null) {
                     navigation.navigate(CrashRoute(caught))
                 } else if (loginSite != null) {
-                    toast.invoke(resources.getString(R.string.error_reauthenticate))
+                    toast.invoke(R.string.error_reauthenticate)
                     navigation.navigate(ReauthenticateRoute(storage.sites[loginSite]!!))
                 } else {
-                    toast.invoke(resources.getString(R.string.courses_synchronize_done))
+                    toast.invoke(R.string.courses_synchronize_done)
                 }
                 refreshing = false
             }
