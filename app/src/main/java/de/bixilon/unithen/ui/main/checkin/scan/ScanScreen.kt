@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
@@ -88,7 +89,7 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 fun CheckInScanScreen() {
     val time = useTime()
 
-    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
     when (appointments.size) {
         0 -> ScanNoAppointments()

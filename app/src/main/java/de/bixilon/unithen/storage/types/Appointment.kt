@@ -34,10 +34,16 @@ data class Appointment(
 
     fun isAttendeesStale(now: Instant = Clock.System.now()) = fetchedAttendees == null || now - fetchedAttendees > ATTENDEES_CACHE_TTL
 
-    fun canPerformCheckIn(now: Instant = Clock.System.now()) = now in (start - CHECKIN_EARLY_DURATION..end)
+    fun canPerformCheckIn(now: Instant = Clock.System.now()) = now in (start - CHECKIN_EARLY_DURATION..end + CHECKIN_LATE_DURATION)
+    fun canSyncCheckIn(now: Instant = Clock.System.now()) = now in (start - CHECKIN_EARLY_DURATION..end + CHECKIN_LATE_SYNC_DURATION)
 
     companion object {
-        val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes // TODO: The api technically provides that
+        // TODO: The api provides both values, but they seem to be configurable and vary from course to course. That is safe default (otherwise "checkin closed") error is thrown, whatever...
+        val CHECKIN_EARLY_DURATION = 1.hours + 30.minutes
+        val CHECKIN_LATE_DURATION = 15.minutes
+
+        val CHECKIN_LATE_SYNC_DURATION = 1.hours
+
         val ATTENDEES_CACHE_TTL = 1.hours
     }
 }

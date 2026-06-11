@@ -22,6 +22,7 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
@@ -162,7 +163,7 @@ fun ScanQrAppointmentScreen() {
 @Composable
 fun QrScanAnyScreen() {
     val time = useTime()
-    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
     QrScanScreen(appointments)
 }

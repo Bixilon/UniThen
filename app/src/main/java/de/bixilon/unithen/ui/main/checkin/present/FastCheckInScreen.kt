@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.runtime.Composable
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useTime
 
@@ -22,7 +23,7 @@ import de.bixilon.unithen.ui.util.useTime
 fun CheckInPresentScreen() {
     val time = useTime()
 
-    val appointments = rememberStorage { appointments.getInRange(time, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
+    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
 
 
     when (appointments.size) {

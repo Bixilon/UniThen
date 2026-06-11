@@ -199,7 +199,7 @@ fun ScanAttendeeList() {
         UserFilterX(filter)
 
         val time = useTime()
-        val readonly = !appointment.canPerformCheckIn(time) // TODO: Allow syncing the rest after the event has ended
+        val readonly = !appointment.canPerformCheckIn(time)
 
         PullToRefreshBox(refresh.active, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh.invoke(true) }) {
             LazyColumn(

@@ -145,7 +145,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                if (appointment.canPerformCheckIn(useTime())) {
+                if (appointment.canSyncCheckIn(useTime())) {
                     var showSync by remember(Unit) { mutableStateOf(pending > 0) }
 
                     LaunchedEffect(pending > 0) {
@@ -162,6 +162,8 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                             Icon(Icons.Filled.Sync, "sync")
                         }
                     }
+                }
+                if (appointment.canPerformCheckIn()) {
                     FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
                         Icon(Icons.Filled.QrCodeScanner, "scan")
                     }
