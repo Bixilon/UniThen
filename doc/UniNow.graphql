@@ -156,7 +156,7 @@ type Event {
 type CheckInAttempt {
     id: ID!
     status: CheckInAttemptStatus!
-    user: CourseUser!
+    user: CourseUser # This might be the "invalid" user too
 
     message: String
 }

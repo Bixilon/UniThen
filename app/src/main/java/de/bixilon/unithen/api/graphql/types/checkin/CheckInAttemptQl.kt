@@ -22,7 +22,7 @@ data class CheckInAttemptQl(
     override val id: Uuid,
     val status: Status,
     val message: String? = null,
-    val user: CourseUserQl? = null,
+    @Serializable(with = CourseUserQl.CourseUserQlSerializer::class) val user: CourseUserQl? = null,
 ) : IdentifiedQl {
 
 

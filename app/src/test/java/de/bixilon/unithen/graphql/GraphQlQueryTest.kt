@@ -81,6 +81,14 @@ class GraphQlQueryTest {
     }
 
     @Test
+    fun `read checkin response with unknown user`() {
+        val response = readResponse<Mutations>("checkin_unknown_user")
+
+        assertEquals(response.appointmentCheckin?.status, CheckInAttemptQl.Status.FAILURE)
+        assertEquals(response.appointmentCheckin?.user, null)
+    }
+
+    @Test
     fun `read delete checkin response`() {
         val response = readResponse<Mutations>("delete_checkin")
 

@@ -1,0 +1,12 @@
+{
+  "appointment_checkin": {
+    "id": "b1465faa-04de-4e69-9db4-b5e0433dcca0",
+    "message": "something",
+    "status": "Failure",
+    "user": {
+      "id": "",
+      "first_name": null,
+      "last_name": null
+    }
+  }
+}
