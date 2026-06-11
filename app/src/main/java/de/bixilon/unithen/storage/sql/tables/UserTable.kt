@@ -76,7 +76,7 @@ class UserTable(
             .and(SqlFilter("NOT EXISTS (SELECT 1 FROM checkin_queue WHERE checkin_queue.appointment = ? AND checkin_queue.user = $table.id)", appointment.id))
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
-                sort.field to order.sql,
+                "LOWER(${sort.field})" to order.sql,
                 AttendeeSort.next(sort).field to order.sql,
             )
 
@@ -92,7 +92,7 @@ class UserTable(
             .and(SqlFilter("NOT EXISTS (SELECT 1 FROM appointment_attendees WHERE appointment_attendees.appointment = ? AND appointment_attendees.user = $table.id)", appointment.id))
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
-                sort.field to order.sql,
+                "LOWER(${sort.field})" to order.sql,
                 AttendeeSort.next(sort).field to order.sql,
             )
 
