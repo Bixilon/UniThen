@@ -68,14 +68,15 @@ fun SettingsScreen() {
 
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle("Check In")
-            BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, "Automatically scan", "Automatically starts QR code scanning")
+            BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, "High resolution scanning", "Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning qr codes.")
+            BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, "Automatically scan", "Automatically starts QR code scanning. Experimental!")
+            BooleanSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION, "Await confirmation", "Awaits the server response when confirming a check in. This option only makes sense if multiple persons are performing the checkin and ticket duplication fraud is a concern.")
         }
         HorizontalDivider()
 
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle("Advanced")
             BooleanSetting(Settings.QR_CODE_REMOVE_NAME, "Remove name (QR code)", "Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might still break scaning.")
-            BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, "High resolution scanning", "Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning qr codes.")
         }
         HorizontalDivider()
 

@@ -68,7 +68,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                // TODO: Show time (no data)
+                // TODO: Show time (missing data)
             }
 
             Checkbox(true, enabled = !readonly && !checkout.active, onCheckedChange = { checkout.invoke(Unit) })

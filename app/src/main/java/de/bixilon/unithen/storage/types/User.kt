@@ -14,7 +14,7 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.ui.main.checkin.scan.qr.isMajorContributor
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.isMajorContributor
 import kotlin.uuid.Uuid
 
 data class User(

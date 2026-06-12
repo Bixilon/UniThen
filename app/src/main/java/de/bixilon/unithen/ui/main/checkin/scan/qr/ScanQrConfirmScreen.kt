@@ -38,9 +38,12 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.isMajorContributor
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -50,21 +53,6 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
 import kotlin.uuid.Uuid
-
-
-val MAJOR_CONTRIBUTORS = mutableMapOf(
-    0x54550CBADB5BC304 to "moritz",
-)
-
-fun isMajorContributor(user: User): Boolean {
-    // Well, not the best, but not revealing my user id :)
-    // This is just an e*as*ter eg*g, nothing special. Purely visual.
-    val hash = user.uuid.toLongs { a, b -> a xor b } and 0xFB.inv()
-
-    val name = MAJOR_CONTRIBUTORS[hash] ?: return false
-
-    return user.firstname.lowercase().trim() == name
-}
 
 
 @Composable
@@ -138,10 +126,21 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
     val resources = LocalResources.current
 
+    val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
+
     val dismissed = rememberStorage { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { dismissed.value = true } }
 
+    fun pop() {
+        if (dismissed.value) return
+
+        navigation.pop()
+        navigation.navigate(ScanAnyRoute) // TODO: scan appointment route
+    }
+
     val checkin = useAsyncNetwork<Unit>(account) {
+        val fast = !await && user != null
+        if (fast) pop()
         try {
             if (user == null) {
                 CheckInUtil.checkIn(storage, account, appointment, userId)
@@ -150,16 +149,12 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             }
 
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            if (!dismissed.value) {
-                navigation.pop()
-                navigation.navigate(ScanAnyRoute)
-            }
+            if (!fast) pop()
         } catch (error: IOException) {
             if (user == null) {
                 message = resources.getString(R.string.network_error)
-            } else if (!dismissed.value) {
-                navigation.pop()
-                navigation.navigate(ScanAnyRoute)
+            } else if (!fast) {
+                pop()
             }
             throw error
         } catch (_: CheckInUnknownUserException) {
