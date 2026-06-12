@@ -33,7 +33,7 @@ import de.bixilon.unithen.ui.util.i18n
 
 
 @Composable
-fun PresntQrAccountSelector(course: Course, appointment: Appointment, accounts: List<Account>) {
+fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts: List<Account>) {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 

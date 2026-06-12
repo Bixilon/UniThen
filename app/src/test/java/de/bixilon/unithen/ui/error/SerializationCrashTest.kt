@@ -23,7 +23,7 @@ class SerializationCrashTest {
         val input = """{"id": "5b198cdd-75df-4479-b9e6-6382f61de68f", "first_name": "Moritz", "last_name": "Zwerger", "name": "Something"}"""
         val expected = """{"id": "5b198cdd-...", "first_name": "...", "last_name": "...", "name": "Som..."}"""
 
-        val error = SerializationCrash(input, SerializationException())
+        val error = SerializationExceptionData(input, SerializationException())
 
 
         assertEquals(error.message, expected)

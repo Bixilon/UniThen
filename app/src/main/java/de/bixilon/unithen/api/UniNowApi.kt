@@ -18,7 +18,7 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
-import de.bixilon.unithen.ui.error.SerializationCrash
+import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
@@ -68,7 +68,7 @@ open class UniNowApi(
         val graphql = try {
             Jackson.GRAPHQL.decodeFromString<GraphQlResponse<T>>(response)
         } catch (error: SerializationException) {
-            throw SerializationCrash(response, error)
+            throw SerializationExceptionData(response, error)
         }
 
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {

@@ -15,7 +15,7 @@ package de.bixilon.unithen.ui.error
 import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
 import kotlinx.serialization.SerializationException
 
-class SerializationCrash(data: String, cause: SerializationException) : SerializationException(cause) {
+class SerializationExceptionData(data: String, cause: SerializationException) : SerializationException(cause) {
     override val message = data.removeMultipleWhitespaces().replace("\n", "").censor()
 
     override fun fillInStackTrace() = this
