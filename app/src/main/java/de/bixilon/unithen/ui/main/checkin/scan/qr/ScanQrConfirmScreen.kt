@@ -110,20 +110,12 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
     if (!course.isEnrolledStale()) return
 
-    var updating by remember { mutableStateOf(false) }
-    val refresh = useAsyncNetwork<Unit>(account) {
-        try {
-            updating = true
-            storage.fetchEnrolled(account, course, false)
-        } finally {
-            updating = false
-        }
-    }
+    val refresh = useAsyncNetwork<Unit>(account) { storage.fetchEnrolled(account, course, false) }
 
     LaunchedEffect(Unit) { refresh.invoke(Unit) }
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-        if (updating) {
+        if (refresh.active) {
             CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(R.string.scan_updating_enrolled.i18n())
         } else {
             Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(R.string.scan_enrolled_outdated.i18n(course.fetched.formatNow()))

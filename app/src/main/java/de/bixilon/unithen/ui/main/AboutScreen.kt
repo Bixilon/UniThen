@@ -39,19 +39,14 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
-import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.rememberIsFdroid
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okhttp3.OkHttpClient
 
 
 @Composable
 fun UpdateChecker() {
-    val navigation = LocalNavigation.current
     val context = LocalContext.current
-    var checking by remember { mutableStateOf(false) }
     var next by remember { mutableIntStateOf(-1) }
 
     LaunchedEffect(next) {
@@ -60,42 +55,30 @@ fun UpdateChecker() {
         }
     }
 
-    LaunchedEffect(checking) {
-        if (!checking) return@LaunchedEffect
+    val check = useAsyncNetwork<Unit>(null) {
+        val request = HttpUtil.create("https://gitlab.bixilon.de".toURI(), "/bixilon/unithen/-/raw/master/fdroid.txt")
+            .get()
+            .build()
 
+        val client = OkHttpClient().newBuilder()
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .build()
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val request = HttpUtil.create("https://gitlab.bixilon.de".toURI(), "/bixilon/unithen/-/raw/master/fdroid.txt")
-                .get()
-                .build()
+        val response = client.newCall(request).execute()
 
-            val client = OkHttpClient().newBuilder()
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .build()
+        if (response.code != 200) throw IllegalStateException("Request is not OK")
 
-            try {
-                val response = client.newCall(request).execute()
-
-                if (response.code != 200) throw IllegalStateException("Request is not OK")
-
-                // Same regex as for fdroid: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/de.bixilon.unithen.yml
-                next = Regex("(\\d+)$").find(response.body.string())!!.groups[1]!!.value.toInt()
-            } catch (error: Throwable) {
-                navigation.navigate(CrashRoute(error))
-                error.printStackTrace()
-            } finally {
-                checking = false
-            }
-        }
+        // Same regex as for fdroid: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/de.bixilon.unithen.yml
+        next = Regex("(\\d+)$").find(response.body.string())!!.groups[1]!!.value.toInt()
     }
 
 
-    Button({ checking = true }, enabled = !checking && next < 0) {
+    Button({ check.invoke(Unit) }, enabled = !check.active && next < 0) {
         Icon(Icons.Default.Update, "")
         Spacer(Modifier.width(8.dp))
         Text(when {
-            checking -> "Checking for updates..."
+            check.active -> "Checking for updates..."
             next > 0 && next <= BuildConfig.VERSION_CODE -> "No update available!"
             next > BuildConfig.VERSION_CODE -> "Update available!"
             else -> "Check for updates"
