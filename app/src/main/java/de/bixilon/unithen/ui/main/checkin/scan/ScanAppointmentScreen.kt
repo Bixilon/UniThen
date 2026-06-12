@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -30,6 +29,7 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -39,43 +39,15 @@ import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-private fun Sync(appointment: Appointment, pending: Int, onFinish: () -> Unit) {
-    val storage = LocalStorage.current
-
-    var done by remember { mutableIntStateOf(0) }
-
-    val abort = remember { mutableStateOf(false) }
-
-    LaunchedEffect(abort) { if (abort.value) onFinish() }
-    DisposableEffect(abort) { onDispose { abort.value = true } }
-
-    // TODO: Show errors
-    LaunchedEffect(Unit) {
-        while (true) {
-            if (abort.value) break
-            val item = storage.checkInQueue.take(appointment) ?: break
-            done++
-
-            try {
-                syncQueue(storage, item)
-            } catch (error: Throwable) {
-                error.printStackTrace()
-            }
-        }
-
-        onFinish()
-    }
-
-    BackHandler { abort.value = true }
-
-
+private fun SyncProgress(done: Int, pending: Int, dismiss: () -> Unit) {
     AlertDialog(
         confirmButton = {},
-        dismissButton = { Button({ abort.value = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
-        onDismissRequest = { abort.value = true },
+        dismissButton = { Button({ dismiss() }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Hide") } },
+        onDismissRequest = { dismiss() },
         icon = { Icon(Icons.Default.Sync, "") },
         title = { Text(R.string.scan_synchronizing_attendees.i18n()) },
         text = {
@@ -102,14 +74,46 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
         return
     }
 
+    val time = useTime()
+    val canSync = appointment.canSyncCheckIn(time)
+
+    var synced by remember { mutableIntStateOf(0) }
     val pending = rememberStorage { checkInQueue.getCount(appointment) }
 
     var syncing by remember { mutableStateOf(false) }
+    var forceSync by remember { mutableStateOf(false) }
+    var showSyncProgress by remember { mutableStateOf(false) }
 
-    if (syncing) {
-        Sync(appointment, pending) { syncing = false }
+
+    if (canSync && pending > 0) {
+        if (showSyncProgress) {
+            SyncProgress(synced, pending) { showSyncProgress = false }
+        }
+
+        LaunchedEffect(syncing) {
+            while (true) {
+                val item = storage.checkInQueue.take(appointment, forceSync) ?: break
+                synced++
+
+                try {
+                    syncQueue(storage, item)
+                } catch (error: Throwable) {
+                    error.printStackTrace()
+                }
+            }
+            forceSync = false
+            showSyncProgress = false
+            syncing = false
+            synced = 0
+        }
+
+        LaunchedEffect(Unit) {
+            while (true) {
+                syncing = true
+                delay(SYNC_BACKOFF_NORMAL + 1.minutes) // additional minute (take does take the time when the sync started, and we'd always be a couple of seconds over it)
+            }
+        }
     }
-
 
     Screen {
         ScreenTitle(course.name)
@@ -136,20 +140,24 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
-                if (appointment.canSyncCheckIn(useTime())) {
-                    var showSync by remember(Unit) { mutableStateOf(pending > 0) }
+                if (canSync) {
+                    var showSyncButton by remember(Unit) { mutableStateOf(pending > 0) }
 
                     LaunchedEffect(pending > 0) {
                         if (pending == 0) {
-                            showSync = false
+                            showSyncButton = false
                         } else {
                             delay(2.seconds)
-                            showSync = true
+                            showSyncButton = true
                         }
                     }
 
-                    if (showSync) {
-                        FloatingActionButton({ syncing = true }) {
+                    if (showSyncButton) {
+                        val color = if (syncing) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
+                        FloatingActionButton({ showSyncProgress = true; if (!syncing) forceSync = true; syncing = true }, containerColor = color) {
+                            if (syncing) {
+                                CircularProgressIndicator()
+                            }
                             Icon(Icons.Filled.Sync, "sync")
                         }
                     }

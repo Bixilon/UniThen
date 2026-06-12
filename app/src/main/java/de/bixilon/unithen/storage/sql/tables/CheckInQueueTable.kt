@@ -29,7 +29,8 @@ import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_FORCE
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import kotlin.time.Clock
@@ -92,9 +93,9 @@ class CheckInQueueTable(
     }
 
 
-    fun take(appointment: Appointment? = null): CheckInQueue? {
+    fun take(appointment: Appointment? = null, force: Boolean = false): CheckInQueue? {
         val time = Clock.System.now()
-        val last = time - SYNC_BACKOFF
+        val last = time - if (force) SYNC_BACKOFF_FORCE else SYNC_BACKOFF_NORMAL
 
         val _appointment = appointment?.let { CheckInQueueTable.appointment eq appointment.id }
 

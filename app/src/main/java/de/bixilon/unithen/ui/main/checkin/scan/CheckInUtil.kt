@@ -21,13 +21,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 object CheckInUtil {
     val MAJOR_CONTRIBUTORS = mutableMapOf(
         0x54550CBADB5BC304 to "moritz",
     )
-    val SYNC_BACKOFF = 5.minutes
+    val SYNC_BACKOFF_FORCE = 30.seconds
+    val SYNC_BACKOFF_NORMAL = 5.minutes
 
     suspend fun syncQueue(storage: SqlStorage, item: CheckInQueue) {
         val user = storage.users[item.user]!!
