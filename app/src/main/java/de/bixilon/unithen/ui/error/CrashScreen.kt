@@ -77,6 +77,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             }
         }
 
+        val trace = remember { exception.stackTraceToString() }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,7 +85,6 @@ fun CrashScreen(message: String?, exception: Throwable) {
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 .padding(8.dp)
         ) {
-            val trace = remember { exception.stackTraceToString() }
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
@@ -104,7 +104,12 @@ fun CrashScreen(message: String?, exception: Throwable) {
 
         if (!BuildConfig.DEBUG) {
             Text("You can try checking for updates below, the crash is most likely fixed in the latest realease.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            UpdateChecker()
+
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                UpdateChecker()
+                Spacer(Modifier.width(8.dp))
+                ReportErrorButton(trace)
+            }
         }
     }
 }
