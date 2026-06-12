@@ -14,4 +14,4 @@ package de.bixilon.unithen.ui.navigation
 
 import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalVisibility = staticCompositionLocalOf { false }
+val LocalVisibility = staticCompositionLocalOf { true }

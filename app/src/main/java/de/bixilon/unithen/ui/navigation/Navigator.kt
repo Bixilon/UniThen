@@ -51,6 +51,7 @@ class Navigator(
 
     @Composable
     fun Host() {
+        val visible = LocalVisibility.current
         val last = stack.last()
 
         if (isNavigating) {
@@ -59,14 +60,14 @@ class Navigator(
 
         for (frame in stack) {
             key(frame.route) {
-                val current = frame === last
-                BackHandler(current && stack.size > 1) { pop() }
+                val visible = frame === last && visible
+                BackHandler(visible && stack.size > 1) { pop() }
 
 
                 CompositionLocalProvider(
-                    LocalVisibility provides current,
+                    LocalVisibility provides visible,
                 ) {
-                    Box(modifier = if (!current) invisible else Modifier) {
+                    Box(modifier = if (!visible) invisible else Modifier) {
                         frame.composable.invoke(frame.route)
                     }
                 }
