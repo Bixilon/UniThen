@@ -24,16 +24,23 @@ data class CheckInAttemptQl(
     val message: String? = null,
     @Serializable(with = CourseUserQl.CourseUserQlSerializer::class) val user: CourseUserQl? = null,
 ) : IdentifiedQl {
+    val error get() = Error.of(message)
 
-
-    fun shouldIgnoreError() = when (message?.lowercase()?.trim()) {
-        "checkin closed" -> true
-        else -> false
-    }
 
     enum class Status {
         SUCCESS,
-
         FAILURE,
+    }
+
+    enum class Error {
+        CHECKIN_CLOSED,
+        ;
+
+        companion object {
+            fun of(message: String?) = when (message?.trim()?.lowercase()) {
+                "checkin closed" -> CHECKIN_CLOSED
+                else -> null
+            }
+        }
     }
 }

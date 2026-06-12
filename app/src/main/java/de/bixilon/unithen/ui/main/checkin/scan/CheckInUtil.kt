@@ -45,7 +45,7 @@ object CheckInUtil {
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
-        if (attemptQl.shouldIgnoreError()) return
+        if (attemptQl.error == CheckInAttemptQl.Error.CHECKIN_CLOSED && appointment.end > Clock.System.now()) return
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
             storage.checkInQueue.update(appointment, user, message = attemptQl.message ?: "Unknown")
@@ -65,7 +65,9 @@ object CheckInUtil {
             storage.checkInQueue.update(appointment, user, sync = now)
         }
 
-        syncQueue(storage, storage.checkInQueue[appointment, user] ?: return)
+        val item = storage.checkInQueue[appointment, user] ?: return
+
+        syncQueue(storage, item)
     }
 
     private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: Uuid) {
@@ -80,8 +82,6 @@ object CheckInUtil {
         }
 
         val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
-
-        if (attemptQl.shouldIgnoreError()) return
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
             throw CheckInError(attemptQl.message)
@@ -123,7 +123,7 @@ object CheckInUtil {
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
-        storage.checkInQueue.delete(appointment, user)
+        storage.checkInQueue.delete(appointment, user) // TODO: Delte after checking status?
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
             throw CheckInError(attemptQl.message)
