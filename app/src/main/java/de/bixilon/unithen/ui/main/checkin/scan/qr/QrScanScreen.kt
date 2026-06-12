@@ -26,6 +26,8 @@ import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURAT
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -83,6 +85,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     val haptic = LocalHapticFeedback.current
     val storage = LocalStorage.current
 
+    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     val errors = remember { mutableStateListOf<ErrorResult>() }
     val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
     var delayed by delayedState
@@ -92,7 +95,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         delay(1.seconds)
         if (delayedState.value == _delayed) {
             haptic.performHapticFeedback(HapticFeedbackType.Reject)
-            navigation.pop()
+            if (!autoScan) navigation.pop()
             navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
         delayed = null
@@ -151,7 +154,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     if (invalid == null) {
                         delayed = null
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                        navigation.pop()
+                        if (!autoScan) navigation.pop()
                         navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)

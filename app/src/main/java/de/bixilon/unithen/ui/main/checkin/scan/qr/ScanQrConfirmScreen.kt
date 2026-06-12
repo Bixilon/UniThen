@@ -36,7 +36,6 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
-import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.isMajorContributor
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
@@ -135,7 +134,6 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
         if (dismissed.value) return
 
         navigation.pop()
-        navigation.navigate(ScanAnyRoute) // TODO: scan appointment route
     }
 
     val checkin = useAsyncNetwork<Unit>(account) {

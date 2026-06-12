@@ -23,9 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,7 +39,6 @@ import de.bixilon.unithen.ui.main.checkin.present.AppointmentCard
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
@@ -51,10 +48,6 @@ import de.bixilon.unithen.ui.util.useTime
 private fun ChooseAppointment(appointments: List<Appointment>) {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
-    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
-    val visible = LocalVisibility.current
-
-    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanAnyRoute) }
 
     Screen {
         ScreenTitle(R.string.scan_choose_appointment_title.i18n())
@@ -87,9 +80,18 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 
 @Composable
 fun CheckInScanScreen() {
+    var scanned by remember { mutableStateOf(false) }
+    val navigation = LocalNavigation.current
+
+    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    if (autoScan) {
+        LaunchedEffect(Unit) { if (!scanned) navigation.navigate(ScanAnyRoute); scanned = true }
+    }
+
     val time = useTime()
 
     val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+
 
     when (appointments.size) {
         0 -> ScanNoAppointments()
