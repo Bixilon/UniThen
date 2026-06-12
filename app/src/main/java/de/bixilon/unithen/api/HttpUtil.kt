@@ -24,6 +24,9 @@ object HttpUtil {
 
     fun create(base: URI, endpoint: String): Request.Builder {
         assert(base.scheme == "https") { "Insecure requests are forbidden!" }
+        if (BuildConfig.DEBUG) {
+            Thread.sleep(3000L)
+        }
         val request = Request.Builder()
             .url(base.with(path = endpoint).toURL())
             .header("User-Agent", "UniThen (version=${BuildConfig.VERSION})")
