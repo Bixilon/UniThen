@@ -39,10 +39,12 @@ and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9
 
 So, the original [UniNow app](https://play.google.com/store/apps/details?id=de.mocama.UniNow) is not that bad (tries to be privacy friendly, works offline), but there are a few points that really bother me:
 
-Doing simple things needs a lot of user interaction (e.g. when I want to do the check in):
+Doing simple things needs a lot of user interaction (e.g. when I want to show my ticket for the check in):
 Open app -> (wait) -> No I am not interested in improving the app -> (Must look at ads) -> My Studies -> ZHS -> (wait) -> Find the course -> (wait) -> Scroll down -> QR Code -> (wait)
 
 And I don't want anything on my phone that I don't essentially need and that is not open source*.
+
+If somebody from UniNow sees this, please reach out **before** blocking the app off. I do not want to harm you (with this app).
 
 ## Under the hood
 
@@ -51,15 +53,13 @@ And I don't want anything on my phone that I don't essentially need and that is 
 - Webview for loading UniNow website + sniff (and store) cookie
 - Fetch user and page details and extract them from html (this could be improved with a dedicated graphql query; but apparently there is none)
 - Get courses and appointments with GraphQL ([Schema](./doc/UniNow.graphql))
-- Store everything locally in SQL database
+- Store everything on your device in a SQL database
 - QR code scanning: Local copy of all enrolled users, queue for offline synchronization and [fts4](https://www.sqlite.org/fts3.html) for searching (actually kinda complex)
 
 ## Something is broken
-Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`
+Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`. I also appreciate feedback (good or bad) :smile:
 
 Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
-
-**Scanning QR codes was not tested yet, as I am not a course tutor**
 
 ## Releasing (Note for myself)
 
