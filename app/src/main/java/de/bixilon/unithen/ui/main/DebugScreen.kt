@@ -50,6 +50,7 @@ fun DebugScreen() {
         Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
         Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
+        Button({ navigator.navigate(CrashRoute(IllegalStateException("It crashed!"))) }) { Text("Open crash screen") }
 
         var progress by remember { mutableStateOf<String?>(null) }
 
