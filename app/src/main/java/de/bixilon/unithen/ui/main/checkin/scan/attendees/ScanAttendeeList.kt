@@ -43,6 +43,8 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlin.uuid.Uuid
 
 
@@ -179,7 +181,7 @@ fun ScanAttendeeList() {
         storage.fetchAttendees(account, appointment, it)
 
         if (appointment.fetchedAttendees == null) { // only on inital fetch
-            state.animateScrollToItem(0, 0)
+            withContext(Dispatchers.Main) { state.animateScrollToItem(0, 0) }
         }
     }
 
