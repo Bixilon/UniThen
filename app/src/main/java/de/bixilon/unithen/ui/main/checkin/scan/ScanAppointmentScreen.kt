@@ -133,8 +133,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
 
                 if (appointment.canSyncCheckIn(useTime())) {
@@ -156,8 +155,8 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                     }
                 }
                 if (appointment.canPerformCheckIn()) {
-                    LargeFloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
-                        Icon(Icons.Filled.QrCodeScanner, "scan", modifier = Modifier.size(60.dp))
+                    FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
+                        Icon(Icons.Filled.QrCodeScanner, "scan")
                     }
                 }
             }
