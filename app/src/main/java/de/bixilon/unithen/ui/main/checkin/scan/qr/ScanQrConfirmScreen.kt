@@ -36,12 +36,11 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
+import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
-import de.bixilon.unithen.ui.main.settings.Settings
-import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -137,10 +136,11 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
     var message by remember { mutableStateOf<String?>(null) }
 
-    val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
-
-
     val resources = LocalResources.current
+
+    val dismissed = rememberStorage { mutableStateOf(false) }
+    DisposableEffect(Unit) { onDispose { dismissed.value = true } }
+
     val checkin = useAsyncNetwork<Unit>(account) {
         try {
             if (user == null) {
@@ -150,12 +150,16 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             }
 
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-            navigation.pop(); if (!auto) navigation.pop() // close scanner too
+            if (!dismissed.value) {
+                navigation.pop()
+                navigation.navigate(ScanAnyRoute)
+            }
         } catch (error: IOException) {
             if (user == null) {
                 message = resources.getString(R.string.network_error)
-            } else {
-                navigation.pop(); if (!auto) navigation.pop() // close scanner too
+            } else if (!dismissed.value) {
+                navigation.pop()
+                navigation.navigate(ScanAnyRoute)
             }
             throw error
         } catch (_: CheckInUnknownUserException) {

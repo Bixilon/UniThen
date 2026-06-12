@@ -75,9 +75,13 @@ private fun getErrorReason(storage: SqlStorage, course: Course, appointment: App
 
 @Composable
 private fun QrScanScreen(appointments: List<Appointment>) {
+    val navigation = LocalNavigation.current
+    if (appointments.isEmpty()) {
+        return navigation.pop()
+    }
+
     val haptic = LocalHapticFeedback.current
     val storage = LocalStorage.current
-    val navigation = LocalNavigation.current
 
     val errors = remember { mutableStateListOf<ErrorResult>() }
     val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
@@ -88,6 +92,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         delay(1.seconds)
         if (delayedState.value == _delayed) {
             haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            navigation.pop()
             navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
         delayed = null
@@ -145,8 +150,9 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     if (invalid == null) {
                         delayed = null
-                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                        navigation.pop()
+                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         delayed = AcceptedResult(course, appointment, scanned.userId)

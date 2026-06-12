@@ -32,10 +32,7 @@ import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
-import de.bixilon.unithen.ui.main.settings.Settings
-import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
@@ -108,12 +105,6 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val pending = rememberStorage { checkInQueue.getCount(appointment) }
 
     var syncing by remember { mutableStateOf(false) }
-
-    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
-    val visible = LocalVisibility.current
-
-    LaunchedEffect(autoScan && visible) { if (autoScan && visible) navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }
-
 
     if (syncing) {
         Sync(appointment, pending) { syncing = false }
