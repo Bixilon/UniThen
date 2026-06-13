@@ -189,7 +189,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
 
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Button({ // TODO: Dismiss button (sync in background)
+            Button({
                 navigation.pop()
             }, enabled = !checkin.active, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
                 Icon(Icons.Filled.Close, "cancel")

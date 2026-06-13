@@ -8,6 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
+import de.bixilon.unithen.BuildConfig
 
 
 const val CRASH_ADDRESS = "unithen-crash" + '@' + "bixilon" + '.' + "de"
@@ -23,7 +24,7 @@ fun ReportErrorButton(stack: String) {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(CRASH_ADDRESS))
                 putExtra(Intent.EXTRA_SUBJECT, "UniThen Crash")
-                putExtra(Intent.EXTRA_TEXT, "Hi there,\nPlease see the exception below:\n\n${stack}\n\n\nCan you please fix this issue?\nThanks!")
+                putExtra(Intent.EXTRA_TEXT, "Hi there,\nApp version: ${BuildConfig.VERSION}\nPlease see the exception below:\n\n${stack}\n\n\nCan you please fix this issue?\nThanks!")
             }
 
 

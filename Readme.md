@@ -57,7 +57,7 @@ If somebody from UniNow sees this, please reach out **before** blocking the app 
 - QR code scanning: Local copy of all enrolled users, queue for offline synchronization and [fts4](https://www.sqlite.org/fts3.html) for searching (actually kinda complex)
 
 ## Something is broken
-Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`. I also appreciate feedback (good or bad) :smile:
+Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`. I also appreciate feedback (positive or negative) :smile:
 
 Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
 
