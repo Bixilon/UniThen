@@ -27,6 +27,8 @@ INSERT INTO courses(id, site, event, uuid, name) VALUES(901, 901, 901, "00000000
 INSERT INTO courses(id, site, event, uuid, name) VALUES(902, 901, 901, "00000000-0000-0000-0000-000000000002", "Second course");
 INSERT INTO courses(id, site, event, uuid, name) VALUES(903, 902, 902, "00000000-0000-0000-0000-000000000001", "First course B");
 
+INSERT INTO courses(id, site, event, uuid, name) VALUES(904, 902, 902, "00000000-0000-0000-0000-000000000005", "Unreferenced course");
+
 
 
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(901, 901, "00000000-0000-0000-0000-000000000001", 1767312123, 1893542523, "Somewhere");

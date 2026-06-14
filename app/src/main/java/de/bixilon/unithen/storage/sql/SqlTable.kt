@@ -16,6 +16,7 @@ import android.database.Cursor
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import org.intellij.lang.annotations.Language
@@ -47,12 +48,16 @@ abstract class SqlTable<T : DbObject>(
     }
 
 
+    @Deprecated("SqlQuery")
     private fun <X> select(where: String = "", arguments: Array<out Any>, runnable: (Cursor) -> X): X {
         val actualWhere = if (where.isBlank()) "" else "WHERE $where"
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table $actualWhere", *arguments, runnable = runnable)
     }
 
+    @Deprecated("SqlQuery")
     protected fun single(filter: SqlFilter) = single(filter.sql, arguments = filter.parameters.toTypedArray())
+
+    @Deprecated("SqlQuery")
     protected fun single(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             if (!it.moveToNext()) return@select null
@@ -64,11 +69,21 @@ abstract class SqlTable<T : DbObject>(
         }
     }
 
+    @Deprecated("SqlQuery")
     protected fun first(filter: SqlFilter) = first(filter.sql, arguments = filter.parameters.toTypedArray())
+
+    @Deprecated("SqlQuery")
     protected fun first(@Language("SQL") where: String = "", vararg arguments: Any): T? {
         return select(where, arguments = arguments) {
             if (!it.moveToNext()) return@select null
             return@select schema.map(it)
+        }
+    }
+
+    fun first(query: SqlBuilder.Executable): T? {
+        return storage.query(query) {
+            if (!it.moveToNext()) return@query null
+            return@query schema.map(it)
         }
     }
 
@@ -96,7 +111,10 @@ abstract class SqlTable<T : DbObject>(
 
     protected fun Cursor.isNotEmpty() = !isEmpty()
 
+    @Deprecated("SqlQuery")
     protected fun all(filter: SqlFilter) = all(filter.sql, *filter.parameters.toTypedArray())
+
+    @Deprecated("SqlQuery")
     protected fun all(@Language("SQL") where: String = "", vararg arguments: Any): List<T> {
         return select(where, arguments = arguments, runnable = { it.collectAll() })
     }

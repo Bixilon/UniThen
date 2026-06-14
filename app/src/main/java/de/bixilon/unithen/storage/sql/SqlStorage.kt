@@ -115,17 +115,12 @@ class SqlStorage(context: Context) : Closeable {
 
 
     fun cleanup() {
-        transaction {
-            // TODO: Remove courses that are not referenced
-        }
+        helper.executeBatch("cleanup")
         insert("VACUUM")
     }
 
     fun clearCache() {
-        transaction {
-            insert("DELETE FROM appointment_attendees")
-            insert("UPDATE appointments SET fetched_attendees=NULL")
-        }
+        helper.executeBatch("clear_cache")
         insert("VACUUM")
     }
 

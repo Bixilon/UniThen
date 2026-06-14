@@ -38,6 +38,10 @@ class SqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSIO
         }
     }
 
+    fun executeBatch(name: String) {
+        writableDatabase.executeBatch(name)
+    }
+
     companion object {
         const val NAME = "uninow"
         const val VERSION = 9
