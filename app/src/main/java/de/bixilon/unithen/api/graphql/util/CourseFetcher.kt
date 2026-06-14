@@ -32,6 +32,12 @@ object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
 
 
+    private fun CourseQl.isTutor(account: Account): Boolean {
+        if (tutors == null) throw NullPointerException("Tutors not fetched!")
+        return tutors.any { account.uuid == it.id }
+    }
+
+
     suspend fun SqlStorage.fetch(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
         val site = sites[account.site]!!
         val api = account.api(site)
@@ -70,7 +76,7 @@ object CourseFetcher {
 
                     val course = store(site, detailsQl)
 
-                    if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
+                    if (detailsQl.isTutor(account)) {
                         val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
                         store(site, course, enrolled!!)
                     }
@@ -95,7 +101,7 @@ object CourseFetcher {
         store(site, detailsQl)
 
 
-        if (detailsQl.tutors?.any { account.uuid == it.id } ?: false) { // TODO: is that the way to check?
+        if (detailsQl.isTutor(account)) {
             val enrolled = api.getEnrolled(course.uuid)
             store(site, course, enrolled!!)
         }
