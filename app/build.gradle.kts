@@ -106,6 +106,9 @@ android {
             abiFilters += listOf("arm64-v8a", "x86_64")
         }
         packaging {
+            jniLibs {
+                excludes += "**/x86_64/libzxingcpp_android.so" // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
+            }
             // jniLibs.useLegacyPackaging = false
             // dex.useLegacyPackaging = false
         }
