@@ -13,11 +13,23 @@
 package de.bixilon.unithen
 
 import android.app.Application
+import android.util.Log
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraXConfig
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.settings.SETTINGS
 import de.bixilon.unithen.ui.main.settings.SettingsStore
 
-class UniThen : Application() {
+class UniThen : Application(), CameraXConfig.Provider {
+    private val config by lazy {
+        CameraXConfig.Builder.fromConfig(Camera2Config.defaultConfig())
+            .setMinimumLoggingLevel(Log.ERROR)
+            .setAvailableCamerasLimiter(CameraSelector.DEFAULT_BACK_CAMERA)
+            .build()
+    }
+
+    override fun getCameraXConfig() = config
 
     override fun onCreate() {
         super.onCreate()
