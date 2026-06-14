@@ -29,12 +29,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.UpdateChecker
 import de.bixilon.unithen.ui.util.Copy2Clipboard
+import de.bixilon.unithen.ui.util.i18n
 import java.io.IOException
+import java.net.UnknownHostException
 
 
 fun formatDetails(error: Throwable): String? = when (error) {
@@ -47,6 +50,9 @@ fun formatDetails(error: Throwable): String? = when (error) {
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
+    if (exception is UnknownHostException) {
+        return SimpleErrorScreen(R.string.network_error.i18n(), exception.message)
+    }
     Screen(
         modifier = Modifier
             .padding(bottom = 8.dp),
