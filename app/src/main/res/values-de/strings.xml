@@ -22,6 +22,7 @@
     <string name="authentication_loading">Anmelden...</string>
     <string name="courses_synchronize_started">Synchronisiere Kurse...Das kann eine Weile dauern!</string>
     <string name="courses_synchronize_done">Alle Kurse synchronisiert!</string>
+    <string name="course_synchronize_done">Kurs synchronisiert!</string>
     <string name="courses_title">Kurse (%1$d)</string>
     <string name="appointments_title">Termine (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Kurse</string>

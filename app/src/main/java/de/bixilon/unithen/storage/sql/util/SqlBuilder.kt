@@ -76,7 +76,7 @@ object SqlBuilder {
     interface Whereable : Executable {
         infix fun where(filter: SqlFilter?) = if (filter == null) this else Where(this, filter)
         infix fun where(filter: SqlFilter) = Where(this, filter)
-        fun where(sql: String, vararg parameters: Any?) = where(SqlFilter(sql, parameters.toList()))
+        fun where(sql: String, vararg parameters: Any) = where(SqlFilter(sql, parameters.toList()))
     }
 
     class Where internal constructor(

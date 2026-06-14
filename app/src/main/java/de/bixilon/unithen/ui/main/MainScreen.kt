@@ -84,7 +84,7 @@ fun ActualMainScreen() {
         NavigationBar(windowInsets = androidx.compose.foundation.layout.WindowInsets()) {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
-                    MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isMember() }
+                    MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isTutorNot() }
                     MainScreens.CHECKIN_SCAN -> rememberStorage { courses.isTutor() }
                     else -> true
                 }

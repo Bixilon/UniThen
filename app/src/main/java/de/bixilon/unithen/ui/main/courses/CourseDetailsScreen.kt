@@ -86,13 +86,13 @@ fun CourseDetailsScreen(course: Course) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(site, event, course, accounts)
 
-            val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull()
+            val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull() // TODO: get tutor account of appointment
             val toast = useToast()
             val refresh = tutor?.let {
                 useAsyncNetwork<Unit>(tutor) {
                     storage.fetch(tutor, course)
 
-                    toast.invoke(R.string.courses_synchronize_done)
+                    toast.invoke(R.string.course_synchronize_done)
                 }
             }
 

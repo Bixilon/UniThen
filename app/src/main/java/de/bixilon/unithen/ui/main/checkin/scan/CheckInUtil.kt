@@ -105,7 +105,7 @@ object CheckInUtil {
     suspend fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
         val course = storage.courses[appointment.course]!!
         val site = storage.sites[course.site]!!
-        val account = storage.accounts.getTutorAccount(course) ?: return
+        val account = storage.accounts.getTutorAccount(appointment) ?: return
 
         val attempt = storage.appointments.getAttemptId(appointment, user) ?: return
 

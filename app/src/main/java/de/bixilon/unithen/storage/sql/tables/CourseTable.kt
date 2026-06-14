@@ -63,21 +63,30 @@ class CourseTable(
     }
 
     fun isTutor(): Boolean {
-        val query = SqlBuilder.select("1").from(AccountTable)
-            .innerJoin(UserTable, (UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
-            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
+        val course = SqlBuilder.select("1").from(UserTable)
             .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
+            .where((UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+
+        val appointments = SqlBuilder.select("1").from(UserTable)
+            .innerJoin(TutorAppointments, TutorAppointments.user eq UserTable.id)
+            .where((UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+
+        val query = SqlBuilder.select("1").from(AccountTable)
+            .where(SqlFilter.exists(course) or SqlFilter.exists(appointments))
             .limit(1)
 
         return storage.query(query) { it.isNotEmpty() }
     }
 
-    fun isMember(): Boolean {
+    fun isTutorNot(): Boolean {
+        val course = SqlBuilder.select("1").from(UserTable)
+            .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
+            .where((UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+
+        // TODO: check appointments?
+
         val query = SqlBuilder.select("1").from(AccountTable)
-            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
-            .innerJoin(UserTable, (UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
-            .leftJoin(TutorCourses, TutorCourses.user eq UserTable.id)
-            .where("tutor_courses.user IS NULL")
+            .where(SqlFilter.exists(course).not())
             .limit(1)
 
         return storage.query(query) { it.isNotEmpty() }

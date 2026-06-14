@@ -121,6 +121,7 @@ fun CourseAppointments(course: Course) {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(items = appointments, key = Appointment::id) {
+                val isTutor = isTutor || rememberStorage { accounts.getTutorAccount(it) != null }
                 val modifier = Modifier.clickable(isTutor) { navigator.navigate(AppointmentDetailsRoute(it)) }
                 AppointmentCard(it, modifier)
             }

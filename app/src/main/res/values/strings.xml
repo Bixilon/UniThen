@@ -28,6 +28,7 @@
     <string name="authentication_loading">Logging in...</string>
     <string name="courses_synchronize_started">Synchronizing courses...This might take a while!</string>
     <string name="courses_synchronize_done">All courses synchronized!</string>
+    <string name="course_synchronize_done">Course synchronized!</string>
     <string name="courses_title">Courses (%1$d)</string>
     <string name="appointments_title">Appointments (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Courses</string>
