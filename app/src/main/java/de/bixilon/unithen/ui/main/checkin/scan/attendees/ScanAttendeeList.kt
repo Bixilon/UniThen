@@ -23,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,8 +44,7 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
 
@@ -163,6 +163,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 @Composable
 fun ScanAttendeeList() {
     val (account, course, appointment) = LocalScanContext.current
+    val scope = rememberCoroutineScope()
 
     val filter = rememberUserFilter()
 
@@ -181,7 +182,7 @@ fun ScanAttendeeList() {
         storage.fetchAttendees(account, appointment, it)
 
         if (appointment.fetchedAttendees == null) { // only on inital fetch
-            withContext(Dispatchers.Main) { state.animateScrollToItem(0, 0) }
+            scope.launch { state.animateScrollToItem(0, 0) }
         }
     }
 
