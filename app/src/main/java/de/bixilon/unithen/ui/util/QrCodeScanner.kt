@@ -55,7 +55,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List
     val owner = LocalLifecycleOwner.current
 
     val requests = remember { MutableStateFlow<SurfaceRequest?>(null) }
-    val reader = remember { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
+    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
 
     var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
@@ -90,6 +90,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List
             .build()
             .apply {
                 setAnalyzer(ContextCompat.getMainExecutor(context)) { imageProxy ->
+                    val reader = reader ?: return@setAnalyzer
                     imageProxy.use {
                         val bitmap = it.toBitmap()
 
@@ -120,7 +121,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List
 
     val _request = request
 
-    if (_request == null) {
+    if (_request == null || reader == null) {
         CameraMessage(modifier, R.string.scan_starting_camera.i18n())
         return
     }
