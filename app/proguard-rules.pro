@@ -15,6 +15,7 @@
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
+-keepattributes LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
@@ -23,6 +24,6 @@
 
 -keepattributes *Annotation*,EnclosingMethod,Signature
 -dontwarn java.awt.**
--keep class de.bixilon.unithen.** {*; }
--keep enum de.bixilon.unithen.**
--keep interface de.bixilon.unithen.**
+-keepnames class de.bixilon.unithen.** {*; }
+-keepnames enum de.bixilon.unithen.**
+-keepnames interface de.bixilon.unithen.**
