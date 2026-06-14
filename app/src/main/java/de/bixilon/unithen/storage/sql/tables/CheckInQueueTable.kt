@@ -89,7 +89,7 @@ class CheckInQueueTable(
 
     fun getCount(appointment: Appointment): Int {
         return storage.query(
-            SqlBuilder.select(SqlBuilder.Aggregations.Count) from this where (CheckInQueueTable.appointment eq appointment.id))
+            SqlBuilder.select(SqlBuilder.Aggregations.Count) from CheckInQueueTable where (CheckInQueueTable.appointment eq appointment.id))
         { it.collectIntAggregation() }
     }
 

@@ -30,7 +30,7 @@ abstract class SqlTable<T : DbObject>(
 
     @Deprecated("schema")
     val columns = schema.columns.map { it.quantifier }
-    val count get() = select(SqlBuilder.select(SqlBuilder.Aggregations.Count).from(this)) { it.collectIntAggregation() }
+    val count get() = select(SqlBuilder.select(SqlBuilder.Aggregations.Count).from(this.schema)) { it.collectIntAggregation() }
 
     @Deprecated("", level = DeprecationLevel.ERROR)
     fun get(): Nothing = Unreachable()

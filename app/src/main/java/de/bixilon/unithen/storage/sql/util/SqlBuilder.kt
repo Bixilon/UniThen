@@ -12,8 +12,6 @@
 
 package de.bixilon.unithen.storage.sql.util
 
-import de.bixilon.unithen.storage.sql.SqlTable
-
 object SqlBuilder {
 
     object Aggregations {
@@ -38,7 +36,7 @@ object SqlBuilder {
     class Select internal constructor(val fields: List<String>) {
 
         infix fun from(table: String) = From(fields, listOf(table))
-        infix fun from(table: SqlTable<*>) = from(table.table)
+        infix fun from(table: SqlTableSchema<*>) = from(table.table)
     }
 
     interface Joinable : Executable {

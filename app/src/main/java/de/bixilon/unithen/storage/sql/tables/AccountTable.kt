@@ -68,12 +68,12 @@ class AccountTable(
     )
 
     fun getTutorAccount(course: Course): Account? {
-        val query = SqlBuilder.select(AccountTable)
-            .innerJoin("users", "users.uuid = accounts.uuid")
-            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
-            .innerJoin("tutor_courses", "tutor_courses.user = users.id")
+        val query = SqlBuilder.select(AccountTable) // TODO: Include appointment tutors
+            .innerJoin(UserTable, UserTable.uuid eq uuid)
+            .innerJoin(AccountCourses, AccountCourses.account eq id)
+            .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
             .where(AccountCourses.course eq course.id)
-            .and(SqlFilter("tutor_courses.course=?", listOf(course.id)))
+            .and(TutorCourses.course eq course.id)
             .limit(1)
 
         return storage.query(query) { it.collectAll() }.firstOrNull()

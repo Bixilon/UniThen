@@ -30,7 +30,7 @@ data class SqlFilter(
     infix fun and(other: SqlFilter?) = connect("AND", other)
     infix fun or(other: SqlFilter?) = connect("OR", other)
 
-    infix fun where(where: SqlFilter?) = if (where == null) this else SqlFilter(this.sql + " WHERE " + where.sql, this.parameters + where.parameters)
+    infix fun exists(query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("EXISTS (${it.sql})", parameters + it.parameters) }
 
     fun not() = SqlFilter("NOT ($sql)", parameters)
 
@@ -64,6 +64,8 @@ data class SqlFilter(
 
         fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)
         fun or(vararg filters: Pair<String, Any?>) = join(" OR ", *filters)
+        fun exists(query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("EXISTS (${it.sql})", it.parameters) }
+
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
 
 

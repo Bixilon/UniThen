@@ -22,3 +22,17 @@ object AccountCourses : SqlTableSchema<DbObject> {
     val account = SqlTableSchema.SqlColumn<Key>(table, "account")
     val course = SqlTableSchema.SqlColumn<Key>(table, "course")
 }
+
+object TutorCourses : SqlTableSchema<DbObject> {
+    override val table = "tutor_courses"
+
+    val user = SqlTableSchema.SqlColumn<Key>(table, "user")
+    val course = SqlTableSchema.SqlColumn<Key>(table, "course")
+}
+
+object TutorAppointments : SqlTableSchema<DbObject> {
+    override val table = "tutor_appointments"
+
+    val user = SqlTableSchema.SqlColumn<Key>(table, "user")
+    val appointment = SqlTableSchema.SqlColumn<Key>(table, "appointment")
+}
