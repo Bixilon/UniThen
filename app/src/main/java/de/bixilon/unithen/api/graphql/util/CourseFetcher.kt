@@ -27,6 +27,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Clock
+import kotlin.uuid.Uuid
 
 object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
@@ -34,37 +35,37 @@ object CourseFetcher {
 
     private fun CourseQl.isTutor(account: Account): Boolean {
         if (tutors == null) throw NullPointerException("Tutors not fetched!")
+        val tutors = tutors.toMutableSet()
+
+        appointments?.let {
+            for (appointment in appointments) {
+                tutors += appointment.tutors ?: continue
+            }
+        }
+
         return tutors.any { account.uuid == it.id }
     }
 
 
-    suspend fun SqlStorage.fetch(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
+    suspend fun SqlStorage.fetchFromCourses(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
         val site = sites[account.site]!!
         val api = account.api(site)
         if (!force && !account.isStale()) return
 
-        val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("Could not fetch course overview?")
+        val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("No courses?")
 
         progress?.invoke(CourseFetchProgress(0, coursesQl.size))
 
         val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
 
-        transaction {
-            accounts.clearCourses(account)
-
-            for (courseQl in coursesQl) {
-                val course = courses[site, courseQl.id] ?: continue
-                accounts.addToCourse(account, course)
-            }
-        }
-        cleanup()
+        setCourses(account, site, coursesQl.map { it.id }.toSet())
 
         var done = 0
         var total = coursesQl.size
 
         coroutineScope {
             coursesQl.mapNotNull { courseQl ->
-                val course = this@fetch.courses[site, courseQl.id]
+                val course = this@fetchFromCourses.courses[site, courseQl.id]
 
                 if (course != null && !course.isDataStale()) {
                     total--
@@ -76,6 +77,7 @@ object CourseFetcher {
                     val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
 
                     val course = store(site, detailsQl)
+                    accounts.addToCourse(account, course)
 
                     if (detailsQl.isTutor(account)) {
                         val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
@@ -83,7 +85,55 @@ object CourseFetcher {
                     }
 
                     progress?.invoke(CourseFetchProgress(done++, total))
+                }
+            }.awaitAll()
+        }
+
+
+        accounts.update(account.id, fetched = Clock.System.now())
+    }
+
+    suspend fun SqlStorage.fetchFromAppointments(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
+        val site = sites[account.site]!!
+        val api = account.api(site)
+        if (!force && !account.isStale()) return
+
+        val appointmentsQl = api.getAppointments() ?: throw NullPointerException("No appointments?")
+        val coursesIds = appointmentsQl.map { it.course!!.id }.toSet()
+
+        progress?.invoke(CourseFetchProgress(0, coursesIds.size))
+
+        val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
+
+        setCourses(account, site, coursesIds)
+
+        var done = 0
+        var total = coursesIds.size
+
+        coroutineScope {
+            coursesIds.mapNotNull { courseId ->
+                val course = this@fetchFromAppointments.courses[site, courseId]
+
+                if (course != null && !course.isDataStale()) {
+                    total--
+                    progress?.invoke(CourseFetchProgress(done, total))
+                    return@mapNotNull null
+                }
+
+                async {
+                    val appointments = appointmentsQl.filter { it.course!!.id == courseId }
+                    val detailsQl = semaphore.withPermit { api.getCourseSlim(courseId)!! }.copy(appointments = appointments)
+
+                    val course = store(site, detailsQl)
                     accounts.addToCourse(account, course)
+
+
+                    if (detailsQl.isTutor(account)) {
+                        val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
+                        store(site, course, enrolled!!)
+                    }
+
+                    progress?.invoke(CourseFetchProgress(done++, total))
                 }
             }.awaitAll()
         }
@@ -96,18 +146,29 @@ object CourseFetcher {
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        // if (!course.isDataStale()) return
+        if (!course.isDataStale()) return
 
         val detailsQl = api.getCourse(course.uuid)!!
         store(site, detailsQl)
+        accounts.addToCourse(account, course)
 
 
         if (detailsQl.isTutor(account)) {
             val enrolled = api.getEnrolled(course.uuid)
             store(site, course, enrolled!!)
         }
+    }
 
-        accounts.addToCourse(account, course)
+    private fun SqlStorage.setCourses(account: Account, site: Site, ids: Set<Uuid>) {
+        transaction {
+            accounts.clearCourses(account)
+
+            for (id in ids) {
+                val course = courses[site, id] ?: continue
+                accounts.addToCourse(account, course)
+            }
+        }
+        cleanup()
     }
 
 
@@ -126,13 +187,16 @@ object CourseFetcher {
             courses.addTutor(tutor, course)
         }
 
-        for (appointmentQl in courseQl.appointments!!) {
-            val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start!!, appointmentQl.end!!, appointmentQl.canceledAt, appointmentQl.location!!.name)
+        if (courseQl.appointments != null) {
+            // TODO: Remove all other ones?
+            for (appointmentQl in courseQl.appointments) {
+                val appointment = appointments.add(course, appointmentQl.id, appointmentQl.start!!, appointmentQl.end!!, appointmentQl.canceledAt, appointmentQl.location!!.name)
 
-            appointments.clearTutors(appointment)
-            for (tutorQl in appointmentQl.tutors!!) {
-                val tutor = users.add(site, tutorQl.id, tutorQl.firstname!!, tutorQl.lastname!!)
-                appointments.addTutor(tutor, appointment)
+                appointments.clearTutors(appointment)
+                for (tutorQl in appointmentQl.tutors!!) {
+                    val tutor = users.add(site, tutorQl.id, tutorQl.firstname!!, tutorQl.lastname!!)
+                    appointments.addTutor(tutor, appointment)
+                }
             }
         }
 

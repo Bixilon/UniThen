@@ -41,8 +41,16 @@ open class AuthenticatedUniNowApi(
         return graphql<Queries>("courses", "user" to JsonPrimitive(user.toString())).userPk?.courses
     }
 
+    suspend fun getAppointments(): List<AppointmentQl>? {
+        return graphql<Queries>("appointments").appointments
+    }
+
     suspend fun getCourse(course: Uuid): CourseQl? {
         return graphql<Queries>("course", "course" to JsonPrimitive(course.toString())).course
+    }
+
+    suspend fun getCourseSlim(course: Uuid): CourseQl? {
+        return graphql<Queries>("course_slim", "course" to JsonPrimitive(course.toString())).course
     }
 
     suspend fun getEnrolled(course: Uuid): List<CourseUserQl>? {

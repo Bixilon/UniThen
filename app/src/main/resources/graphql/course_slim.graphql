@@ -1,0 +1,17 @@
+query ($course: ID!) {
+    courses_pk(id: $course) {
+        id
+        name
+        event {
+            id
+            name
+            start
+            end
+        }
+        tutors {
+            id
+            first_name
+            last_name
+        }
+    }
+}

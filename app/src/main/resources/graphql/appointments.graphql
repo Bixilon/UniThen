@@ -1,0 +1,33 @@
+query {
+    appointments {
+        id
+        start
+        end
+        canceledAt
+        tutors {
+            id
+            first_name
+            last_name
+        }
+        location {
+            __typename
+            ... on Area {
+                name
+            }
+            ... on Location {
+                name
+            }
+            ... on Room {
+                name
+                floor {
+                    building {
+                        name
+                    }
+                }
+            }
+        }
+        course {
+            id
+        }
+    }
+}

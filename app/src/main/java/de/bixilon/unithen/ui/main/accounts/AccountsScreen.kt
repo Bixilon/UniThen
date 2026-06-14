@@ -34,13 +34,16 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -53,7 +56,8 @@ import kotlinx.coroutines.launch
 @Composable
 private fun Sync(account: Account): (() -> Unit)? {
     val storage = LocalStorage.current
-    val synchronize = useAsyncNetwork<Unit>(account) { storage.fetch(account, true) }
+    val fetchAppointments by rememberSetting(Settings.FETCH_APPOINTMENTS)
+    val synchronize = useAsyncNetwork<Unit>(account) { if (fetchAppointments) storage.fetchFromAppointments(account, true) else storage.fetchFromCourses(account, true) }
 
     var running by remember { mutableStateOf(false) } // TODO: Abort actually
 

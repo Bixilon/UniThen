@@ -27,7 +27,7 @@ import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.MainScreens
@@ -55,7 +55,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
 
         message = resources.getString(R.string.authentication_course_list)
 
-        storage.fetch(account, true) { message = resources.getString(R.string.authentication_fetching, it.course, it.courses) }
+        storage.fetchFromCourses(account, true) { message = resources.getString(R.string.authentication_fetching, it.course, it.courses) }
 
         when {
             !first -> Unit

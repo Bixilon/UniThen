@@ -29,7 +29,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
@@ -39,6 +40,8 @@ import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.main.add.toBitmap
+import de.bixilon.unithen.ui.main.settings.Settings
+import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -60,6 +63,7 @@ fun CoursesScreen() {
     val events = rememberStorage { events.all().sortedByDescending { it.start } }
 
     val toast = useToast()
+    val fetchAppointments by rememberSetting(Settings.FETCH_APPOINTMENTS)
     Screen {
         ScreenTitle(R.string.courses_title.i18n(courseCount))
 
@@ -72,7 +76,7 @@ fun CoursesScreen() {
 
                 storage.accounts.all().forEach {
                     try {
-                        storage.fetch(it, false)
+                        if (fetchAppointments) storage.fetchFromAppointments(it, false) else storage.fetchFromCourses(it, false)
                     } catch (_: AuthenticationException) {
                         storage.accounts.logout(it)
                         loginSite = it.site

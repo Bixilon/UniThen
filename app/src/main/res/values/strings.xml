@@ -120,6 +120,8 @@
     <string name="settings_advanced">Advanced</string>
     <string name="settings_advanced_remove_name">Remove name (QR code)</string>
     <string name="settings_advanced_remove_name_description">Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might not work with the UniNow app.</string>
+    <string name="settings_advanced_fetch_appointments">Alternative course fetching</string>
+    <string name="settings_advanced_fetch_appointments_description">Uses another query for fetching courses. This takes much longer. Only enable if you are tutor for individual appointments, not for the whole course.</string>
 
     <string name="settings_check_in">Check In (Scan)</string>
     <string name="settings_check_in_high_resolution">High resolution scanning</string>

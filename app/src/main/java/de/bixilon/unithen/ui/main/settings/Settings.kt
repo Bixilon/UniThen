@@ -24,6 +24,8 @@ object Settings {
     val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", true)
     val SCAN_AWAIT_SERVER_CONFIRMATION = Setting("scan_await_server_confirmation", false)
 
+    val FETCH_APPOINTMENTS = Setting("fetch_appointments", false)
+
     val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
 
     val ATTENDEE_ORDER = Setting("attendee_order", Order.ASC)
