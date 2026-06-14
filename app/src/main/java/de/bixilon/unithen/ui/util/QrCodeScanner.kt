@@ -41,21 +41,20 @@ import kotlin.time.Instant
 
 @Composable
 fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List<BarcodeReader.Result>) -> Unit) {
-    if (!LocalVisibility.current) return
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) {
         CameraMessage(modifier, R.string.scan_camera_permission.i18n())
         return
     }
+    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
 
-    if (!rememberForeground()) return
+    if (!LocalVisibility.current || !rememberForeground()) return
 
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
 
     val requests = remember { MutableStateFlow<SurfaceRequest?>(null) }
-    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
 
     var provider by remember { mutableStateOf<ProcessCameraProvider?>(null) }
     val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
