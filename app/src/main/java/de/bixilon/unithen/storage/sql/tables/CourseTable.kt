@@ -63,21 +63,21 @@ class CourseTable(
     }
 
     fun isTutor(): Boolean {
-        val query = SqlBuilder.select("1").from("accounts")
-            .innerJoin("users", "users.uuid = accounts.uuid")
+        val query = SqlBuilder.select("1").from(AccountTable)
+            .innerJoin(UserTable, (UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
             .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
-            .innerJoin("tutor_courses", "tutor_courses.user = users.id")
+            .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
             .limit(1)
 
         return storage.query(query) { it.isNotEmpty() }
     }
 
     fun isMember(): Boolean {
-        val query = SqlBuilder.select("1").from("accounts")
+        val query = SqlBuilder.select("1").from(AccountTable)
             .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
-            .leftJoin("users", "users.uuid = accounts.uuid")
-            .leftJoin("tutor_courses", "tutor_courses.user = users.id")
-            .where(SqlFilter("tutor_courses.user IS NULL"))
+            .innerJoin(UserTable, (UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+            .leftJoin(TutorCourses, TutorCourses.user eq UserTable.id)
+            .where("tutor_courses.user IS NULL")
             .limit(1)
 
         return storage.query(query) { it.isNotEmpty() }

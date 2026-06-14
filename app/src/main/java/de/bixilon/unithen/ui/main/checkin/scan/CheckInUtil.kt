@@ -34,7 +34,7 @@ object CheckInUtil {
         val appointment = storage.appointments[item.appointment]!!
         val course = storage.courses[appointment.course]!!
         val site = storage.sites[course.site]!!
-        val account = storage.accounts.getTutorAccount(course) ?: return
+        val account = storage.accounts.getTutorAccount(appointment) ?: return
 
 
         val attemptQl = withContext(Dispatchers.IO) {

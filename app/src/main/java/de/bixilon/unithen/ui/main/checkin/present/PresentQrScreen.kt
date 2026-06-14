@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.lightspark.composeqr.QrCodeView
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.string.StringUtil.truncate
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
@@ -89,6 +90,9 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
             InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
             InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
             InfoPair(R.string.appointment_location.i18n(), appointment.location)
+            if (BuildConfig.DEBUG) {
+                InfoPair("ID", appointment.uuid.toString())
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

@@ -96,7 +96,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         if (delayedState.value == _delayed) {
             haptic.performHapticFeedback(HapticFeedbackType.Reject)
             if (!autoScan) navigation.pop()
-            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.course)!!, _delayed.course, _delayed.appointment, _delayed.userId))
+            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.appointment)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
         delayed = null
     }
@@ -155,7 +155,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         delayed = null
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                         if (!autoScan) navigation.pop()
-                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(course)!!, course, appointment, scanned.userId))
+                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         delayed = AcceptedResult(course, appointment, scanned.userId)

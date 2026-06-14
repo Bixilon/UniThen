@@ -66,7 +66,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val storage = LocalStorage.current
 
     val course = storage.courses[appointment.course]!!
-    val account = storage.accounts.getTutorAccount(course)
+    val account = storage.accounts.getTutorAccount(appointment)
 
 
     if (account == null) {

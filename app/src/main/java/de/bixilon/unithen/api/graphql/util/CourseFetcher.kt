@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.api.graphql.util
 
+import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
@@ -46,6 +47,21 @@ object CourseFetcher {
         return tutors.any { account.uuid == it.id }
     }
 
+    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, slim: Boolean, semaphore: Semaphore, appointments: List<AppointmentQl>?) {
+        val site = sites[account.site]!!
+        val api = account.api(site)
+
+        val detailsQl = semaphore.withPermit { if (slim) api.getCourseSlim(id) else api.getCourse(id) }!!.let { it.copy(appointments = appointments ?: it.appointments) }
+
+        val course = store(site, detailsQl)
+        accounts.addToCourse(account, course)
+
+        if (detailsQl.isTutor(account)) {
+            val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
+            store(site, course, enrolled!!)
+        }
+    }
+
 
     suspend fun SqlStorage.fetchFromCourses(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
         val site = sites[account.site]!!
@@ -74,16 +90,7 @@ object CourseFetcher {
                 }
 
                 async {
-                    val detailsQl = semaphore.withPermit { api.getCourse(courseQl.id)!! }
-
-                    val course = store(site, detailsQl)
-                    accounts.addToCourse(account, course)
-
-                    if (detailsQl.isTutor(account)) {
-                        val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
-                        store(site, course, enrolled!!)
-                    }
-
+                    fetchCourse(account, courseQl.id, false, semaphore, null)
                     progress?.invoke(CourseFetchProgress(done++, total))
                 }
             }.awaitAll()
@@ -122,16 +129,7 @@ object CourseFetcher {
 
                 async {
                     val appointments = appointmentsQl.filter { it.course!!.id == courseId }
-                    val detailsQl = semaphore.withPermit { api.getCourseSlim(courseId)!! }.copy(appointments = appointments)
-
-                    val course = store(site, detailsQl)
-                    accounts.addToCourse(account, course)
-
-
-                    if (detailsQl.isTutor(account)) {
-                        val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
-                        store(site, course, enrolled!!)
-                    }
+                    fetchCourse(account, courseId, true, semaphore, appointments)
 
                     progress?.invoke(CourseFetchProgress(done++, total))
                 }

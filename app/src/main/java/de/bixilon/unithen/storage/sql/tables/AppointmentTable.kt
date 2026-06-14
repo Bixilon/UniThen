@@ -48,22 +48,26 @@ class AppointmentTable(
 
     fun getInRange(from: Instant, to: Instant, canceled: Boolean? = null, member: Boolean? = null, tutor: Boolean? = null): List<Appointment> {
         val _canceled = canceled?.let { if (it) AppointmentTable.canceled.isNotNull() else AppointmentTable.canceled.isNull() }
-        val _member = member?.let { SqlFilter.exists(SqlBuilder.select("1").from(AccountCourses).where((AppointmentTable.course eq AccountCourses.course).letIf(it) { not() })) }
+        val _member = member?.let { SqlFilter.exists(SqlBuilder.select("1").from(AccountCourses).where((course eq AccountCourses.course).letIf(it) { not() })) }
         val _tutor = tutor?.let { // TODO: OR is tutor for appointment
-            val exists =
-                if (it) {
+            if (it) {
+                return@let SqlFilter.exists(
                     SqlBuilder.select("1").from(AccountCourses)
                         .innerJoin(TutorCourses, (TutorCourses.user eq AccountCourses.account) and (TutorCourses.course eq AccountCourses.course))
-                        .where(AccountCourses.course eq course)
-                } else {
-                    SqlBuilder.select("1").from(AccountCourses)
-                        .where(AccountCourses.course eq course)
-                        .and(SqlFilter.exists(
-                            SqlBuilder.select("1").from(TutorCourses)
-                                .where((TutorCourses.user eq AccountCourses.account) and (TutorCourses.course eq AccountCourses.course)))
-                            .not())
-                }
-            return@let SqlFilter.exists(exists)
+                        .where(AccountCourses.course eq course))
+                    .or(
+                        SqlFilter.exists(SqlBuilder.select("1").from(AccountCourses)
+                            .innerJoin(TutorAppointments, (TutorAppointments.user eq AccountCourses.account) and (TutorAppointments.appointment eq id))
+                            .where(AccountCourses.course eq course))
+                    )
+            } else {
+                return@let SqlFilter.exists(SqlBuilder.select("1").from(AccountCourses)
+                    .where(AccountCourses.course eq course)
+                    .and(SqlFilter.exists(
+                        SqlBuilder.select("1").from(TutorCourses)
+                            .where((TutorCourses.user eq AccountCourses.account) and (TutorCourses.course eq AccountCourses.course)))
+                        .not()))
+            }
         }
 
         val _time = ((end lt from) or (start gt to)).not()

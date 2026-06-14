@@ -29,6 +29,7 @@ import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
@@ -68,12 +69,28 @@ class AccountTable(
     )
 
     fun getTutorAccount(course: Course): Account? {
-        val query = SqlBuilder.select(AccountTable) // TODO: Include appointment tutors
-            .innerJoin(UserTable, UserTable.uuid eq uuid)
+        val query = SqlBuilder.select(AccountTable)
+            .innerJoin(UserTable, (UserTable.uuid eq uuid) and (UserTable.site eq site))
             .innerJoin(AccountCourses, AccountCourses.account eq id)
             .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
             .where(AccountCourses.course eq course.id)
             .and(TutorCourses.course eq course.id)
+            .limit(1)
+
+        return storage.query(query) { it.collectAll() }.firstOrNull()
+    }
+
+    fun getTutorAccount(appointment: Appointment): Account? {
+        val course = storage.courses[appointment.course]!!
+        getTutorAccount(course)?.let { return it }
+
+        val query = SqlBuilder.select(AccountTable)
+            .innerJoin(UserTable, (UserTable.uuid eq uuid) and (UserTable.site eq site))
+            .innerJoin(AccountCourses, AccountCourses.account eq id)
+            .innerJoin(CourseTable, AccountCourses.course eq CourseTable.id)
+            .innerJoin(TutorAppointments, TutorAppointments.user eq UserTable.id)
+            .where(AccountCourses.course eq appointment.course)
+            .and(TutorAppointments.appointment eq appointment.id)
             .limit(1)
 
         return storage.query(query) { it.collectAll() }.firstOrNull()
