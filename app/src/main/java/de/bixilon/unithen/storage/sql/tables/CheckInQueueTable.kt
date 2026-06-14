@@ -25,6 +25,7 @@ import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.lt
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -44,7 +45,7 @@ class CheckInQueueTable(
 
     operator fun get(appointment: Appointment, uuid: Uuid) = single(SqlFilter.and("appointment" to appointment.id, "uuid" to uuid))
     operator fun get(appointment: Appointment, user: User) = single(SqlFilter.and("appointment" to appointment.id, "user" to user.id))
-    operator fun get(appointment: Appointment) = all(SqlFilter.and("appointment" to appointment.id) + " ORDER BY status")
+    operator fun get(appointment: Appointment) = all(select().where(SqlFilter.and("appointment" to appointment.id)))
 
     @Deprecated("data", level = DeprecationLevel.ERROR)
     fun update(appointment: Appointment, user: User): Nothing = Broken()
@@ -101,7 +102,7 @@ class CheckInQueueTable(
 
         return storage.transaction {
             // TODO: Only sync if appointment end is still ahead of us
-            val entry = first((SqlFilter("sync<?", last) and _appointment) + "LIMIT 1") ?: return@transaction null
+            val entry = first(select().where((sync lt last) and _appointment).limit(1)) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 

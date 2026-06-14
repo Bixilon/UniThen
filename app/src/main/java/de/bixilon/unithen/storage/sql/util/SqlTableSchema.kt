@@ -22,6 +22,8 @@ interface SqlTableSchema<T : DbObject> {
 
     class SqlColumn<T>(val table: String, val name: String) {
         val quantifier get() = "$table.$name"
+
+        override fun toString() = quantifier
     }
 
 

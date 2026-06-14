@@ -30,9 +30,9 @@ data class SqlFilter(
     infix fun and(other: SqlFilter?) = connect("AND", other)
     infix fun or(other: SqlFilter?) = connect("OR", other)
 
-    operator fun plus(other: String?) = if (other == null) this else SqlFilter(this.sql + " " + other, this.parameters)
-
     infix fun where(where: SqlFilter?) = if (where == null) this else SqlFilter(this.sql + " WHERE " + where.sql, this.parameters + where.parameters)
+
+    fun not() = SqlFilter("NOT ($sql)", parameters)
 
 
     companion object {
@@ -85,7 +85,7 @@ data class SqlFilter(
         infix fun <T> SqlTableSchema.SqlColumn<T>.le(other: T) = create("<=", other)
 
 
-        fun <T> SqlTableSchema.SqlColumn<T?>.isNull() = SqlFilter(this.name + " IS NULL")
-        fun <T> SqlTableSchema.SqlColumn<T?>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
+        fun <T> SqlTableSchema.SqlColumn<T?>.isNull() = SqlFilter(this.quantifier + " IS NULL")
+        fun <T> SqlTableSchema.SqlColumn<T?>.isNotNull() = SqlFilter(this.quantifier + " IS NOT NULL")
     }
 }

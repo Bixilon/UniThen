@@ -94,6 +94,7 @@ object SqlBuilder {
 
     interface Orderable : Executable {
         fun order(field: String, order: Order.Order = Order.Order.ASC) = order(field to order)
+        fun order(field: SqlTableSchema.SqlColumn<*>, order: Order.Order = Order.Order.ASC) = order(field.quantifier, order)
         fun order(vararg fields: Pair<String, Order.Order>) = Order(this, fields.toList())
     }
 

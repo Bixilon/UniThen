@@ -21,10 +21,13 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.gt
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNotNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.lt
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -53,9 +56,11 @@ class AppointmentTable(
             }
         }
 
-        val filter = SqlFilter("NOT (end < ? OR start > ?)", listOf(from, to)) and _canceled and _tutor and _member
+        val _time = ((end lt from) or (start gt to)).not()
 
-        return all(filter + "ORDER BY start DESC")
+        val filter = _time and _canceled and _tutor and _member
+
+        return all(select().where(filter).order(start, SqlBuilder.Order.Order.DESC))
     }
 
     fun update(id: Key, start: Instant? = null, end: Instant? = null, canceled: Instant? = null, location: String? = null, fetchedAttendees: Instant? = null) = update(id, SqlFilter.comma("start" to start, "end" to end, "canceled" to canceled, "location" to location, "fetched_attendees" to fetchedAttendees))
