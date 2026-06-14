@@ -21,7 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -86,24 +86,17 @@ fun CourseDetailsScreen(course: Course) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(site, event, course, accounts)
 
-            var refreshing by remember { mutableStateOf(false) }
-
             val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull()
             val toast = useToast()
             val refresh = tutor?.let {
                 useAsyncNetwork<Unit>(tutor) {
-                    try {
-                        refreshing = true
-                        storage.fetch(tutor, course)
+                    storage.fetch(tutor, course)
 
-                        toast.invoke(R.string.courses_synchronize_done)
-                    } finally {
-                        refreshing = false
-                    }
+                    toast.invoke(R.string.courses_synchronize_done)
                 }
             }
 
-            PullToRefreshBox(refreshing, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
+            PullToRefreshBox(refresh?.active ?: false, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
                 Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     CourseAppointments(course)
                     CourseEnrolled(course)

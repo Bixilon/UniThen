@@ -44,13 +44,12 @@ import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.flow.first
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
 
 @Composable
 private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modifier) {
-    val now = remember { Clock.System.now() }
+    val now = useTime()
 
     val color = when {
         appointment.canceled != null -> MaterialTheme.colorScheme.errorContainer

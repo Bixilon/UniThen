@@ -30,7 +30,7 @@ fun useTime(): Instant {
     LaunchedEffect(Unit) {
         while (true) {
             time = getTime(fakeTime)
-            delay(10.seconds)
+            delay(30.seconds)
         }
     }
 

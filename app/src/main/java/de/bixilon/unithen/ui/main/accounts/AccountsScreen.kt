@@ -44,14 +44,10 @@ import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.useAsyncNetwork
-import de.bixilon.unithen.ui.util.useToast
-import de.bixilon.unithen.ui.util.verticalScroll
+import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.time.Clock
 
 
 @Composable
@@ -190,11 +186,12 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
     val site = rememberStorage { sites[account.site]!! }
+    val now = useTime()
 
 
     val color = when {
         account.sessionKey.isNullOrBlank() -> MaterialTheme.colorScheme.errorContainer
-        Clock.System.now() - account.fetched < 4.weeks -> MaterialTheme.colorScheme.primaryContainer // TODO: That color sucks
+        now - account.fetched < 4.weeks -> MaterialTheme.colorScheme.primaryContainer // TODO: That color sucks
         else -> MaterialTheme.colorScheme.secondaryContainer
     }
 

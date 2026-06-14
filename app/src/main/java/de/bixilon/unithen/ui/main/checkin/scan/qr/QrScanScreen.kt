@@ -38,9 +38,9 @@ import kotlinx.coroutines.delay
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 import kotlin.uuid.Uuid
 
 @Serializable
@@ -59,7 +59,7 @@ data class ErrorResult(
     val reason: QrErrorReasons,
     val details: String? = null,
 ) {
-    val time = Clock.System.now()
+    val time = TimeSource.Monotonic.markNow()
 }
 
 private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, userId: Uuid): QrErrorReasons? {
@@ -104,7 +104,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
     LaunchedEffect(Unit) {
         while (true) {
-            val now = Clock.System.now()
+            val now = TimeSource.Monotonic.markNow()
             errors.removeIf { (now - it.time) > 1.seconds }
             delay(100.milliseconds)
         }

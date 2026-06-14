@@ -27,7 +27,6 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import java.text.DateFormatSymbols
 import java.util.*
-import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Instant
 
@@ -76,7 +75,7 @@ object TimeFormatUtil {
     @Composable
     fun Instant.formatNow(): String {
         if (this.epochSeconds == 0L) return R.string.time_never.i18n()
-        val delta = Clock.System.now() - this
+        val delta = useTime() - this
 
         val format = if (delta > Duration.ZERO) R.string.time_future else R.string.time_past
 
