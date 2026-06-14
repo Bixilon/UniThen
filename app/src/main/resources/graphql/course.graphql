@@ -20,6 +20,8 @@ query ($course: ID!) {
             canceledAt
             tutors {
                 id
+                first_name
+                last_name
             }
             location {
                 __typename

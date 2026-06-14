@@ -96,7 +96,7 @@ object CourseFetcher {
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        if (!course.isDataStale()) return
+        // if (!course.isDataStale()) return
 
         val detailsQl = api.getCourse(course.uuid)!!
         store(site, detailsQl)
@@ -131,8 +131,8 @@ object CourseFetcher {
 
             appointments.clearTutors(appointment)
             for (tutorQl in appointmentQl.tutors!!) {
-                val user = users[site, tutorQl.id] ?: continue // TODO: Warn if tutor is not in course->tutors?
-                appointments.addTutor(user, appointment)
+                val tutor = users.add(site, tutorQl.id, tutorQl.firstname!!, tutorQl.lastname!!)
+                appointments.addTutor(tutor, appointment)
             }
         }
 
