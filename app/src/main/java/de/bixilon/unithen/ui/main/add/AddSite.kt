@@ -17,11 +17,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.R
@@ -29,44 +30,30 @@ import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.i18n
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import de.bixilon.unithen.ui.util.useAsyncNetwork
 
 @Composable
 fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
     val storage = LocalStorage.current
-    var error: Throwable? by remember { mutableStateOf(null) }
 
     BackHandler { cancel.invoke() }
 
-    LaunchedEffect(url) {
-        try {
-            val site = withContext(Dispatchers.IO) { storage.sites.add(url) }
-            callback(site)
-        } catch (_error: Throwable) {
-            _error.printStackTrace()
-            error = _error
-        }
-    }
+    val add = useAsyncNetwork<Unit>(null) { val site = storage.sites.add(url); callback.invoke(site) }
+
+    LaunchedEffect(url) { add.invoke(Unit) }
+
 
     AlertDialog(
         onDismissRequest = cancel,
-        title = { if (error != null) Text("Error!") else Text("Add Site") },
+        title = { Text(R.string.sites_fetching_title.i18n()) },
         text = {
-            error?.let {
-                Text("An error occurred while fetching page details: $it", color = Color.Red)
-                return@AlertDialog
-            }
-
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Fetching page details ($url)...")
+                Text(R.string.sites_fetching_description.i18n())
             }
         },
-        confirmButton = { if (error != null) TextButton(onClick = cancel) { Text("Close") } }
+        confirmButton = { Button(onClick = cancel) { Text(R.string.cancel.i18n()) } }
     )
 }
 
@@ -91,11 +78,11 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
 
     AlertDialog(
         onDismissRequest = cancel ?: {},
-        title = { Text("Add New Site") },
+        title = { Text(R.string.sites_add_title.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
-                    "Enter the URL of the site you want to add:",
+                    text = R.string.sites_add_description.i18n(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -105,7 +92,7 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    placeholder = { Text("e.g. kurse.uni.de") },
+                    placeholder = { Text(R.string.sites_add_placeholder.i18n()) },
                 )
             }
         },
@@ -118,11 +105,13 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
                 },
                 enabled = catchAll { SiteDetails.fix(input.text.toString()) }?.isNotBlank() ?: false,
             ) {
-                Text("Add Site")
+                Icon(Icons.Filled.Add, "add")
+                Spacer(Modifier.width(8.dp))
+                Text(R.string.sites_add_add.i18n())
             }
         },
         dismissButton = {
-            cancel?.let { TextButton(onClick = it) { Text("Cancel") } }
+            cancel?.let { TextButton(onClick = it) { Text(R.string.cancel.i18n()) } }
         },
         containerColor = MaterialTheme.colorScheme.background
     )

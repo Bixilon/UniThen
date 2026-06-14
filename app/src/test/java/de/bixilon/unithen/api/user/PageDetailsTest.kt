@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 class PageDetailsTest {
 
     // @Test
-    fun `fetch zhs`() {
+    suspend fun `fetch zhs`() {
         val details = SiteDetails.fetch("https://kurse.zhs-muenchen.de".toURI())
         assertEquals(details.name, "ZHS München")
     }

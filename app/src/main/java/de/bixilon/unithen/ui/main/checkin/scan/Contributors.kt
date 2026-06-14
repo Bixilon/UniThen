@@ -10,20 +10,22 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.types
+package de.bixilon.unithen.ui.main.checkin.scan
 
-import de.bixilon.unithen.storage.DbKeyed
-import de.bixilon.unithen.storage.Key
-import de.bixilon.unithen.ui.main.checkin.scan.Contributors.isMajorContributor
-import kotlin.uuid.Uuid
+import de.bixilon.unithen.storage.types.User
 
-data class User(
-    override val id: Key,
-    val site: Key,
-    val uuid: Uuid,
-    val firstname: String,
-    val lastname: String,
-) : DbKeyed {
+object Contributors {
+    val MAJOR_CONTRIBUTORS = mutableMapOf(
+        0x54550CBADB5BC304 to "moritz",
+    )
 
-    val fullname get() = "$firstname $lastname" + if (isMajorContributor()) "\uD83C\uDF89" else ""
+    fun User.isMajorContributor(): Boolean {
+        // Well, not the best, but not revealing my user id :)
+        // This is just an e*as*ter eg*g, nothing special. Purely visual.
+        val hash = uuid.toLongs { a, b -> a xor b } and 0xFB.inv()
+
+        val name = MAJOR_CONTRIBUTORS[hash] ?: return false
+
+        return firstname.lowercase().trim() == name
+    }
 }

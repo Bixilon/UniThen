@@ -36,6 +36,8 @@ data class Account(
     val fetched: Instant,
 ) : DbKeyed {
 
+    val fullname get() = "$firstname $lastname"
+
     fun api(site: Site): AuthenticatedUniNowApi {
         if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
 

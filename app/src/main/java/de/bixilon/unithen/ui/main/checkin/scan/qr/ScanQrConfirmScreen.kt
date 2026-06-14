@@ -37,7 +37,7 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.isMajorContributor
+import de.bixilon.unithen.ui.main.checkin.scan.Contributors.isMajorContributor
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
@@ -209,7 +209,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
                     Text(R.string.scan_try_anyways.i18n())
                 } else {
                     Icon(Icons.Filled.Check, "check")
-                    Text(stringResource(if (isMajorContributor(user)) R.string.scan_confirm_contributor else R.string.scan_confirm))
+                    Text(stringResource(if (user.isMajorContributor()) R.string.scan_confirm_contributor else R.string.scan_confirm))
                 }
             }
         }

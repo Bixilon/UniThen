@@ -23,7 +23,7 @@ import kotlin.uuid.Uuid
 class UserDetailsTest {
 
     // @Test
-    fun `fetch zhs`() {
+    suspend fun `fetch zhs`() {
         val authentication = CookieAuthentication("XXX")
 
 

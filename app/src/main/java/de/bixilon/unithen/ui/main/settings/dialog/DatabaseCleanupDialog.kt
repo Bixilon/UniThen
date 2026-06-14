@@ -27,13 +27,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.useAppRestart
 import de.bixilon.unithen.ui.util.useToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun DatabaseCleanupDialog(dismiss: () -> Unit) {
+    val restart = useAppRestart()
     val storage = LocalStorage.current
     val toast = useToast()
 
@@ -41,8 +45,8 @@ fun DatabaseCleanupDialog(dismiss: () -> Unit) {
         try {
             storage.clearCache()
             storage.cleanup()
-            toast.invoke("Database cleaned up!")
-            // TODO: Restart app
+            toast.invoke(R.string.database_cleanup_success)
+            restart.invoke()
         } finally {
             withContext(Dispatchers.Main) { dismiss.invoke() }
         }
@@ -52,14 +56,12 @@ fun DatabaseCleanupDialog(dismiss: () -> Unit) {
         confirmButton = {},
         onDismissRequest = {},
         icon = { Icon(Icons.Filled.CleaningServices, "cleaning") },
-        title = { Text("Cleaning up...") },
+        title = { Text(R.string.database_cleanup_title.i18n()) },
         text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Unreferenced courses are being removed and cache is cleared.")
+                Text(R.string.settings_entrypoint_description.i18n())
             }
         },
     )

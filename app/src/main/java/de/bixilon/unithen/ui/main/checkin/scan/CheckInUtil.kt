@@ -25,9 +25,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 object CheckInUtil {
-    val MAJOR_CONTRIBUTORS = mutableMapOf(
-        0x54550CBADB5BC304 to "moritz",
-    )
     val SYNC_BACKOFF_FORCE = 30.seconds
     val SYNC_BACKOFF_NORMAL = 5.minutes
 
@@ -149,16 +146,5 @@ object CheckInUtil {
 
             syncQueue(storage, item)
         }
-    }
-
-
-    fun isMajorContributor(user: User): Boolean {
-        // Well, not the best, but not revealing my user id :)
-        // This is just an e*as*ter eg*g, nothing special. Purely visual.
-        val hash = user.uuid.toLongs { a, b -> a xor b } and 0xFB.inv()
-
-        val name = MAJOR_CONTRIBUTORS[hash] ?: return false
-
-        return user.firstname.lowercase().trim() == name
     }
 }

@@ -12,10 +12,10 @@
 
 <resources>
     <string name="app_name" translatable="false">UniThen</string>
-    <string name="setup_1">"This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at "</string>
+    <string name="setup_1">This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at</string>
     <string name="setup_title">Setup</string>
     <string name="setup_2">This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.</string>
-    <string name="setup_3">An access token (generated with your credentials) will be saved securely on this device.</string>
+    <string name="setup_3">An access token (generated with your credentials) will be saved locally on this device.</string>
     <string name="setup_4">The servers are operated by UniNow GmbH, please check their website for their privacy policy.</string>
     <string name="set_accept">I understand and accept these terms</string>
     <string name="setup_login">Continue to login</string>
@@ -51,6 +51,7 @@
     <string name="scan_no_account_message">No account</string>
     <string name="scan_no_account_title">No account who can perform check in?</string>
     <string name="scan_synchronizing_attendees">Synchronizing...</string>
+    <string name="search_placeholder">Search...</string>
     <string name="sort_firstname">Firstname</string>
     <string name="sort_lastname">Lastname</string>
     <string name="scan_error_invalid_format">Invalid QR code format!</string>
@@ -61,13 +62,15 @@
     <string name="scan_error_unknown_user">Unknown user!</string>
     <string name="scan_error_not_enrolled">User not enrolled in course!</string>
     <string name="scan_error_already_checked_in">User is already checked in!</string>
-    <string name="scan_error_already_checked_in_pending">User is already checked in (checkin pending)</string>
+    <string name="scan_error_already_checked_in_pending">User is already checked in (check in pending)</string>
     <string name="scan_error_already_checked_in_pending_checkout">User is already checked in (checkout pending)</string>
     <string name="scan_error_other">Unknown error!</string>
     <string name="scan_updating_enrolled">Updating enrolled list...</string>
     <string name="scan_enrolled_outdated">Enrolled list was last updated %1$s</string>
     <string name="scan_unknown_user_server">Unknown user: %1$s</string>
     <string name="scan_unknown_error_server">Error: %1$s</string>
+    <string name="course">Course</string>
+    <string name="site">Site</string>
     <string name="user_name">Name</string>
     <string name="cancel">Cancel</string>
     <string name="scan_try_synchronize">Try synchronize</string>
@@ -85,4 +88,54 @@
     <string name="scan_camera_permission">Camera permission was not granted (yet). Please grant the permission for QR code scanning!</string>
     <string name="error_reauthenticate">Please authenticate again!</string>
     <string name="error_network">Network error: %1$s</string>
+
+    <string name="time_never">never</string>
+    <string name="time_future">in %1$s</string>
+    <string name="time_past">%1$s ago</string>
+
+    <string name="about_unofficial">This is an unofficial app and NOT affiliated with UniNow GmbH!</string>
+    <string name="about_license">Licensed under the GNU General Public License v3 or later.\nThis app comes with absolutely NO WARRANTY.</string>
+
+    <string name="accounts_sync_title">Synchronizing...</string>
+    <string name="accounts_sync_description">This might take a while!</string>
+    <string name="accounts_option_sync">Synchronize</string>
+    <string name="accounts_option_remove">Remove</string>
+
+    <string name="accounts_remove_title">Are you sure?</string>
+    <string name="accounts_remove_description">This will remove the account, you will need to log in again.</string>
+    <string name="accounts_remove_success">Account was removed!</string>
+
+    <string name="sites_add_title">Add New Site</string>
+    <string name="sites_add_description">Enter the URL of the booking system you want to add:</string>
+    <string name="sites_add_placeholder">e.g. kurse.university.de</string>
+    <string name="sites_add_add">Add</string>
+
+    <string name="sites_fetching_title">Fetching page details...</string>
+    <string name="sites_fetching_description">This might take a while!</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_general">General</string>
+    <string name="settings_entrypoint">Entrypoint</string>
+    <string name="settings_entrypoint_description">Choose what screen should open when the app is opened.</string>
+    <string name="settings_advanced">Advanced</string>
+    <string name="settings_advanced_remove_name">Remove name (QR code)</string>
+    <string name="settings_advanced_remove_name_description">Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might not work with the UniNow app.</string>
+
+    <string name="settings_check_in">Check In (Scan)</string>
+    <string name="settings_check_in_high_resolution">High resolution scanning</string>
+    <string name="settings_check_in_high_resolution_description">Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning QR codes.</string>
+
+    <string name="settings_check_in_auto_scan">Automatically scan</string>
+    <string name="settings_check_in_auto_scan_description">Opens the QR code scanner automatically and scans again after confirming a check in.</string>
+
+    <string name="settings_check_in_await_server">Await confirmation</string>
+    <string name="settings_check_in_await_server_description">Awaits the server response when confirming a check in. This option only makes sense if multiple devices are performing the checkin and ticket duplication fraud is a concern.</string>
+
+    <string name="settings_cleanup_database">Cleanup database</string>
+    <string name="settings_about">About</string>
+
+
+    <string name="database_cleanup_title">Cleaning up...</string>
+    <string name="database_cleanup_description">Unreferenced courses are being removed and cache is cleared.</string>
+    <string name="database_cleanup_success">Database was cleaned up!</string>
 </resources>

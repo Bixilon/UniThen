@@ -57,6 +57,7 @@ object CourseFetcher {
                 accounts.addToCourse(account, course)
             }
         }
+        cleanup()
 
         var done = 0
         var total = coursesQl.size

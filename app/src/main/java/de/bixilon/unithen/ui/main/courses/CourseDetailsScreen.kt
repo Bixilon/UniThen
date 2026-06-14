@@ -25,6 +25,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetch
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
@@ -65,7 +66,7 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
         )
 
         Text(
-            text = accounts.joinToString(", ") { it.firstname + " " + it.lastname },
+            text = accounts.joinToString(", ") { it.fullname },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -95,7 +96,7 @@ fun CourseDetailsScreen(course: Course) {
                         refreshing = true
                         storage.fetch(tutor, course)
 
-                        toast.invoke("Course refreshed!")
+                        toast.invoke(R.string.courses_synchronize_done)
                     } finally {
                         refreshing = false
                     }

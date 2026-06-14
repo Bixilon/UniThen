@@ -36,9 +36,11 @@ import androidx.core.net.toUri
 import de.bixilon.kutil.primitive.IntUtil.toInt
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberIsFdroid
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okhttp3.OkHttpClient
@@ -91,6 +93,8 @@ fun UpdateChecker() {
 fun AboutScreen() {
     Screen(modifier = Modifier.verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         Image(
             Logo,
             contentDescription = "logo",
@@ -101,7 +105,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "UniThen",
+            text = R.string.app_name.i18n(),
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
         )
@@ -109,7 +113,7 @@ fun AboutScreen() {
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "This is an unofficial app and NOT affiliated with UniNow GmbH!",
+            text = R.string.about_unofficial.i18n(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -160,7 +164,7 @@ fun AboutScreen() {
         }
 
         Text(
-            text = "Licensed under the GNU General Public License v3 or later.\nThis app comes with absolutely NO WARRANTY.",
+            text = R.string.about_license.i18n(),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,

@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import de.bixilon.kutil.unit.UnitFormatter.format
+import de.bixilon.unithen.R
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -73,11 +74,13 @@ object TimeFormatUtil {
     fun Instant.format() = this.toLocalDateTime(TimeZone.currentSystemDefault()).format()
 
     @Composable
-    fun Instant.formatNow(): String { // TODO: i18n
-        if (this.epochSeconds == 0L) return "never"
+    fun Instant.formatNow(): String {
+        if (this.epochSeconds == 0L) return R.string.time_never.i18n()
         val delta = Clock.System.now() - this
 
-        return (if (delta > Duration.ZERO) "in " else "") + delta.absoluteValue.format() + (if (delta < Duration.ZERO) " ago" else "")
+        val format = if (delta > Duration.ZERO) R.string.time_future else R.string.time_past
+
+        return format.i18n(delta.absoluteValue.format())
     }
 
     @Composable

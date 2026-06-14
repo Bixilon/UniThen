@@ -15,17 +15,19 @@ package de.bixilon.unithen.api
 import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.api.authentication.Authentication
+import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import java.net.URI
+import kotlin.time.Duration.Companion.seconds
 
 object HttpUtil {
     val JSON = "application/json; charset=utf-8".toMediaType()
 
-    fun create(base: URI, endpoint: String): Request.Builder {
+    suspend fun create(base: URI, endpoint: String): Request.Builder {
         assert(base.scheme == "https") { "Insecure requests are forbidden!" }
         if (BuildConfig.DEBUG) {
-            Thread.sleep(3000L)
+            delay(3.seconds)
         }
         val request = Request.Builder()
             .url(base.with(path = endpoint).toURL())

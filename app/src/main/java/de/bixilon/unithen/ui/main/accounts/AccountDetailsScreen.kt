@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
@@ -31,6 +32,7 @@ import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.verticalScroll
 
 @Composable
@@ -41,7 +43,7 @@ fun AccountDetailsScreen(account: Account) {
     Column(modifier = Modifier.padding(16.dp)) {
         InfoContainer {
             Text(
-                text = "${account.firstname} ${account.lastname}",
+                text = account.fullname,
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -56,7 +58,7 @@ fun AccountDetailsScreen(account: Account) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Section {
-            SectionTitle("Courses (${courses.size})")
+            SectionTitle(R.string.courses_title.i18n(courses.size))
 
 
             val navigation = LocalNavigation.current

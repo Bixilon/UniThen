@@ -34,7 +34,7 @@ data class UserDetails(
         private val LASTNAME_REGEX = "last_name: \"(.+)\"".toRegex() // TODO: extract via user_pk->last_name
         private val EMAIL_REGEX = "email: \"(.+@.+\\..+)\"".toRegex() // TODO: extract via user_pk->email
 
-        fun fetch(url: URI, authentication: Authentication): UserDetails {
+        suspend fun fetch(url: URI, authentication: Authentication): UserDetails {
             val request = HttpUtil.create(url, "/")
                 .authenticate(authentication)
                 .get()

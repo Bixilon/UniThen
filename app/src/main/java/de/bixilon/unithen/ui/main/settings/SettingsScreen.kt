@@ -13,9 +13,6 @@
 package de.bixilon.unithen.ui.main.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -26,6 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
+import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
@@ -37,20 +36,15 @@ import de.bixilon.unithen.ui.main.settings.types.EnumSetting
 import de.bixilon.unithen.ui.main.settings.types.SettingsDialog
 import de.bixilon.unithen.ui.main.settings.types.SettingsLink
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 
 
 @Composable
 fun SettingsScreen() {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier // TODO: Screen
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        ScreenTitle("Settings")
+    Screen(Modifier.verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ScreenTitle(R.string.settings_title.i18n())
 
         if (BuildConfig.DEBUG) {
             Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -62,29 +56,29 @@ fun SettingsScreen() {
         }
 
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle("General")
-            EnumSetting(Settings.ENTRYPOINT, MainScreens, "Entrypoint", "Choose what screen should open when starting the app.")
+            SectionTitle(R.string.settings_general.i18n())
+            EnumSetting(Settings.ENTRYPOINT, MainScreens, R.string.settings_entrypoint.i18n(), R.string.settings_entrypoint_description.i18n())
         }
         HorizontalDivider()
 
         val tutor = rememberStorage { courses.isTutor() }
         if (tutor) {
             Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionTitle("Check In (Scan)")
-                BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, "High resolution scanning", "Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning qr codes.")
-                BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, "Automatically scan", "Opens the QR-code scanner automatically and scans again after confirming a checkin.")
-                BooleanSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION, "Await confirmation", "Awaits the server response when confirming a check in. This option only makes sense if multiple devices are performing the checkin and ticket duplication fraud is a concern.")
+                SectionTitle(R.string.settings_check_in.i18n())
+                BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, R.string.settings_check_in_high_resolution.i18n(), R.string.settings_check_in_high_resolution_description.i18n())
+                BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, R.string.settings_check_in_auto_scan.i18n(), R.string.settings_check_in_auto_scan_description.i18n())
+                BooleanSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION, R.string.settings_check_in_await_server.i18n(), R.string.settings_check_in_await_server_description.i18n())
             }
             HorizontalDivider()
         }
 
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle("Advanced")
-            BooleanSetting(Settings.QR_CODE_REMOVE_NAME, "Remove name (QR code)", "Remove name inside the QR code. This makes scanning the QR code easier. The name is not checked, however it might not work with the UniNow app.")
+            SectionTitle(R.string.settings_advanced.i18n())
+            BooleanSetting(Settings.QR_CODE_REMOVE_NAME, R.string.settings_advanced_remove_name.i18n(), R.string.settings_advanced_remove_name_description.i18n())
         }
         HorizontalDivider()
 
-        SettingsDialog("Cleanup database", Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
-        SettingsLink("About", Icons.Default.Info, AboutRoute)
+        SettingsDialog(R.string.settings_cleanup_database.i18n(), Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
+        SettingsLink(R.string.settings_about.i18n(), Icons.Default.Info, AboutRoute)
     }
 }

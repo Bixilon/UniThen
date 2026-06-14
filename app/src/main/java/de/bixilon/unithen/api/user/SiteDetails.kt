@@ -45,7 +45,7 @@ data class SiteDetails(
 
         private fun fetchIcon(url: URI) = url.toURL().openStream().readAll()
 
-        fun fetch(url: URI): SiteDetails {
+        suspend fun fetch(url: URI): SiteDetails {
             val request = HttpUtil.create(url, "/")
                 .get()
                 .build()

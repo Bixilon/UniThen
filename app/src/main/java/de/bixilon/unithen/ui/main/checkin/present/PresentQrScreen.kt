@@ -85,7 +85,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         InfoContainer(modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(0.8f)) {
-            InfoPair(R.string.course_name.i18n(), "${account.firstname} ${account.lastname}")
+            InfoPair(R.string.course_name.i18n(), account.fullname)
             InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
             InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
             InfoPair(R.string.appointment_location.i18n(), appointment.location)

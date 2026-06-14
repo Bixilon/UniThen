@@ -77,12 +77,12 @@ private fun Sync(account: Account): (() -> Unit)? {
     AlertDialog(
         confirmButton = {},
         onDismissRequest = { running = false },
-        title = { Text("Synchronizing...") },
+        title = { Text(R.string.accounts_sync_title.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Synchronizing account...")
+                Text(R.string.accounts_sync_description.i18n())
             }
         },
     )
@@ -105,13 +105,13 @@ private fun Remove(account: Account): (() -> Unit)? {
                 Button({ deleting = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
                     Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.onErrorContainer)
                     Spacer(Modifier.width(8.dp))
-                    Text("Remove", color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text(R.string.accounts_option_remove.i18n(), color = MaterialTheme.colorScheme.onErrorContainer)
                 }
             },
             dismissButton = { Button({ show = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Cancel") } },
             onDismissRequest = { show = false },
-            title = { Text("Are you sure?") },
-            text = { Text("This will remove the account, you will need to log in again.") },
+            title = { Text(R.string.accounts_remove_title.i18n()) },
+            text = { Text(R.string.accounts_remove_description.i18n()) },
         )
         return null
     }
@@ -124,7 +124,7 @@ private fun Remove(account: Account): (() -> Unit)? {
                 // TODO: Revoke token
                 storage.accounts.remove(account)
                 storage.cleanup()
-                toast.invoke("Account removed!")
+                toast.invoke(R.string.accounts_remove_success)
             } finally {
                 show = false
                 deleting = false
@@ -169,7 +169,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
                 text = {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Filled.Sync, "")
-                        Text("Synchronize")
+                        Text(R.string.accounts_option_sync.i18n())
                     }
                 },
                 onClick = { expanded = false; sync?.invoke() }
@@ -178,7 +178,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
                 text = {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                         Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.errorContainer)
-                        Text("Remove", color = MaterialTheme.colorScheme.errorContainer)
+                        Text(R.string.accounts_option_remove.i18n(), color = MaterialTheme.colorScheme.errorContainer)
                     }
                 },
                 onClick = { expanded = false; remove?.invoke() }
@@ -211,7 +211,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
         ) {
             Column {
                 Text(
-                    text = account.firstname + " " + account.lastname,
+                    text = account.fullname,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

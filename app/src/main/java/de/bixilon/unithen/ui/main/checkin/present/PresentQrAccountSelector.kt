@@ -43,8 +43,8 @@ fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts:
         ScreenTitle(R.string.present_choose_account_title.i18n())
 
         InfoContainer {
-            InfoPair("Course", course.name)
-            InfoPair("Site", site.name)
+            InfoPair(R.string.course.i18n(), course.name)
+            InfoPair(R.string.site.i18n(), site.name)
         }
 
         Spacer(Modifier.height(8.dp))
@@ -53,8 +53,8 @@ fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts:
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(accounts, key = Account::id) { item ->
-                TextCard(item.firstname + " " + item.lastname, Modifier.clickable { navigation.navigate(PresentQrRoute(item, course, appointment)) })
+            items(accounts, key = Account::id) {
+                TextCard(it.fullname, Modifier.clickable { navigation.navigate(PresentQrRoute(it, course, appointment)) })
             }
         }
     }
