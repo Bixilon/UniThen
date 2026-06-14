@@ -5,7 +5,6 @@
 ![](https://shields-io.bixilon.de/f-droid/v/de.bixilon.unithen?style=for-the-badge&logo=fdroid)
 ![](https://shields-io.bixilon.de/gitlab/v/release/bixilon/unithen?branch=master&gitlab_url=https%3A%2F%2Fgitlab.bixilon.de&style=for-the-badge)
 
-
 This android application is for doing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
 It can be used for any booking system hosted by them, e.g. for the [ZHS München](https://kurse.zhs-muenchen.de).
 
@@ -32,8 +31,9 @@ and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9
 
 ## Screenshots
 
-| **Course overview** ![Course overview](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | **QR Code Check In** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | QR Code Scanning ![Scanning](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) |
-|:-----------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------:|
+| **Course overview** ![Course overview](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | **QR Code Check In** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
+|:-----------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
+|      **Attendee List** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)      |  QR Code Scanning ![Scanning](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)   |
 
 ## Why
 
