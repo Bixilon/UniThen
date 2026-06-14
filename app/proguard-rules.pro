@@ -22,7 +22,7 @@
 #-renamesourcefileattribute SourceFile
 -dontwarn com.google.re2j.**
 
--keepattributes *Annotation*,EnclosingMethod,Signature
+-keepattributes EnclosingMethod
 -dontwarn java.awt.**
 -keepnames class de.bixilon.unithen.** {*; }
 -keepnames enum de.bixilon.unithen.**
