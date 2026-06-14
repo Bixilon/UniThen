@@ -113,7 +113,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     // TODO: overlay invalid qr codes
 
     Box(modifier = Modifier.fillMaxSize()) {
-        QrCameraPreview {
+        QrCameraPreview(modifier = Modifier.fillMaxSize()) {
             if (it.isEmpty()) {
                 delayed = null
             } else {

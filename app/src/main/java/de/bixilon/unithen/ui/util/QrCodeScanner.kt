@@ -23,10 +23,16 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import de.bixilon.unithen.R
@@ -39,8 +45,26 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
+@androidx.compose.ui.tooling.preview.Preview
 @Composable
-fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List<BarcodeReader.Result>) -> Unit) {
+private fun Loading(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .padding(24.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator(modifier = Modifier.size(300.dp))
+
+            Spacer(Modifier.height(30.dp))
+
+            Text(R.string.scan_starting_camera.i18n(), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) {
@@ -121,8 +145,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier.fillMaxSize(), onResult: (List
     val _request = request
 
     if (_request == null || reader == null) {
-        CameraMessage(modifier, R.string.scan_starting_camera.i18n())
-        return
+        return Loading(modifier)
     }
 
     CameraXViewfinder(
