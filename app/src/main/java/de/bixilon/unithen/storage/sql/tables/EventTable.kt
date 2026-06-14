@@ -18,8 +18,9 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
@@ -30,7 +31,7 @@ class EventTable(
     storage: SqlStorage,
 ) : SqlTable<Event>(storage, EventTable) {
 
-    operator fun get(id: Key) = single("id=?", id)
+    operator fun get(id: Key) = single(EventTable.id eq id)
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
 
@@ -49,7 +50,7 @@ class EventTable(
         return insert(site, uuid, name, start, end)
     }
 
-    companion object : SqlTableSchema<Event> {
+    companion object : SelectableSqlTableSchema<Event> {
         override val table get() = "events"
 
         val id = column(Event::id)

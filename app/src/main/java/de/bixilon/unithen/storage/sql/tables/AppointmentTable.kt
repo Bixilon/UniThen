@@ -20,10 +20,11 @@ import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNotNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -35,7 +36,7 @@ class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, AppointmentTable) {
 
-    operator fun get(id: Key) = single("id=?", id)
+    operator fun get(id: Key) = single(AppointmentTable.id eq id)
     operator fun get(course: Course, uuid: Uuid) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
@@ -91,7 +92,7 @@ class AppointmentTable(
         insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?)", user.id, appointment.id)
     }
 
-    companion object : SqlTableSchema<Appointment> {
+    companion object : SelectableSqlTableSchema<Appointment> {
         override val table get() = "appointments"
 
         val id = column(Appointment::id)

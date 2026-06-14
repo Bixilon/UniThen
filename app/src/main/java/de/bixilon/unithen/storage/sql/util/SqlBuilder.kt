@@ -43,9 +43,11 @@ object SqlBuilder {
 
     interface Joinable : Executable {
         fun innerJoin(table: String, on: SqlFilter) = InnerJoin(this, table, on)
+        fun innerJoin(table: SqlTableSchema<*>, on: SqlFilter) = InnerJoin(this, table.table, on)
         fun innerJoin(table: String, on: String) = InnerJoin(this, table, SqlFilter(on, listOf()))
 
         fun leftJoin(table: String, on: SqlFilter) = LeftJoin(this, table, on)
+        fun leftJoin(table: SqlTableSchema<*>, on: SqlFilter) = LeftJoin(this, table.table, on)
         fun leftJoin(table: String, on: String) = LeftJoin(this, table, SqlFilter(on, listOf()))
     }
 
@@ -76,6 +78,7 @@ object SqlBuilder {
     interface Whereable : Executable {
         infix fun where(filter: SqlFilter?) = if (filter == null) this else Where(this, filter)
         infix fun where(filter: SqlFilter) = Where(this, filter)
+        fun where(sql: String, vararg parameters: Any?) = where(SqlFilter(sql, parameters.toList()))
     }
 
     class Where internal constructor(
@@ -126,5 +129,5 @@ object SqlBuilder {
     fun select(vararg fields: String) = Select(fields = fields.toList())
     fun select(count: Aggregations.Count) = select("COUNT(*)")
 
-    fun select(schema: SqlTableSchema<*>) = Select(schema.columns.map { it.quantifier }) from schema.table
+    fun select(schema: SelectableSqlTableSchema<*>) = Select(schema.columns.map { it.quantifier }) from schema.table
 }

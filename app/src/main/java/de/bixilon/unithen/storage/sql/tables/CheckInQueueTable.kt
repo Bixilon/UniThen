@@ -21,10 +21,10 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.ftsEscape
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -109,7 +109,7 @@ class CheckInQueueTable(
         }
     }
 
-    companion object : SqlTableSchema<CheckInQueue> {
+    companion object : SelectableSqlTableSchema<CheckInQueue> {
         override val table get() = "checkin_queue"
 
         val user = column(CheckInQueue::user)

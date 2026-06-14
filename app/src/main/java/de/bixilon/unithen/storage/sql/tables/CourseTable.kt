@@ -19,9 +19,10 @@ import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.*
 import kotlin.time.Instant
@@ -30,7 +31,7 @@ import kotlin.uuid.Uuid
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, CourseTable) {
-    operator fun get(id: Key) = single("id=?", id)
+    operator fun get(id: Key) = single(CourseTable.id eq id)
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, event: Event? = null, uuid: Uuid? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
@@ -64,7 +65,7 @@ class CourseTable(
     fun isTutor(): Boolean {
         val query = SqlBuilder.select("1").from("accounts")
             .innerJoin("users", "users.uuid = accounts.uuid")
-            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
             .innerJoin("tutor_courses", "tutor_courses.user = users.id")
             .limit(1)
 
@@ -73,7 +74,7 @@ class CourseTable(
 
     fun isMember(): Boolean {
         val query = SqlBuilder.select("1").from("accounts")
-            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
             .leftJoin("users", "users.uuid = accounts.uuid")
             .leftJoin("tutor_courses", "tutor_courses.user = users.id")
             .where(SqlFilter("tutor_courses.user IS NULL"))
@@ -82,11 +83,13 @@ class CourseTable(
         return storage.query(query) { it.isNotEmpty() }
     }
 
-    operator fun get(account: Account): List<Course> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.course = $table.id WHERE account = ?", account.id) { it.collectAll() }
-    }
+    operator fun get(account: Account) = storage.courses.all(
+        SqlBuilder.select(CourseTable)
+            .innerJoin(AccountCourses, AccountCourses.course eq id)
+            .where(AccountCourses.account eq account.id)
+    )
 
-    companion object : SqlTableSchema<Course> {
+    companion object : SelectableSqlTableSchema<Course> {
         override val table get() = "courses"
 
         val id = column(Course::id)

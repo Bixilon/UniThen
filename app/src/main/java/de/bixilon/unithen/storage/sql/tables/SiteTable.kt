@@ -20,7 +20,8 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
@@ -29,8 +30,8 @@ class SiteTable(
     storage: SqlStorage,
 ) : SqlTable<Site>(storage, SiteTable) {
 
-    operator fun get(id: Key) = single("id=?", id)
-    operator fun get(host: String) = single("host=?", host)
+    operator fun get(id: Key) = single(SiteTable.id eq id)
+    operator fun get(host: String) = single(SiteTable.host eq host)
 
     fun insert(host: String, name: String, icon: ByteArray?): Site {
         val id = insert("INSERT INTO $table(host, name, icon, fetched) VALUES (?,?,?,?)", host, name, icon, Clock.System.now())
@@ -53,7 +54,7 @@ class SiteTable(
         return add(fixed, details.name, details.icon)
     }
 
-    companion object : SqlTableSchema<Site> {
+    companion object : SelectableSqlTableSchema<Site> {
         override val table get() = "sites"
 
         val id = column(Site::id)

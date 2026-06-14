@@ -23,9 +23,10 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
@@ -38,7 +39,7 @@ class AccountTable(
     storage: SqlStorage,
 ) : SqlTable<Account>(storage, AccountTable) {
 
-    operator fun get(id: Key) = single("id=?", id)
+    operator fun get(id: Key) = single(AccountTable.id eq id)
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
@@ -61,16 +62,17 @@ class AccountTable(
         return insert(site, details, authentication)
     }
 
-    operator fun get(course: Course): List<Account> {
-        return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN account_courses ON account_courses.account = $table.id WHERE course = ?", course.id) { it.collectAll() }
-    }
+    operator fun get(course: Course) = all(select()
+        .innerJoin(AccountCourses, AccountCourses.account eq id)
+        .where(AccountCourses.course eq course.id)
+    )
 
     fun getTutorAccount(course: Course): Account? {
         val query = SqlBuilder.select(AccountTable)
             .innerJoin("users", "users.uuid = accounts.uuid")
-            .innerJoin("account_courses", "account_courses.account = accounts.id")
+            .innerJoin(AccountCourses, AccountCourses.account eq AccountTable.id)
             .innerJoin("tutor_courses", "tutor_courses.user = users.id")
-            .where(SqlFilter("account_courses.course=?", listOf(course.id)))
+            .where(AccountCourses.course eq course.id)
             .and(SqlFilter("tutor_courses.course=?", listOf(course.id)))
             .limit(1)
 
@@ -95,7 +97,7 @@ class AccountTable(
         insert("DELETE FROM accounts WHERE id=?", account.id)
     }
 
-    companion object : SqlTableSchema<Account> {
+    companion object : SelectableSqlTableSchema<Account> {
         override val table get() = "accounts"
 
         val id = column(Account::id)

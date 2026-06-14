@@ -10,22 +10,15 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.storage.sql.util
+package de.bixilon.unithen.storage.sql.tables
 
-import de.bixilon.kutil.string.StringUtil.toSnakeCase
 import de.bixilon.unithen.storage.DbObject
-import kotlin.reflect.KProperty1
+import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 
-interface SqlTableSchema<T : DbObject> {
-    val table: String
+object AccountCourses : SqlTableSchema<DbObject> {
+    override val table = "account_courses"
 
-
-    class SqlColumn<T>(val table: String, val name: String) {
-        val quantifier get() = "$table.$name"
-    }
-
-
-    companion object {
-        inline fun <S : DbObject, V> SqlTableSchema<S>.column(field: KProperty1<S, V>) = SqlColumn<V>(this.table, field.name.toSnakeCase())
-    }
+    val account = SqlTableSchema.SqlColumn<Key>(table, "account")
+    val course = SqlTableSchema.SqlColumn<Key>(table, "course")
 }

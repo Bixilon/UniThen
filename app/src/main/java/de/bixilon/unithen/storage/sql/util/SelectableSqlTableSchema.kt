@@ -12,20 +12,11 @@
 
 package de.bixilon.unithen.storage.sql.util
 
-import de.bixilon.kutil.string.StringUtil.toSnakeCase
+import android.database.Cursor
 import de.bixilon.unithen.storage.DbObject
-import kotlin.reflect.KProperty1
 
-interface SqlTableSchema<T : DbObject> {
-    val table: String
+interface SelectableSqlTableSchema<T : DbObject> : SqlTableSchema<T> {
+    val columns: List<SqlTableSchema.SqlColumn<*>>
 
-
-    class SqlColumn<T>(val table: String, val name: String) {
-        val quantifier get() = "$table.$name"
-    }
-
-
-    companion object {
-        inline fun <S : DbObject, V> SqlTableSchema<S>.column(field: KProperty1<S, V>) = SqlColumn<V>(this.table, field.name.toSnakeCase())
-    }
+    fun map(cursor: Cursor): T
 }

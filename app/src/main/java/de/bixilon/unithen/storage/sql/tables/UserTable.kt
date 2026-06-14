@@ -18,9 +18,10 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
+import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import de.bixilon.unithen.storage.sql.util.SqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -34,7 +35,7 @@ class UserTable(
     storage: SqlStorage,
 ) : SqlTable<User>(storage, UserTable) {
 
-    operator fun get(id: Key) = single("id=?", id)
+    operator fun get(id: Key) = single(UserTable.id eq id)
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
@@ -111,7 +112,7 @@ class UserTable(
         return storage.query("SELECT 1 FROM appointment_attendees WHERE appointment=? AND user=?", appointment.id, user.id) { it.isNotEmpty() }
     }
 
-    companion object : SqlTableSchema<User> {
+    companion object : SelectableSqlTableSchema<User> {
         override val table get() = "users"
 
         val id = column(User::id)

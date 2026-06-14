@@ -16,7 +16,6 @@ import de.bixilon.unithen.api.graphql.types.location.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
@@ -52,7 +51,7 @@ object Jackson {
     }
 
     object InstantSerializer : KSerializer<Instant> {
-        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.LONG)
+        override val descriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.LONG)
 
         override fun serialize(encoder: Encoder, value: Instant) {
             encoder.encodeLong(value.epochSeconds)

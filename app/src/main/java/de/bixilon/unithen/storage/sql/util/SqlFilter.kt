@@ -67,20 +67,25 @@ data class SqlFilter(
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
 
 
-        private fun <T> SqlTableSchema.SqlColumn<*, T>.create(operator: String, other: T): SqlFilter {
+        private fun <T> SqlTableSchema.SqlColumn<T>.create(operator: String, other: T): SqlFilter {
             return SqlFilter(this.quantifier + operator + "?", listOf(other!!))
         }
 
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.eq(other: T) = create("=", other)
+        private fun <T> SqlTableSchema.SqlColumn<T>.create(operator: String, other: SqlTableSchema.SqlColumn<T>): SqlFilter {
+            return SqlFilter(this.quantifier + operator + other.quantifier)
+        }
 
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.neq(other: T) = create("!=", other)
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.gt(other: T) = create(">", other)
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.ge(other: T) = create(">=", other)
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.lt(other: T) = create("<", other)
-        infix fun <T> SqlTableSchema.SqlColumn<*, T>.le(other: T) = create("<=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.eq(other: T) = create("=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.eq(other: SqlTableSchema.SqlColumn<T>) = create("=", other)
+
+        infix fun <T> SqlTableSchema.SqlColumn<T>.neq(other: T) = create("!=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.gt(other: T) = create(">", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.ge(other: T) = create(">=", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.lt(other: T) = create("<", other)
+        infix fun <T> SqlTableSchema.SqlColumn<T>.le(other: T) = create("<=", other)
 
 
-        fun <T> SqlTableSchema.SqlColumn<*, T>.isNull() = SqlFilter(this.name + " IS NULL")
-        fun <T> SqlTableSchema.SqlColumn<*, T>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
+        fun <T> SqlTableSchema.SqlColumn<T?>.isNull() = SqlFilter(this.name + " IS NULL")
+        fun <T> SqlTableSchema.SqlColumn<T?>.isNotNull() = SqlFilter(this.name + " IS NOT NULL")
     }
 }
