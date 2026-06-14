@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -44,7 +45,9 @@ fun ByteArray.toBitmap() = BitmapFactory.decodeByteArray(this, 0, this.size)
 @Composable
 private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
+        modifier = Modifier
+            .clip(CardDefaults.shape)
+            .then(modifier)
             .fillMaxWidth(),
     ) {
         Box(

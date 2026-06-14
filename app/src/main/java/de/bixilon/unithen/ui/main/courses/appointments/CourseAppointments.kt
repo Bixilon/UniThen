@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Appointment
@@ -60,7 +61,9 @@ private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modif
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
-        modifier = modifier
+        modifier = Modifier
+            .clip(CardDefaults.shape)
+            .then(modifier)
             .fillMaxWidth()
     ) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {

@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
@@ -39,7 +40,9 @@ import de.bixilon.unithen.ui.util.i18n
 @Composable
 fun AppointmentCard(course: Course, appointment: Appointment, modifier: Modifier = Modifier) {
     Card(
-        modifier = modifier
+        modifier = Modifier
+            .clip(CardDefaults.shape)
+            .then(modifier)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     ) {
