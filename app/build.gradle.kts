@@ -112,6 +112,9 @@ android {
             // jniLibs.useLegacyPackaging = false
             // dex.useLegacyPackaging = false
         }
+        androidResources {
+            localeFilters += "de"
+        }
     }
 
     buildTypes {
