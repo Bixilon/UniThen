@@ -29,7 +29,7 @@ open class AuthenticatedUniNowApi(
     val authentication: Authentication,
 ) : UniNowApi(url) {
 
-    override fun buildRequest(endpoint: String): Request.Builder {
+    override suspend fun buildRequest(endpoint: String): Request.Builder {
         val request = super.buildRequest(endpoint)
 
         authentication.authenticate(request)
@@ -37,27 +37,27 @@ open class AuthenticatedUniNowApi(
         return request
     }
 
-    fun getCourses(user: Uuid): List<CourseQl>? {
+    suspend fun getCourses(user: Uuid): List<CourseQl>? {
         return graphql<Queries>("courses", "user" to JsonPrimitive(user.toString())).userPk?.courses
     }
 
-    fun getCourse(course: Uuid): CourseQl? {
+    suspend fun getCourse(course: Uuid): CourseQl? {
         return graphql<Queries>("course", "course" to JsonPrimitive(course.toString())).course
     }
 
-    fun getEnrolled(course: Uuid): List<CourseUserQl>? {
+    suspend fun getEnrolled(course: Uuid): List<CourseUserQl>? {
         return graphql<Queries>("enrolled", "course" to JsonPrimitive(course.toString())).course?.enrolled
     }
 
-    fun getCheckInAttempts(appointment: Uuid): AppointmentQl? {
+    suspend fun getCheckInAttempts(appointment: Uuid): AppointmentQl? {
         return graphql<Queries>("attempts", "appointment" to JsonPrimitive(appointment.toString())).appointment
     }
 
-    fun checkInUser(appointment: Uuid, user: Uuid): CheckInAttemptQl? {
+    suspend fun checkInUser(appointment: Uuid, user: Uuid): CheckInAttemptQl? {
         return graphql<Mutations>("checkin", "appointment" to JsonPrimitive(appointment.toString()), "user" to JsonPrimitive(user.toString())).appointmentCheckin
     }
 
-    fun deleteCheckInAttempt(attempt: Uuid): CheckInAttemptQl? {
+    suspend fun deleteCheckInAttempt(attempt: Uuid): CheckInAttemptQl? {
         return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attempt.toString())).deleteCheckinAttempt
     }
 }

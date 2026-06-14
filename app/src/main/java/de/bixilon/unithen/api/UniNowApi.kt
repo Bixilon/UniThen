@@ -33,14 +33,14 @@ open class UniNowApi(
     val url: URI,
 ) {
 
-    protected open fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
+    protected open suspend fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
 
-    inline fun <reified I> postJson(endpoint: String, payload: I): String {
+    suspend inline fun <reified I> postJson(endpoint: String, payload: I): String {
         val payload = Jackson.MAPPER.encodeToString(payload).toRequestBody(HttpUtil.JSON)
         return postJson(endpoint, payload)
     }
 
-    fun postJson(endpoint: String, payload: RequestBody = RequestBody.EMPTY): String {
+    suspend fun postJson(endpoint: String, payload: RequestBody = RequestBody.EMPTY): String {
         val request = buildRequest(endpoint)
             .post(payload)
             .build()
@@ -59,8 +59,8 @@ open class UniNowApi(
         return response.body.string()
     }
 
-    inline fun <reified T> graphql(name: String, vararg variables: Pair<String, JsonElement>) = graphql<T>(QueryLoader[name], *variables)
-    inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, JsonElement>): T {
+    suspend inline fun <reified T> graphql(name: String, vararg variables: Pair<String, JsonElement>) = graphql<T>(QueryLoader[name], *variables)
+    suspend inline fun <reified T> graphql(query: QlQuery, vararg variables: Pair<String, JsonElement>): T {
         val request = GraphQlRequest(query.query, JsonObject(variables.toMap()))
 
         val response = postJson("/api/query", request)
