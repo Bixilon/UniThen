@@ -138,4 +138,5 @@
     <string name="database_cleanup_title">Cleaning up...</string>
     <string name="database_cleanup_description">Unreferenced courses are being removed and cache is cleared.</string>
     <string name="database_cleanup_success">Database was cleaned up!</string>
+    <string name="loading_database">Loading database...</string>
 </resources>

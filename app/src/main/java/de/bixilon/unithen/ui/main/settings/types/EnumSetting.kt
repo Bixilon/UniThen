@@ -53,7 +53,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
         }
 
         ExposedDropdownMenuBox(expanded = expanded, modifier = Modifier.fillMaxWidth(0.4f), onExpandedChange = { expanded = it }) {
-            TextField( // TODO: This is buggy (selection possible)
+            TextField(
                 value = value.nullCast<Labeled>()?.label?.i18n() ?: value.name.lowercase(),
                 onValueChange = {},
                 readOnly = true,

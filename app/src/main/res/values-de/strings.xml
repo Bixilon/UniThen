@@ -43,6 +43,7 @@
     <string name="scan_no_account_message">Kein Account!</string>
     <string name="scan_no_account_title">Kein Account, der den Check In machen kann?</string>
     <string name="scan_synchronizing_attendees">Synchronisiere...</string>
+    <string name="search_placeholder">Suchen...</string>
     <string name="sort_firstname">Vorname</string>
     <string name="sort_lastname">Nachname</string>
     <string name="scan_error_invalid_format">Ungültiges Format!</string>
@@ -118,4 +119,5 @@
     <string name="database_cleanup_title">Aufräumen...</string>
     <string name="database_cleanup_description">Der Cache wird gelöscht...</string>
     <string name="database_cleanup_success">Datenbank aufgeräumt!</string>
+    <string name="loading_database">Datenbank wird geladen...</string>
 </resources>

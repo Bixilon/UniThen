@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
+import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
@@ -54,6 +55,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.util.AndroidUtil.activity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -109,8 +111,6 @@ fun MainNavigator() {
         composable<SettingsRoute> { SettingsScreen() }
 
         composable<CrashRoute> { CrashScreen(null, it.exception) }
-
-
     }
 
     CompositionLocalProvider(
@@ -162,7 +162,7 @@ fun Loader(content: @Composable () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     CircularProgressIndicator()
                     Spacer(Modifier.width(16.dp))
-                    Text("Loading database...")
+                    Text(R.string.loading_database.i18n())
                 }
             }
         }
