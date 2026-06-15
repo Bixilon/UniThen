@@ -86,6 +86,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     val storage = LocalStorage.current
 
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
     val confirmation by rememberSetting(Settings.SCAN_CONFIRMATION_SCREEN)
     val errors = remember { mutableStateListOf<ErrorResult>() }
     val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
@@ -108,7 +109,8 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         while (true) {
             val now = TimeSource.Monotonic.markNow()
             errors.removeIf { (now - it.time) > 1.seconds }
-            accepted.removeIf { (now - it.time) > 5.seconds }
+            accepted.removeIf { (it.done != null && (now - it.done!!) > 5.seconds) }
+            accepted.removeIf { (now - it.time) > if (await) 30.seconds else 5.seconds }
             delay(100.milliseconds)
         }
     }

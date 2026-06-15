@@ -51,6 +51,7 @@ data class AcceptedState(
     val user: User,
 ) {
     val time = TimeSource.Monotonic.markNow()
+    var done: TimeSource.Monotonic.ValueTimeMark? = null
 }
 
 @Composable
@@ -79,6 +80,8 @@ private fun AcceptedBox(state: AcceptedState) {
         } catch (error: IOException) {
             okay = true
             errorMessage = resources.getString(R.string.error_network, error.message ?: "")
+        } finally {
+            state.done = TimeSource.Monotonic.markNow()
         }
     }
 
