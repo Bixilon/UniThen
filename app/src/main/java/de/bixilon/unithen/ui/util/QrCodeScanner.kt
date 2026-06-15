@@ -13,7 +13,6 @@
 package de.bixilon.unithen.ui.util
 
 import android.Manifest
-import android.graphics.Rect
 import androidx.camera.compose.CameraXViewfinder
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -33,17 +32,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import zxingcpp.BarcodeReader
+import java.util.concurrent.Executors
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
+
+private val CAMERA_EXECUTOR by lazy { Executors.newFixedThreadPool(2) }
 
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
@@ -71,7 +77,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
         CameraMessage(modifier, R.string.scan_camera_permission.i18n())
         return
     }
-    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryInvert = true, tryDenoise = true)) }
+    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
 
     if (!LocalVisibility.current || !rememberForeground()) return
 
@@ -106,30 +112,26 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                 .setResolutionStrategy(ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY)
         }
 
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
         val analyzer = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setResolutionSelector(resolution.build())
             .build()
             .apply {
-                setAnalyzer(ContextCompat.getMainExecutor(context)) { imageProxy ->
-                    val reader = reader ?: return@setAnalyzer
-                    imageProxy.use {
-                        val bitmap = it.toBitmap()
+                setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
+                    val reader = reader ?: return@setAnalyzer imageProxy.close()
 
-                        val rect = Rect(0, 0, bitmap.width, bitmap.height)
-
-                        val results = reader.read(bitmap, rect)
-                        val now = Clock.System.now()
-                        if (results.isNotEmpty()) {
-                            last = now
-                        }
-                        if (results.isEmpty() && now - last > 600.milliseconds) {
-                            return@use
-                        }
-
-                        onResult(results)
+                    val results = imageProxy.use { ignoreAll { reader.read(it) } ?: reader.read(it.toBitmap()) }
+                    val now = Clock.System.now()
+                    if (results.isNotEmpty()) {
+                        last = now
                     }
+                    if (results.isEmpty() && now - last > 600.milliseconds) {
+                        return@setAnalyzer
+                    }
+
+                    scope.launch { onResult(results) }
                 }
             }
 
