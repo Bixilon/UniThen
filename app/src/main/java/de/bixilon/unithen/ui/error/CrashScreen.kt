@@ -51,7 +51,7 @@ fun formatDetails(error: Throwable): String? = when (error) {
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
     if (exception is UnknownHostException) {
-        return SimpleErrorScreen(R.string.error_network.i18n(), exception.message)
+        return SimpleErrorScreen(R.string.network_error.i18n(), exception.message)
     }
     Screen(
         modifier = Modifier
