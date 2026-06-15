@@ -29,6 +29,7 @@ fun <T> rememberAsync(invokable: suspend () -> T): T? {
             try {
                 value = invokable.invoke()
             } catch (error: Throwable) {
+                error.printStackTrace()
                 navigation.navigate(CrashRoute(error))
             }
         }

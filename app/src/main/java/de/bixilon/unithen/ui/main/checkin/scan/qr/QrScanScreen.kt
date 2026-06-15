@@ -156,6 +156,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
                         if (!autoScan) navigation.pop()
                         navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                        break
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         delayed = AcceptedResult(course, appointment, scanned.userId)

@@ -17,7 +17,7 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 - QR Code Check in (presenting and scanning)
 - List courses/appointments
 - Really fast, no ads, no trackers
-- Simple and small (~6MB; most of it is due to qr code scanning from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp))
+- Simple and small (~4MB; most of it is due to qr code scanning from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp))
 - Completely offline (authenticate once)
 
 ## Download
@@ -31,9 +31,9 @@ and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9
 
 ## Screenshots
 
-| **Course overview** ![Course overview](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | **QR Code Check In** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) |
-|:-----------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------:|
-|      **Attendee List** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)      |  QR Code Scanning ![Scanning](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png)   |
+| **Course overview** ![Course overview](fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | **QR Code Check In** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/2.png)  |
+|:-----------------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
+|      **Attendee List** ![QR Code](fastlane/metadata/android/en-US/images/phoneScreenshots/3.png)      | **QR Code Scanning** ![Scanning](fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) |
 
 ## Why
 
