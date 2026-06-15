@@ -162,12 +162,12 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                         if (confirmation) {
                             if (!autoScan) navigation.pop()
                             navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                            break
                         } else {
                             val site = storage.sites[storage.courses[appointment.course]!!.site]!!
                             val user = storage.users[site, scanned.userId] ?: continue
                             accepted += AcceptedState(course, appointment, user)
                         }
-                        break
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         delayed = AcceptedResult(course, appointment, scanned.userId)
