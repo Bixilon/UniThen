@@ -86,6 +86,8 @@ fun CheckInScanScreen() {
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     if (autoScan) {
         LaunchedEffect(Unit) { if (!scanned) navigation.navigate(ScanAnyRoute); scanned = true }
+    } else {
+        LaunchedEffect(Unit) { scanned = true }
     }
 
     val time = useTime()
