@@ -38,7 +38,7 @@ fun useAppRestart(): () -> Unit {
 
             manager.set(AlarmManager.RTC, System.currentTimeMillis() + 100, pending)
 
-            Runtime.getRuntime().exit(0);
+            Runtime.getRuntime().exit(0) // TODO: broken
         }
     }
 }

@@ -43,8 +43,10 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
 
     if (active.value) return AsyncNetworkState(true, {})
 
+    val scope = remember { CoroutineScope(Dispatchers.IO) }
+
     val invoke = { args: T ->
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             if (active.value) return@launch
             try {
                 active.value = true

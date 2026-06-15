@@ -24,6 +24,7 @@ fun <T> rememberAsync(invokable: suspend () -> T): T? {
     val navigation = LocalNavigation.current
     var value by remember { mutableStateOf<T?>(null) }
 
+
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {

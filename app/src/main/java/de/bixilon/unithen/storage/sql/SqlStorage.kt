@@ -34,6 +34,7 @@ import kotlin.uuid.Uuid
 class SqlStorage(context: Context) : Closeable {
     val helper = SqlHelper(context)
 
+    val scope = CoroutineScope(Dispatchers.Main)
     private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
 
     val sites = SiteTable(this)
@@ -48,9 +49,7 @@ class SqlStorage(context: Context) : Closeable {
     fun notifyState() {
         TRANSACTIONS.get()?.let { it += notify; return }
 
-        CoroutineScope(Dispatchers.Default).launch {
-            notify.intValue++
-        }
+        scope.launch { notify.intValue++ }
     }
 
     private fun SQLiteStatement.bind(vararg parameters: Any?) {
@@ -100,7 +99,7 @@ class SqlStorage(context: Context) : Closeable {
             TRANSACTIONS.set(set)
             return helper.writableDatabase.transaction { block.invoke(this@SqlStorage) }
         } finally {
-            CoroutineScope(Dispatchers.Main).launch { set.forEach { it.intValue++ } }
+            scope.launch { set.forEach { it.intValue++ } }
             TRANSACTIONS.remove()
         }
     }

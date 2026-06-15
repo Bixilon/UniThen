@@ -96,7 +96,7 @@ private fun AcceptedBox(state: AcceptedState) {
     ) {
         Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(text = state.user.fullname, style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
-            Text(text = state.course.name, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+            Text(text = state.course.name, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center) // TODO: hide if only one course is possible
 
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 if (checkin.active) {
