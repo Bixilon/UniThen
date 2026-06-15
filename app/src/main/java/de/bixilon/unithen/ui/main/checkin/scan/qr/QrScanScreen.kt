@@ -86,8 +86,10 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     val storage = LocalStorage.current
 
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    val confirmation by rememberSetting(Settings.SCAN_CONFIRMATION_SCREEN)
     val errors = remember { mutableStateListOf<ErrorResult>() }
     val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
+    val accepted = remember { mutableStateListOf<AcceptedState>() }
     var delayed by delayedState
 
     LaunchedEffect(delayed) { // TODO: Allow clicking on it?
@@ -106,6 +108,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         while (true) {
             val now = TimeSource.Monotonic.markNow()
             errors.removeIf { (now - it.time) > 1.seconds }
+            accepted.removeIf { (now - it.time) > 5.seconds }
             delay(100.milliseconds)
         }
     }
@@ -128,6 +131,8 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     }
 
                     val scanned = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
+
+                    if (accepted.find { it.appointment.uuid == scanned.appointmentId && it.user.uuid == scanned.userId } != null) continue
 
                     val appointment = appointments.find { it.uuid == scanned.appointmentId }
                     if (appointment == null) {
@@ -154,8 +159,14 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     if (invalid == null) {
                         delayed = null
                         haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                        if (!autoScan) navigation.pop()
-                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                        if (confirmation) {
+                            if (!autoScan) navigation.pop()
+                            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                        } else {
+                            val site = storage.sites[storage.courses[appointment.course]!!.site]!!
+                            val user = storage.users[site, scanned.userId] ?: continue
+                            accepted += AcceptedState(course, appointment, user)
+                        }
                         break
                     } else {
                         errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
@@ -174,6 +185,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     ScanInstructions(courses)
 
     ErrorOverlay(errors)
+    AcceptedOverlay(accepted)
 }
 
 @Composable

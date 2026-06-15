@@ -85,6 +85,8 @@
     <string name="error_reauthenticate">Bitte melde dich erneut an!</string>
     <string name="error_network">Netzwerkfehler: %1$s</string>
     <string name="scan_error_wrong_appointment">Falscher Termin (Alter QR-Code?)</string>
+    <string name="scan_checking_in">Wird eingecheckt...</string>
+    <string name="scan_successful">Erfolgreich eingecheckt!</string>
     <string name="time_never">nie</string>
     <string name="time_future">in %1$s</string>
     <string name="time_past">vor %1$s</string>
@@ -116,6 +118,7 @@
     <string name="settings_check_in_auto_scan_description">Öffnet den QR-Code Scanner automatisch und schließt ihn nicht, nach dem Scan.</string>
     <string name="settings_check_in_await_server">Serverantwort abwarten</string>
     <string name="settings_check_in_await_server_description">"Wartet auf die Antwort vom Server nach dem Scannen. Es macht nur Sinn diese Option zu aktivieren, wenn mehrere Geräte QR-Codes Scannen und Ticketbetrug (Duplizieren) ist eine Sorge "</string>
+    <string name="settings_check_in_confirmation_screen_description">Öffnet den Bestätigungsdialog wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
     <string name="settings_cleanup_database">Datenbank aufräumen</string>
     <string name="settings_about">Über</string>
     <string name="database_cleanup_title">Aufräumen...</string>
@@ -125,4 +128,5 @@
     <string name="course">Kurs</string>
     <string name="settings_advanced_fetch_appointments">Alternative Kursanfrage</string>
     <string name="settings_advanced_fetch_appointments_description">Benutzt eine andere Anfrage zum Abrufen der Kurse. Das braucht einiges länger. Aktiviere diese Option nur, wenn du Kursleitung für einzelne Termine bist, nicht für den ganzen Kurs.</string>
+    <string name="settings_check_in_confirmation_screen">Scan Bestätigung</string>
 </resources>

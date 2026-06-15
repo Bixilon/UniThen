@@ -89,6 +89,8 @@
     <string name="scan_camera_permission">Camera permission was not granted (yet). Please grant the permission for QR code scanning!</string>
     <string name="error_reauthenticate">Please authenticate again!</string>
     <string name="error_network">Network error: %1$s</string>
+    <string name="scan_checking_in">Checking in...</string>
+    <string name="scan_successful">Successfully checked in!</string>
 
     <string name="time_never">never</string>
     <string name="time_future">in %1$s</string>
@@ -133,6 +135,9 @@
 
     <string name="settings_check_in_await_server">Await confirmation</string>
     <string name="settings_check_in_await_server_description">Awaits the server response when confirming a check in. This option only makes sense if multiple devices are performing the checkin and ticket duplication fraud is a concern.</string>
+
+    <string name="settings_check_in_confirmation_screen">Scan confirmation</string>
+    <string name="settings_check_in_confirmation_screen_description">Opens the confirmation screen when successfully scanning a ticket and only checks in the user after clicking \"Confirm\".</string>
 
     <string name="settings_cleanup_database">Cleanup database</string>
     <string name="settings_about">About</string>

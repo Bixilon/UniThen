@@ -46,6 +46,7 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
@@ -71,7 +72,7 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
         (attempt != null && attempt.message != null) || attendee -> Icon(Icons.Filled.Close, "", tint = Color.Red, modifier = size)
         attempt != null -> Icon(Icons.Filled.Warning, "", tint = Color.Yellow, modifier = size)
 
-        else -> Icon(Icons.Filled.CheckCircle, "", tint = Color(0xFF00A000), modifier = size) // dark green
+        else -> Icon(Icons.Filled.CheckCircle, "", tint = checkInSuccess, modifier = size)
     }
 
     if (message != null || attempt?.message != null) {

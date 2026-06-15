@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.util.i18n
@@ -30,7 +31,8 @@ fun ErrorOverlay(errors: List<ErrorResult>) {
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
-            .padding(bottom = 50.dp),
+            .padding(bottom = 50.dp)
+            .alpha(0.7f),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Column(
