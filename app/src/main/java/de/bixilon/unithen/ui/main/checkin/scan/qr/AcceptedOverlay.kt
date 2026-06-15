@@ -16,12 +16,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
@@ -101,8 +103,15 @@ private fun AcceptedBox(state: AcceptedState) {
                 } else {
                     val message = errorMessage ?: if (okay) R.string.scan_successful.i18n() else ""
 
+                    var icon: ImageVector? = null
+
                     if (errorMessage != null) {
-                        Icon(Icons.Filled.Warning, "")
+                        icon = Icons.Filled.Warning
+                    } else if (okay) {
+                        icon = Icons.Filled.Check
+                    }
+                    if (icon != null) {
+                        Icon(icon, "")
                         Spacer(Modifier.width(8.dp))
                     }
 

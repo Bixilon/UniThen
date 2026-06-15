@@ -38,6 +38,7 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
@@ -162,6 +163,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 
 @Composable
 fun ScanAttendeeList() {
+    val visible = LocalVisibility.current
     val (account, course, appointment) = LocalScanContext.current
     val scope = rememberCoroutineScope()
 
@@ -190,6 +192,10 @@ fun ScanAttendeeList() {
         if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
             refresh.invoke(false)
         }
+    }
+
+    if (!visible) {
+        LaunchedEffect(attendees, queue, not) { state.animateScrollToItem(0, 0) }
     }
 
 
