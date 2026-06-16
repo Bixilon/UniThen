@@ -91,6 +91,8 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
         }
 
         LaunchedEffect(syncing) {
+            if (!syncing) return@LaunchedEffect
+
             while (true) {
                 val item = storage.checkInQueue.take(appointment, forceSync) ?: break
                 synced++

@@ -31,6 +31,7 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.DefaultStorage
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
@@ -56,6 +57,7 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.util.AndroidUtil.activity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -83,15 +85,36 @@ fun MainNavigator() {
         composable<CourseDetailsRoute> { CourseDetailsScreen(it.course) }
         composable<AppointmentDetailsRoute> { AppointmentDetailsScreen(it.appointment) }
 
-        composable<PresentQrAppointmentRoute> { PresentQrAppointmentScreen(it.course, it.appointment) }
-        composable<PresentQrRoute> { PresentQrScreen(it.account, it.course, it.appointment) }
+        composable<PresentQrAppointmentRoute> {
+            PresentQrAppointmentScreen(it.course, it.appointment)
 
-        composable<ScanAppointmentRoute> { ScanAppointmentScreen(it.appointment) }
+            if (useTime() > it.appointment.end) {
+                LocalNavigation.current.pop()
+            }
+        }
+        composable<PresentQrRoute> {
+            PresentQrScreen(it.account, it.course, it.appointment)
+
+            if (useTime() > it.appointment.end) {
+                LocalNavigation.current.pop()
+            }
+        }
+
+        composable<ScanAppointmentRoute> {
+            ScanAppointmentScreen(it.appointment)
+
+            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+                LocalNavigation.current.pop()
+            }
+        }
         composable<ScanQrAppointmentRoute> {
             CompositionLocalProvider(
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
             ) {
                 ScanQrAppointmentScreen()
+            }
+            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+                LocalNavigation.current.pop()
             }
         }
         composable<ScanQrConfirmRoute> {
@@ -99,6 +122,9 @@ fun MainNavigator() {
                 LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
             ) {
                 ScanQrConfirmScreen(it.userId)
+            }
+            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+                LocalNavigation.current.pop()
             }
         }
 
