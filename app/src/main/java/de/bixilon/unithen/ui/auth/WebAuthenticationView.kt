@@ -44,7 +44,7 @@ fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
     var host by remember { mutableStateOf("") }
 
     BackHandler(enabled = canGoBack) { view?.goBack() }
-    val hasWebView = runCatching { CookieManager.getInstance() }.isSuccess
+    val hasWebView = remember { runCatching { CookieManager.getInstance() }.isSuccess }
 
     if (!hasWebView) {
         SimpleErrorScreen("No webview found", "Please install android webview!")

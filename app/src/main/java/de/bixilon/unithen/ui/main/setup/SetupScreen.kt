@@ -52,6 +52,7 @@ fun SetupScreen() {
         Column(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(buildAnnotatedString {
                 append(R.string.setup_1.i18n())
+                append(' ')
 
                 withLink(LinkAnnotation.Url("https://gitlab.bixilon.de/bixilon/unithen")) { append("gitlab.bixilon.de/bixilon/unithen") }
 

@@ -33,7 +33,7 @@ fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
 
     Button({
         copied = true
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(text, text)))
         }
     }, modifier, enabled = !copied) {

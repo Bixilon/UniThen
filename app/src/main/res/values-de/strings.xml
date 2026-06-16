@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter </string>
+    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter</string>
     <string name="setup_title">Einrichtung</string>
     <string name="set_accept">Ich akzeptiere diese Bedingungen</string>
     <string name="setup_login">Weiter zur Anmeldung</string>
