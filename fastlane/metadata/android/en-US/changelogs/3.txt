@@ -1,7 +1,10 @@
 This release contains various improvements:
  - QR code scanning (performing checkin)
+ - Replace "Fast Check In" activity with main navigation and entrypoint setting
  - Localization (i18n)
  - Many UI improvements
  - Way more robust and various crash fixes (especially on older android versions)
  - Various QoL and code improvements, first steps towards KMP
  - Many other improvements
+
+Special thanks to both Achims for testing!
