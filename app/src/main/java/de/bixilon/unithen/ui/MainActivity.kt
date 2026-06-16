@@ -27,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
@@ -204,7 +205,7 @@ fun Loader(content: @Composable () -> Unit) {
     LaunchedEffect(Unit) {
         if (storage.sites.count == 0) {
             // TODO: sync ui with this?
-            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { storage.sites.add(it) } }
+            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { ignoreAll { storage.sites.add(it) } } }
         }
     }
 
