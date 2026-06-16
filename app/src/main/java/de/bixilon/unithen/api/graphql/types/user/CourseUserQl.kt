@@ -24,6 +24,7 @@ import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
 import kotlin.uuid.Uuid
 
+// actually hacky, they represent enrolled users too (both share fields)
 @Serializable
 data class CourseUserQl(
     override val id: Uuid,

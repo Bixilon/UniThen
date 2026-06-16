@@ -45,6 +45,15 @@ type CourseUser {
     last_name: String!
 
     email: String
+}
+
+type EnrolledUser {
+    id: ID!
+
+    first_name: String!
+    last_name: String!
+
+    email: String
 
     payment_completed: Unknown
 }
@@ -88,6 +97,7 @@ type Equipment {
     name_translatable: NameTranslatable
     condition: Unknown
 }
+
 type Fee {
     id: ID!
     name: String!
@@ -125,7 +135,7 @@ type Course {
 
     intervals: [Interval!] # TODO
 
-    enrolled: [CourseUser!]
+    enrolled: [EnrolledUser!]
 }
 
 type BookingSlotResource {
@@ -159,7 +169,7 @@ type Event {
 type CheckInAttempt {
     id: ID!
     status: CheckInAttemptStatus!
-    user: CourseUser # This might be the "invalid" user too
+    user: CourseUser # This might be the "invalid" user too; its actually a CourseUser and not an EnrolledUser...
 
     message: String
 }
