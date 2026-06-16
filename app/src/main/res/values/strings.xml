@@ -63,8 +63,8 @@
     <string name="scan_error_unknown_user">Unknown user!</string>
     <string name="scan_error_not_enrolled">Not enrolled in course!</string>
     <string name="scan_error_already_checked_in">Already checked in!</string>
-    <string name="scan_error_already_checked_in_pending">User is already checked in (check in pending)</string>
-    <string name="scan_error_already_checked_in_pending_checkout">User is already checked in (checkout pending)</string>
+    <string name="scan_error_check_in_pending">User is already checked in (check in pending)</string>
+    <string name="scan_error_check_out_pending">User is already checked in (checkout pending)</string>
     <string name="scan_error_other">Unknown error!</string>
     <string name="scan_updating_enrolled">Updating enrolled list...</string>
     <string name="scan_enrolled_outdated">Enrolled list was last updated %1$s</string>

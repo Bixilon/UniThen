@@ -12,10 +12,12 @@ INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(902, 901, "0000000
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(903, 901, "00000000-0000-0000-0000-000000000003", "Emilia", "Gans");
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(904, 901, "00000000-0000-0000-0000-000000000004", "Gustaf", "Maier");
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(905, 901, "00000000-0000-0000-0000-000000000005", "Hannah", "Lang");
+INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(906, 901, "00000000-0000-0000-0000-000000000006", "Leonie", "Kurz");
+INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(907, 901, "00000000-0000-0000-0000-000000000007", "Eva", "Klug");
 
-INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(906, 902, "00000000-0000-0000-0000-000000000001", "Mia", "Lang");
-INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(907, 902, "00000000-0000-0000-0000-000000000006", "Marie", "Zimmer");
-INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(908, 902, "00000000-0000-0000-0000-000000000007", "Sophie", "Kurz");
+INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(908, 902, "00000000-0000-0000-0000-000000000001", "Mia", "Lang");
+INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(909, 902, "00000000-0000-0000-0000-000000000006", "Marie", "Zimmer");
+INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(910, 902, "00000000-0000-0000-0000-000000000007", "Sophie", "Kurz");
 
 
 INSERT INTO accounts(id, site, uuid, firstname, lastname, fetched, session_key) VALUES(901, 901, "00000000-0000-0000-0000-000000000001", "Hans", "Maulwurf", 1, "a");
@@ -34,6 +36,7 @@ INSERT INTO courses(id, site, event, uuid, name) VALUES(904, 902, 902, "00000000
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(901, 901, "00000000-0000-0000-0000-000000000001", 1767312123, 1893542523, "Somewhere");
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(902, 902, "00000000-0000-0000-0000-000000000002", 1769446900, 1769446940, "Somewhere");
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(903, 902, "00000000-0000-0000-0000-000000000003", 1769446950, 1769446980, "Somewhere");
+INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(904, 901, "00000000-0000-0000-0000-000000000004", 10, 60, "Somewhere");
 
 
 INSERT INTO account_courses(account, course) VALUES(901, 901);
@@ -52,5 +55,12 @@ INSERT INTO tutor_appointments(user, appointment) VALUES(905, 902);
 INSERT INTO course_enrolled(user, course) VALUES(902, 901);
 INSERT INTO course_enrolled(user, course) VALUES(903, 901);
 INSERT INTO course_enrolled(user, course) VALUES(904, 901);
-INSERT INTO course_enrolled(user, course) VALUES(905, 901);
+INSERT INTO course_enrolled(user, course) VALUES(906, 901);
+INSERT INTO course_enrolled(user, course) VALUES(907, 901);
+
 INSERT INTO course_enrolled(user, course) VALUES(901, 902);
+
+
+INSERT INTO checkin_queue(user, appointment, time, message, sync) VALUES(904, 901, 0, "Some error", 0);
+INSERT INTO appointment_attendees(user, appointment, attempt) VALUES(906, 901,  "b6b766b2-de38-4305-8f09-b23efc6aebd9");
+INSERT INTO checkin_queue(user, appointment, time, attempt, sync) VALUES(907, 901, 0, "b6b766b2-de38-4305-8f09-b23efc6aebda", 0);

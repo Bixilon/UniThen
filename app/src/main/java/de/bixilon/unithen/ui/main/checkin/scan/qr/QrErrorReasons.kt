@@ -25,7 +25,8 @@ enum class QrErrorReasons(override val label: Int) : Labeled {
     UNKNOWN_USER(R.string.scan_error_unknown_user),
     NOT_ENROLLED(R.string.scan_error_not_enrolled),
     ALREADY_CHECKED_IN(R.string.scan_error_already_checked_in),
-    ALREADY_CHECKED_IN_PENDING(R.string.scan_error_already_checked_in_pending),
+    CHECK_IN_PENDING(R.string.scan_error_check_in_pending),
+    CHECK_OUT_PENDING(R.string.scan_error_check_out_pending),
 
 
     OTHER(R.string.scan_error_other),

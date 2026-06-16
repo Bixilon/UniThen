@@ -71,7 +71,9 @@ private fun getErrorReason(storage: SqlStorage, course: Course, appointment: App
     if (attendee) return QrErrorReasons.ALREADY_CHECKED_IN
 
     val attempt = storage.checkInQueue[appointment, user]
-    if (attempt != null) return QrErrorReasons.ALREADY_CHECKED_IN_PENDING
+    if (attempt != null && attempt.attempt != null) return QrErrorReasons.CHECK_OUT_PENDING
+    if (attempt != null) return QrErrorReasons.CHECK_IN_PENDING
+    // TODO: show error message from server?
 
     return null
 }
@@ -151,7 +153,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                             continue
                         }
 
-                        errors += ErrorResult(QrErrorReasons.WRONG_APPOINTMENT, expected.start.toString()) // TODO: format date
+                        errors += ErrorResult(QrErrorReasons.WRONG_APPOINTMENT, actual.first().start.toString()) // TODO: format date
                         continue
                     }
 
