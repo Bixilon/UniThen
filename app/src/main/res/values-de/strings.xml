@@ -52,8 +52,8 @@
     <string name="scan_error_invalid_appointment">Ungültiger Termin (Falscher Kurs?)</string>
     <string name="scan_error_invalid_course">Ungültiger Kurs!</string>
     <string name="scan_error_unknown_user">Unbekannter Benutzer!</string>
-    <string name="scan_error_not_enrolled">Benutzer ist nicht im Kurs angemeldet!</string>
-    <string name="scan_error_already_checked_in">Benutzer ist bereits eingecheckt!</string>
+    <string name="scan_error_not_enrolled">Nicht im Kurs angemeldet!</string>
+    <string name="scan_error_already_checked_in">Bereits eingecheckt!</string>
     <string name="scan_error_already_checked_in_pending">Benutzer ist bereits eingecheckt (Synchronisierung ausstehend)!</string>
     <string name="scan_error_already_checked_in_pending_checkout">Benutzer ist bereits eingecheckt (Checkout ausstehend)!</string>
     <string name="scan_error_other">Unbekannter Fehler!</string>
@@ -85,8 +85,6 @@
     <string name="error_reauthenticate">Bitte melde dich erneut an!</string>
     <string name="error_network">Netzwerkfehler: %1$s</string>
     <string name="scan_error_wrong_appointment">Falscher Termin (Alter QR-Code?)</string>
-    <string name="scan_checking_in">Wird eingecheckt...</string>
-    <string name="scan_successful">Erfolgreich eingecheckt!</string>
     <string name="time_never">nie</string>
     <string name="time_future">in %1$s</string>
     <string name="time_past">vor %1$s</string>

@@ -61,8 +61,8 @@
     <string name="scan_error_wrong_appointment">Wrong appointment (old QR code?)</string>
     <string name="scan_error_invalid_course">Invalid course!</string>
     <string name="scan_error_unknown_user">Unknown user!</string>
-    <string name="scan_error_not_enrolled">User not enrolled in course!</string>
-    <string name="scan_error_already_checked_in">User is already checked in!</string>
+    <string name="scan_error_not_enrolled">Not enrolled in course!</string>
+    <string name="scan_error_already_checked_in">Already checked in!</string>
     <string name="scan_error_already_checked_in_pending">User is already checked in (check in pending)</string>
     <string name="scan_error_already_checked_in_pending_checkout">User is already checked in (checkout pending)</string>
     <string name="scan_error_other">Unknown error!</string>
@@ -89,8 +89,6 @@
     <string name="scan_camera_permission">Camera permission was not granted (yet). Please grant the permission for QR code scanning!</string>
     <string name="error_reauthenticate">Please authenticate again!</string>
     <string name="error_network">Network error: %1$s</string>
-    <string name="scan_checking_in">Checking in...</string>
-    <string name="scan_successful">Successfully checked in!</string>
 
     <string name="time_never">never</string>
     <string name="time_future">in %1$s</string>

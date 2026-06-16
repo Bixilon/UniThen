@@ -59,14 +59,14 @@ fun ErrorBox(message: String, details: String?) {
         ) {
             Text(
                 text = message,
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp),
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 textAlign = TextAlign.Center,
             )
             Text(
                 text = details,
-                modifier = Modifier.padding(16.dp),
+                modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.onErrorContainer,
                 textAlign = TextAlign.Center,
             )

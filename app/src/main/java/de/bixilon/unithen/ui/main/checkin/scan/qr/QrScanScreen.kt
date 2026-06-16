@@ -24,6 +24,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -62,15 +63,15 @@ data class ErrorResult(
     val time = TimeSource.Monotonic.markNow()
 }
 
-private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, userId: Uuid): QrErrorReasons? {
-    val site = storage.sites[storage.courses[appointment.course]!!.site]!!
-    val user = storage.users[site, userId] ?: return QrErrorReasons.UNKNOWN_USER
-
-
+private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, user: User): QrErrorReasons? {
     val enrolled = storage.users.isEnrolled(course, user)
     if (!enrolled) return QrErrorReasons.NOT_ENROLLED
+
+    val attendee = storage.users.isAttendee(appointment, user)
+    if (attendee) return QrErrorReasons.ALREADY_CHECKED_IN
+
     val attempt = storage.checkInQueue[appointment, user]
-    if (attempt != null) return QrErrorReasons.ALREADY_CHECKED_IN
+    if (attempt != null) return QrErrorReasons.ALREADY_CHECKED_IN_PENDING
 
     return null
 }
@@ -156,23 +157,33 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     val course = storage.courses[appointment.course]!!
 
-                    val invalid = getErrorReason(storage, course, appointment, scanned.userId)
+                    val site = storage.sites[course.site]!!
+                    val user = storage.users[site, scanned.userId]
 
-                    if (invalid == null) {
-                        delayed = null
-                        haptic.performHapticFeedback(HapticFeedbackType.Confirm)
-                        if (confirmation) {
-                            if (!autoScan) navigation.pop()
-                            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
-                            break
-                        } else {
-                            val site = storage.sites[storage.courses[appointment.course]!!.site]!!
-                            val user = storage.users[site, scanned.userId] ?: continue
-                            accepted += AcceptedState(course, appointment, user)
-                        }
+                    delayed = AcceptedResult(course, appointment, scanned.userId)
+
+                    if (user == null) {
+                        errors += ErrorResult(QrErrorReasons.UNKNOWN_USER, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
+                        continue
+                    }
+
+                    val invalid = getErrorReason(storage, course, appointment, user)
+
+                    if (invalid != null) {
+                        val details = if (appointments.size == 1) user.fullname else "${user.fullname} (${course.name})"
+                        errors += ErrorResult(invalid, details)
+                        continue
+                    }
+
+                    delayed = null
+                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+
+                    if (confirmation) {
+                        if (!autoScan) navigation.pop()
+                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                        break
                     } else {
-                        errors += ErrorResult(invalid, if (BuildConfig.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
-                        delayed = AcceptedResult(course, appointment, scanned.userId)
+                        accepted += AcceptedState(course, appointment, user)
                     }
                 } catch (_: SerializationException) {
                     errors += ErrorResult(QrErrorReasons.INVALID_DATA)
@@ -187,7 +198,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     ScanInstructions(courses)
 
     ErrorOverlay(errors)
-    AcceptedOverlay(accepted)
+    AcceptedOverlay(accepted, courses.size > 1)
 }
 
 @Composable

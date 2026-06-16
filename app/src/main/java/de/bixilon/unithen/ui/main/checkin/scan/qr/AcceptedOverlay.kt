@@ -23,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
@@ -39,7 +38,6 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserExceptio
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
-import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import okio.IOException
 import kotlin.time.TimeSource
@@ -55,7 +53,7 @@ data class AcceptedState(
 }
 
 @Composable
-private fun AcceptedBox(state: AcceptedState) {
+private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     val storage = LocalStorage.current
     val resources = LocalResources.current
     val haptic = LocalHapticFeedback.current
@@ -94,43 +92,36 @@ private fun AcceptedBox(state: AcceptedState) {
         color = if (okay) checkInSuccess else if (errorMessage != null) MaterialTheme.colorScheme.errorContainer else checkInSuccess,
         tonalElevation = 2.dp,
     ) {
-        Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(text = state.user.fullname, style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
-            Text(text = state.course.name, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center) // TODO: hide if only one course is possible
-
+        Column(modifier = Modifier.padding(6.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                if (checkin.active) {
-                    CircularProgressIndicator()
-                    Spacer(Modifier.width(8.dp))
-                    Text(R.string.scan_checking_in.i18n())
-                } else {
-                    val message = errorMessage ?: if (okay) R.string.scan_successful.i18n() else ""
-
-                    var icon: ImageVector? = null
-
-                    if (errorMessage != null) {
-                        icon = Icons.Filled.Warning
-                    } else if (okay) {
-                        icon = Icons.Filled.Check
-                    }
-                    if (icon != null) {
-                        Icon(icon, "")
-                        Spacer(Modifier.width(8.dp))
-                    }
-
-                    Text(
-                        text = message,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                    )
+                when {
+                    checkin.active -> CircularProgressIndicator()
+                    errorMessage != null -> Icon(Icons.Filled.Warning, "")
+                    okay -> Icon(Icons.Filled.Check, "")
                 }
+
+                Spacer(Modifier.width(8.dp))
+                Text(text = state.user.fullname, style = MaterialTheme.typography.headlineLarge, textAlign = TextAlign.Center)
+            }
+
+            if (showCourseName) {
+                Text(text = state.course.name, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+            }
+
+            val message = errorMessage
+            if (message != null) {
+                Text(
+                    text = message,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
     }
 }
 
 @Composable
-fun AcceptedOverlay(accepted: List<AcceptedState>) {
+fun AcceptedOverlay(accepted: List<AcceptedState>, showCourseName: Boolean = true) {
     if (accepted.isEmpty()) return
 
 
@@ -150,7 +141,7 @@ fun AcceptedOverlay(accepted: List<AcceptedState>) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (state in accepted) {
-                key(state.user.id, state.appointment.id) { AcceptedBox(state) }
+                key(state.user.id, state.appointment.id) { AcceptedBox(state, showCourseName) }
             }
         }
     }
