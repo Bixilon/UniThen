@@ -16,21 +16,31 @@ import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.util.CookieParser
+import java.net.URI
 
 
 open class WebAuthClient(
+    val expected: URI,
     val callback: (Authentication) -> Unit,
 ) : WebViewClient() {
 
     init {
         CookieManager.getInstance().setAcceptCookie(true)
-        CookieManager.getInstance().removeAllCookie() // TODO: don't use deprecated cookie, store cookies only in memory
+        CookieManager.getInstance().removeAllCookies(null)
+        CookieManager.getInstance().flush()
     }
 
     override fun onPageFinished(view: WebView, url: String) {
+        try {
+            val current = url.toURI()
+            if (current.host != expected.host) return
+        } catch (error: Throwable) {
+            return
+        }
         val cookies = CookieManager.getInstance().getCookie(url)?.let(CookieParser::parse) ?: return
 
         val session = cookies["ory-session"] ?: return

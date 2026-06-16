@@ -65,13 +65,14 @@ fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
             )
         }
 
+        // TODO: Use Android Custom tabs, but that kind of sucks, cookie sniffing is not possible. This can probably only be done better with cooperation with UniNow (proper oauth flow)
 
         AndroidView(modifier = Modifier.fillMaxHeight(), factory = { context ->
             WebView(context).apply {
                 view = this
 
 
-                webViewClient = object : WebAuthClient({
+                webViewClient = object : WebAuthClient(url, {
                     loadDataWithBaseURL("", "<html>Logged in!</html>", "text/html", "utf-8", "")
                     callback.invoke(it)
                 }) {
@@ -88,6 +89,8 @@ fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
                 settings.allowUniversalAccessFromFileURLs = false
                 settings.domStorageEnabled = false
                 settings.databaseEnabled = false
+                settings.allowContentAccess = false
+
                 settings.javaScriptEnabled = true
 
                 loadUrl(url.with(path = "/auth/login").toString())
