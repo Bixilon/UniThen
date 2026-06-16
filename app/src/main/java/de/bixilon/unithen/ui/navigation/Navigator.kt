@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.navigation
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -31,7 +30,6 @@ class Navigator(
 ) {
     private val stack = mutableStateListOf<Frame>()
     private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
-    private var isNavigating = false
 
 
     inner class Builder {
@@ -54,10 +52,6 @@ class Navigator(
         val visible = LocalVisibility.current
         val last = stack.last()
 
-        if (isNavigating) {
-            isNavigating = false
-        }
-
         for (frame in stack) {
             key(frame.route) {
                 val visible = frame === last && visible
@@ -78,13 +72,6 @@ class Navigator(
     @Synchronized
     fun navigate(route: NavigationRoute) {
         val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
-
-        if (isNavigating) {
-            Log.w("NAV", "Ignoring route $route (already navigating)")
-            return
-        }
-
-        isNavigating = true
 
         if (mode == NavigationMode.SINGLE) {
             val existing = stack.find { it.route == route }
