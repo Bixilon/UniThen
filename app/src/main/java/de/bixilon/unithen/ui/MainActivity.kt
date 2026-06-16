@@ -72,7 +72,9 @@ fun MainNavigator() {
 
     navigator.routes {
         composable<MainRoute> { MainScreen() }
-        composable<DebugRoute> { DebugScreen() }
+        if (BuildConfig.DEBUG) {
+            composable<DebugRoute> { DebugScreen() }
+        }
         composable<SetupRoute> { SetupScreen() }
 
         composable<AboutRoute> { AboutScreen() }
