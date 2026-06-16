@@ -129,7 +129,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
             }
             for (code in it) {
                 try {
-                    val text = code.text ?: continue
+                    val text = code.text?.trim() ?: continue
                     if (!text.startsWith("{")) {
                         errors += ErrorResult(QrErrorReasons.INVALID_FORMAT)
                         continue
