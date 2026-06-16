@@ -36,9 +36,15 @@ import de.bixilon.unithen.ui.util.useAsyncNetwork
 fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
     val storage = LocalStorage.current
 
-    BackHandler { cancel.invoke() }
-
-    val add = useAsyncNetwork<Unit>(null) { val site = storage.sites.add(url); callback.invoke(site) }
+    val add = useAsyncNetwork<Unit>(null) {
+        try {
+            val site = storage.sites.add(url)
+            callback.invoke(site)
+        } catch (error: Throwable) {
+            cancel.invoke()
+            throw error
+        }
+    }
 
     LaunchedEffect(url) { add.invoke(Unit) }
 

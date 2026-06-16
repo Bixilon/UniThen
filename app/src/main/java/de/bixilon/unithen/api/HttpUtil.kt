@@ -23,6 +23,7 @@ import kotlin.time.Duration.Companion.seconds
 
 object HttpUtil {
     val JSON = "application/json; charset=utf-8".toMediaType()
+    const val USER_AGENT = "UniThen (version=${BuildConfig.VERSION})"
 
     suspend fun create(base: URI, endpoint: String): Request.Builder {
         assert(base.scheme == "https") { "Insecure requests are forbidden!" }
@@ -31,7 +32,7 @@ object HttpUtil {
         }
         val request = Request.Builder()
             .url(base.with(path = endpoint).toURL())
-            .header("User-Agent", "UniThen (version=${BuildConfig.VERSION})")
+            .header("User-Agent", USER_AGENT)
 
         return request
     }

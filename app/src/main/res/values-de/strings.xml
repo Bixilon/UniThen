@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter</string>
+    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter </string>
     <string name="setup_title">Einrichtung</string>
     <string name="set_accept">Ich akzeptiere diese Bedingungen</string>
     <string name="setup_login">Weiter zur Anmeldung</string>
@@ -118,7 +118,7 @@
     <string name="settings_check_in_auto_scan_description">Öffnet den QR-Code Scanner automatisch und schließt ihn nicht, nach dem Scan.</string>
     <string name="settings_check_in_await_server">Serverantwort abwarten</string>
     <string name="settings_check_in_await_server_description">"Wartet auf die Antwort vom Server nach dem Scannen. Es macht nur Sinn diese Option zu aktivieren, wenn mehrere Geräte QR-Codes Scannen und Ticketbetrug (Duplizieren) ist eine Sorge "</string>
-    <string name="settings_check_in_confirmation_screen_description">Öffnet den Bestätigungsdialog wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
+    <string name="settings_check_in_confirmation_screen_description">Öffnet den Bestätigungsdialog, wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
     <string name="settings_cleanup_database">Datenbank aufräumen</string>
     <string name="settings_about">Über</string>
     <string name="database_cleanup_title">Aufräumen...</string>

@@ -12,12 +12,12 @@
 
 <resources>
     <string name="app_name" translatable="false">UniThen</string>
-    <string name="setup_1">This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at</string>
+    <string name="setup_1">This app is unofficial and NOT affiliated with UniNow GmbH! Do not report issues to them, instead report them at </string>
     <string name="setup_title">Setup</string>
     <string name="setup_2">This software was created by Moritz Zwerger and is licensed under the terms of the GPLv3. The app creator is not responsible for any damage to your account. This app comes with absolutely NO warranty.</string>
     <string name="setup_3">An access token (generated with your credentials) will be saved locally on this device.</string>
     <string name="setup_4">The servers are operated by UniNow GmbH, please check their website for their privacy policy.</string>
-    <string name="set_accept">I understand and accept these terms</string>
+    <string name="set_accept">I understand and accept those terms</string>
     <string name="setup_login">Continue to login</string>
     <string name="add_account_title">Please choose your booking site</string>
     <string name="add_account_help">Can\'t find your site?</string>
