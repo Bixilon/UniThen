@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
@@ -38,13 +39,11 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.useAsyncNetwork
-import de.bixilon.unithen.ui.util.useTime
-import de.bixilon.unithen.ui.util.verticalScroll
+import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
 
@@ -54,7 +53,16 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
     val (account, _, appointment) = LocalScanContext.current
 
-    val checkout = useAsyncNetwork<Unit>(account) { CheckInUtil.checkOut(storage, appointment, user) }
+    val toast = useToast()
+    val resources = LocalResources.current
+    
+    val checkout = useAsyncNetwork<Unit>(account) {
+        try {
+            CheckInUtil.checkOut(storage, appointment, user)
+        } catch (error: CheckInError) {
+            toast.invoke(resources.getString(R.string.scan_unknown_error_server, error.message ?: "Unknown error") + " (${user.fullname})")
+        }
+    }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -139,7 +147,15 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
     val (account, _, appointment) = LocalScanContext.current
-    val checkin = useAsyncNetwork<Unit>(account) { CheckInUtil.checkIn(storage, appointment, user) }
+    val toast = useToast()
+    val resources = LocalResources.current
+    val checkin = useAsyncNetwork<Unit>(account) {
+        try {
+            CheckInUtil.checkIn(storage, appointment, user)
+        } catch (error: CheckInError) {
+            toast.invoke(resources.getString(R.string.scan_unknown_error_server, error.message ?: "Unknown error") + " (${user.fullname})")
+        }
+    }
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
