@@ -34,11 +34,13 @@ data class CheckInAttemptQl(
 
     enum class Error {
         CHECKIN_CLOSED,
+        NOT_APPROVED,
         ;
 
         companion object {
             fun of(message: String?) = when (message?.trim()?.lowercase()) {
                 "checkin closed" -> CHECKIN_CLOSED
+                "booking not approved yet" -> NOT_APPROVED
                 else -> null
             }
         }
