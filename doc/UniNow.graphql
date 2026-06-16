@@ -9,6 +9,9 @@ scalar UUID
 "A 36 digit UUID; can be blank in special cases"
 scalar ID
 
+"e.g. courses.course.fb6004ca-803d-4121-8451-ea809e3f23ef"
+scalar ResourceName
+
 enum CheckInAttemptStatus {
     Success,
     Failure,
@@ -346,6 +349,7 @@ type Query {
     courses_pk(id: ID!): Course
 
     get_course_single_appointments(course_id: UUID!, filters: [Filter]): Appointment # TODO: Type
+    public_product_form_data(resource_name: ResourceName!): Unknown # (additional_fields, product_id, product_prerequisites)
 }
 
 type Mutation {
