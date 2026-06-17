@@ -207,7 +207,7 @@ fun ScanAttendeeList() {
         }
     }
 
-    if (!visible) {
+    if (!visible) { // TODO: This is not good, when checking out persons its weirdly scrolling down.
         LaunchedEffect(attendees, queue, not) { state.animateScrollToItem(0, 0) }
     }
 

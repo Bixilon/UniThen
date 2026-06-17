@@ -150,8 +150,8 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             if (!fast) pop()
         } catch (error: IOException) {
-            if (user == null) {
-                message = resources.getString(R.string.network_error)
+            if (await) {
+                message = resources.getString(R.string.error_network, error.message)
             } else if (!fast) {
                 pop()
             }
