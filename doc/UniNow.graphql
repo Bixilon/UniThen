@@ -55,7 +55,7 @@ type EnrolledUser {
 
     email: String
 
-    payment_completed: Unknown
+    payment_completed: Boolean
 }
 
 type Product {

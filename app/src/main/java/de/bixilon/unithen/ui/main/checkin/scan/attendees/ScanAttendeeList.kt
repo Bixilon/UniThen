@@ -68,7 +68,6 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -101,7 +100,6 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
         colors = CardDefaults.cardColors(containerColor = color),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -161,7 +159,6 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp)
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -232,7 +229,8 @@ fun ScanAttendeeList() {
                     .fillMaxSize()
                     .verticalScroll(state),
                 state = state,
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                contentPadding = PaddingValues(bottom = 150.dp),
             ) {
                 items(items = attendees, key = User::id) { AttendeeCard(it, readonly) }
                 items(items = queue, key = { it.user }) { QueueCard(it, readonly) }

@@ -13,7 +13,9 @@
 package de.bixilon.unithen.ui.main.accounts
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,10 +27,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.ui.containers.InfoContainer
-import de.bixilon.unithen.ui.containers.Section
-import de.bixilon.unithen.ui.containers.SectionTitle
-import de.bixilon.unithen.ui.containers.TextCard
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -40,7 +39,7 @@ fun AccountDetailsScreen(account: Account) {
     val site = rememberStorage { sites[account.site]!! }
     val courses = rememberStorage { courses[account].sortedBy { it.name } } // TODO: better sort
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Screen {
         InfoContainer {
             Text(
                 text = account.fullname,

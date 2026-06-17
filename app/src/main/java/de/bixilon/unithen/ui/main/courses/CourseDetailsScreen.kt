@@ -34,6 +34,7 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.courses.appointments.CourseAppointments
@@ -83,7 +84,7 @@ fun CourseDetailsScreen(course: Course) {
 
 
     Box {
-        Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(site, event, course, accounts)
 
             val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull() // TODO: get tutor account of appointment

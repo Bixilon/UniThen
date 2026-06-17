@@ -35,6 +35,7 @@ data class CheckInAttemptQl(
     enum class Error {
         CHECKIN_CLOSED,
         NOT_APPROVED,
+        // TODO: unknown user, not enrolled, more?
         ;
 
         companion object {

@@ -15,8 +15,8 @@ package de.bixilon.unithen.ui.util
 import android.content.ClipData
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
@@ -31,7 +31,7 @@ fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
     var copied by remember { mutableStateOf(false) }
 
 
-    Button({
+    IconButton({
         copied = true
         CoroutineScope(Dispatchers.Main).launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(text, text)))
