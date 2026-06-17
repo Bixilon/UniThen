@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lightspark.composeqr.QrCodeView
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.BuildConfig
@@ -44,6 +43,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import de.bixilon.unithen.ui.util.QrCode
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import kotlinx.serialization.json.JsonObject
@@ -100,7 +100,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Box(Modifier.padding(4.dp)) {
             val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
 
-            QrCodeView(
+            QrCode(
                 data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
                 modifier = Modifier
                     .fillMaxWidth()

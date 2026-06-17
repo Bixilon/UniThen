@@ -166,7 +166,7 @@ dependencies {
     implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material.icons.extended)
 
-    implementation(libs.compose.qr.code)
+    implementation(libs.zxing)
 
     implementation(libs.okhttp)
     implementation(libs.ksoup)
