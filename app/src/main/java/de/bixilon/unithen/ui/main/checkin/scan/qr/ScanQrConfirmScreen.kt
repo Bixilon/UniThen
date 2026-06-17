@@ -172,7 +172,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
         Spacer(Modifier.height(16.dp))
 
 
-        if (user == null) {
+        if (user == null || !enrolled) {
             EnrolledListWarning(account, course)
             Spacer(Modifier.height(16.dp))
         }
