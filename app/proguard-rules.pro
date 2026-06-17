@@ -24,6 +24,12 @@
 
 -keepattributes EnclosingMethod
 -dontwarn java.awt.**
--keepnames class de.bixilon.unithen.** {*; }
--keepnames enum de.bixilon.unithen.**
--keepnames interface de.bixilon.unithen.**
+
+-assumenosideeffects class de.bixilon.unithen.R$string
+
+-keep class de.bixilon.unithen.UniThen
+-keep class de.bixilon.unithen.ui.MainActivity
+
+-keep,allowshrinking,allowoptimization class de.bixilon.unithen.** {*; }
+-keep,allowshrinking,allowoptimization enum de.bixilon.unithen.**
+-keep,allowshrinking,allowoptimization interface de.bixilon.unithen.**
