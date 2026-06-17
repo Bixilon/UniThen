@@ -81,6 +81,7 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
 
     val warning = when {
         user == null -> R.string.scan_error_unknown_user.i18n()
+        !enrolled -> R.string.scan_error_not_enrolled.i18n()
         attempt != null && attempt.attempt != null -> R.string.scan_error_check_out_pending.i18n()
         attendee -> R.string.scan_error_already_checked_in.i18n()
         attempt != null -> R.string.scan_error_check_in_pending.i18n()
