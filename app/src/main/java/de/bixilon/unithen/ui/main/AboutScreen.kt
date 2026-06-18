@@ -72,7 +72,7 @@ fun UpdateChecker() {
         if (response.code != 200) throw IllegalStateException("Request is not OK")
 
         // Same regex as for fdroid: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/de.bixilon.unithen.yml
-        next = Regex("(\\d+)$").find(response.body.string())!!.groups[1]!!.value.toInt()
+        next = Regex("^(\\d+)$", RegexOption.MULTILINE).find(response.body.string())!!.groups[1]!!.value.toInt()
     }
 
 
