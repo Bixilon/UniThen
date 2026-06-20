@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -128,7 +129,11 @@ fun CoursesScreen() {
                             Text(event.name + " (${courses.size}):")
                         }
                     }
-                    items(items = courses, key = Course::id) { course -> TextCard(course.name, Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) }) }
+                    items(items = courses, key = Course::id) { course ->
+                        val account = rememberStorage { accounts.getTutorAccount(course) }
+                        val color = if (account != null) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
+                        TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
+                    }
                 }
             }
         }
