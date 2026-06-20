@@ -28,7 +28,7 @@ import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.util.i18n
 
 @Composable
-fun ScanInstructions(courses: List<Course>) {
+fun ScanInstructions(courses: Collection<Course>) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -196,7 +196,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         }
     }
 
-    val courses = rememberStorage { appointments.map { storage.courses[it.course]!! } }
+    val courses = rememberStorage { appointments.map { storage.courses[it.course]!! }.toSet() }
     ScanInstructions(courses)
 
     ErrorOverlay(errors)
