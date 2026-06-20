@@ -87,6 +87,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
 
     if (canSync && pending > 0) {
         if (showSyncProgress) {
+            val pending = remember { pending } // Don't update number of pending during sync
             SyncProgress(synced, pending) { showSyncProgress = false }
         }
 
