@@ -190,6 +190,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
     val site = rememberStorage { sites[account.site]!! }
+    val user = rememberStorage { users[account.user]!! }
     val now = useTime()
 
 
@@ -212,14 +213,14 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
         ) {
             Column {
                 Text(
-                    text = account.fullname,
+                    text = user._fullname,
                     style = MaterialTheme.typography.titleLarge,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 if (BuildConfig.DEBUG) {
                     Spacer(Modifier.height(8.dp))
-                    Text("ID: " + account.uuid.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("ID: " + user.uuid.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 

@@ -20,10 +20,9 @@ INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(909, 902, "0000000
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(910, 902, "00000000-0000-0000-0000-000000000007", "Sophie", "Kurz");
 
 
-INSERT INTO accounts(id, site, uuid, firstname, lastname, fetched, session_key) VALUES(901, 901, "00000000-0000-0000-0000-000000000001", "Hans", "Maulwurf", 1, "a");
-INSERT INTO accounts(id, site, uuid, firstname, lastname, fetched, session_key) VALUES(902, 901, "00000000-0000-0000-0000-000000000002", "Peter", "Wurst", 1, "a");
-INSERT INTO accounts(id, site, uuid, firstname, lastname, fetched, session_key) VALUES(903, 902, "00000000-0000-0000-0000-000000000002", "Marie", "Zimmer", 1, "");
-
+INSERT INTO accounts(id, site, user, fetched, session_key) VALUES(901, 901, 901, 1, "a");
+INSERT INTO accounts(id, site, user, fetched, session_key) VALUES(902, 901, 902, 1, "a");
+INSERT INTO accounts(id, site, user, fetched, session_key) VALUES(903, 902, 909, 1, "");
 
 INSERT INTO courses(id, site, event, uuid, name) VALUES(901, 901, 901, "00000000-0000-0000-0000-000000000001", "First course");
 INSERT INTO courses(id, site, event, uuid, name) VALUES(902, 901, 901, "00000000-0000-0000-0000-000000000002", "Second course");

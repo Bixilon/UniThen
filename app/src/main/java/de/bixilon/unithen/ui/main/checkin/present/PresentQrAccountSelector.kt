@@ -29,6 +29,7 @@ import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.PresentQrRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
 
 
@@ -54,7 +55,8 @@ fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts:
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(accounts, key = Account::id) {
-                TextCard(it.fullname, Modifier.clickable { navigation.navigate(PresentQrRoute(it, course, appointment)) })
+                val user = rememberStorage { users[it.user]!! }
+                TextCard(user._fullname, Modifier.clickable { navigation.navigate(PresentQrRoute(it, course, appointment)) })
             }
         }
     }

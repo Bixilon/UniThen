@@ -30,6 +30,8 @@ WHERE id NOT IN (
     SELECT user FROM course_enrolled
     UNION
     SELECT user FROM appointment_attendees
+    UNION
+    SELECT user FROM accounts
 );
 
 DROP TABLE temp.orphan_courses;

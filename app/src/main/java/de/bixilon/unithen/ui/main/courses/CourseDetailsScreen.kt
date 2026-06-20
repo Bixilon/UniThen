@@ -33,6 +33,7 @@ import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURAT
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
@@ -47,7 +48,7 @@ import de.bixilon.unithen.ui.util.useToast
 
 
 @Composable
-private fun Header(site: Site, event: Event, course: Course, accounts: List<Account>) {
+private fun Header(site: Site, event: Event, course: Course, accounts: List<User>) {
 
     InfoContainer {
         Text(
@@ -67,7 +68,7 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
         )
 
         Text(
-            text = accounts.joinToString(", ") { it.fullname },
+            text = accounts.joinToString(", ") { it._fullname },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
@@ -80,12 +81,13 @@ fun CourseDetailsScreen(course: Course) {
     val navigator = LocalNavigation.current
     val event = rememberStorage { events[course.event]!! }
     val site = rememberStorage { sites[event.site]!! }
-    val accounts = rememberStorage { accounts[course].sortedBy { it.lastname } }
+    val accounts = rememberStorage { accounts[course] }
+    val users = rememberStorage {accounts.map { users[it.user]!! }.sortedBy { it.lastname } }
 
 
     Box {
         Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Header(site, event, course, accounts)
+            Header(site, event, course, users)
 
             val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull() // TODO: get tutor account of appointment
             val toast = useToast()

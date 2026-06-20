@@ -78,7 +78,8 @@ class CourseTable(
         return storage.query(query) { it.isNotEmpty() }
     }
 
-    fun isTutorNot(): Boolean {
+
+    fun isTutorNot(): Boolean { // TODO: broken, when tutor and user in course
         val course = SqlBuilder.select("1").from(UserTable)
             .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
             .where((UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))

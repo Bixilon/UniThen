@@ -21,6 +21,7 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,7 +35,7 @@ object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
 
 
-    private fun CourseQl.isTutor(account: Account): Boolean {
+    private fun CourseQl.isTutor(user: User): Boolean {
         if (tutors == null) throw NullPointerException("Tutors not fetched!")
         val tutors = tutors.toMutableSet()
 
@@ -44,7 +45,7 @@ object CourseFetcher {
             }
         }
 
-        return tutors.any { account.uuid == it.id }
+        return tutors.any { user.uuid == it.id }
     }
 
     private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, slim: Boolean, semaphore: Semaphore, appointments: List<AppointmentQl>?) {
@@ -56,7 +57,7 @@ object CourseFetcher {
         val course = store(site, detailsQl)
         accounts.addToCourse(account, course)
 
-        if (detailsQl.isTutor(account)) {
+        if (detailsQl.isTutor(users[account.id]!!)) {
             val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
             store(site, course, enrolled!!)
         }
@@ -68,7 +69,7 @@ object CourseFetcher {
         val api = account.api(site)
         if (!force && !account.isStale()) return
 
-        val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("No courses?")
+        val coursesQl = api.getCourses(users[account.user]!!.uuid) ?: throw NullPointerException("No courses?")
 
         progress?.invoke(CourseFetchProgress(0, coursesQl.size))
 
@@ -151,7 +152,7 @@ object CourseFetcher {
         accounts.addToCourse(account, course)
 
 
-        if (detailsQl.isTutor(account)) {
+        if (detailsQl.isTutor(users[account.id]!!)) {
             val enrolled = api.getEnrolled(course.uuid)
             store(site, course, enrolled!!)
         }

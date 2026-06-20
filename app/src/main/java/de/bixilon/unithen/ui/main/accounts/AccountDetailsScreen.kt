@@ -38,11 +38,12 @@ import de.bixilon.unithen.ui.util.verticalScroll
 fun AccountDetailsScreen(account: Account) {
     val site = rememberStorage { sites[account.site]!! }
     val courses = rememberStorage { courses[account].sortedBy { it.name } } // TODO: better sort
+    val user = rememberStorage { users[account.user]!! }
 
     Screen {
         InfoContainer {
             Text(
-                text = account.fullname,
+                text = user._fullname,
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

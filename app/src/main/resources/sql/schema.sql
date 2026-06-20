@@ -38,17 +38,15 @@ CREATE TABLE users (
 CREATE TABLE accounts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   site INTEGER,
-  uuid VARCHAR(36),
-
-  firstname VARCHAR(255) NOT NULL,
-  lastname VARCHAR(255) NOT NULL,
+  user INTEGER,
 
   session_key VARCHAR(1024),
 
   fetched INTEGER,
 
   FOREIGN KEY (site) REFERENCES sites(id),
-  UNIQUE (site, uuid)
+  FOREIGN KEY (user) REFERENCES users(id),
+  UNIQUE (site, user)
 );
 
 CREATE TABLE courses (

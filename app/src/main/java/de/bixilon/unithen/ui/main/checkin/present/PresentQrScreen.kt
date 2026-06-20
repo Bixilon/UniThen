@@ -43,6 +43,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCode
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
@@ -55,6 +56,7 @@ import kotlin.uuid.Uuid
 fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) {
     val visible = LocalVisibility.current
     val name by rememberSetting(Settings.QR_CODE_REMOVE_NAME)
+    val user = rememberStorage { users[account.user]!! }
 
     val context = LocalContext.current
     DisposableEffect(visible) {
@@ -86,7 +88,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         InfoContainer(modifier = Modifier
             .padding(horizontal = 16.dp)
             .fillMaxWidth(0.8f)) {
-            InfoPair(R.string.course_name.i18n(), account.fullname)
+            InfoPair(R.string.course_name.i18n(), user._fullname)
             InfoPair(R.string.appointment_start.i18n(), appointment.start.format())
             InfoPair(R.string.appointment_end.i18n(), appointment.end.format())
             InfoPair(R.string.appointment_location.i18n(), appointment.location)
@@ -98,10 +100,10 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Spacer(modifier = Modifier.height(16.dp))
 
         Box(Modifier.padding(4.dp)) {
-            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
+            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(user.firstname, user.lastname)
 
             QrCode(
-                data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
+                data = createQrCode(user.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f, matchHeightConstraintsFirst = true)

@@ -32,6 +32,7 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.storage.types.User
 import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
@@ -41,26 +42,26 @@ class AccountTable(
 ) : SqlTable<Account>(storage, AccountTable) {
 
     operator fun get(id: Key) = single(AccountTable.id eq id)
-    operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
+    operator fun get(site: Site, user: User) = single(SqlFilter.and("site" to site.id, "user" to user.id))
 
-    fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
-    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey, "fetched" to fetched))
+    fun get(site: Site? = null,sessionKey: String? = null) = all(SqlFilter.and("site" to site,  "session_key" to sessionKey))
+    fun update(id: Int, user: User?=null, sessionKey: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("user" to user?.id, "session_key" to sessionKey, "fetched" to fetched))
 
 
-    fun update(account: Account, details: UserDetails, authentication: Authentication) {
-        update(account.id, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+    fun update(account: Account, user: User, authentication: Authentication) {
+        update(account.id, user, authentication.cast<CookieAuthentication>().session)
     }
 
-    fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname, session_key, fetched) VALUES (?,?,?,?,?,?)", site.id, details.uuid, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session, Clock.System.now())
+    fun insert(site: Site, user: User, authentication: Authentication): Account {
+        val id = insert("INSERT INTO $table(site, user, session_key, fetched) VALUES (?,?,?,?)", site.id, user.id, authentication.cast<CookieAuthentication>().session, Clock.System.now())
 
         return this[id]!! // TODO: cleanup
     }
 
-    fun add(site: Site, details: UserDetails, authentication: Authentication): Account {
-        this[site, details.uuid]?.let { update(it, details, authentication); return this[it.id]!! }
+    fun add(site: Site, user: User, authentication: Authentication): Account {
+        this[site, user]?.let { update(it, user, authentication); return this[it.id]!! }
 
-        return insert(site, details, authentication)
+        return insert(site, user, authentication)
     }
 
     operator fun get(course: Course) = all(select()
@@ -119,14 +120,12 @@ class AccountTable(
 
         val id = column(Account::id)
         val site = column(Account::site)
-        val uuid = column(Account::uuid)
-        val firstname = column(Account::firstname)
-        val lastname = column(Account::lastname)
+        val user = column(Account::user)
         val sessionKey = column(Account::sessionKey)
         val fetched = column(Account::fetched)
 
-        override val columns = listOf(id, site, uuid, firstname, lastname, sessionKey, fetched)
+        override val columns = listOf(id, site, user, sessionKey, fetched)
 
-        override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
+        override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2),  cursor.getStringOrNull(3), cursor.getInstant(4))
     }
 }

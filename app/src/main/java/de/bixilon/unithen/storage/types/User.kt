@@ -25,5 +25,6 @@ data class User(
     val lastname: String,
 ) : DbKeyed {
 
-    val fullname get() = "$firstname $lastname" + if (isMajorContributor()) "\uD83C\uDF89" else ""
+    val _fullname get() = "$firstname $lastname"
+    val fullname get() = _fullname + if (isMajorContributor()) "\uD83C\uDF89" else ""
 }

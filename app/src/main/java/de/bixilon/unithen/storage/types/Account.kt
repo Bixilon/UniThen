@@ -25,18 +25,13 @@ import kotlin.uuid.Uuid
 data class Account(
     override val id: Key,
     val site: Key,
-    val uuid: Uuid,
-
-    val firstname: String,
-    val lastname: String,
+    val user: Key,
 
     @Deprecated("multiple authentication methods")
     val sessionKey: String?,
 
     val fetched: Instant,
 ) : DbKeyed {
-
-    val fullname get() = "$firstname $lastname"
 
     fun api(site: Site): AuthenticatedUniNowApi {
         if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")

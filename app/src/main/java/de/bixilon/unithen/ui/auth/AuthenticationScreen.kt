@@ -51,7 +51,10 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
         val first = storage.accounts.count == 0
         val details = UserDetails.fetch(site.url, authentication)
 
-        val account = storage.transaction { it.accounts.add(site, details, authentication) }
+        val account = storage.transaction {
+            val user = it.users.add(site, details.uuid, details.firstname, details.lastname)
+            it.accounts.add(site, user, authentication)
+        }
 
         message = resources.getString(R.string.authentication_course_list)
 
