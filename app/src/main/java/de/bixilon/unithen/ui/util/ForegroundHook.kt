@@ -19,20 +19,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 
 @Composable
 fun rememberForeground(): Boolean {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    var state by remember { mutableStateOf(true) }
+    val owner = LocalLifecycleOwner.current
+    var state by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) }
 
-    DisposableEffect(lifecycleOwner) {
-        val lifecycle = lifecycleOwner.lifecycle
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                Lifecycle.Event.ON_START -> state = true
-                Lifecycle.Event.ON_PAUSE -> state = false
-                Lifecycle.Event.ON_RESUME -> state = true
-                Lifecycle.Event.ON_DESTROY -> state = false
-                else -> Unit
-            }
+    DisposableEffect(owner) {
+        val lifecycle = owner.lifecycle
+        val observer = LifecycleEventObserver { _, _ ->
+            state = owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
         }
+
         lifecycle.addObserver(observer)
 
         onDispose {
