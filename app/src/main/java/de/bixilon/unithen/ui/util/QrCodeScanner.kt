@@ -38,9 +38,6 @@ import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import zxingcpp.BarcodeReader
@@ -91,6 +88,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
     val request by requests.collectAsState(initial = null)
 
     var last by remember { mutableStateOf(Instant.DISTANT_PAST) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         provider = ProcessCameraProvider.awaitInstance(context)
@@ -112,11 +110,10 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                 .setResolutionStrategy(ResolutionStrategy.HIGHEST_AVAILABLE_STRATEGY)
         }
 
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
         val analyzer = ImageAnalysis.Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .setResolutionSelector(resolution.build())
+            .setBackgroundExecutor(CAMERA_EXECUTOR)
             .build()
             .apply {
                 setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
@@ -127,7 +124,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                     if (results.isNotEmpty()) {
                         last = now
                     }
-                    if (results.isEmpty() && now - last > 600.milliseconds) {
+                    if (results.isEmpty() && now - last < 600.milliseconds) {
                         return@setAnalyzer
                     }
 
