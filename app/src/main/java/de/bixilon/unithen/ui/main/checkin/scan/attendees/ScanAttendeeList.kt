@@ -23,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +56,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
 
     val toast = useToast()
     val resources = LocalResources.current
-    
+
     val checkout = useAsyncNetwork<Unit>(account) {
         try {
             CheckInUtil.checkOut(storage, appointment, user)
@@ -207,13 +208,14 @@ fun ScanAttendeeList() {
         }
     }
 
-    if (!visible) { // TODO: This is not good, when checking out persons its weirdly scrolling down.
+    if (!visible) { // TODO: This is not good, when checking out persons its weirdly scrolling down (to the key of that person)
         LaunchedEffect(attendees, queue, not) { state.animateScrollToItem(0, 0) }
     }
 
 
     Section {
-        SectionTitle(R.string.appointment_attendees_title.i18n(attendees.size, enrolled))
+        val count = remember(attendees, queue) { attendees.size + queue.filter { it.message == null && it.attempt == null }.size }
+        SectionTitle(R.string.appointment_attendees_title.i18n(count, enrolled))
 
 
         LaunchedEffect(filter.search, filter.sort, filter.order) { state.animateScrollToItem(0, 0) }
