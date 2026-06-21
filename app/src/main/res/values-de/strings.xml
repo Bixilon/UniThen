@@ -110,13 +110,14 @@
     <string name="settings_advanced">Fortgeschritten</string>
     <string name="settings_advanced_remove_name">Entferne Name (QR-Code)</string>
     <string name="settings_advanced_remove_name_description">Entfernt den Namen aus dem QR-Code. Scannen wird dadurch leichter. Der Name wird nicht überprüft, aber es kann sein, dass der Check In mit der UniNow App nicht mehr funktioniert.</string>
-    <string name="settings_check_in_high_resolution">Hohe Auflösung</string>
-    <string name="settings_check_in_high_resolution_description">Bevorzugt höhere Auflösung über schnellerers QR-Code Scanning. Aktiviere diese Option, wenn du Probleme hast QR-Codes zu scannen.</string>
-    <string name="settings_check_in_auto_scan">Automatisch Scannen</string>
-    <string name="settings_check_in_auto_scan_description">Öffnet den QR-Code Scanner automatisch und schließt ihn nicht, nach dem Scan.</string>
-    <string name="settings_check_in_await_server">Serverantwort abwarten</string>
-    <string name="settings_check_in_await_server_description">Wartet auf die Antwort vom Server beim Scannen. Das macht den Check In langsamer, aktiviere diese Option, wenn mehrere Geräte Tickets Scannen oder Buchungen genehmigt werden müssen.</string>
-    <string name="settings_check_in_confirmation_screen_description">Öffnet den Bestätigungsdialog, wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
+    <string name="settings_scan_high_resolution">Hohe Auflösung</string>
+    <string name="settings_scan_high_resolution_description">Bevorzugt höhere Auflösung über schnellerers QR-Code Scanning. Aktiviere diese Option, wenn du Probleme hast QR-Codes zu scannen.</string>
+    <string name="settings_scan_auto_scan">Automatisch Scannen</string>
+    <string name="settings_scan_auto_scan_description">Öffnet den QR-Code Scanner automatisch und schließt ihn nicht, nach dem Scan.</string>
+    <string name="settings_scan_await_server">Serverantwort abwarten</string>
+    <string name="settings_scan_await_server_description">Wartet auf die Antwort vom Server beim Scannen. Das macht den Check In langsamer, aktiviere diese Option, wenn mehrere Geräte Tickets Scannen oder Buchungen genehmigt werden müssen.</string>
+    <string name="settings_scan_confirmation_screen_description">Öffnet den Bestätigungsdialog, wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
+    <string name="settings_scan_offline_description">Zeigt keinen Fehler an, wenn kein Netzwerk verfügbar ist (Der Versuch wird später automatisch im Hintergrund synchronisiert).</string>
     <string name="settings_cleanup_database">Datenbank aufräumen</string>
     <string name="settings_about">Über</string>
     <string name="database_cleanup_title">Aufräumen...</string>
@@ -126,5 +127,6 @@
     <string name="course">Kurs</string>
     <string name="settings_advanced_fetch_appointments">Alternative Kursanfrage</string>
     <string name="settings_advanced_fetch_appointments_description">Benutzt eine andere Anfrage zum Abrufen der Kurse. Das braucht einiges länger. Aktiviere diese Option nur, wenn du Kursleitung für einzelne Termine bist, nicht für den ganzen Kurs.</string>
-    <string name="settings_check_in_confirmation_screen">Scan Bestätigung</string>
+    <string name="settings_scan_confirmation_screen">Scan Bestätigung</string>
+    <string name="settings_scan_offline">Ignoriere Netzwerkfehler</string>
 </resources>

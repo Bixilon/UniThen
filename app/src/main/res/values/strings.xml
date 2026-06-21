@@ -124,18 +124,21 @@
     <string name="settings_advanced_fetch_appointments">Alternative course fetching</string>
     <string name="settings_advanced_fetch_appointments_description">Uses another query for fetching courses. This takes much longer. Only enable if you are tutor for individual appointments, not for the whole course.</string>
 
-    <string name="settings_check_in">Check In (Scan)</string>
-    <string name="settings_check_in_high_resolution">High resolution scanning</string>
-    <string name="settings_check_in_high_resolution_description">Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning QR codes.</string>
+    <string name="settings_scan">Check In (Scan)</string>
+    <string name="settings_scan_high_resolution">High resolution scanning</string>
+    <string name="settings_scan_high_resolution_description">Prefers high resolution over faster QR code scanning. Enable if you have trouble scanning QR codes.</string>
 
-    <string name="settings_check_in_auto_scan">Automatically scan</string>
-    <string name="settings_check_in_auto_scan_description">Opens the QR code scanner automatically and scans again after confirming a check in.</string>
+    <string name="settings_scan_auto_scan">Automatically scan</string>
+    <string name="settings_scan_auto_scan_description">Opens the QR code scanner automatically and scans again after confirming a check in.</string>
 
-    <string name="settings_check_in_await_server">Await confirmation</string>
-    <string name="settings_check_in_await_server_description">Awaits the server response when confirming a check in. This makes checking users in way slower, enable this option if multiple devices are performing the checkin or bookings need to be approved.</string>
+    <string name="settings_scan_await_server">Await confirmation</string>
+    <string name="settings_scan_await_server_description">Awaits the server response when confirming a check in. This makes checking users in way slower, enable this option if multiple devices are performing the checkin or bookings need to be approved.</string>
 
-    <string name="settings_check_in_confirmation_screen">Scan confirmation</string>
-    <string name="settings_check_in_confirmation_screen_description">Opens the confirmation screen when successfully scanning a ticket and only checks in the user after clicking \"Confirm\".</string>
+    <string name="settings_scan_confirmation_screen">Scan confirmation</string>
+    <string name="settings_scan_confirmation_screen_description">Opens the confirmation screen when successfully scanning a ticket and only checks in the user after clicking \"Confirm\".</string>
+
+    <string name="settings_scan_offline">Ignore network errors</string>
+    <string name="settings_scan_offline_description">Ignores if no network is available when scanning tickets. The attempt is later automatically synchronized in the background.</string>
 
     <string name="settings_cleanup_database">Cleanup database</string>
     <string name="settings_about">About</string>

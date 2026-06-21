@@ -24,6 +24,7 @@ object Settings {
     val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", true)
     val SCAN_AWAIT_SERVER_CONFIRMATION = Setting("scan_await_server_confirmation", true)
     val SCAN_CONFIRMATION_SCREEN = Setting("scan_confirmation_screen", true)
+    val SCAN_ALLOW_OFFLINE = Setting("scan_allow_offline", true)
 
     val FETCH_APPOINTMENTS = Setting("fetch_appointments", false)
 

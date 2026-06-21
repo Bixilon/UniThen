@@ -127,6 +127,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
     val resources = LocalResources.current
 
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
+    val offline by rememberSetting(Settings.SCAN_ALLOW_OFFLINE)
 
     val dismissed = rememberStorage { mutableStateOf(false) }
     DisposableEffect(Unit) { onDispose { dismissed.value = true } }
@@ -150,7 +151,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             haptic.performHapticFeedback(HapticFeedbackType.Confirm)
             if (!fast) pop()
         } catch (error: IOException) {
-            if (await) {
+            if (await && !offline) {
                 message = resources.getString(R.string.error_network, error.message)
             } else if (!fast) {
                 pop()

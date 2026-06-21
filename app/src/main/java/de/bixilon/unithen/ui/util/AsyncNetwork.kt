@@ -41,7 +41,7 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
     val toast = useToast()
     val active = remember { mutableStateOf(false) }
 
-    if (active.value) return AsyncNetworkState(true, {})
+    if (active.value) return AsyncNetworkState(true) {}
 
     val scope = remember { CoroutineScope(Dispatchers.IO) }
 

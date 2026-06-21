@@ -64,11 +64,12 @@ fun SettingsScreen() {
         val tutor = rememberStorage { courses.isTutor() }
         if (tutor) {
             Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionTitle(R.string.settings_check_in.i18n())
-                BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, R.string.settings_check_in_high_resolution.i18n(), R.string.settings_check_in_high_resolution_description.i18n())
-                BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, R.string.settings_check_in_auto_scan.i18n(), R.string.settings_check_in_auto_scan_description.i18n())
-                BooleanSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION, R.string.settings_check_in_await_server.i18n(), R.string.settings_check_in_await_server_description.i18n())
-                BooleanSetting(Settings.SCAN_CONFIRMATION_SCREEN, R.string.settings_check_in_confirmation_screen.i18n(), R.string.settings_check_in_confirmation_screen_description.i18n())
+                SectionTitle(R.string.settings_scan.i18n())
+                BooleanSetting(Settings.SCAN_QR_HIGH_RESOLUTION, R.string.settings_scan_high_resolution.i18n(), R.string.settings_scan_high_resolution_description.i18n())
+                BooleanSetting(Settings.SCAN_QR_AUTO_SCAN, R.string.settings_scan_auto_scan.i18n(), R.string.settings_scan_auto_scan_description.i18n())
+                BooleanSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION, R.string.settings_scan_await_server.i18n(), R.string.settings_scan_await_server_description.i18n())
+                BooleanSetting(Settings.SCAN_CONFIRMATION_SCREEN, R.string.settings_scan_confirmation_screen.i18n(), R.string.settings_scan_confirmation_screen_description.i18n())
+                BooleanSetting(Settings.SCAN_ALLOW_OFFLINE, R.string.settings_scan_offline.i18n(), R.string.settings_scan_offline_description.i18n())
             }
             HorizontalDivider()
         }
