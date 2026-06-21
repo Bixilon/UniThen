@@ -102,12 +102,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        ndk {
-            abiFilters += listOf("arm64-v8a", "x86_64")
-        }
         packaging {
             jniLibs {
-                excludes += "**/x86_64/libzxingcpp_android.so" // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
+                // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
+                excludes += "**/x86_64/libzxingcpp_android.so"
+                excludes += "**/x86/libzxingcpp_android.so"
+                excludes += "**/armeabi-v7a/libzxingcpp_android.so"
             }
             // jniLibs.useLegacyPackaging = false
             // dex.useLegacyPackaging = false
