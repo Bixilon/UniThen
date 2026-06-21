@@ -38,6 +38,7 @@ import de.bixilon.unithen.R
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import zxingcpp.BarcodeReader
@@ -47,6 +48,7 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
 private val CAMERA_EXECUTOR by lazy { Executors.newFixedThreadPool(2) }
+private val READER by lazy { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
 
 @androidx.compose.ui.tooling.preview.Preview
 @Composable
@@ -74,9 +76,10 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
         CameraMessage(modifier, R.string.scan_camera_permission.i18n())
         return
     }
-    val reader = rememberAsync { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
+    rememberAsync { READER } // init lazy and handle native loading error
 
     if (!LocalVisibility.current || !rememberForeground()) return
+
 
     val context = LocalContext.current
     val owner = LocalLifecycleOwner.current
@@ -117,9 +120,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
             .build()
             .apply {
                 setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
-                    val reader = reader ?: return@setAnalyzer imageProxy.close()
-
-                    val results = imageProxy.use { ignoreAll { reader.read(it) } ?: reader.read(it.toBitmap()) }
+                    val results = imageProxy.use { ignoreAll { READER.read(it) } ?: READER.read(it.toBitmap()) }
                     val now = Clock.System.now()
                     if (results.isNotEmpty()) {
                         last = now
@@ -136,16 +137,13 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
         provider.bindToLifecycle(owner, CameraSelector.DEFAULT_BACK_CAMERA, preview, analyzer)
 
         onDispose {
+            scope.cancel()
             provider.unbindAll()
             requests.value = null
         }
     }
 
-    val _request = request
-
-    if (_request == null || reader == null) {
-        return Loading(modifier)
-    }
+    val _request = request ?: return Loading(modifier)
 
     CameraXViewfinder(
         surfaceRequest = _request,
