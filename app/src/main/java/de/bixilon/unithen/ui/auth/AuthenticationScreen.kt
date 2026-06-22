@@ -73,9 +73,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
         onDismissRequest = {},
         title = { Text(R.string.authentication_loading.i18n()) },
         text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(message)
