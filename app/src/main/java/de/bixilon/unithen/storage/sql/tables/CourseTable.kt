@@ -78,15 +78,17 @@ class CourseTable(
         return storage.query(query) { it.isNotEmpty() }
     }
 
-    fun isTutorNot(): Boolean {
-        val course = SqlBuilder.select("1").from(UserTable)
-            .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
-            .where((UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+    fun isNotTutor(): Boolean { // TODO: This just checks if any account is not a tutor in any course (This should check if any account is not a tutor in any course)
+        val tutors = SqlBuilder.select(UserTable.id).from(UserTable)
+            .innerJoin(AccountTable, (UserTable.uuid eq AccountTable.uuid) and (UserTable.site eq AccountTable.site))
+
+        val courses = SqlBuilder.select(TutorCourses.course).from(TutorCourses)
+            .where(SqlFilter.contains(TutorCourses.user, tutors))
 
         // TODO: check appointments?
 
-        val query = SqlBuilder.select("1").from(AccountTable)
-            .where(SqlFilter.exists(course).not())
+        val query = SqlBuilder.select("1").from(CourseTable)
+            .where(SqlFilter.contains(CourseTable.id, courses).not())
             .limit(1)
 
         return storage.query(query) { it.isNotEmpty() }

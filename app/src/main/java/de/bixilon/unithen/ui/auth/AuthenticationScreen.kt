@@ -60,7 +60,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
         when {
             !first -> Unit
             storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
-            storage.courses.isTutorNot() -> entrypoint = MainScreens.CHECKIN_PRESENT
+            storage.courses.isNotTutor() -> entrypoint = MainScreens.CHECKIN_PRESENT
         }
 
         callback.invoke()

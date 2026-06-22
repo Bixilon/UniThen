@@ -126,6 +126,7 @@ object SqlBuilder {
 
 
     fun select(vararg fields: String) = Select(fields = fields.toList())
+    fun select(vararg fields: SqlTableSchema.SqlColumn<*>) = Select(fields = fields.map { it.quantifier })
     fun select(count: Aggregations.Count) = select("COUNT(*)")
 
     fun select(schema: SelectableSqlTableSchema<*>) = Select(schema.columns.map { it.quantifier }) from schema.table

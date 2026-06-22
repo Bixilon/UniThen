@@ -65,6 +65,7 @@ data class SqlFilter(
         fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)
         fun or(vararg filters: Pair<String, Any?>) = join(" OR ", *filters)
         fun exists(query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("EXISTS (${it.sql})", it.parameters) }
+        fun contains(field: SqlTableSchema.SqlColumn<*>, query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("${field.quantifier} IN (${it.sql})", it.parameters) }
 
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
 
