@@ -27,19 +27,20 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
     val scope = rememberCoroutineScope()
 
     val flow = remember { store.data.map { it[key] } }
-    val value by flow.collectAsState(initial = null)
+    val value = flow.collectAsState(initial = null)
 
     val initial = remember { runBlocking { flow.first() } }
+
 
     return remember {
         object : MutableState<T> {
             override var value: T
-                get() = value ?: initial ?: default
+                get() = value.value ?: initial ?: default
                 set(newValue) {
                     scope.launch { store.edit { it[key] = newValue } }
                 }
 
-            override fun component1() = value ?: default
+            override fun component1() = value.value ?: default
             override fun component2(): (T) -> Unit = { this.value = it }
         }
     }
@@ -68,16 +69,15 @@ fun rememberSetting(setting: Setting<String>): MutableState<String> {
 @Composable
 @JvmName("rememberEnumSetting")
 fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
-    var raw by rememberSetting(stringPreferencesKey(setting.key), setting.default.name)
-
+    val raw = rememberSetting(stringPreferencesKey(setting.key), setting.default.name)
 
 
     return remember {
         object : MutableState<T> {
             override var value: T
-                get() = values.getOrNull(raw) ?: setting.default
+                get() = values.getOrNull(raw.value) ?: setting.default
                 set(newValue) {
-                    raw = newValue.name
+                    raw.value = newValue.name
                 }
 
             override fun component1() = value
