@@ -83,8 +83,8 @@ fun SettingsScreen() {
         }
         HorizontalDivider()
 
-        SettingsDialog(R.string.settings_cleanup_database.i18n(), Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
         SettingsLink(R.string.settings_accounts.i18n(), Icons.Default.AccountCircle, AccountsRoute)
+        SettingsDialog(R.string.settings_cleanup_database.i18n(), Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
         SettingsLink(R.string.settings_about.i18n(), Icons.Default.Info, AboutRoute)
     }
 }
