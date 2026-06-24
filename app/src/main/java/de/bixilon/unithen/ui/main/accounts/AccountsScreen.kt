@@ -177,8 +177,8 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
             DropdownMenuItem(
                 text = {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.errorContainer)
-                        Text(R.string.accounts_option_remove.i18n(), color = MaterialTheme.colorScheme.errorContainer)
+                        Icon(Icons.Filled.Delete, "", tint = MaterialTheme.colorScheme.onErrorContainer)
+                        Text(R.string.accounts_option_remove.i18n(), color = MaterialTheme.colorScheme.onErrorContainer)
                     }
                 },
                 onClick = { expanded = false; remove?.invoke() }
