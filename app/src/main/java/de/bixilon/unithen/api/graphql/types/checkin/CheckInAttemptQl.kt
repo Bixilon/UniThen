@@ -35,6 +35,7 @@ data class CheckInAttemptQl(
     enum class Error {
         CHECKIN_CLOSED,
         NOT_APPROVED,
+        ALREADY_CHECKED_IN,
         // TODO: unknown user, not enrolled, more?
         ;
 
@@ -42,6 +43,7 @@ data class CheckInAttemptQl(
             fun of(message: String?) = when (message?.trim()?.lowercase()) {
                 "checkin closed" -> CHECKIN_CLOSED
                 "booking not approved yet" -> NOT_APPROVED
+                "already checked in" -> ALREADY_CHECKED_IN
                 else -> null
             }
         }
