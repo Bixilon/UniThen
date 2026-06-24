@@ -1,8 +1,7 @@
-This application is for doing the QR code check in (and a bit more) for UniNow courses.
-It can be used for any booking system hosted by them, e.g. for the ZHS München.
+With this app you can present and scan QR code tickets (and a bit more) for UniNow courses.
+It can be used for any digital booking system (DBS) hosted by them, e.g. for the ZHS München.
 
-This app is NOT affiliated with UniNow GmbH, the provider/developer of the booking system.
-
+This app is <b>NOT</b> affiliated with UniNow GmbH, the provider/developer of the booking system.
 
 Features:
 <ul>

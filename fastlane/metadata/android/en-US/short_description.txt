@@ -1,1 +1,1 @@
-Course check-in for ZHS without the bloaty UniNow app
+Unofficial course check in app for UniNow digital booking systems (DBS)
