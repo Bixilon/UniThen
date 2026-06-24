@@ -34,7 +34,7 @@ type User {
 
     calendars: Calendar
 
-    courses: [Course!] # Unused
+    courses(isTutor: Boolean, isEnrolled: Boolean): [Course!]
 }
 
 # There is a special "unknown" user with all fields set to null and id is a blank string
@@ -313,6 +313,7 @@ type NameTranslatable { # TODO: Typename
     key: Unknown
     value: Unknown
 }
+
 type ProductOffer { # TODO: Typename
     poster: Unknown
     description: Unknown
@@ -386,7 +387,7 @@ type Query {
     appointments: [Appointment!]
     course_groups: [CourseGroup!] # TODO
 
-    courses(isTutor: Boolean, isEnrolled: Boolean): [Course!] # Timeout
+    courses: [Course!] # Timeout; not used
 
     courses_pk(id: ID!): Course
 
