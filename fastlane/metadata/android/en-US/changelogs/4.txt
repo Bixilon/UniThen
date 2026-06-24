@@ -1,5 +1,6 @@
 This release contains various improvements:
  - Various fixes (e.g. QR code sometimes not scanning until app restart)
  - Add back support for armeabi-v7a and x86 devices (presenting qr codes only)
+ - Move account management to settings
 
 Special thanks to Kathleen for testing!

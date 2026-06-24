@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.HorizontalDivider
@@ -29,6 +30,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AboutRoute
+import de.bixilon.unithen.ui.main.AccountsRoute
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.main.settings.dialog.DatabaseCleanupDialog
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
@@ -82,6 +84,7 @@ fun SettingsScreen() {
         HorizontalDivider()
 
         SettingsDialog(R.string.settings_cleanup_database.i18n(), Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }
+        SettingsLink(R.string.settings_accounts.i18n(), Icons.Default.AccountCircle, AccountsRoute)
         SettingsLink(R.string.settings_about.i18n(), Icons.Default.Info, AboutRoute)
     }
 }

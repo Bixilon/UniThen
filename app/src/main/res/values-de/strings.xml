@@ -26,7 +26,6 @@
     <string name="courses_title">Kurse (%1$d)</string>
     <string name="appointments_title">Termine (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Kurse</string>
-    <string name="main_navigation_accounts">Benutzer</string>
     <string name="main_navigation_settings">Einstellungen</string>
     <string name="accounts_title">Benutzer (%1$d)</string>
     <string name="present_no_appointments_message">Keine kommenden Kurse!</string>
@@ -119,6 +118,7 @@
     <string name="settings_scan_confirmation_screen_description">Öffnet den Bestätigungsdialog, wenn ein Ticket erfolgreich gescannt wurde und wartet auf die Bestätigung.</string>
     <string name="settings_scan_offline_description">Zeigt keinen Fehler an, wenn kein Netzwerk verfügbar ist (Der Versuch wird später automatisch im Hintergrund synchronisiert).</string>
     <string name="settings_cleanup_database">Datenbank aufräumen</string>
+    <string name="settings_accounts">Benutzer</string>
     <string name="settings_about">Über</string>
     <string name="database_cleanup_title">Aufräumen...</string>
     <string name="database_cleanup_description">Der Cache wird gelöscht...</string>

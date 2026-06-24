@@ -32,7 +32,6 @@
     <string name="courses_title">Courses (%1$d)</string>
     <string name="appointments_title">Appointments (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Courses</string>
-    <string name="main_navigation_accounts">Accounts</string>
     <string name="main_navigation_checkin_present">Check In (Show)</string>
     <string name="main_navigation_checkin_scan">Check In (Scan)</string>
     <string name="main_navigation_settings">Settings</string>
@@ -141,6 +140,7 @@
     <string name="settings_scan_offline_description">Ignores if no network is available when scanning tickets. The attempt is later automatically synchronized in the background.</string>
 
     <string name="settings_cleanup_database">Cleanup database</string>
+    <string name="settings_accounts">Accounts</string>
     <string name="settings_about">About</string>
 
 

@@ -14,9 +14,13 @@ package de.bixilon.unithen.ui.main
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.QrCode
+import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -30,7 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.R
-import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInScanScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
@@ -52,7 +55,6 @@ enum class MainScreens(
     val route: NavigationRoute,
 ) : Labeled {
     COURSES(Icons.Default.DateRange, R.string.main_navigation_courses, CoursesRoute),
-    ACCOUNTS(Icons.Default.AccountCircle, R.string.main_navigation_accounts, AccountsRoute),
     CHECKIN_PRESENT(Icons.Default.QrCode, R.string.main_navigation_checkin_present, CheckInPresentRoute),
     CHECKIN_SCAN(Icons.Default.QrCodeScanner, R.string.main_navigation_checkin_scan, CheckInScanRoute),
     SETTINGS(Icons.Default.Settings, R.string.main_navigation_settings, SettingsRoute),
@@ -72,7 +74,6 @@ fun ActualMainScreen() {
 
     navigator.routes {
         composable<CoursesRoute> { CoursesScreen() }
-        composable<AccountsRoute> { AccountsScreen() }
         composable<SettingsRoute> { SettingsScreen() }
         composable<CheckInPresentRoute> { CheckInPresentScreen() }
         composable<CheckInScanRoute> { CheckInScanScreen() }
@@ -81,7 +82,7 @@ fun ActualMainScreen() {
     Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
 
-        NavigationBar(windowInsets = androidx.compose.foundation.layout.WindowInsets()) {
+        NavigationBar(windowInsets = WindowInsets()) {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
                     MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isNotTutor() }
