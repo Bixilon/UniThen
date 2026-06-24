@@ -1,5 +1,5 @@
 "Time/Date, e.g. 2025-10-12T22:00:00Z"
-scalar Date
+scalar DateTime
 
 "@deprecated Unknown."
 scalar Unknown
@@ -58,6 +58,19 @@ type EnrolledUser {
     payment_completed: Boolean
 }
 
+type PublicUser {
+    id: ID!
+
+    first_name: String!
+    last_name: String!
+}
+
+type SectionItem {
+    key: Unknown
+    value: Unknown
+    type: Unknown
+}
+
 type Product {
     id: ID!
 
@@ -79,17 +92,17 @@ type Posting {
     product: Product!
 
 
-    approved_at: Date
+    approved_at: DateTime
 
     paymentIntent: Unknown
 
-    payment_completed: Date
-    payment_pending: Date
+    payment_completed: DateTime
+    payment_pending: DateTime
     selected_duration: Unknown
-    auto_renew_end_date: Date
+    auto_renew_end_date: DateTime
 }
 
-union Resource = Fee | Course | Room | Location | BookingSlotResource | Appointment | Equipment
+union Resource = Fee | Course | Room | Location | BookingSlotResource | Appointment | Equipment # TODO: Coupon, Pass
 
 type Equipment {
     id: ID!
@@ -110,7 +123,7 @@ type Fee {
 type Interval {
     id: ID!
     type: String # TODO: OFFLINE
-    startTime: Date
+    startTime: DateTime
     endTime: Unknown
     weekdays: [Int!]
 
@@ -125,6 +138,15 @@ type Course {
     id: ID!
     name: String!
     description: String
+
+    customID: String
+    isSingleAppointmentBooking: Unknown
+    created_at: DateTime
+
+    bookingConfiguration: Unknown # capacity
+
+    responsibleUsers: [Unknown] # Course User?
+
     tags: [Unknown] # Type: Tag (id, ?)
 
     offer: Offer!
@@ -136,12 +158,14 @@ type Course {
     intervals: [Interval!] # TODO
 
     enrolled: [EnrolledUser!]
+
+    dependencies: [Unknown] # type, resource
 }
 
 type BookingSlotResource {
     id: ID!
-    start: Date
-    end: Date
+    start: DateTime
+    end: DateTime
 }
 
 type Offer {
@@ -158,8 +182,8 @@ type Event {
 
     owner: Unknown
 
-    start: Date!
-    end: Date!
+    start: DateTime!
+    end: DateTime!
 
     current: Boolean!
 
@@ -177,14 +201,14 @@ type CheckInAttempt {
 type Appointment {
     id: ID!
 
-    start: Date! # TODO !
-    end: Date! # TODO !
+    start: DateTime! # TODO !
+    end: DateTime! # TODO !
 
-    checkInStart: Date! # TODO !
-    checkInEnd: Date! # TODO !
+    checkInStart: DateTime! # TODO !
+    checkInEnd: DateTime! # TODO !
 
 
-    canceledAt: Date
+    canceledAt: DateTime
 
     tutors: [CourseUser!]
 
@@ -309,10 +333,10 @@ type CartProducts { # TODO: Typename
 type Cart { # TODO: Typename
     id: ID!
     total: Unknown
-    reserved_until: Date!
+    reserved_until: DateTime!
     seconds_until_reservation_ends: Int!
-    checkout_started_at: Date! # TODO
-    created_at: Date!
+    checkout_started_at: DateTime! # TODO
+    created_at: DateTime!
     products: [CartProducts!]
 }
 
@@ -335,6 +359,14 @@ input Sorter {
     order: String # Desc
 }
 
+type PostingForTutor {
+    id: ID!
+    approved_at: DateTime
+    product_prerequisites: [SectionItem]
+    public_user: PublicUser
+    additional_fields: [SectionItem]
+}
+
 
 type Query {
     user_pk(userID: ID!): User
@@ -354,12 +386,15 @@ type Query {
     appointments: [Appointment!]
     course_groups: [CourseGroup!] # TODO
 
-    courses: [Course!] # Timeout
+    courses(isTutor: Boolean, isEnrolled: Boolean): [Course!] # Timeout
 
     courses_pk(id: ID!): Course
 
     get_course_single_appointments(course_id: UUID!, filters: [Filter]): Appointment # TODO: Type
     public_product_form_data(resource_name: ResourceName!): Unknown # (additional_fields, product_id, product_prerequisites)
+
+    postings_for_tutor(resource_name: ResourceName!): [PostingForTutor!]
+    certificate_pk(id: UUID!): Unknown # Ceriticate
 }
 
 type Mutation {
