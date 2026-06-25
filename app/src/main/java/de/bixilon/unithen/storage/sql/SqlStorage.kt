@@ -16,8 +16,6 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.core.database.sqlite.transaction
 import de.bixilon.unithen.storage.sql.SqlUtil.db
@@ -35,7 +33,7 @@ class SqlStorage(context: Context) : Closeable {
     val helper = SqlHelper(context)
 
     val scope = CoroutineScope(Dispatchers.Main)
-    private val notify = mutableIntStateOf(0) // TODO: Kind of a hack
+    val notify = mutableIntStateOf(0) // TODO: Kind of a hack
 
     val sites = SiteTable(this)
     val events = EventTable(this)
@@ -107,11 +105,6 @@ class SqlStorage(context: Context) : Closeable {
     override fun close() {
         helper.close()
     }
-
-    fun <T> stateOf(block: SqlStorage.() -> T): State<T> {
-        return derivedStateOf { notify.intValue; block.invoke(this) }
-    }
-
 
     fun cleanup() {
         helper.executeBatch("cleanup")

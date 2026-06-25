@@ -13,9 +13,10 @@
 package de.bixilon.unithen.ui.storage
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.util.rememberAsync
 
 val LocalStorage = staticCompositionLocalOf<SqlStorage> { throw IllegalStateException("No storage set!") }
 
@@ -23,8 +24,17 @@ val LocalStorage = staticCompositionLocalOf<SqlStorage> { throw IllegalStateExce
 @Composable
 fun <T> rememberStorage(block: SqlStorage.() -> T): T {
     val storage = LocalStorage.current
+    val value = remember(storage.notify.intValue) { block.invoke(storage) }
 
-    val value by storage.stateOf { block.invoke(storage) }
+
+    return value
+}
+
+@Composable
+fun <T> rememberStorageAsync(block: SqlStorage.() -> T): T? {
+    val storage = LocalStorage.current
+    val value = rememberAsync(storage.notify.intValue) { block.invoke(storage) }
+
 
     return value
 }

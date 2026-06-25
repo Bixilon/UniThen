@@ -40,7 +40,7 @@ import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
 
@@ -84,7 +84,7 @@ fun CheckInScanScreen() {
     val navigation = LocalNavigation.current
 
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
-    if (autoScan) {
+    if (autoScan) { // TODO: Only if there are appointments? (screen pops automatically)
         LaunchedEffect(Unit) { if (!scanned) navigation.navigate(ScanAnyRoute); scanned = true }
     } else {
         LaunchedEffect(Unit) { scanned = true }
@@ -92,10 +92,11 @@ fun CheckInScanScreen() {
 
     val time = useTime()
 
-    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+    val appointments = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
 
-    when (appointments.size) {
+    when (appointments?.size) {
+        null -> Unit // TODO: Loader
         0 -> ScanNoAppointments()
         1 -> ScanAppointmentScreen(appointments.first())
         else -> ChooseAppointment(appointments)

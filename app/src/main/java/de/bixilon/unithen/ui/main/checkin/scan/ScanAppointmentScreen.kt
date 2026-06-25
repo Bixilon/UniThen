@@ -34,7 +34,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
@@ -78,7 +78,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val canSync = appointment.canSyncCheckIn(time)
 
     var synced by remember { mutableIntStateOf(0) }
-    val pending = rememberStorage { checkInQueue.getCount(appointment) }
+    val pending = rememberStorageAsync { checkInQueue.getCount(appointment) } ?: 0
 
     var syncing by remember { mutableStateOf(false) }
     var forceSync by remember { mutableStateOf(false) }

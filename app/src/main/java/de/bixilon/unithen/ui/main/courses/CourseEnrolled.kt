@@ -25,14 +25,14 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.containers.TextCard
-import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.verticalScroll
 
 
 @Composable
 fun CourseEnrolled(course: Course) {
-    val users = rememberStorage { users.getEnrolled(course) }
+    val users = rememberStorageAsync { users.getEnrolled(course) } ?: return
 
     if (users.isEmpty()) return
 

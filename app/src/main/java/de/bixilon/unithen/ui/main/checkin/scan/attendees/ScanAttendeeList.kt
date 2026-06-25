@@ -44,6 +44,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.launch
 import kotlin.uuid.Uuid
@@ -185,10 +186,10 @@ fun ScanAttendeeList() {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attendees = rememberStorage { users.getAttendees(appointment, filter.search, filter.sort, filter.order) }
-    val queue = rememberStorage { checkInQueue[appointment, filter.search, filter.sort, filter.order] }
+    val attendees = rememberStorageAsync { users.getAttendees(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
+    val queue = rememberStorageAsync { checkInQueue[appointment, filter.search, filter.sort, filter.order] } ?: emptyList()
 
-    val not = rememberStorage { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) }
+    val not = rememberStorageAsync { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
 
     val state = rememberLazyListState()
 

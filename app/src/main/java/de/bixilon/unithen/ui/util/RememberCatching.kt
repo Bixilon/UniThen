@@ -20,12 +20,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
-fun <T> rememberAsync(invokable: suspend () -> T): T? {
+fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
     val navigation = LocalNavigation.current
     var value by remember { mutableStateOf<T?>(null) }
 
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 value = invokable.invoke()

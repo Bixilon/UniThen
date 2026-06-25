@@ -39,6 +39,7 @@ import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AppointmentDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
@@ -94,7 +95,7 @@ private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modif
 @Composable
 fun CourseAppointments(course: Course) {
     val navigator = LocalNavigation.current
-    val appointments = rememberStorage { appointments[course].sortedByDescending { it.start } }
+    val appointments = rememberStorageAsync { appointments[course].sortedByDescending { it.start } } ?: return
 
     if (appointments.isEmpty()) return
     val isTutor = rememberStorage { accounts.getTutorAccount(course) != null }

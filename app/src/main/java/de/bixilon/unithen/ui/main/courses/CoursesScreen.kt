@@ -46,6 +46,7 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useToast
 import de.bixilon.unithen.ui.util.verticalScroll
@@ -61,7 +62,7 @@ fun CoursesScreen() {
     var refreshing by remember { mutableStateOf(false) }
 
     val courseCount = rememberStorage { courses.count }
-    val events = rememberStorage { events.all().sortedByDescending { it.start } }
+    val events = rememberStorageAsync { events.all().sortedByDescending { it.start } } ?: emptyList()
 
     val toast = useToast()
     val fetchAppointments by rememberSetting(Settings.FETCH_APPOINTMENTS)

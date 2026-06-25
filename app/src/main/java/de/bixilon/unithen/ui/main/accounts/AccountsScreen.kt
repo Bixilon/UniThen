@@ -47,6 +47,7 @@ import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -262,7 +263,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 @Composable
 fun AccountsScreen() {
-    val accounts = rememberStorage { accounts.all() }
+    val accounts = rememberStorageAsync { accounts.all() } ?: return
 
     Screen {
         ScreenTitle(R.string.accounts_title.i18n(accounts.size))
