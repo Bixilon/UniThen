@@ -42,7 +42,7 @@ abstract class SqlTable<T : DbObject>(
         update("UPDATE $table SET ${filter.sql} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
     }
 
-    protected fun update(sql: String, vararg parameters: Any?) {
+    protected fun update(@Language("SQL") sql: String, vararg parameters: Any?) {
         storage.update(sql, parameters = parameters)
     }
 

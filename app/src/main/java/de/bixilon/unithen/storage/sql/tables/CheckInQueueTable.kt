@@ -60,6 +60,10 @@ class CheckInQueueTable(
         update("DELETE FROM $table WHERE appointment=? AND user=?", appointment.id, user.id)
     }
 
+    fun clearPendingCheckout(appointment: Appointment) {
+        insert("DELETE FROM $table WHERE appointment=? AND attempt IS NOT NULL", appointment.id)
+    }
+
 
     fun addPending(appointment: Appointment, user: User, sync: Instant) {
         // TODO: This only works in android 9+
