@@ -87,7 +87,7 @@ android {
         applicationId = "de.bixilon.unithen"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
+        versionCode = 5
 
         buildConfigField("String", "GIT_COMMIT", git?.commit?.let { "\"$it\"" }.toString())
         buildConfigField("String", "GIT_BRANCH", git?.branch?.let { "\"$it\"" }.toString())
