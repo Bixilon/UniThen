@@ -37,7 +37,7 @@ import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.auth.WebViewWarmup
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
-import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
 
 
@@ -95,7 +95,7 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
 
 @Composable
 fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
-    val sites = rememberStorage { sites.all() }
+    val sites = rememberStorageAsync { sites.all() } ?: return
 
     if (sites.isEmpty()) {
         AddSiteDialog(null, callback)

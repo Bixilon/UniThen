@@ -41,6 +41,7 @@ import de.bixilon.unithen.ui.main.courses.appointments.CourseAppointments
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.useToast
@@ -114,7 +115,7 @@ fun CourseDetailsScreen(course: Course) {
         ) {
             val time = useTime()
 
-            val present = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
+            val present = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
 
             if (present != null) {
                 FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present)) }) {
@@ -122,7 +123,7 @@ fun CourseDetailsScreen(course: Course) {
                 }
             }
 
-            val scan = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
+            val scan = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
             if (scan != null) {
                 FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan)) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")
