@@ -97,6 +97,7 @@ fun CourseDetailsScreen(course: Course) {
                 }
             }
 
+            // TODO: This is bad, this is not scrollable
             PullToRefreshBox(refresh?.active ?: false, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
                 Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     CourseAppointments(course)
