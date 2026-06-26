@@ -13,34 +13,32 @@
 package de.bixilon.unithen.ui.main.settings
 
 import androidx.compose.runtime.*
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import de.bixilon.kutil.enums.ValuesEnum
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 @Composable
 fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
-    val store = SETTINGS.store
+    val store = SETTINGS
     val scope = rememberCoroutineScope()
 
-    val flow = remember { store.data.map { it[key] } }
-    val value = flow.collectAsState(initial = null)
-
-    val initial = remember { runBlocking { flow.first() } }
-
+    val current = remember { store.state.map { it[key] } }.collectAsState(null)
+    val initial = remember { store[key] }
 
     return remember {
         object : MutableState<T> {
-            override var value: T
-                get() = value.value ?: initial ?: default
-                set(newValue) {
-                    scope.launch { store.edit { it[key] = newValue } }
+            override var value
+                get() = current.value ?: initial ?: default
+                set(next) {
+                    scope.launch { store.set(key, next) }
                 }
 
-            override fun component1() = value.value ?: default
+            override fun component1() = value
             override fun component2(): (T) -> Unit = { this.value = it }
         }
     }

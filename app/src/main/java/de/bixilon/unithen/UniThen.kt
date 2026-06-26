@@ -20,6 +20,9 @@ import androidx.camera.core.CameraXConfig
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.settings.SETTINGS
 import de.bixilon.unithen.ui.main.settings.SettingsStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class UniThen : Application(), CameraXConfig.Provider {
     private val config by lazy {
@@ -34,6 +37,7 @@ class UniThen : Application(), CameraXConfig.Provider {
     override fun onCreate() {
         super.onCreate()
         SETTINGS = SettingsStore(this)
+        CoroutineScope(Dispatchers.IO).launch { SETTINGS.preload() }
         STORAGE = SqlStorage(applicationContext)
     }
 
