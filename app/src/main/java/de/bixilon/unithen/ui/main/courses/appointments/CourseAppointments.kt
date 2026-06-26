@@ -95,7 +95,7 @@ private fun AppointmentCard(appointment: Appointment, modifier: Modifier = Modif
 @Composable
 fun CourseAppointments(course: Course) {
     val navigator = LocalNavigation.current
-    val appointments = rememberStorageAsync { appointments[course].sortedByDescending { it.start } } ?: return
+    val appointments = rememberStorageAsync(course) { appointments[course].sortedByDescending { it.start } } ?: return
 
     if (appointments.isEmpty()) return
     val isTutor = rememberStorage { accounts.getTutorAccount(course) != null }

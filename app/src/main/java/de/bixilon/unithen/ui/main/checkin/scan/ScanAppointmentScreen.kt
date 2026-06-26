@@ -78,7 +78,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val canSync = appointment.canSyncCheckIn(time)
 
     var synced by remember { mutableIntStateOf(0) }
-    val pending = rememberStorageAsync { checkInQueue.getCount(appointment) } ?: 0
+    val pending = rememberStorageAsync(appointment) { checkInQueue.getCount(appointment) } ?: 0
 
     var syncing by remember { mutableStateOf(false) }
     var forceSync by remember { mutableStateOf(false) }

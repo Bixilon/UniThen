@@ -24,7 +24,7 @@ import de.bixilon.unithen.ui.util.useTime
 fun CheckInPresentScreen() {
     val time = useTime()
 
-    val appointments = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
+    val appointments = rememberStorageAsync(time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false) }
 
 
     when (appointments?.size) {

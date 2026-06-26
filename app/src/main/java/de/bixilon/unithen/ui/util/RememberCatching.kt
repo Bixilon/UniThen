@@ -39,3 +39,24 @@ fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
 
     return value
 }
+
+@Composable
+fun <T> rememberAsync(vararg keys: Any?, invokable: suspend () -> T): T? {
+    val navigation = LocalNavigation.current
+    var value by remember { mutableStateOf<T?>(null) }
+
+
+    LaunchedEffect(*keys) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                value = invokable.invoke()
+            } catch (error: Throwable) {
+                error.printStackTrace()
+                navigation.navigate(CrashRoute(error))
+            }
+        }
+    }
+
+
+    return value
+}

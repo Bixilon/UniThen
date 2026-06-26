@@ -92,7 +92,7 @@ fun CheckInScanScreen() {
 
     val time = useTime()
 
-    val appointments = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+    val appointments = rememberStorageAsync(time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
 
 
     when (appointments?.size) {

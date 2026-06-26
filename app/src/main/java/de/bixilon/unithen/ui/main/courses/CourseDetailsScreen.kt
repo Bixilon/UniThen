@@ -115,7 +115,7 @@ fun CourseDetailsScreen(course: Course) {
         ) {
             val time = useTime()
 
-            val present = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
+            val present = rememberStorageAsync(course, time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = false).find { it.course == course.id } }
 
             if (present != null) {
                 FloatingActionButton({ navigator.navigate(PresentQrAppointmentRoute(course, present)) }) {
@@ -123,7 +123,7 @@ fun CourseDetailsScreen(course: Course) {
                 }
             }
 
-            val scan = rememberStorageAsync { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
+            val scan = rememberStorageAsync(course, time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true).find { it.course == course.id } }
             if (scan != null) {
                 FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan)) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")

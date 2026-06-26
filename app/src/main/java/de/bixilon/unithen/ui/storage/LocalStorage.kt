@@ -38,3 +38,22 @@ fun <T> rememberStorageAsync(block: SqlStorage.() -> T): T? {
 
     return value
 }
+
+@Composable
+fun <T> rememberStorageAsync(key: Any?, block: SqlStorage.() -> T): T? {
+    val storage = LocalStorage.current
+    val value = rememberAsync(storage.notify.intValue, key) { block.invoke(storage) }
+
+
+    return value
+}
+
+
+@Composable
+fun <T> rememberStorageAsync(vararg keys: Any?, block: SqlStorage.() -> T): T? {
+    val storage = LocalStorage.current
+    val value = rememberAsync(storage.notify.intValue, *keys) { block.invoke(storage) }
+
+
+    return value
+}

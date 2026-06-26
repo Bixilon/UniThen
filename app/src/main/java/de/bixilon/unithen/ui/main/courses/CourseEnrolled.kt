@@ -32,7 +32,7 @@ import de.bixilon.unithen.ui.util.verticalScroll
 
 @Composable
 fun CourseEnrolled(course: Course) {
-    val users = rememberStorageAsync { users.getEnrolled(course) } ?: return
+    val users = rememberStorageAsync(course) { users.getEnrolled(course) } ?: return
 
     if (users.isEmpty()) return
 

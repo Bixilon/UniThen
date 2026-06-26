@@ -186,10 +186,10 @@ fun ScanAttendeeList() {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attendees = rememberStorageAsync { users.getAttendees(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
-    val queue = rememberStorageAsync { checkInQueue[appointment, filter.search, filter.sort, filter.order] } ?: emptyList()
+    val attendees = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { users.getAttendees(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
+    val queue = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { checkInQueue[appointment, filter.search, filter.sort, filter.order] } ?: emptyList()
 
-    val not = rememberStorageAsync { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
+    val not = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
 
     val state = rememberLazyListState()
 
