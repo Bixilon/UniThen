@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import de.bixilon.unithen.storage.sql.SqlStorage
+import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.rememberAsync
 
 val LocalStorage = staticCompositionLocalOf<SqlStorage> { throw IllegalStateException("No storage set!") }
@@ -26,13 +27,14 @@ fun <T> rememberStorage(block: SqlStorage.() -> T): T {
     val storage = LocalStorage.current
     val value = remember(storage.notify.intValue) { block.invoke(storage) }
 
-
     return value
 }
 
 @Composable
 fun <T> rememberStorageAsync(block: SqlStorage.() -> T): T? {
+    if (!LocalVisibility.current) return null
     val storage = LocalStorage.current
+
     val value = rememberAsync(storage.notify.intValue) { block.invoke(storage) }
 
 
@@ -41,9 +43,10 @@ fun <T> rememberStorageAsync(block: SqlStorage.() -> T): T? {
 
 @Composable
 fun <T> rememberStorageAsync(key: Any?, block: SqlStorage.() -> T): T? {
+    if (!LocalVisibility.current) return null
     val storage = LocalStorage.current
-    val value = rememberAsync(storage.notify.intValue, key) { block.invoke(storage) }
 
+    val value = rememberAsync(storage.notify.intValue, key) { block.invoke(storage) }
 
     return value
 }
@@ -51,9 +54,10 @@ fun <T> rememberStorageAsync(key: Any?, block: SqlStorage.() -> T): T? {
 
 @Composable
 fun <T> rememberStorageAsync(vararg keys: Any?, block: SqlStorage.() -> T): T? {
+    if (!LocalVisibility.current) return null
     val storage = LocalStorage.current
-    val value = rememberAsync(storage.notify.intValue, *keys) { block.invoke(storage) }
 
+    val value = rememberAsync(storage.notify.intValue, *keys) { block.invoke(storage) }
 
     return value
 }
