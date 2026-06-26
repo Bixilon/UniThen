@@ -129,8 +129,8 @@ fun AcceptedOverlay(accepted: List<AcceptedState>, showCourseName: Boolean = tru
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
-            .padding(top = 150.dp)
-            .alpha(0.8f),
+            .padding(top = 200.dp)
+            .alpha(0.9f),
         contentAlignment = Alignment.TopCenter,
     ) {
         Column(
