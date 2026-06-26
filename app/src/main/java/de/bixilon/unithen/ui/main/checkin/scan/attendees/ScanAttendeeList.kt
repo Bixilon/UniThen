@@ -191,6 +191,7 @@ fun ScanAttendeeList() {
 
     val not = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
 
+
     val state = rememberLazyListState()
 
     val storage = LocalStorage.current
@@ -235,9 +236,10 @@ fun ScanAttendeeList() {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(bottom = 150.dp),
             ) {
-                items(items = attendees, key = User::id) { AttendeeCard(it, readonly) }
-                items(items = queue, key = { it.user }) { QueueCard(it, readonly) }
-                items(items = not, key = User::id) { EnrolledCard(it, readonly) }
+                // Unique keys, otherwise the app might crash because of duplicated keys (async storage)
+                items(items = attendees, key = { "a" + it.id }) { AttendeeCard(it, readonly) }
+                items(items = queue, key = { "q" + it.user }) { QueueCard(it, readonly) }
+                items(items = not, key = { "n" + it.id }) { EnrolledCard(it, readonly) }
             }
         }
     }
