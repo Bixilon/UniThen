@@ -32,7 +32,7 @@ import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.R
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.storage.DefaultStorage
-import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
@@ -91,14 +91,14 @@ fun MainNavigator() {
         composable<PresentQrAppointmentRoute> {
             PresentQrAppointmentScreen(it.course, it.appointment)
 
-            if (useTime() > it.appointment.end) {
+            if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
                 LocalNavigation.current.pop()
             }
         }
         composable<PresentQrRoute> {
             PresentQrScreen(it.account, it.course, it.appointment)
 
-            if (useTime() > it.appointment.end) {
+            if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
                 LocalNavigation.current.pop()
             }
         }
@@ -106,7 +106,7 @@ fun MainNavigator() {
         composable<ScanAppointmentRoute> {
             ScanAppointmentScreen(it.appointment)
 
-            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
                 LocalNavigation.current.pop()
             }
         }
@@ -116,7 +116,7 @@ fun MainNavigator() {
             ) {
                 ScanQrAppointmentScreen()
             }
-            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
                 LocalNavigation.current.pop()
             }
         }
@@ -126,7 +126,7 @@ fun MainNavigator() {
             ) {
                 ScanQrConfirmScreen(it.userId)
             }
-            if (useTime() > (it.appointment.end + Appointment.CHECKIN_LATE_DURATION)) {
+            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
                 LocalNavigation.current.pop()
             }
         }
