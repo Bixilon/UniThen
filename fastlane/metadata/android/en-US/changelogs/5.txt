@@ -1,2 +1,3 @@
 This release contains various improvements:
  - Performance improvements
+ - Fix haptic feedback on older devices (scanning)

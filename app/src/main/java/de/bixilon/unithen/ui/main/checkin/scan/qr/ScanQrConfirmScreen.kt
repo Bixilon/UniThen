@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -51,6 +50,7 @@ import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.useHapticFeedback
 import okio.IOException
 import kotlin.uuid.Uuid
 
@@ -113,7 +113,7 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
 @Composable
 fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
-    val haptic = LocalHapticFeedback.current
+    val haptic = useHapticFeedback()
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     val (account, course, appointment) = LocalScanContext.current
@@ -148,7 +148,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
                 CheckInUtil.checkIn(storage, appointment, user)
             }
 
-            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            haptic.invoke(HapticFeedbackType.Confirm)
             if (!fast) pop()
         } catch (error: IOException) {
             if (await && !offline) {
@@ -159,9 +159,9 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             throw error
         } catch (_: CheckInUnknownUserException) {
             message = resources.getString(R.string.scan_unknown_user_server)
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            haptic.invoke(HapticFeedbackType.Reject)
         } catch (error: CheckInError) {
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            haptic.invoke(HapticFeedbackType.Reject)
             message = resources.getString(R.string.scan_unknown_error_server, error.message ?: "")
         }
     }

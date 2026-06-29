@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +38,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.useHapticFeedback
 import okio.IOException
 import kotlin.time.TimeSource
 
@@ -56,7 +56,7 @@ data class AcceptedState(
 private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     val storage = LocalStorage.current
     val resources = LocalResources.current
-    val haptic = LocalHapticFeedback.current
+    val haptic = useHapticFeedback()
     val account = rememberStorage { storage.accounts.getTutorAccount(state.appointment) }
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
@@ -68,12 +68,12 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
             CheckInUtil.checkIn(storage, state.appointment, state.user)
 
             okay = true
-            haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+            haptic.invoke(HapticFeedbackType.Confirm)
         } catch (_: CheckInUnknownUserException) {
             errorMessage = resources.getString(R.string.scan_unknown_user_server)
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            haptic.invoke(HapticFeedbackType.Reject)
         } catch (error: CheckInError) {
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            haptic.invoke(HapticFeedbackType.Reject)
             errorMessage = resources.getString(R.string.scan_unknown_error_server, error.message ?: "")
         } catch (error: IOException) {
             okay = true

@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
@@ -33,6 +32,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
+import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.util.Jackson
 import kotlinx.coroutines.delay
@@ -85,7 +85,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         return navigation.pop()
     }
 
-    val haptic = LocalHapticFeedback.current
+    val haptic = useHapticFeedback()
     val storage = LocalStorage.current
 
     val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
@@ -100,7 +100,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         val _delayed = delayed ?: return@LaunchedEffect
         delay(1.seconds)
         if (delayedState.value == _delayed) {
-            haptic.performHapticFeedback(HapticFeedbackType.Reject)
+            haptic.invoke(HapticFeedbackType.Reject)
             if (!autoScan) navigation.pop()
             navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.appointment)!!, _delayed.course, _delayed.appointment, _delayed.userId))
         }
@@ -178,7 +178,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     }
 
                     delayed = null
-                    haptic.performHapticFeedback(HapticFeedbackType.Confirm)
+                    haptic.invoke(HapticFeedbackType.Confirm)
 
                     if (confirmation) {
                         if (!autoScan) navigation.pop()
