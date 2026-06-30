@@ -6,10 +6,9 @@ plugins {
 android {
     namespace = "de.bixilon.unithen.baselineprofile"
     compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
+        version = release(37)
     }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -18,7 +17,7 @@ android {
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 36
+        targetSdk = 37
 
 
         testApplicationId = "de.bixilon.unithen.baselineprofile"

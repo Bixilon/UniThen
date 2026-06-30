@@ -28,9 +28,7 @@ class MainBenchmarks {
     val rule = BaselineProfileRule()
 
     @Test
-    fun generate() = rule.collect(
-        packageName = "de.bixilon.unithen"
-    ) {
+    fun generate() = rule.collect(packageName = "de.bixilon.unithen") {
         startActivityAndWait()
 
         device.wait(Until.hasObject(By.text("Check In (Show)")), 1000)
