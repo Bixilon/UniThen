@@ -75,15 +75,7 @@ class Navigator(
 
         when (policy) {
             NavigationStackPolicy.NORMAL -> Unit
-            NavigationStackPolicy.IGNORE_SAME_TYPE -> {
-                val existing = stack.find { it.route::class.java == route::class.java }
-                if (existing != null) {
-                    stack.removeAt(stack.indexOf(existing))
-                    stack += existing
-                    return
-                }
-            }
-
+            NavigationStackPolicy.IGNORE_SAME_TYPE -> stack.removeIf { it.route::class.java == route::class.java }
             NavigationStackPolicy.IGNORE_SAME -> {
                 val existing = stack.find { it.route == route }
                 if (existing != null) {
