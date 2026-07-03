@@ -58,7 +58,7 @@
     <string name="scan_error_other">Unbekannter Fehler!</string>
     <string name="scan_updating_enrolled">Synchronisiere Teilnehmerliste...</string>
     <string name="scan_enrolled_outdated">Teilnehmerliste wurde zuletzt %1$s aktualisiert</string>
-    <string name="scan_unknown_error_server">Fehler: %1$s</string>
+    <string name="scan_unknown_error_server">Serverfehler: %1$s</string>
     <string name="site">Seite</string>
     <string name="user_name">Name</string>
     <string name="cancel">Abbrechen</string>

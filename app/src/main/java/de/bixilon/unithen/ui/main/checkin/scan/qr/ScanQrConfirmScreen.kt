@@ -76,7 +76,7 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
     }
 
     if (message != null || attempt?.message != null) {
-        return ErrorBox(message ?: attempt?.message ?: "Error")
+        return ErrorBox(message ?: attempt?.message?.let { R.string.scan_unknown_error_server.i18n(it) } ?: "Error")
     }
 
     val warning = when {
