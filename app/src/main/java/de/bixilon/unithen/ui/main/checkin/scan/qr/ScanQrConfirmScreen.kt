@@ -113,6 +113,10 @@ private fun EnrolledListWarning(account: Account, course: Course) {
 
 @Composable
 fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
+    val dismissed = remember { mutableStateOf(false) }
+    DisposableEffect(Unit) { onDispose { dismissed.value = true } }
+    if (dismissed.value) return
+
     val haptic = useHapticFeedback()
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
@@ -129,8 +133,6 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
     val offline by rememberSetting(Settings.SCAN_ALLOW_OFFLINE)
 
-    val dismissed = rememberStorage { mutableStateOf(false) }
-    DisposableEffect(Unit) { onDispose { dismissed.value = true } }
 
     fun pop() {
         if (dismissed.value) return
