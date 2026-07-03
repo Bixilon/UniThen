@@ -131,7 +131,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
             } else {
                 errors.clear()
             }
-            for (code in it) {
+            for (code in it.toSet()) {
                 try {
                     val text = code.text?.trim() ?: continue
                     if (!text.startsWith("{")) {
@@ -186,7 +186,8 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
                     if (confirmation) {
                         if (!autoScan) navigation.pop()
-                        navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(appointment)!!, course, appointment, scanned.userId))
+                        val account = storage.accounts.getTutorAccount(appointment)!!
+                        navigation.navigate(ScanQrConfirmRoute(account, course, appointment, scanned.userId))
                         break
                     } else {
                         accepted += AcceptedState(course, appointment, user)
