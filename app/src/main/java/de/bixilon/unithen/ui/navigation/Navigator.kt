@@ -26,7 +26,7 @@ import kotlin.reflect.KClass
 
 class Navigator(
     private val start: NavigationRoute,
-    val mode: NavigationMode = NavigationMode.STANDARD,
+    val policy: NavigationStackPolicy = NavigationStackPolicy.IGNORE_SAME,
 ) {
     private val stack = mutableStateListOf<Frame>()
     private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
@@ -70,15 +70,27 @@ class Navigator(
     }
 
     @Synchronized
-    fun navigate(route: NavigationRoute) {
+    fun navigate(route: NavigationRoute, policy: NavigationStackPolicy = this.policy) {
         val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
 
-        if (mode == NavigationMode.SINGLE) {
-            val existing = stack.find { it.route == route }
-            if (existing != null) {
-                stack.removeAt(stack.indexOf(existing))
-                stack += existing
-                return
+        when (policy) {
+            NavigationStackPolicy.NORMAL -> Unit
+            NavigationStackPolicy.IGNORE_SAME_TYPE -> {
+                val existing = stack.find { it.route::class.java == route::class.java }
+                if (existing != null) {
+                    stack.removeAt(stack.indexOf(existing))
+                    stack += existing
+                    return
+                }
+            }
+
+            NavigationStackPolicy.IGNORE_SAME -> {
+                val existing = stack.find { it.route == route }
+                if (existing != null) {
+                    stack.removeAt(stack.indexOf(existing))
+                    stack += existing
+                    return
+                }
             }
         }
 

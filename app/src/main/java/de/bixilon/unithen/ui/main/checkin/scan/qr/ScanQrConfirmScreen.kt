@@ -136,6 +136,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
     fun pop() {
         if (dismissed.value) return
+        dismissed.value = true
 
         navigation.pop()
     }
@@ -170,6 +171,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
+        Spacer(Modifier.height(8.dp))
 
         Warning(checkin.active, user, enrolled, attendee, queue, message)
         Spacer(Modifier.height(16.dp))

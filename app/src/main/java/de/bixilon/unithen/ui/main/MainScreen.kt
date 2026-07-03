@@ -42,8 +42,8 @@ import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.main.setup.SetupScreen
-import de.bixilon.unithen.ui.navigation.NavigationMode
 import de.bixilon.unithen.ui.navigation.NavigationRoute
+import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
@@ -69,7 +69,7 @@ enum class MainScreens(
 @Composable
 fun ActualMainScreen() {
     val entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
-    val navigator = remember { Navigator(entrypoint.route, NavigationMode.SINGLE) }
+    val navigator = remember { Navigator(entrypoint.route, NavigationStackPolicy.IGNORE_SAME) }
 
 
     navigator.routes {

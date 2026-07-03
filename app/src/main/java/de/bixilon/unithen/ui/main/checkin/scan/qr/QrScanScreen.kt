@@ -29,6 +29,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.settings.Settings
 import de.bixilon.unithen.ui.main.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
@@ -187,7 +188,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     if (confirmation) {
                         if (!autoScan) navigation.pop()
                         val account = storage.accounts.getTutorAccount(appointment)!!
-                        navigation.navigate(ScanQrConfirmRoute(account, course, appointment, scanned.userId))
+                        navigation.navigate(ScanQrConfirmRoute(account, course, appointment, scanned.userId), NavigationStackPolicy.IGNORE_SAME_TYPE)
                         break
                     } else {
                         accepted += AcceptedState(course, appointment, user)
