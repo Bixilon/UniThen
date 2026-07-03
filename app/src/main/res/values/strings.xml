@@ -69,6 +69,7 @@
     <string name="scan_enrolled_outdated">Enrolled list was last updated %1$s</string>
     <string name="scan_unknown_user_server">Unknown user: %1$s</string>
     <string name="scan_unknown_error_server">Server error: %1$s</string>
+    <string name="scan_unknown_error_server_generic">Server error occurred!</string>
     <string name="course">Course</string>
     <string name="site">Site</string>
     <string name="user_name">Name</string>

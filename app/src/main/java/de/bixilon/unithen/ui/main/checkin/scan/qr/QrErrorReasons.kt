@@ -26,6 +26,7 @@ enum class QrErrorReasons(override val label: Int) : Labeled {
     NOT_ENROLLED(R.string.scan_error_not_enrolled),
     ALREADY_CHECKED_IN(R.string.scan_error_already_checked_in),
     CHECK_IN_PENDING(R.string.scan_error_check_in_pending),
+    CHECK_IN_SERVER_ERROR(R.string.scan_unknown_error_server_generic),
     CHECK_OUT_PENDING(R.string.scan_error_check_out_pending),
 
 

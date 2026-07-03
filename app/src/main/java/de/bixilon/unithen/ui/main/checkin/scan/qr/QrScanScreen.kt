@@ -71,9 +71,13 @@ private fun getErrorReason(storage: SqlStorage, course: Course, appointment: App
     if (attendee) return QrErrorReasons.ALREADY_CHECKED_IN
 
     val attempt = storage.checkInQueue[appointment, user]
-    if (attempt != null && attempt.attempt != null) return QrErrorReasons.CHECK_OUT_PENDING
-    if (attempt != null) return QrErrorReasons.CHECK_IN_PENDING
-    // TODO: show error message from server?
+    if (attempt != null) {
+        if (attempt.attempt != null) return QrErrorReasons.CHECK_OUT_PENDING
+        // TODO: show message from server
+        if (attempt.message != null) return QrErrorReasons.CHECK_IN_SERVER_ERROR
+
+        return QrErrorReasons.CHECK_IN_PENDING
+    }
 
     return null
 }

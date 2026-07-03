@@ -124,6 +124,7 @@
     <string name="database_cleanup_description">Der Cache wird gelöscht...</string>
     <string name="database_cleanup_success">Datenbank aufgeräumt!</string>
     <string name="loading_database">Datenbank wird geladen...</string>
+    <string name="scan_unknown_error_server_generic">Serverfehler!</string>
     <string name="course">Kurs</string>
     <string name="settings_advanced_fetch_appointments">Alternative Kursanfrage</string>
     <string name="settings_advanced_fetch_appointments_description">Benutzt eine andere Anfrage zum Abrufen der Kurse. Das braucht einiges länger. Aktiviere diese Option nur, wenn du Kursleitung für einzelne Termine bist, nicht für den ganzen Kurs.</string>
