@@ -11,6 +11,7 @@ stages:
 
 .android:
   image: gitlab-registry.bixilon.de:443/bixnet/ci/android:$ANDROID_SDK_VERSION
+  interruptible: true
   variables:
     GRADLE_USER_HOME: $CI_PROJECT_DIR/.home
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
