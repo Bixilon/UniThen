@@ -15,7 +15,7 @@
     <string name="setup_title">Einrichtung</string>
     <string name="set_accept">Ich akzeptiere diese Bedingungen</string>
     <string name="setup_login">Weiter zur Anmeldung</string>
-    <string name="add_account_title">Bitte wähle dein Buchungssystem</string>
+    <string name="add_account_title">Wähle dein Buchungssystem</string>
     <string name="add_account_help">Ich finde meine Seite nicht.</string>
     <string name="authentication_course_list">Lade Kursliste...</string>
     <string name="authentication_take_a_while">Das kann eine Weile dauern...</string>
