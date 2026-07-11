@@ -204,4 +204,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.zxingcpp)
+
+
+    implementation(project(":common"))
 }
