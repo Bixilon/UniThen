@@ -12,28 +12,8 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.runtime.*
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.Composable
+
 
 @Composable
-fun rememberForeground(): Boolean {
-    val owner = LocalLifecycleOwner.current
-    var state by remember { mutableStateOf(owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) }
-
-    DisposableEffect(owner) {
-        val lifecycle = owner.lifecycle
-        val observer = LifecycleEventObserver { _, _ ->
-            state = owner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
-        }
-
-        lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycle.removeObserver(observer)
-        }
-    }
-
-    return state
-}
+expect fun rememberForeground(): Boolean

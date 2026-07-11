@@ -18,20 +18,18 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import de.bixilon.unithen.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 // Thanks https://stackoverflow.com/questions/6609414/how-do-i-programmatically-restart-an-android-app
 @Composable
-fun useAppRestart(): () -> Unit {
+actual fun useAppRestart(): () -> Unit {
     val context = LocalContext.current
 
     return {
         CoroutineScope(Dispatchers.Main).launch {
-            val activity = Intent(context, MainActivity::class.java)
+            val activity = Intent(context, Class.forName("de.bixilon.unithen.ui.MainActivity")) // TODO: Use current activity
             val pending = PendingIntent.getActivity(context, 123456, activity, PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
