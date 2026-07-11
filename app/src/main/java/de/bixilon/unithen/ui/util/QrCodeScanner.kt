@@ -50,7 +50,8 @@ import kotlin.time.Instant
 private val CAMERA_EXECUTOR by lazy { Executors.newFixedThreadPool(2) }
 private val READER by lazy { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
 
-@androidx.compose.ui.tooling.preview.Preview
+data class ScannedQrCode(val text: String?)
+
 @Composable
 private fun Loading(modifier: Modifier = Modifier) {
     Box(
@@ -69,7 +70,7 @@ private fun Loading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader.Result>) -> Unit) {
+fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) {
@@ -129,7 +130,7 @@ fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (List<BarcodeReader
                         return@setAnalyzer
                     }
 
-                    scope.launch { onResult(results) }
+                    scope.launch { onResult(results.map { ScannedQrCode(it.text) }.toSet()) }
                 }
             }
 

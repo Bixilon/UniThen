@@ -132,7 +132,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
             } else {
                 errors.clear()
             }
-            for (code in it.toSet()) {
+            for (code in it) {
                 try {
                     val text = code.text?.trim() ?: continue
                     if (!text.startsWith("{")) {
