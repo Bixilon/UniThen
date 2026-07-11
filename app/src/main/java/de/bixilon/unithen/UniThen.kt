@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
+import de.bixilon.unithen.storage.sql.AndroidSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.main.settings.SETTINGS
 import de.bixilon.unithen.ui.main.settings.SettingsStore
@@ -38,7 +39,7 @@ class UniThen : Application(), CameraXConfig.Provider {
         super.onCreate()
         SETTINGS = SettingsStore(this)
         CoroutineScope(Dispatchers.IO).launch { SETTINGS.preload() }
-        STORAGE = SqlStorage(applicationContext)
+        STORAGE = SqlStorage(AndroidSqlHelper(applicationContext))
     }
 
     override fun onTerminate() {

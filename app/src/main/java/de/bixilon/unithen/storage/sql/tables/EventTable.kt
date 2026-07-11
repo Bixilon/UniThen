@@ -12,12 +12,10 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
@@ -62,6 +60,6 @@ class EventTable(
 
         override val columns = listOf(id, site, uuid, name, start, end)
 
-        override fun map(cursor: Cursor) = Event(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getInstant(4), cursor.getInstant(5))
+        override fun map(cursor: SQLiteHelper.Cursor) = Event(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getInstant(4), cursor.getInstant(5))
     }
 }

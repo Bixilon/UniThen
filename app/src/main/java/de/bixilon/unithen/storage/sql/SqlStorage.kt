@@ -12,25 +12,17 @@
 
 package de.bixilon.unithen.storage.sql
 
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteStatement
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.core.database.sqlite.transaction
-import de.bixilon.unithen.storage.sql.SqlUtil.db
 import de.bixilon.unithen.storage.sql.tables.*
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okio.Closeable
 import org.intellij.lang.annotations.Language
-import kotlin.time.Instant
-import kotlin.uuid.Uuid
+import java.io.Closeable
 
-class SqlStorage(context: Context) : Closeable {
-    val helper = SqlHelper(context)
+class SqlStorage(val helper: SQLiteHelper) : Closeable {
 
     val scope = CoroutineScope(Dispatchers.Main)
     val notify = mutableIntStateOf(0) // TODO: Kind of a hack
@@ -50,44 +42,20 @@ class SqlStorage(context: Context) : Closeable {
         scope.launch { notify.intValue++ }
     }
 
-    private fun SQLiteStatement.bind(vararg parameters: Any?) {
-        for ((index, parameter) in parameters.withIndex()) {
-            val actual = index + 1
-            when (parameter) {
-                null -> bindNull(actual)
-                is Int -> bindLong(actual, parameter.toLong())
-                is Long -> bindLong(actual, parameter)
-                is String -> bindString(actual, parameter)
-                is Instant -> bindLong(actual, parameter.epochSeconds)
-                is Uuid -> bindString(actual, parameter.toString())
-                is ByteArray -> bindBlob(actual, parameter)
-                is Enum<*> -> bindString(actual, parameter.name)
-                else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
-            }
-        }
+
+    fun <T> query(statement: SqlBuilder.Executable, runnable: (SQLiteHelper.Cursor) -> T) = query(statement.toSql(), runnable)
+    fun <T> query(statement: SqlBuilder.SqlStatement, runnable: (SQLiteHelper.Cursor) -> T) = query(statement.sql, parameters = statement.parameters.toTypedArray(), runnable)
+
+    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (SQLiteHelper.Cursor) -> T): T {
+        return helper.query(sql, *parameters).use { runnable.invoke(it) }
     }
 
-    fun <T> query(statement: SqlBuilder.Executable, runnable: (Cursor) -> T) = query(statement.toSql(), runnable)
-    fun <T> query(statement: SqlBuilder.SqlStatement, runnable: (Cursor) -> T) = query(statement.sql, parameters = statement.parameters.toTypedArray(), runnable)
-
-    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (Cursor) -> T): T {
-        return helper.readableDatabase.rawQuery(sql, parameters.map { it.db() }.toTypedArray()).use { runnable.invoke(it) }
-    }
-
-    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        val statement = helper.writableDatabase.compileStatement(sql)
-
-        statement.bind(*parameters)
-
-        return statement.use { it.executeInsert().toInt() }.apply { notifyState() }
+    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Long {
+        return helper.insert(sql, *parameters).apply { notifyState() }
     }
 
     fun update(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        val statement = helper.writableDatabase.compileStatement(sql)
-
-        statement.bind(*parameters)
-
-        return statement.use { it.executeUpdateDelete() }.apply { notifyState() }
+        return helper.execute(sql, *parameters).apply { notifyState() }
     }
 
     inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T {
@@ -95,7 +63,7 @@ class SqlStorage(context: Context) : Closeable {
         val set: MutableSet<MutableIntState> = mutableSetOf()
         try {
             TRANSACTIONS.set(set)
-            return helper.writableDatabase.transaction { block.invoke(this@SqlStorage) }
+            return helper.transaction { block.invoke(this@SqlStorage) }
         } finally {
             scope.launch { set.forEach { it.intValue++ } }
             TRANSACTIONS.remove()

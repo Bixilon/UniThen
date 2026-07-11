@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.storage.sql
 
-import android.database.Cursor
 import de.bixilon.kutil.exception.Unreachable
 import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
@@ -47,14 +46,14 @@ abstract class SqlTable<T : DbObject>(
     }
 
     protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        return storage.insert(sql, *parameters)
+        return storage.insert(sql, *parameters).toInt() // TODO: That is bad, it is returning the row id, not the id
     }
 
     protected fun single(filter: SqlFilter) = single(SqlBuilder.select(schema).where(filter))
 
     protected fun first(filter: SqlFilter) = first(SqlBuilder.select(schema).where(filter))
 
-    private fun <X> select(query: SqlBuilder.Executable, runnable: (Cursor) -> X): X {
+    private fun <X> select(query: SqlBuilder.Executable, runnable: (SQLiteHelper.Cursor) -> X): X {
         return storage.query(query, runnable)
     }
 
@@ -78,7 +77,7 @@ abstract class SqlTable<T : DbObject>(
         return select(query) { it.collectAll() }
     }
 
-    protected fun Cursor.collectAll(): List<T> {
+    protected fun SQLiteHelper.Cursor.collectAll(): List<T> {
         val result = ArrayList<T>()
 
         while (moveToNext()) {
@@ -88,18 +87,6 @@ abstract class SqlTable<T : DbObject>(
         return result
     }
 
-    protected fun Cursor.collectIntAggregation(): Int {
-        moveToNext(); return getInt(0)
-    }
-
-    protected fun Cursor.isEmpty(): Boolean {
-        if (!moveToNext()) return true
-
-        moveToPrevious()
-        return false
-    }
-
-    protected fun Cursor.isNotEmpty() = !isEmpty()
 
     protected fun all(filter: SqlFilter) = all(select().where(filter))
 

@@ -12,29 +12,38 @@
 
 package de.bixilon.unithen.storage.sql
 
-import android.database.Cursor
-import androidx.core.database.getStringOrNull
-import de.bixilon.kutil.enums.ValuesEnum
-import kotlin.time.Instant
-import kotlin.uuid.Uuid
+import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 
 object SqlUtil {
 
-    fun Cursor.getUUID(index: Int) = getString(index).let { Uuid.parse(it) }
-    fun Cursor.getUUIDOrNull(index: Int) = getStringOrNull(index)?.let { Uuid.parse(it) }
-    fun Cursor.getInstant(index: Int) = Instant.fromEpochSeconds(getLong(index), 0)
-    fun Cursor.getInstantOrNull(index: Int) = if (isNull(index)) null else getInstant(index)
+    fun split(path: String): List<String> {
+        val raw = SqlUtil::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString()
 
-    fun <T : Enum<T>> Cursor.getEnum(index: Int, values: ValuesEnum<T>) = values[getString(index)]
+        val statements: MutableList<String> = mutableListOf()
+        val builder = StringBuilder()
+        var begin = false
 
-    fun Any?.db(): String? = when (this) {
-        null -> null
-        is Int -> this.toString()
-        is Long -> this.toString()
-        is String -> this
-        is Uuid -> this.toString()
-        is Instant -> epochSeconds.toString()
-        is Enum<*> -> name
-        else -> throw IllegalArgumentException("Unknown parameter type: $this")
+        raw.lines().forEach { line ->
+            val trimmed = line.trim()
+
+            if (trimmed.startsWith("BEGIN")) {
+                begin = true
+            }
+
+            builder.append(line).append("\n")
+
+            if (begin) {
+                if (trimmed.startsWith("END")) {
+                    begin = false
+                    statements.add(builder.toString().trim())
+                    builder.clear()
+                }
+            } else if (trimmed.endsWith(";")) {
+                statements.add(builder.toString().removeSuffix(";"))
+                builder.clear()
+            }
+        }
+
+        return statements
     }
 }

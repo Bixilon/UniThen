@@ -12,13 +12,10 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -113,6 +110,6 @@ class CourseTable(
 
         override val columns = listOf(id, site, event, uuid, name, fetched, fetchedEnrolled)
 
-        override fun map(cursor: Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5), cursor.getInstantOrNull(6))
+        override fun map(cursor: SQLiteHelper.Cursor) = Course(cursor.getInt(0), cursor.getInt(1), cursor.getInt(2), cursor.getUUID(3), cursor.getString(4), cursor.getInstant(5), cursor.getInstantOrNull(6))
     }
 }

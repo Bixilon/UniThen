@@ -167,7 +167,7 @@ fun Loader(content: @Composable () -> Unit) {
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                storage.helper.writableDatabase
+                storage.helper.load()
             } catch (thrown: Throwable) {
                 error = thrown
             } finally {

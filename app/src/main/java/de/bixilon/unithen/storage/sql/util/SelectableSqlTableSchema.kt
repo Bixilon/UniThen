@@ -12,11 +12,11 @@
 
 package de.bixilon.unithen.storage.sql.util
 
-import android.database.Cursor
 import de.bixilon.unithen.storage.DbObject
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 
 interface SelectableSqlTableSchema<T : DbObject> : SqlTableSchema<T> {
     val columns: List<SqlTableSchema.SqlColumn<*>>
 
-    fun map(cursor: Cursor): T
+    fun map(cursor: SQLiteHelper.Cursor): T
 }

@@ -12,14 +12,11 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
-import androidx.core.database.getStringOrNull
 import de.bixilon.kutil.exception.Broken
 import de.bixilon.kutil.functions.FunctionUtil.letIf
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.tables.UserTable.Companion.ftsEscape
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
@@ -126,6 +123,6 @@ class CheckInQueueTable(
 
         override val columns = listOf(user, appointment, time, attempt, message, sync)
 
-        override fun map(cursor: Cursor) = CheckInQueue(cursor.getInt(0), cursor.getInt(1), cursor.getInstantOrNull(2), cursor.getUUIDOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5))
+        override fun map(cursor: SQLiteHelper.Cursor) = CheckInQueue(cursor.getInt(0), cursor.getInt(1), cursor.getInstantOrNull(2), cursor.getUUIDOrNull(3), cursor.getStringOrNull(4), cursor.getInstantOrNull(5))
     }
 }

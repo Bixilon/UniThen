@@ -12,14 +12,12 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
-import androidx.core.database.getBlobOrNull
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
@@ -65,6 +63,6 @@ class SiteTable(
 
         override val columns = listOf(id, host, name, icon, fetched)
 
-        override fun map(cursor: Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
+        override fun map(cursor: SQLiteHelper.Cursor) = Site(cursor.getInt(0), cursor.getString(1), cursor.getString(2), cursor.getBlobOrNull(3), cursor.getInstant(4))
     }
 }

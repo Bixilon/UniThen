@@ -12,12 +12,11 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
 import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -123,7 +122,7 @@ class UserTable(
 
         override val columns = listOf(id, site, uuid, firstname, lastname)
 
-        override fun map(cursor: Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
+        override fun map(cursor: SQLiteHelper.Cursor) = User(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4))
 
         fun ftsEscape(input: String) = input // TODO: Improve?
             .replace("-", "")

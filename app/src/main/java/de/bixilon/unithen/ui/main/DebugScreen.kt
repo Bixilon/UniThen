@@ -15,7 +15,6 @@ package de.bixilon.unithen.ui.main
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import de.bixilon.unithen.storage.sql.SqlHelper.Companion.executeBatch
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -47,7 +46,7 @@ fun DebugScreen() {
 
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
-        Button({ storage.helper.writableDatabase.executeBatch("dummy") }) { Text("Initiate dummy database") }
+        Button({ storage.helper.executeBatch("dummy") }) { Text("Initiate dummy database") }
         Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
         Button({ navigator.navigate(CrashRoute(IllegalStateException("It crashed!"))) }) { Text("Open crash screen") }

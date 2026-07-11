@@ -12,17 +12,14 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
-import androidx.core.database.getStringOrNull
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -127,6 +124,6 @@ class AccountTable(
 
         override val columns = listOf(id, site, uuid, firstname, lastname, sessionKey, fetched)
 
-        override fun map(cursor: Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
+        override fun map(cursor: SQLiteHelper.Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
     }
 }

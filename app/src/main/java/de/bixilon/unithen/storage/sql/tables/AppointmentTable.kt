@@ -12,15 +12,11 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import android.database.Cursor
 import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.storage.Key
+import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstant
-import de.bixilon.unithen.storage.sql.SqlUtil.getInstantOrNull
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUID
-import de.bixilon.unithen.storage.sql.SqlUtil.getUUIDOrNull
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
@@ -86,7 +82,7 @@ class AppointmentTable(
 
 
     fun insert(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
-        val id = storage.insert("INSERT INTO $table(course, uuid, start, end, canceled, location) VALUES (?,?,?,?,?,?)", course.id, uuid, start, end, canceled, location)
+        val id = insert("INSERT INTO $table(course, uuid, start, end, canceled, location) VALUES (?,?,?,?,?,?)", course.id, uuid, start, end, canceled, location)
 
         return this[id]!!
     }
@@ -130,6 +126,6 @@ class AppointmentTable(
 
         override val columns = listOf(id, course, uuid, start, end, canceled, location, fetchedAttendees)
 
-        override fun map(cursor: Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getInstantOrNull(5), cursor.getString(6), cursor.getInstantOrNull(7))
+        override fun map(cursor: SQLiteHelper.Cursor) = Appointment(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getInstant(3), cursor.getInstant(4), cursor.getInstantOrNull(5), cursor.getString(6), cursor.getInstantOrNull(7))
     }
 }
