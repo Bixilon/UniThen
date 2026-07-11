@@ -23,7 +23,7 @@ val CONFIRM by lazy { VibrationEffect.createOneShot(80, 100) }
 val REJECT by lazy { VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE) }
 
 @Composable
-fun useHapticFeedback(): (HapticFeedbackType) -> Unit {
+actual fun useHapticFeedback(): (HapticFeedbackType) -> Unit {
     val vibrator = LocalContext.current.getSystemService(Vibrator::class.java)
     val haptics = LocalHapticFeedback.current
 

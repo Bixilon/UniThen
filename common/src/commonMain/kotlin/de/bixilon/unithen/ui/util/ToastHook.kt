@@ -12,29 +12,14 @@
 
 package de.bixilon.unithen.ui.util
 
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 interface ToastInvoker {
     suspend operator fun invoke(message: String, long: Boolean = false)
     suspend operator fun invoke(@StringRes message: Int, long: Boolean = false)
 }
 
+
 @Composable
-fun useToast(): ToastInvoker {
-    val resources = LocalResources.current
-    val context = LocalContext.current
-
-    return object : ToastInvoker {
-        override suspend fun invoke(message: String, long: Boolean) {
-            withContext(Dispatchers.Main) { Toast.makeText(context, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show() }
-        }
-
-        override suspend fun invoke(message: Int, long: Boolean) = invoke(resources.getString(message, long))
-    }
-}
+expect fun useToast(): ToastInvoker
