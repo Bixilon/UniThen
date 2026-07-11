@@ -129,16 +129,16 @@
     <string name="settings_scan_high_resolution_description">Prioritizes accuracy over scanning speed. Enable if you have trouble scanning QR codes. Drains your battery faster.</string>
 
     <string name="settings_scan_auto_scan">Automatically scan</string>
-    <string name="settings_scan_auto_scan_description">Automatícally opens the QR code scanner and resumes scanning after confirming a check in.</string>
+    <string name="settings_scan_auto_scan_description">Automatically opens the QR code scanner and resumes scanning after confirming a check in.</string>
 
     <string name="settings_scan_await_server">Await confirmation</string>
-    <string name="settings_scan_await_server_description">Awaits the server confirmation on check in. This may be alower. Enable if multiple devices are scanning QR codes or bookings need to be approved.</string>
+    <string name="settings_scan_await_server_description">Awaits the server confirmation on check in. This may be slower. Enable if multiple devices are scanning QR codes or bookings need to be approved.</string>
 
     <string name="settings_scan_confirmation_screen">Scan confirmation</string>
     <string name="settings_scan_confirmation_screen_description">Shows a confirmation screen after scanning a QR code. The user is only checked in after clicking \"Confirm\".</string>
 
     <string name="settings_scan_offline">Ignore network errors</string>
-    <string name="settings_scan_offline_description">Allows checkin in users when no network is available. Pending check ins are synch synchronized automatically in the background when the connection is restored.</string>
+    <string name="settings_scan_offline_description">Allows checkin in users when no network is available. Pending check ins are synchronized automatically in the background when the connection is restored.</string>
 
     <string name="settings_cleanup_database">Cleanup database</string>
     <string name="settings_accounts">Accounts</string>
