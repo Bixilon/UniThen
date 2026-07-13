@@ -45,6 +45,7 @@ type CourseUser {
     last_name: String!
 
     email: String
+    contactable: Boolean
 }
 
 type EnrolledUser {
@@ -94,7 +95,7 @@ type Posting {
 
     approved_at: DateTime
 
-    paymentIntent: Unknown
+    paymentIntent: Unknown # (payment_method->base_refund_fee)
 
     payment_completed: DateTime
     payment_pending: DateTime
@@ -229,8 +230,8 @@ union Facility = Area | Location | Room
 
 type GeoPoint { # TODO: typename
     id: ID!
-    latitude: Unknown
-    longitude: Unknown
+    latitude: Float
+    longitude: Float
 }
 
 type Area {
