@@ -1,0 +1,200 @@
+{
+  "id": "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e",
+  "organization_id": null,
+  "type": "api",
+  "request_url": "https://kurse.zhs-muenchen.de/self-service/login/api?return_to=uninow://COURSE/login",
+  "return_to": "uninow://COURSE/login",
+  "ui": {
+    "action": "https://kurse.zhs-muenchen.de/services/identity/self-service/login?flow=aaaaaaaa-63cd-4704-8bb9-2f2640e9577e",
+    "method": "POST",
+    "nodes": [
+      {
+        "type": "input",
+        "group": "oidc",
+        "attributes": {
+          "name": "provider",
+          "type": "submit",
+          "value": "oidc-tum",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010002,
+            "text": "Sign in with oidc-tum",
+            "type": "info",
+            "context": {
+              "provider": "oidc-tum",
+              "provider_id": "oidc-tum"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "oidc",
+        "attributes": {
+          "name": "provider",
+          "type": "submit",
+          "value": "saml-haw-landshut",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010002,
+            "text": "Sign in with saml-haw-landshut",
+            "type": "info",
+            "context": {
+              "provider": "saml-haw-landshut",
+              "provider_id": "saml-haw-landshut"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "oidc",
+        "attributes": {
+          "name": "provider",
+          "type": "submit",
+          "value": "saml-hs-muenchen",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010002,
+            "text": "Sign in with saml-hs-muenchen",
+            "type": "info",
+            "context": {
+              "provider": "saml-hs-muenchen",
+              "provider_id": "saml-hs-muenchen"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "oidc",
+        "attributes": {
+          "name": "provider",
+          "type": "submit",
+          "value": "saml-hs-wt",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010002,
+            "text": "Sign in with saml-hs-wt",
+            "type": "info",
+            "context": {
+              "provider": "saml-hs-wt",
+              "provider_id": "saml-hs-wt"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "oidc",
+        "attributes": {
+          "name": "provider",
+          "type": "submit",
+          "value": "saml-lmu",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010002,
+            "text": "Sign in with saml-lmu",
+            "type": "info",
+            "context": {
+              "provider": "saml-lmu",
+              "provider_id": "saml-lmu"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "default",
+        "attributes": {
+          "name": "csrf_token",
+          "type": "hidden",
+          "value": "",
+          "required": true,
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {}
+      }, {
+        "type": "input",
+        "group": "default",
+        "attributes": {
+          "name": "identifier",
+          "type": "text",
+          "value": "",
+          "required": true,
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1070002,
+            "text": "E-Mail",
+            "type": "info",
+            "context": {
+              "name": "traits.email",
+              "title": "E-Mail"
+            }
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "password",
+        "attributes": {
+          "name": "password",
+          "type": "password",
+          "required": true,
+          "autocomplete": "current-password",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1070001,
+            "text": "Password",
+            "type": "info"
+          }
+        }
+      }, {
+        "type": "input",
+        "group": "password",
+        "attributes": {
+          "name": "method",
+          "type": "submit",
+          "value": "password",
+          "disabled": false,
+          "node_type": "input"
+        },
+        "messages": [],
+        "meta": {
+          "label": {
+            "id": 1010022,
+            "text": "Sign in with password",
+            "type": "info"
+          }
+        }
+      }
+    ]
+  },
+  "refresh": false,
+  "requested_aal": "aal1",
+  "state": "choose_method"
+}

@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 class OryTests {
 
     @Test
-    fun `parse zhs`() {
+    fun `parse whoami`() {
         val data = runBlocking { Res.readBytes("files/ory/whoami.json") }.decodeToString()
 
         val parsed = Jackson.MAPPER.decodeFromString<Whoami>(data)
@@ -30,5 +30,15 @@ class OryTests {
         assertEquals(parsed.identity.id, "00000000-1111-2222-3333-444444444444".toUuid())
         assertEquals(parsed.identity.traits.name.first, "firstname")
         assertEquals(parsed.identity.traits.name.last, "lastname")
+    }
+
+    @Test
+    fun `parse login flow`() {
+        val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
+
+        val parsed = Jackson.MAPPER.decodeFromString<LoginFlow>(data)
+
+
+        assertEquals(parsed.id, "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e".toUuid())
     }
 }

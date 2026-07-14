@@ -18,6 +18,7 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
+import de.bixilon.unithen.api.ory.LoginFlow
 import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
@@ -50,6 +51,16 @@ open class UniNowApi(
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
         return response.bodyAsText()
+    }
+
+    suspend inline fun <reified T> getJson(endpoint: String, data: Map<String, String>): T {
+        val response = get(endpoint, data)
+
+        try {
+            return Jackson.MAPPER.decodeFromString<T>(response)
+        } catch (error: SerializationException) {
+            throw SerializationExceptionData(response, error)
+        }
     }
 
     suspend fun postJson(endpoint: String, payload: String): String {
@@ -88,5 +99,14 @@ open class UniNowApi(
         }
 
         return graphql.data
+    }
+
+
+    suspend fun login(): LoginFlow {
+        val parameters = mapOf(
+            "return_to" to "uninow://COURSE/login",
+            "return_session_token_exchange_code" to true.toString(),
+        )
+        return getJson<LoginFlow>("/services/identity/self-service/login/api", parameters)
     }
 }
