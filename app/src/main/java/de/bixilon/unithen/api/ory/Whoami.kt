@@ -10,12 +10,31 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.user
+package de.bixilon.unithen.api.ory
 
+import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
-data class UserDetails(
-    val uuid: Uuid,
-    val firstname: String,
-    val lastname: String,
-)
+@Serializable
+data class Whoami(
+    val identity: Identity,
+) {
+
+    @Serializable
+    data class Identity(
+        val id: Uuid,
+        val traits: Traits,
+    ) {
+
+        @Serializable
+        data class Traits(
+            val name: Name,
+        )
+
+        @Serializable
+        data class Name(
+            val first: String,
+            val last: String,
+        )
+    }
+}

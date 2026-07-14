@@ -19,6 +19,11 @@ import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import de.bixilon.unithen.api.ory.Whoami
+import de.bixilon.unithen.api.user.UserDetails
+import de.bixilon.unithen.ui.error.SerializationExceptionData
+import de.bixilon.unithen.util.Jackson
+import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonPrimitive
 import okhttp3.Request
 import java.net.URI
@@ -67,5 +72,16 @@ open class AuthenticatedUniNowApi(
 
     suspend fun deleteCheckInAttempt(attempt: Uuid): CheckInAttemptQl? {
         return graphql<Mutations>("delete_checkin", "attempt" to JsonPrimitive(attempt.toString())).deleteCheckinAttempt
+    }
+
+    suspend fun getUserDetails(): UserDetails {
+        val response = get("/services/identity/sessions/whoami")
+        val whoami = try {
+            Jackson.MAPPER.decodeFromString<Whoami>(response)
+        } catch (error: SerializationException) {
+            throw SerializationExceptionData(response, error)
+        }
+
+        return UserDetails(whoami.identity.id, whoami.identity.traits.name.first, whoami.identity.traits.name.last)
     }
 }

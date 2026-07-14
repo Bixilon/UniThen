@@ -10,33 +10,24 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.user
+package de.bixilon.unithen.api.ory
 
 import de.bixilon.kutil.stream.InputStreamUtil.readAsString
-import de.bixilon.kutil.uri.URIUtil.toURI
-import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.uuid.Uuid
 
-class UserDetailsTest {
-
-    // @Test
-    suspend fun `fetch zhs`() {
-        val authentication = CookieAuthentication("XXX")
-
-
-        val details = UserDetails.fetch("https://kurse.zhs-muenchen.de".toURI(), authentication)
-        assertEquals(details.uuid, "10000000-0003-0000-0000-000000000001".toUuid())
-    }
+class OryTests {
 
     @Test
     fun `parse zhs`() {
-        val html = UserDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
-        val expected = UserDetails(Uuid.parse("10000000-0003-0000-0000-000000000001"), "Max", "Muster", "mail@server.de")
+        val data = OryTests::class.java.getResourceAsStream("/ory/whoami.json")!!.readAsString()
 
-        val details = UserDetails.parse(html)
-        assertEquals(details, expected)
+        val parsed = Jackson.MAPPER.decodeFromString<Whoami>(data)
+
+        assertEquals(parsed.identity.id, "00000000-1111-2222-3333-444444444444".toUuid())
+        assertEquals(parsed.identity.traits.name.first, "firstname")
+        assertEquals(parsed.identity.traits.name.last, "lastname")
     }
 }

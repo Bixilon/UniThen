@@ -26,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.R
+import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
-import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.main.settings.Settings
@@ -49,7 +49,8 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
 
     val fetch = useAsyncNetwork<Unit>(null) {
         val first = storage.accounts.count == 0
-        val details = UserDetails.fetch(site.url, authentication)
+        val api = AuthenticatedUniNowApi(site.url, authentication)
+        val details = api.getUserDetails()
 
         val account = storage.transaction { it.accounts.add(site, details, authentication) }
 

@@ -32,6 +32,13 @@ import java.util.concurrent.TimeUnit
 open class UniNowApi(
     val url: URI,
 ) {
+    protected val client by lazy {
+        OkHttpClient().newBuilder()
+            .readTimeout(60, TimeUnit.SECONDS)
+            .followRedirects(true)
+            .followSslRedirects(true)
+            .build()
+    }
 
     protected open suspend fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
 
@@ -40,17 +47,23 @@ open class UniNowApi(
         return postJson(endpoint, payload)
     }
 
+    suspend fun get(endpoint: String): String {
+        val request = buildRequest(endpoint)
+            .get()
+            .build()
+
+        val response = client.newCall(request).execute()
+
+        if (response.code != 200) throw IllegalStateException("Request is not OK: ${response.code}: ${response.body.string()}")
+
+        return response.body.string()
+    }
+
     suspend fun postJson(endpoint: String, payload: RequestBody = RequestBody.EMPTY): String {
         val request = buildRequest(endpoint)
             .post(payload)
             .build()
 
-
-        val client = OkHttpClient().newBuilder()
-            .readTimeout(60, TimeUnit.SECONDS)
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .build()
 
         val response = client.newCall(request).execute()
 

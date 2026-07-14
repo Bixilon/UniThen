@@ -28,7 +28,7 @@ class PageDetailsTest {
 
     @Test
     fun `parse zhs`() {
-        val html = UserDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
+        val html = PageDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
         val array = ByteArray(0)
 
         val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png".toURI()) array else Broken() }
@@ -38,7 +38,7 @@ class PageDetailsTest {
 
     @Test
     fun `parse aaa`() {
-        val html = UserDetailsTest::class.java.getResourceAsStream("/http/aaa_front_page.html")!!.readAsString()
+        val html = PageDetailsTest::class.java.getResourceAsStream("/http/aaa_front_page.html")!!.readAsString()
         val array = ByteArray(0)
 
         val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png".toURI()) array else Broken() }
