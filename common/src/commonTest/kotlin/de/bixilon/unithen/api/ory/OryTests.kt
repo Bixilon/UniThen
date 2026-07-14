@@ -10,16 +10,18 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.api.ory
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
+class OryTests {
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
+    @Test
+    fun `parse zhs`() {
+        val data = OryTests::class.java.getResourceAsStream("/ory/whoami.json")!!.readAsString()
+
+        val parsed = Jackson.MAPPER.decodeFromString<Whoami>(data)
+
+        assertEquals(parsed.identity.id, "00000000-1111-2222-3333-444444444444".toUuid())
+        assertEquals(parsed.identity.traits.name.first, "firstname")
+        assertEquals(parsed.identity.traits.name.last, "lastname")
+    }
 }
-
-
-@Composable
-expect fun useToast(): ToastInvoker

@@ -10,16 +10,18 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.api.graphql.types.user
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
+import de.bixilon.unithen.api.graphql.types.CourseQl
+import de.bixilon.unithen.api.graphql.types.IdentifiedQl
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlin.uuid.Uuid
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
-
-
-@Composable
-expect fun useToast(): ToastInvoker
+@Serializable
+data class UserQl(
+    override val id: Uuid,
+    @SerialName("first_name") val firstname: String? = null,
+    @SerialName("last_name") val lastname: String? = null,
+    val courses: List<CourseQl>?=null,
+) : IdentifiedQl

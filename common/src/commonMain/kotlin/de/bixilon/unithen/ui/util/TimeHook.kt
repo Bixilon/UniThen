@@ -12,14 +12,29 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
+import androidx.compose.runtime.*
+import de.bixilon.unithen.settings.Settings
+import de.bixilon.unithen.settings.rememberSetting
+import kotlinx.coroutines.delay
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
-
+fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else Clock.System.now()
 
 @Composable
-expect fun useToast(): ToastInvoker
+fun useTime(): Instant {
+    val fakeTime by rememberSetting(Settings.FAKE_TIME)
+    var time by remember { mutableStateOf(getTime(fakeTime)) }
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            time = getTime(fakeTime)
+            delay(30.seconds)
+        }
+    }
+
+    LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
+
+    return time
+}

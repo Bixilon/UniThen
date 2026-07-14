@@ -10,16 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
-
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
+expect object BuildInfo {
+    val DEBUG: Boolean
+    val VERSION: String
+    val VERSION_CODE: Int
+    val GIT_COMMIT: String
 }
-
-
-@Composable
-expect fun useToast(): ToastInvoker

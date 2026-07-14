@@ -10,16 +10,25 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.error
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
-
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
-
+import androidx.compose.ui.platform.LocalContext
+import de.bixilon.unithen.BuildInfo
 
 @Composable
-expect fun useToast(): ToastInvoker
+actual fun useSendCrashMail(): (stack: String) -> Unit {
+    val context = LocalContext.current
+    return {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(CRASH_ADDRESS))
+            putExtra(Intent.EXTRA_SUBJECT, "UniThen Crash")
+            putExtra(Intent.EXTRA_TEXT, "Hi there,\nApp version: ${BuildInfo.VERSION}\nPlease see the exception below:\n\n${it}\n\n\nCan you please fix this issue?\nThanks!")
+        }
+
+
+        context.startActivity(Intent.createChooser(intent, "Pick an Email provider"))
+    }
+}

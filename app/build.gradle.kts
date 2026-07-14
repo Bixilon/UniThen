@@ -161,50 +161,25 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.androidx.material.icons.core)
-    implementation(libs.androidx.material.icons.extended)
-
-    implementation(libs.zxing)
-
-    implementation(libs.okhttp)
-    implementation(libs.ksoup)
-
-    implementation(libs.kotlinx.datetime)
 
 
 
-    implementation(libs.kutil)
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.camera.core) { exclude("androidx.appcompat", "appcompat") }
-    implementation(libs.androidx.camera.view) { exclude("androidx.appcompat", "appcompat") }
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.camera2)
 
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.profileinstaller)
 
-
-    testImplementation(libs.kotlin.test.core)
-    testImplementation(libs.kotlin.test.junit)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
+
     baselineProfile(project(":baselineprofile"))
-
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-    implementation(libs.zxingcpp)
-
-
     implementation(project(":common"))
 }

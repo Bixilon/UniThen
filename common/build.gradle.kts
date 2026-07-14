@@ -9,6 +9,8 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(11)
+
     compilerOptions {
         languageVersion.set(KotlinVersion.KOTLIN_2_4)
         freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
@@ -18,13 +20,13 @@ kotlin {
 
     androidLibrary {
         namespace = "de.bixilon.unithen.common"
-        compileSdk {
-            version = release(36) { minorApiLevel = 1 }
-        }
+        compileSdk = 36
         minSdk = 26
+        androidResources.enable = true
     }
 
     sourceSets {
+
         commonMain.dependencies {
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
@@ -56,8 +58,9 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.ui)
             implementation(libs.androidx.ui.graphics)
-            implementation(libs.androidx.ui.tooling.preview)
             implementation(libs.androidx.material3)
+
+            implementation(libs.zxing)
             implementation(libs.zxingcpp)
 
 
@@ -65,11 +68,16 @@ kotlin {
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)
 
-            implementation(libs.androidx.camera.core)
-            implementation(libs.androidx.camera.view)
+            // TODO: exclude appcompat
+            implementation(libs.androidx.camera.core) // { exclude("androidx.appcompat", "appcompat") }
+            implementation(libs.androidx.camera.view) // { exclude("androidx.appcompat", "appcompat") }
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.camera.compose)
             implementation(libs.androidx.camera.camera2)
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.kutil)
         }
     }
 }

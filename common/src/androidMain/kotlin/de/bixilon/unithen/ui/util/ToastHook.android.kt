@@ -15,13 +15,13 @@ package de.bixilon.unithen.ui.util
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
 
 @Composable
 actual fun useToast(): ToastInvoker {
-    val resources = LocalResources.current
     val context = LocalContext.current
 
     return object : ToastInvoker {
@@ -29,6 +29,6 @@ actual fun useToast(): ToastInvoker {
             withContext(Dispatchers.Main) { Toast.makeText(context, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show() }
         }
 
-        override suspend fun invoke(message: Int, long: Boolean) = invoke(resources.getString(message, long))
+        override suspend fun invoke(message: StringResource, long: Boolean) = invoke(getString(message, long))
     }
 }

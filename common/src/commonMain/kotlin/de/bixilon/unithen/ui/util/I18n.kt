@@ -14,12 +14,11 @@ package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
+@Composable
+inline fun StringResource.i18n() = stringResource(this)
 
 
 @Composable
-expect fun useToast(): ToastInvoker
+inline fun StringResource.i18n(vararg formatArgs: Any) = stringResource(this, *formatArgs)

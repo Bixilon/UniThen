@@ -10,16 +10,14 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen
 
-import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
-
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
+actual object BuildInfo {
+    actual val DEBUG get() = true // TODO: Get from BuildConfig
+    actual val VERSION: String
+        get() = TODO("Not yet implemented")
+    actual val VERSION_CODE: Int
+        get() = TODO("Not yet implemented")
+    actual val GIT_COMMIT: String
+        get() = TODO("Not yet implemented")
 }
-
-
-@Composable
-expect fun useToast(): ToastInvoker

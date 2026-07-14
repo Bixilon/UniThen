@@ -10,16 +10,23 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
-import androidx.compose.runtime.Composable
+import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.ui.main.settings.types.Labeled
 import org.jetbrains.compose.resources.StringResource
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.sort_firstname
+import unithen.common.generated.resources.sort_lastname
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
+enum class AttendeeSort(val field: String, override val label: StringResource) : Labeled {
+    FIRSTNAME("firstname", Res.string.sort_firstname),
+    LASTNAME("lastname", Res.string.sort_lastname),
+    ;
+
+    companion object : ValuesEnum<AttendeeSort> {
+        override val VALUES = values()
+        override val NAME_MAP = names()
+    }
 }
-
-
-@Composable
-expect fun useToast(): ToastInvoker

@@ -13,13 +13,10 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
+import androidx.compose.ui.Modifier
 
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
 
+data class ScannedQrCode(val text: String?)
 
 @Composable
-expect fun useToast(): ToastInvoker
+expect fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (Set<ScannedQrCode>) -> Unit)

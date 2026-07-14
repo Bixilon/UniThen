@@ -10,16 +10,26 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.settings
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
-
-interface ToastInvoker {
-    suspend operator fun invoke(message: String, long: Boolean = false)
-    suspend operator fun invoke(message: StringResource, long: Boolean = false)
-}
+import androidx.compose.runtime.MutableState
+import de.bixilon.kutil.enums.ValuesEnum
 
 
 @Composable
-expect fun useToast(): ToastInvoker
+@JvmName("rememberBooleanSetting")
+expect fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean>
+
+@Composable
+@JvmName("rememberIntSetting")
+expect fun rememberSetting(setting: Setting<Int>): MutableState<Int>
+
+@Composable
+@JvmName("rememberStringSetting")
+expect fun rememberSetting(setting: Setting<String>): MutableState<String>
+
+
+@Composable
+@JvmName("rememberEnumSetting")
+expect fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T>
