@@ -70,10 +70,6 @@ data class SiteDetails(
                 .first()?.text() ?: throw IllegalStateException("Can not extract title!")
 
 
-            parsed.head()
-                .getElementsByTag("script")
-                .find { it.data().contains("window.UniNow = ") } ?: throw IllegalStateException("Not a uni now page (no script tag)!")
-
 
             parsed.body().getElementsMatchingText("in Magdeburg by").firstOrNull() ?: throw IllegalStateException("Not a uni now page (not in Magdeburg)!")
 
