@@ -12,19 +12,23 @@
 
 package de.bixilon.unithen.ui.util
 
-import android.content.ClipData
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
+expect suspend fun Clipboard.setText(text: String)
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
     val clipboard = LocalClipboard.current
@@ -34,7 +38,7 @@ fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
     IconButton({
         copied = true
         CoroutineScope(Dispatchers.Main).launch {
-            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(text, text)))
+            clipboard.setText(text)
         }
     }, modifier, enabled = !copied) {
         Icon(Icons.Filled.ContentCopy, "copy")

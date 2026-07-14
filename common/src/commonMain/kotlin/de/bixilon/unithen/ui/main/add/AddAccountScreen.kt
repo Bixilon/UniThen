@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.add
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -35,6 +34,7 @@ import de.bixilon.unithen.ui.auth.WebViewWarmup
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
+import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.toBitmap
 import unithen.common.generated.resources.Res

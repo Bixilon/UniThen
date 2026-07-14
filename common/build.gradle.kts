@@ -59,11 +59,11 @@ kotlin {
         androidResources.enable = true
     }
 
-    jvm("desktop") {
-        compilerOptions {
-            jvmTarget = JvmTarget.JVM_11
-        }
-    }
+    //jvm("desktop") {
+    //    compilerOptions {
+    //        jvmTarget = JvmTarget.JVM_11
+    //    }
+    //}
 
     sourceSets {
 
@@ -104,6 +104,9 @@ kotlin {
             implementation(libs.zxingcpp)
 
             implementation(libs.kutil)
+
+
+            implementation(libs.kotlinx.datetime)
 
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)

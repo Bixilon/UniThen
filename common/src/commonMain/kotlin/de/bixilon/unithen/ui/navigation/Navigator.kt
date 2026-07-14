@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.navigation
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -21,6 +20,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import de.bixilon.kutil.cast.CastUtil.cast
+import de.bixilon.unithen.ui.util.BackHandler
 import kotlin.reflect.KClass
 
 

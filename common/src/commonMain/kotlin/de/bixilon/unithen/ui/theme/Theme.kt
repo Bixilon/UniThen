@@ -12,11 +12,8 @@
 
 package de.bixilon.unithen.ui.theme
 
-import android.os.Build
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 
 val DARK_COLOR_SCHEME = darkColorScheme(
     primary = primaryDark,
@@ -94,27 +91,3 @@ val LIGHT_COLOR_SCHEME = lightColorScheme(
     surfaceContainerHigh = surfaceContainerHighLight,
     surfaceContainerHighest = surfaceContainerHighestLight,
 )
-
-
-@Composable
-fun UniThenTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
-    content: @Composable () -> Unit,
-) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DARK_COLOR_SCHEME
-        else -> LIGHT_COLOR_SCHEME
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
-}

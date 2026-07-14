@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.add
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.input.TextFieldState
@@ -28,6 +27,7 @@ import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import unithen.common.generated.resources.*

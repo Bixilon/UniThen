@@ -14,13 +14,11 @@ package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalResources
-import de.bixilon.kutil.unit.UnitFormatter.format
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
+import de.bixilon.kutil.unit.UnitFormatter.format
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.char
@@ -34,14 +32,18 @@ import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Instant
 
+@Composable
+expect fun LocalDateTime.formatDate(): String
+
+@Composable
+expect fun LocalDateTime.formatTime(): String
+
 object TimeFormatUtil {
 
     @Composable
-    private fun LocalDateTime.formatDate(): String {
-        val resources = LocalResources.current
+    fun LocalDateTime.formatDate(locale: Locale): String {
 
         return remember {
-            val locale = resources.configuration.locales.get(0)
             val months = MonthNames(DateFormatSymbols.getInstance(locale).months.toList())
             val short = DateFormatSymbols.getInstance(locale).shortWeekdays
             val days = DayOfWeekNames(short[Calendar.MONDAY], short[Calendar.TUESDAY], short[Calendar.WEDNESDAY], short[Calendar.THURSDAY], short[Calendar.FRIDAY], short[Calendar.SATURDAY], short[Calendar.SUNDAY])
@@ -54,12 +56,11 @@ object TimeFormatUtil {
         }
     }
 
-    @Composable
-    private fun LocalDateTime.formatTime(): String {
-        val context = LocalContext.current
 
+    @Composable
+    fun LocalDateTime.formatTime(is24Hour: Boolean): String {
         return remember {
-            val format = when (android.text.format.DateFormat.is24HourFormat(context)) {
+            val format = when (is24Hour) {
                 true -> LocalDateTime.Format { hour(); char(':'); minute() }
                 false -> LocalDateTime.Format { amPmHour(); char(':'); minute(); char(' '); amPmMarker("AM", "PM") }
             }
