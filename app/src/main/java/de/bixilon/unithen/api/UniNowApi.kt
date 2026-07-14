@@ -35,8 +35,7 @@ open class UniNowApi(
     protected val client by lazy {
         OkHttpClient().newBuilder()
             .readTimeout(60, TimeUnit.SECONDS)
-            .followRedirects(true)
-            .followSslRedirects(true)
+            .followRedirects(false)
             .build()
     }
 
