@@ -56,7 +56,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         val database = if (readonly) readableDatabase else writableDatabase
 
         val statement = database.compileStatement(sql)
-        statement.bind(*(parameters.map { it.db() }.toTypedArray()))
+        statement.bind(*parameters)
 
         return statement
     }
@@ -74,6 +74,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
     }
 
     override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
+        // TODO: That sucks, we must convert all parameters to a string...
         return AndroidCursor(readableDatabase.rawQuery(sql, parameters.map { it.db() }.toTypedArray()))
     }
 
