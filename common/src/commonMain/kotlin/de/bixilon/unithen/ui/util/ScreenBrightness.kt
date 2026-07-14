@@ -10,12 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.auth
+package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import de.bixilon.unithen.api.authentication.Authentication
-import java.net.URI
-
 
 @Composable
-expect fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit)
+expect fun ScreenBrightnessOverride(value: Float)

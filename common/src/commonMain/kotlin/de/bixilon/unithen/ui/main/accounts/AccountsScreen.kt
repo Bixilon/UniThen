@@ -28,7 +28,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
@@ -42,7 +41,6 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
-import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -234,7 +232,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
             ) {
-                val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
 
                 if (bitmap != null) {
                     Image(

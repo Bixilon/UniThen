@@ -10,12 +10,29 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.auth
+package de.bixilon.unithen.ui.util
 
+import android.content.Context
+import android.view.WindowManager
 import androidx.compose.runtime.Composable
-import de.bixilon.unithen.api.authentication.Authentication
-import java.net.URI
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.platform.LocalContext
+import de.bixilon.unithen.util.AndroidUtil.activity
 
+private fun setBrightness(context: Context, level: Float) {
+    val window = context.activity?.window ?: return
+
+    window.attributes = window.attributes.apply { screenBrightness = level }
+}
 
 @Composable
-expect fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit)
+actual fun ScreenBrightnessOverride(value: Float) {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        setBrightness(context, value)
+
+        onDispose {
+            setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
+        }
+    }
+}

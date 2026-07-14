@@ -28,7 +28,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
@@ -42,15 +41,11 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute
-import de.bixilon.unithen.ui.main.add.toBitmap
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
-import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.useAsyncNetwork
-import de.bixilon.unithen.ui.util.useToast
-import de.bixilon.unithen.ui.util.verticalScroll
+import de.bixilon.unithen.ui.util.*
 import unithen.common.generated.resources.*
 
 
@@ -110,7 +105,7 @@ fun CoursesScreen() {
                     item {
                         val site = rememberStorage { sites[event.site]!! } // TODO: Section?
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+                            val bitmap = remember(site.icon) { site.icon?.toBitmap() }
 
                             if (bitmap != null) {
                                 Image(

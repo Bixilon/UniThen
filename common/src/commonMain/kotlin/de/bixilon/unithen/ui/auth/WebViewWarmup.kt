@@ -12,27 +12,7 @@
 
 package de.bixilon.unithen.ui.auth
 
-import android.webkit.WebSettings
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
-import de.bixilon.unithen.ui.util.rememberAsync
-import kotlin.time.TimeSource
-
-private var warmed = false
 
 @Composable
-fun WebViewWarmup() {
-    if (warmed) return
-    warmed = true
-
-    val context = LocalContext.current
-
-    // Thanks: https://groups.google.com/a/chromium.org/g/android-webview-dev/c/hjn1h7dBlH8
-    rememberAsync {
-        val start = TimeSource.Monotonic.markNow()
-        catchAll { WebSettings.getDefaultUserAgent(context) }
-        println("Webview preloaded: ${TimeSource.Monotonic.markNow() - start}")
-    }
-}
-
+expect fun WebViewWarmup()

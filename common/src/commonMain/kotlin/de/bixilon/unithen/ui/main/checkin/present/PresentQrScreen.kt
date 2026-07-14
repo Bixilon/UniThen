@@ -12,9 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.present
 
-import android.app.Activity
-import android.content.Context
-import android.view.WindowManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -23,17 +20,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
@@ -45,6 +39,7 @@ import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.QrCode
+import de.bixilon.unithen.ui.util.ScreenBrightnessOverride
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import kotlinx.serialization.json.JsonObject
@@ -58,15 +53,8 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
     val visible = LocalVisibility.current
     val name by rememberSetting(Settings.QR_CODE_REMOVE_NAME)
 
-    val context = LocalContext.current
-    DisposableEffect(visible) {
-        if (visible) {
-            setBrightness(context, 1.0f)
-        }
-
-        onDispose {
-            setBrightness(context, WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE)
-        }
+    if (visible) {
+        ScreenBrightnessOverride(1.0f)
     }
 
     Column(
@@ -119,11 +107,6 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
     }
 }
 
-private fun setBrightness(context: Context, level: Float) {
-    val window = context.nullCast<Activity>()?.window ?: return
-
-    window.attributes = window.attributes.apply { screenBrightness = level }
-}
 
 fun createQrCode(user: Uuid, appointment: Uuid, firstname: String, lastname: String): String {
     val node = JsonObject(mapOf(

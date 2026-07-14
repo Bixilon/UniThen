@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -58,6 +59,12 @@ kotlin {
         androidResources.enable = true
     }
 
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
+
     sourceSets {
 
         commonMain.dependencies {
@@ -96,6 +103,7 @@ kotlin {
             implementation(libs.zxing)
             implementation(libs.zxingcpp)
 
+            implementation(libs.kutil)
 
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)

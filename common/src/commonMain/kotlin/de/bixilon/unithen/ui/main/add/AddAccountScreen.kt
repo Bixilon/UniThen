@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.add
 
-import android.graphics.BitmapFactory
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -28,7 +27,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Site
@@ -38,11 +36,10 @@ import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.toBitmap
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.add_account_title
 
-
-fun ByteArray.toBitmap() = BitmapFactory.decodeByteArray(this, 0, this.size)
 
 @Composable
 private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
@@ -58,7 +55,7 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
                 .padding(16.dp),
         ) {
             Row {
-                val bitmap = remember(site.icon) { site.icon?.toBitmap()?.asImageBitmap() }
+                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
 
                 if (bitmap != null) {
                     Image(

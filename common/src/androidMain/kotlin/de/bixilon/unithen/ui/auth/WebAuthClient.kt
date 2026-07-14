@@ -22,7 +22,6 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.util.CookieParser
 import java.net.URI
 
-
 open class WebAuthClient(
     val expected: URI,
     val callback: (Authentication) -> Unit,
