@@ -14,6 +14,7 @@ package de.bixilon.unithen.api
 
 import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.authentication.Authentication
 import kotlinx.coroutines.delay
 import okhttp3.MediaType.Companion.toMediaType
@@ -27,7 +28,7 @@ object HttpUtil {
 
     suspend fun create(base: URI, endpoint: String): Request.Builder {
         assert(base.scheme == "https") { "Insecure requests are forbidden!" }
-        if (BuildInfo.DEBUG) {
+        if (RuntimeInfo.debug) {
             delay(3.seconds)
         }
         val request = Request.Builder()

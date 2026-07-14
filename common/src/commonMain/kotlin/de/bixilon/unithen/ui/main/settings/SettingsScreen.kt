@@ -23,7 +23,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -49,7 +49,7 @@ fun SettingsScreen() {
     Screen(Modifier.verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ScreenTitle(Res.string.settings_title.i18n())
 
-        if (BuildInfo.DEBUG) {
+        if (RuntimeInfo.debug) {
             Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionTitle("Debug")
 

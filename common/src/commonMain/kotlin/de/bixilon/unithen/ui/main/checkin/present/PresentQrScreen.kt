@@ -35,7 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.kutil.string.StringUtil.truncate
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
@@ -112,7 +112,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
             InfoPair(Res.string.appointment_start.i18n(), appointment.start.format())
             InfoPair(Res.string.appointment_end.i18n(), appointment.end.format())
             InfoPair(Res.string.appointment_location.i18n(), appointment.location)
-            if (BuildInfo.DEBUG) {
+            if (RuntimeInfo.debug) {
                 InfoPair("ID", appointment.uuid.toString())
             }
         }

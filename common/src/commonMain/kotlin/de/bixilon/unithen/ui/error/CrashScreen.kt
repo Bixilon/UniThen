@@ -28,7 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.ui.containers.Screen
@@ -109,7 +109,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             Copy2Clipboard(trace, modifier = Modifier.align(Alignment.TopEnd))
         }
 
-        if (!BuildInfo.DEBUG) {
+        if (!RuntimeInfo.debug) {
             Text("You can try checking for updates below, the crash is most likely fixed in the latest realease.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {

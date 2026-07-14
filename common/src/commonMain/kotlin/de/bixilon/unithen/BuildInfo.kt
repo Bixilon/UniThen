@@ -12,9 +12,8 @@
 
 package de.bixilon.unithen
 
-expect object BuildInfo {
-    val DEBUG: Boolean
-    val VERSION: String
-    val VERSION_CODE: Int
-    val GIT_COMMIT: String
+object BuildInfo {
+    val VERSION: String get() = ""
+    val VERSION_CODE: Int get() = 1
+    val GIT_COMMIT: String get() = "a"
 }

@@ -18,6 +18,7 @@ import androidx.compose.runtime.*
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage

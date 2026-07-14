@@ -20,7 +20,6 @@ import de.bixilon.unithen.ui.navigation.NavigationRoute
 import kotlin.uuid.Uuid
 
 object MainRoute : NavigationRoute
-object SetupRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
 data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute

@@ -31,9 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.primitive.IntUtil.toInt
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
@@ -128,7 +128,7 @@ fun AboutScreen() {
             Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Version: ${BuildInfo.VERSION} (${BuildInfo.VERSION_CODE})", textAlign = TextAlign.Center)
 
-                if (BuildInfo.DEBUG) {
+                if (RuntimeInfo.debug) {
                     Text("This is a DEBUG build!", color = Color.Red)
                 }
 
@@ -159,7 +159,7 @@ fun AboutScreen() {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (!BuildInfo.DEBUG) {
+        if (!RuntimeInfo.debug) {
             UpdateChecker()
             Spacer(modifier = Modifier.height(24.dp))
         }

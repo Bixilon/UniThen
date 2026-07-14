@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -148,7 +148,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     if (appointment == null) {
                         val actual = storage.appointments[scanned.appointmentId]
                         if (actual.size != 1) {
-                            errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (BuildInfo.DEBUG) scanned.appointmentId.toString() else null)
+                            errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (RuntimeInfo.debug) scanned.appointmentId.toString() else null)
                             continue
                         }
                         val course = storage.courses[actual.first().course]!!
@@ -170,7 +170,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                     delayed = AcceptedResult(course, appointment, scanned.userId)
 
                     if (user == null) {
-                        errors += ErrorResult(QrErrorReasons.UNKNOWN_USER, if (BuildInfo.DEBUG) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
+                        errors += ErrorResult(QrErrorReasons.UNKNOWN_USER, if (RuntimeInfo.debug) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
                         continue
                     }
 

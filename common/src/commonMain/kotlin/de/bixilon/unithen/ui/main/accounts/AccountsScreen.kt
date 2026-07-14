@@ -32,7 +32,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.DurationUtil.weeks
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
 import de.bixilon.unithen.settings.Settings
@@ -218,7 +218,7 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                if (BuildInfo.DEBUG) {
+                if (RuntimeInfo.debug) {
                     Spacer(Modifier.height(8.dp))
                     Text("ID: " + account.uuid.toString(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }

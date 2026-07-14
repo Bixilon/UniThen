@@ -12,12 +12,13 @@
 
 package de.bixilon.unithen
 
-actual object BuildInfo {
-    actual val DEBUG get() = true // TODO: Get from BuildConfig
-    actual val VERSION: String
-        get() = TODO("Not yet implemented")
-    actual val VERSION_CODE: Int
-        get() = TODO("Not yet implemented")
-    actual val GIT_COMMIT: String
-        get() = TODO("Not yet implemented")
+interface RuntimeInfo {
+    val debug: Boolean
+
+    companion object : RuntimeInfo by RuntimeInfo0.actual
+
+    object RuntimeInfo0 {
+        lateinit var actual: RuntimeInfo
+    }
 }
+

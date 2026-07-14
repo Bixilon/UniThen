@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.BuildInfo
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -121,7 +121,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                 )
             }
             Row {
-                if (BuildInfo.DEBUG) {
+                if (RuntimeInfo.debug) {
                     IconButton({
                         storage.transaction {
                             storage.checkInQueue.delete(appointment, user)

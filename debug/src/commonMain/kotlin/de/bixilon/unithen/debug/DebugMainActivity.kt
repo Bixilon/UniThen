@@ -15,7 +15,10 @@ package de.bixilon.unithen.debug
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import de.bixilon.unithen.ui.main.MainScreen
+import de.bixilon.unithen.ui.CommonMainActivity
+import de.bixilon.unithen.ui.error.CrashScreen
+import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.main.setup.SetupScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 
@@ -25,8 +28,10 @@ fun DebugMainActivity() {
     val navigator = remember { Navigator(DebugRoute) }
 
     navigator.routes {
-        composable<MainRoute> { MainScreen() }
+        composable<MainRoute> { CommonMainActivity() }
         composable<DebugRoute> { DebugScreen() }
+        composable<SetupRoute> { SetupScreen() }
+        composable<CrashRoute> { CrashScreen(null, it.exception) }
     }
 
     CompositionLocalProvider(

@@ -16,3 +16,4 @@ import de.bixilon.unithen.ui.navigation.NavigationRoute
 
 object DebugRoute : NavigationRoute
 object MainRoute : NavigationRoute
+object SetupRoute : NavigationRoute

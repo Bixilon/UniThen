@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose)
-    kotlin("plugin.serialization") version "2.4.0"
+    alias(libs.plugins.kotlin.serialization) version "2.4.0"
 }
 
 kotlin {
@@ -15,7 +15,6 @@ kotlin {
         languageVersion.set(KotlinVersion.KOTLIN_2_4)
         freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
         freeCompilerArgs.add("-Xintrinsic-const-evaluation")
-        optIn.add("kotlin.time.ExperimentalTime")
     }
 
     androidLibrary {
@@ -64,7 +63,6 @@ kotlin {
             implementation(libs.zxingcpp)
 
 
-
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)
 
@@ -75,6 +73,7 @@ kotlin {
             implementation(libs.androidx.camera.compose)
             implementation(libs.androidx.camera.camera2)
         }
+
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.kutil)

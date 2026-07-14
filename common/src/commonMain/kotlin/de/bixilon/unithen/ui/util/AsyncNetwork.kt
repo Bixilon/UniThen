@@ -15,7 +15,6 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalResources
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
@@ -40,7 +39,6 @@ data class AsyncNetworkState<T>(
 fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
-    val resources = LocalResources.current
     val toast = useToast()
     val active = remember { mutableStateOf(false) }
 
