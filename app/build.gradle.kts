@@ -10,13 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
-import de.bixilon.kutil.primitive.BooleanUtil.toBoolean
-import de.bixilon.kutil.stream.InputStreamUtil.readAsString
-import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
-import de.bixilon.kutil.string.WhitespaceUtil.trimWhitespaces
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 
 plugins {
     alias(libs.plugins.android.application)
@@ -26,59 +22,6 @@ plugins {
 }
 
 
-buildscript {
-    dependencies {
-        classpath(libs.kutil)
-    }
-}
-
-fun getEnv(name: String): String? = System.getenv(name)?.takeIf { it.isNotBlank() }
-
-data class GitStatus(
-    val commit: String,
-    val branch: String,
-    val clean: Boolean,
-    val tag: String?,
-)
-
-fun loadGitFromEnv(): GitStatus? {
-    val commit = getEnv("CI_COMMIT_SHA") ?: return null
-    val branch = getEnv("CI_COMMIT_BRANCH") ?: return null
-    val tag = getEnv("CI_COMMIT_TAG")
-    return GitStatus(commit, branch, true, tag)
-}
-
-val FDROID = project.properties["fdroid"]?.toBoolean() ?: false
-
-val hasGit by lazy { project.rootDir.resolve(".git").exists() }
-
-fun executeGit(vararg args: String): String? {
-    if (!hasGit) return null
-
-    val process = ProcessBuilder()
-        .command(*(arrayOf("git") + args))
-        .directory(project.rootDir)
-        .redirectOutput(ProcessBuilder.Redirect.PIPE)
-        .start()
-    if (process.waitFor() != 0) return null
-
-    return process.inputStream.readAsString()
-        .trimWhitespaces()
-        .trim { it == '\n' || it == '\r' }
-        .removeMultipleWhitespaces()
-        .takeIf { it.isNotBlank() }
-}
-
-fun loadGitFromGit(): GitStatus? {
-    val commit = executeGit("rev-parse", "HEAD") ?: return null
-    val branch = executeGit("branch", "--show-current") ?: "master"
-    val clean = if (FDROID) true else executeGit("status", "--porcelain") == null
-    val tag = executeGit("describe", "--exact-match", "--tags")
-
-    return GitStatus(commit, branch, clean, tag)
-}
-
-val git by lazy { ignoreAll { loadGitFromGit() } ?: loadGitFromEnv() }
 
 android {
     namespace = "de.bixilon.unithen"
@@ -88,18 +31,9 @@ android {
         applicationId = "de.bixilon.unithen"
         minSdk = 26
         targetSdk = 36
-        versionCode = 6
+        versionCode = project.extra.get("versionCode").toString().toInt()
 
-        buildConfigField("String", "GIT_COMMIT", git?.commit?.let { "\"$it\"" }.toString())
-        buildConfigField("String", "GIT_BRANCH", git?.branch?.let { "\"$it\"" }.toString())
-        buildConfigField("String", "GIT_CLEAN", git?.clean?.let { "\"$it\"" }.toString())
-        buildConfigField("String", "GIT_TAG", git?.tag?.let { "\"$it\"" }.toString())
-
-        var version = (git?.tag?.removePrefix("v") ?: git?.commit?.substring(0, 10) ?: "unknown")
-        git?.takeIf { !it.clean }?.let { version += "-dirty" }
-        buildConfigField("String", "VERSION", "\"" + version + "\"")
-
-        versionName = version
+        versionName = project.extra.get("version").toString()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

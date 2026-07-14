@@ -20,6 +20,7 @@ import de.bixilon.unithen.BuildInfo
 @Composable
 actual fun useSendCrashMail(): (stack: String) -> Unit {
     val context = LocalContext.current
+
     return {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"

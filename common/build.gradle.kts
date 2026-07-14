@@ -8,6 +8,40 @@ plugins {
     alias(libs.plugins.kotlin.serialization) version "2.4.0"
 }
 
+val generatedSources = layout.buildDirectory.dir("generated/info/commonMain/kotlin")
+
+val generateInfo = tasks.register("generateInfo") {
+    val outputFile = generatedSources.map { it.file("de/bixilon/unithen/BuildInfo.kt") }
+
+    outputs.file(outputFile)
+
+    doLast {
+
+        outputFile.get().asFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                """
+package de.bixilon.unithen
+
+object BuildInfo {
+    val VERSION: String get() = "${project.extra.get("version")}"
+    val VERSION_CODE: Int get() = ${project.extra.get("versionCode")}
+    val GIT_COMMIT: String get() = "${project.extra.get("commit")}"
+}
+"""
+            )
+        }
+    }
+}
+
+kotlin.sourceSets.commonMain {
+    kotlin.srcDir(generatedSources)
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().configureEach {
+    dependsOn(generateInfo)
+}
+
 kotlin {
     jvmToolchain(11)
 
