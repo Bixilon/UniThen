@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main
+package de.bixilon.unithen.debug
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text

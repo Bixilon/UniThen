@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
-import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
@@ -60,13 +59,10 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun MainNavigator() {
-    val navigator = remember { Navigator(if (BuildInfo.DEBUG) DebugRoute else MainRoute) }
+    val navigator = remember { Navigator(MainRoute) }
 
     navigator.routes {
         composable<MainRoute> { MainScreen() }
-        if (BuildInfo.DEBUG) {
-            composable<DebugRoute> { DebugScreen() }
-        }
         composable<SetupRoute> { SetupScreen() }
 
         composable<AboutRoute> { AboutScreen() }

@@ -182,4 +182,5 @@ dependencies {
 
     baselineProfile(project(":baselineprofile"))
     implementation(project(":common"))
+    debugImplementation(project(":debug"))
 }

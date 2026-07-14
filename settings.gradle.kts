@@ -23,3 +23,4 @@ rootProject.name = "UniThen"
 include(":app")
 include(":baselineprofile")
 include(":common")
+include(":debug")

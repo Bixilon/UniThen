@@ -25,7 +25,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
+import de.bixilon.unithen.debug.DebugMainActivity
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import de.bixilon.unithen.util.AndroidUtil.activity
@@ -51,7 +53,7 @@ class MainActivity : ComponentActivity() {
                         CompositionLocalProvider(
                             LocalStorage provides UniThen.STORAGE,
                         ) {
-                            CommonMainActivity()
+                            if (BuildConfig.DEBUG) DebugMainActivity() else CommonMainActivity()
                         }
                     }
                 }
