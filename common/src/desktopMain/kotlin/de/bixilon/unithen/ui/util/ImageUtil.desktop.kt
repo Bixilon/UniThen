@@ -13,5 +13,10 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toComposeImageBitmap
+import com.fleeksoft.io.ByteArrayInputStream
+import javax.imageio.ImageIO
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+actual fun ByteArray.toBitmap(): ImageBitmap {
+    return ImageIO.read(ByteArrayInputStream(this)).toComposeImageBitmap()
+}

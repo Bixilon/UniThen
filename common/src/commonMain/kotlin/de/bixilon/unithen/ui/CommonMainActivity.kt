@@ -153,6 +153,7 @@ fun Loader(content: @Composable () -> Unit) {
             try {
                 storage.helper.load()
             } catch (thrown: Throwable) {
+                thrown.printStackTrace()
                 error = thrown
             } finally {
                 loaded = true

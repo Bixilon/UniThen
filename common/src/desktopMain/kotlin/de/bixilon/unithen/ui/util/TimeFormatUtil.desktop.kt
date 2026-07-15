@@ -12,6 +12,14 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
+import kotlinx.datetime.LocalDateTime
+import de.bixilon.unithen.ui.util.TimeFormatUtil.formatTime
+import de.bixilon.unithen.ui.util.TimeFormatUtil.formatDate
+import java.util.Locale
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun LocalDateTime.formatTime() = formatTime(true)
+
+@Composable
+actual fun LocalDateTime.formatDate() = formatDate(Locale.getDefault())

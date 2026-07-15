@@ -12,6 +12,11 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import de.bixilon.unithen.ui.error.ErrorBox
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun QrCode(data: String, modifier: Modifier) {
+    ErrorBox("TODO: $data")
+}

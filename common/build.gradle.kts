@@ -59,11 +59,11 @@ kotlin {
         androidResources.enable = true
     }
 
-    //jvm("desktop") {
-    //    compilerOptions {
-    //        jvmTarget = JvmTarget.JVM_11
-    //    }
-    //}
+    jvm("desktop") {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
 
     sourceSets {
 

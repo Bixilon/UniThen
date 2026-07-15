@@ -12,6 +12,12 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.Clipboard
+import java.awt.datatransfer.StringSelection
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@OptIn(ExperimentalComposeUiApi::class)
+actual suspend fun Clipboard.setText(text: String) {
+    setClipEntry(ClipEntry(StringSelection(text)))
+}

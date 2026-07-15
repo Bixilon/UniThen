@@ -20,9 +20,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
+import de.bixilon.unithen.storage.sql.JvmSqlHelper
+import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 
+
+val STORAGE by lazy { SqlStorage(JvmSqlHelper(null)) }
 
 @Composable
 fun ApplicationScope.UniThenApplication() {
@@ -42,7 +47,9 @@ fun ApplicationScope.UniThenApplication() {
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    CompositionLocalProvider { // TODO: provide storage and settings
+                    CompositionLocalProvider(
+                        LocalStorage provides STORAGE,
+                    ) {
                         CommonMainActivity()
                     }
                 }
@@ -51,11 +58,10 @@ fun ApplicationScope.UniThenApplication() {
     }
 }
 
-object UniThen {
 
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        application { UniThenApplication() }
+fun main(args: Array<String>) {
+    RuntimeInfo.RuntimeInfo0.actual = object : RuntimeInfo {
+        override val debug get() = true // TODO
     }
+    application { UniThenApplication() }
 }

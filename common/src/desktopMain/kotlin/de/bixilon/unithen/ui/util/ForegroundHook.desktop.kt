@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun rememberForeground() = true

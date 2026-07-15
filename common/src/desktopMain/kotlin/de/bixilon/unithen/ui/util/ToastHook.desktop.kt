@@ -12,6 +12,14 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.StringResource
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun useToast(): ToastInvoker {
+    return object : ToastInvoker {
+        override suspend fun invoke(message: String, long: Boolean) = Unit
+
+        override suspend fun invoke(message: StringResource, long: Boolean) = Unit
+    }
+}

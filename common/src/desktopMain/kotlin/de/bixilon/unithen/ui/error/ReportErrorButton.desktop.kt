@@ -10,8 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.error
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun useSendCrashMail(): (stack: String) -> Unit {
+    TODO("Not yet implemented")
+}

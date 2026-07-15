@@ -31,13 +31,15 @@ kotlin {
             implementation(libs.compose.material3)
             implementation(libs.androidx.navigationevent.desktop)
             implementation(libs.androidx.navigationevent.compose.desktop)
+
+            implementation("org.xerial:sqlite-jdbc:3.53.2.0")
         }
     }
 }
 
 compose.desktop {
     application {
-        mainClass = "de.bixilon.unithen.UniThen"
+        mainClass = "de.bixilon.unithen.UniThenKt"
 
         nativeDistributions {
             packageName = "UniThen"

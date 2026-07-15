@@ -12,6 +12,10 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 
-expect fun ByteArray.toBitmap(): ImageBitmap
+@Composable
+actual fun useHapticFeedback(): (HapticFeedbackType) -> Unit {
+    return {}
+}
