@@ -47,8 +47,8 @@ data class SqlFilter(
 
             for ((argument, value) in filters) {
                 if (value == null) continue
-                assert("\"" !in argument)
-                assert("'" !in argument)
+                require("\"" !in argument)
+                require("'" !in argument)
 
                 if (string.isNotEmpty()) {
                     string.append(separator)

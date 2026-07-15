@@ -17,6 +17,7 @@ import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.kutil.uri.URIUtil.toURI
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertSame
 
 class PageDetailsTest {
 
@@ -33,7 +34,7 @@ class PageDetailsTest {
 
         val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png".toURI()) array else Broken() }
         assertEquals(details.name, "ZHS München")
-        assert(details.icon === array)
+        assertSame(details.icon, array)
     }
 
     @Test
@@ -43,7 +44,7 @@ class PageDetailsTest {
 
         val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png".toURI()) array else Broken() }
         assertEquals(details.name, "Deutschkurse Buchungsplattform")
-        assert(details.icon === array)
+        assertSame(details.icon, array)
     }
 
     @Test

@@ -26,7 +26,7 @@ object HttpUtil {
     const val USER_AGENT = "UniThen (version=${BuildConfig.VERSION})"
 
     suspend fun create(base: URI, endpoint: String): Request.Builder {
-        assert(base.scheme == "https") { "Insecure requests are forbidden!" }
+        require(base.scheme == "https") { "Insecure requests are forbidden!" }
         if (BuildConfig.DEBUG) {
             delay(3.seconds)
         }
