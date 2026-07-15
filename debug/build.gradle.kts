@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -21,6 +22,12 @@ kotlin {
         compileSdk = 36
         minSdk = 26
         androidResources.enable = true
+    }
+
+    jvm {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
     }
 
     sourceSets {

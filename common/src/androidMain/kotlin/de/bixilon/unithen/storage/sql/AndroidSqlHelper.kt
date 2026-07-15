@@ -23,7 +23,7 @@ import java.io.IOException
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, VERSION), SQLiteHelper {
+class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
 
     private fun SQLiteDatabase.executeBatch(path: String) {
         val statements = SqlUtil.split(path)
@@ -129,13 +129,11 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         override fun isNull(index: Int) = cursor.isNull(index)
 
         override fun moveToNext() = cursor.moveToNext()
-        override fun moveToPrevious() = cursor.moveToPrevious()
 
         override fun close() = cursor.close()
     }
 
     companion object {
         const val NAME = "uninow"
-        const val VERSION = 9
     }
 }

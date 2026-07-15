@@ -47,8 +47,8 @@ fun DebugScreen() {
 
 
         Button({ navigator.navigate(MainRoute) }) { Text("Main") }
-        Button({ storage.helper.executeBatch("dummy") }) { Text("Initiate dummy database") }
-        Button({ storage.insert1000Users() }) { Text("Insert 1000 users") }
+        Button({ storage.helper.load(); storage.helper.executeBatch("dummy") }) { Text("Initiate dummy database") }
+        Button({ storage.helper.load(); storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
         Button({ navigator.navigate(CrashRoute(IllegalStateException("It crashed!"))) }) { Text("Open crash screen") }
 

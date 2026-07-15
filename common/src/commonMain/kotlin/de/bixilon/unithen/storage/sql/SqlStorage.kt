@@ -85,6 +85,7 @@ class SqlStorage(val helper: SQLiteHelper) : Closeable {
     }
 
     companion object {
+        const val VERSION = 9
         val TRANSACTIONS = ThreadLocal<MutableSet<MutableIntState>>()
     }
 }

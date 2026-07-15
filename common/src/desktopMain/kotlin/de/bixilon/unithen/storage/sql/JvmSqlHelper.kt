@@ -13,6 +13,7 @@
 package de.bixilon.unithen.storage.sql
 
 import java.io.File
+import java.io.IOException
 import java.sql.DriverManager
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -27,8 +28,30 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
         Class.forName("org.sqlite.JDBC", true, JvmSqlHelper::class.java.classLoader)
     }
 
+    private val version get() = createStatement("PRAGMA user_version;").executeQuery().use { it.next(); it.getInt(1) }
+
     override fun load() {
-        executeBatch("schema")
+        val version = version
+        if (version == SqlStorage.VERSION) return
+        if (version > SqlStorage.VERSION) {
+            throw IllegalStateException("Database was created with a newer version: $version >= ${SqlStorage.VERSION}")
+        }
+
+        if (version == 0) {
+            executeBatch("schema")
+        } else {
+            transaction {
+                for (version in (version + 1)..SqlStorage.VERSION) {
+                    try {
+                        executeBatch("migrations/${version}")
+                    } catch (error: Throwable) {
+                        throw IOException("Error during database migration $version: ${error.message}", error)
+                    }
+                }
+            }
+        }
+
+        execute("PRAGMA user_version = ${SqlStorage.VERSION};")
     }
 
 
@@ -70,7 +93,8 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
 
     override fun insert(sql: String, vararg parameters: Any?): Long {
         val statement = createStatement(sql, *parameters)
-        return statement.use { it.executeUpdate().toLong() } // TODO: return rowid
+
+        return statement.use { it.executeUpdate().toLong() } // TODO: return auto increment id
     }
 
     override fun <T> transaction(block: () -> T): T {
@@ -92,20 +116,21 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
     }
 
     class SqlCursor(val cursor: ResultSet) : SQLiteHelper.Cursor {
-        override fun getBlob(index: Int) = cursor.getBytes(index)
-        override fun getBlobOrNull(index: Int) = cursor.getBytes(index)
+        override fun getBlob(index: Int) = cursor.getBytes(index +1)
+        override fun getBlobOrNull(index: Int) = cursor.getBytes(index+1)
 
-        override fun getString(index: Int) = cursor.getString(index)
-        override fun getStringOrNull(index: Int) = cursor.getString(index)
+        override fun getString(index: Int) = cursor.getString(index+1)
+        override fun getStringOrNull(index: Int) = cursor.getString(index+1)
 
-        override fun getInt(index: Int) = cursor.getInt(index)
-        override fun getLong(index: Int) = cursor.getLong(index)
+        override fun getInt(index: Int) = cursor.getInt(index+1)
+        override fun getLong(index: Int) = cursor.getLong(index+1)
 
         override fun isNull(index: Int) = false // TODO
 
         override fun moveToNext() = cursor.next()
-        override fun moveToPrevious() = TODO("TODO")
 
         override fun close() = cursor.close()
+
+        override fun isEmpty() = !cursor.next()
     }
 }

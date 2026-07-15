@@ -27,12 +27,14 @@ kotlin {
     sourceSets {
         jvmMain.dependencies {
             implementation(project(":common"))
+            implementation(project(":debug"))
             implementation(compose.desktop.currentOs)
             implementation(libs.compose.material3)
             implementation(libs.androidx.navigationevent.desktop)
             implementation(libs.androidx.navigationevent.compose.desktop)
 
             implementation("org.xerial:sqlite-jdbc:3.53.2.0")
+            runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
         }
     }
 }

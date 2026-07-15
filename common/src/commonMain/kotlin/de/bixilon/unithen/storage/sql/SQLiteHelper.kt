@@ -47,7 +47,6 @@ interface SQLiteHelper : Closeable {
 
 
         fun moveToNext(): Boolean
-        fun moveToPrevious(): Boolean
 
         fun getUUID(index: Int) = getString(index).let { Uuid.parse(it) }
         fun getUUIDOrNull(index: Int) = getStringOrNull(index)?.let { Uuid.parse(it) }
@@ -62,10 +61,7 @@ interface SQLiteHelper : Closeable {
         }
 
         fun isEmpty(): Boolean {
-            if (!moveToNext()) return true
-
-            moveToPrevious()
-            return false
+            return !moveToNext()
         }
 
         fun isNotEmpty() = !isEmpty()

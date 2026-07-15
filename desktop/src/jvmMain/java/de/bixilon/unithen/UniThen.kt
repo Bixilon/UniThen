@@ -20,6 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
+import de.bixilon.unithen.debug.DebugMainActivity
 import de.bixilon.unithen.storage.sql.JvmSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
@@ -50,7 +51,7 @@ fun ApplicationScope.UniThenApplication() {
                     CompositionLocalProvider(
                         LocalStorage provides STORAGE,
                     ) {
-                        CommonMainActivity()
+                        if(RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                     }
                 }
             }
