@@ -1,0 +1,34 @@
+/*
+ * UniThen
+ * Copyright (C) 2026 Moritz Zwerger
+ *
+ * This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
+ */
+
+package de.bixilon.unithen.ui.util
+
+import android.widget.Toast
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.getString
+
+@Composable
+actual fun useToast(): ToastInvoker {
+    val context = LocalContext.current
+
+    return object : ToastInvoker {
+        override suspend fun invoke(message: String, long: Boolean) {
+            withContext(Dispatchers.Main) { Toast.makeText(context, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show() }
+        }
+
+        override suspend fun invoke(message: StringResource, long: Boolean) = invoke(getString(message, long))
+    }
+}

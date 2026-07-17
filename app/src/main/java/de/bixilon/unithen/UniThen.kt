@@ -17,10 +17,11 @@ import android.util.Log
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
+import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
+import de.bixilon.unithen.settings.SETTINGS
+import de.bixilon.unithen.settings.SettingsStore
 import de.bixilon.unithen.storage.sql.AndroidSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.ui.main.settings.SETTINGS
-import de.bixilon.unithen.ui.main.settings.SettingsStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,6 +32,12 @@ class UniThen : Application(), CameraXConfig.Provider {
             .setMinimumLoggingLevel(Log.ERROR)
             .setAvailableCamerasLimiter(CameraSelector.DEFAULT_BACK_CAMERA)
             .build()
+    }
+
+    init {
+        RuntimeInfo0.actual = object : RuntimeInfo {
+            override val debug get() = BuildConfig.DEBUG
+        }
     }
 
     override fun getCameraXConfig() = config
