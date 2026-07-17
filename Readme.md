@@ -4,8 +4,7 @@
 
 ![](https://shields-io.bixilon.de/f-droid/v/de.bixilon.unithen?style=for-the-badge&logo=fdroid)
 ![](https://shields-io.bixilon.de/gitlab/v/release/bixilon/unithen?branch=master&gitlab_url=https%3A%2F%2Fgitlab.bixilon.de&style=for-the-badge)
-
-This android application is for doing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
+This app is for doing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
 It can be used for any digital booking system (DBS) hosted by them, e.g. for the [ZHS München](https://kurse.zhs-muenchen.de).
 
 This app is **NOT** affiliated with UniNow GmbH, the provider/developer of the booking system.
@@ -22,13 +21,18 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 
 ## Download
 
+### Android
 [<img src="doc/fdroid.svg" alt="Get it on F-Droid" height="80">](https://f-droid.org/packages/de.bixilon.unithen)
 
 The latest release is published on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). and on [F-Droid](https://f-droid.org/packages/de.bixilon.unithen). F-Droid builds are reproducible,
 and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`) too. F-Droid is the preferred way, then you don't need to worry about updates.
+(This app requires Android 9+).
 
-(This app is Android 9+ only at the moment).
+### iOS
+Ongoing, see [#3](https://gitlab.bixilon.de/bixilon/unithen/-/issues/3) for more details.
 
+### Desktop
+This app is ported to the jvm with compose multiplatform and runs on desktop, however this is a show off and not an offical supported platform. Please build it yourself.
 There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
 
 ## Screenshots
