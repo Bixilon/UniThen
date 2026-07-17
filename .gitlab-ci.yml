@@ -59,7 +59,7 @@ test:
   artifacts:
     when: always
     reports:
-      junit: app/build/test-results/**/TEST-*.xml
+      junit: common/build/test-results/**/TEST-*.xml
 
 
 
