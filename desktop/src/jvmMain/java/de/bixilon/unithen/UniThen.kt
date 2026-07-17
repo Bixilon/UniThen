@@ -14,7 +14,11 @@ package de.bixilon.unithen
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -59,14 +63,20 @@ fun ApplicationScope.UniThenApplication() {
             Surface(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    CompositionLocalProvider(
-                        LocalStorage provides STORAGE,
+                Scaffold(
+                    modifier = Modifier.imePadding(),
+                    containerColor = MaterialTheme.colorScheme.background
+                ) { innerPadding ->
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
                     ) {
-                        if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
+                        CompositionLocalProvider(
+                            LocalStorage provides STORAGE,
+                        ) {
+                            if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
+                        }
                     }
                 }
             }
