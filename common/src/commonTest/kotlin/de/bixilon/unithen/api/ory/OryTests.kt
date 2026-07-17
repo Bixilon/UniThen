@@ -12,6 +12,12 @@
 
 package de.bixilon.unithen.api.ory
 
+import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.util.Kutil.toUuid
+import de.bixilon.kutil.stream.InputStreamUtil.readAsString
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
 class OryTests {
 
     @Test

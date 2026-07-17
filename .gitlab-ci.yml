@@ -8,9 +8,7 @@ stages:
   - test
   - package
 
-
-.android:
-  image: gitlab-registry.bixilon.de:443/bixnet/ci/android:$ANDROID_SDK_VERSION
+.gradle:
   interruptible: true
   variables:
     GRADLE_USER_HOME: $CI_PROJECT_DIR/.home
@@ -34,6 +32,14 @@ stages:
       paths:
         - .home/wrapper
 
+.jvm:
+  image: azul/zulu-openjdk-alpine:21-latest
+  extends: .gradle
+
+.android:
+  image: gitlab-registry.bixilon.de:443/bixnet/ci/android:$ANDROID_SDK_VERSION
+  extends: .gradle
+
 build:
   extends: .android
   stage: build
@@ -44,9 +50,9 @@ build:
 
 
 test:
-  extends: .android
+  extends: .jvm
   stage: test
-  script: ./gradlew --build-cache test
+  script: ./gradlew --build-cache :common:jvmTest
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
