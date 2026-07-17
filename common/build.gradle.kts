@@ -63,6 +63,8 @@ kotlin {
         }
     }
 
+    iosArm64()
+
     applyDefaultHierarchyTemplate()
 
     sourceSets {
@@ -143,6 +145,10 @@ kotlin {
             implementation(project(":debug"))
             implementation(libs.compose.components.resources)
             implementation(libs.kotlinx.coroutines.test)
+        }
+
+        iosMain.dependencies {
+            implementation("io.github.zxing-cpp:kotlin-native:3.1.0")
         }
     }
 }
