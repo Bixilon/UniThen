@@ -26,9 +26,24 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.kutil.os.PlatformInfo
+import de.bixilon.kutil.os.OSTypes
+import java.nio.file.Path
+import kotlin.io.path.div
+
+val home = run {
+    val user = System.getProperty("user.home")?.let { Path.of(it) } ?: throw IllegalStateException("Can not get user home!")
+
+    return@run user / when (PlatformInfo.OS) {
+        OSTypes.LINUX -> ".local/share/unithen"
+        OSTypes.WINDOWS -> "AppData/Roaming/UniThen"
+        OSTypes.MAC -> "Library/Application Support/UniThen"
+        else -> ".unithen"
+    }
+}
 
 
-val STORAGE by lazy { SqlStorage(JvmSqlHelper(null)) }
+val STORAGE by lazy { SqlStorage(JvmSqlHelper(home.toFile())) }
 
 @Composable
 fun ApplicationScope.UniThenApplication() {

@@ -33,6 +33,8 @@ kotlin {
             implementation(libs.androidx.navigationevent.desktop)
             implementation(libs.androidx.navigationevent.compose.desktop)
 
+            implementation(libs.kutil)
+
             implementation("org.xerial:sqlite-jdbc:3.53.2.0")
             runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
         }
