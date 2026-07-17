@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.auth
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -27,13 +28,15 @@ import java.net.URI
 @Composable
 actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
     val state = rememberTextFieldState()
-    Text("So, this web view stuff is not implemented on desktop, feel free to paste your session cookie (ory-session) below:")
-    TextField(state)
+    Column {
+        Text("So, this web view stuff is not implemented on desktop, feel free to paste your session cookie (ory-session) below:")
+        TextField(state)
 
-    val disabled = state.text.isBlank() || state.text.length < 30
+        val disabled = state.text.isBlank() || state.text.length < 30
 
-    Button({ callback.invoke(CookieAuthentication(state.text.toString())) }, enabled = !disabled) {
-        Icon(Icons.Default.Add, "")
-        Text("Add")
+        Button({ callback.invoke(CookieAuthentication(state.text.toString())) }, enabled = !disabled) {
+            Icon(Icons.Default.Add, "")
+            Text("Add")
+        }
     }
 }

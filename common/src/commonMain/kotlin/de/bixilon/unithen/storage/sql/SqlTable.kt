@@ -46,7 +46,11 @@ abstract class SqlTable<T : DbObject>(
     }
 
     protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
-        return storage.insert(sql, *parameters).toInt() // TODO: That is bad, it is returning the row id, not the id
+        return storage.insert(sql, *parameters)
+    }
+
+    protected fun execute(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+        return storage.update(sql, *parameters)
     }
 
     protected fun single(filter: SqlFilter) = single(SqlBuilder.select(schema).where(filter))

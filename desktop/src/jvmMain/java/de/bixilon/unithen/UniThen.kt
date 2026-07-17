@@ -43,7 +43,7 @@ val home = run {
 }
 
 
-val STORAGE by lazy { SqlStorage(JvmSqlHelper(home.toFile())) }
+val STORAGE by lazy { SqlStorage(JvmSqlHelper((home / "uninow.sqlite").toFile())) }
 
 @Composable
 fun ApplicationScope.UniThenApplication() {

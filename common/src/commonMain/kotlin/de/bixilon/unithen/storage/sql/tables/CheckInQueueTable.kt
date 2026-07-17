@@ -54,22 +54,22 @@ class CheckInQueueTable(
     }
 
     fun delete(appointment: Appointment, user: User) {
-        update("DELETE FROM $table WHERE appointment=? AND user=?", appointment.id, user.id)
+        execute("DELETE FROM $table WHERE appointment=? AND user=?", appointment.id, user.id)
     }
 
     fun clearPendingCheckout(appointment: Appointment) {
-        insert("DELETE FROM $table WHERE appointment=? AND attempt IS NOT NULL", appointment.id)
+        execute("DELETE FROM $table WHERE appointment=? AND attempt IS NOT NULL", appointment.id)
     }
 
 
     fun addPending(appointment: Appointment, user: User, sync: Instant) {
         // TODO: This only works in android 9+
-        insert("INSERT INTO $table(appointment, user, sync) VALUES (?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET sync=?", appointment.id, user.id, sync, sync)
+        execute("INSERT INTO $table(appointment, user, sync) VALUES (?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET sync=?", appointment.id, user.id, sync, sync)
     }
 
     fun addCheckout(appointment: Appointment, user: User, attempt: Uuid, sync: Instant) {
         // TODO: This only works in android 9+
-        insert("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
+        execute("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
     }
 
     operator fun get(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<CheckInQueue> {

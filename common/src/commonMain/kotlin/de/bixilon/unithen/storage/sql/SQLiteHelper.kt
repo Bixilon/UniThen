@@ -23,7 +23,7 @@ interface SQLiteHelper : Closeable {
 
     fun query(sql: String, vararg parameters: Any?): Cursor
     fun execute(sql: String, vararg parameters: Any?): Int
-    fun insert(sql: String, vararg parameters: Any?): Long
+    fun insert(sql: String, vararg parameters: Any?): Int
 
     fun executeBatch(path: String) {
         val statements = SqlUtil.split(path)

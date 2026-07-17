@@ -93,13 +93,13 @@ class AppointmentTable(
         return insert(course, uuid, start, end, canceled, location)
     }
 
-    fun clearAttendees(appointment: Appointment) = update("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
+    fun clearAttendees(appointment: Appointment) = execute("DELETE FROM appointment_attendees WHERE appointment=?", appointment.id)
     fun addAttendee(user: User, appointment: Appointment, attempt: Uuid) {
-        insert("INSERT OR REPLACE INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?)", user.id, appointment.id, attempt)
+        execute("INSERT OR REPLACE INTO appointment_attendees(user, appointment, attempt) VALUES (?,?,?)", user.id, appointment.id, attempt)
     }
 
     fun removeAttendee(user: User, appointment: Appointment) {
-        insert("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)
+        execute("DELETE FROM appointment_attendees WHERE user=? AND appointment=?", user.id, appointment.id)
     }
 
     fun getAttemptId(appointment: Appointment, user: User): Uuid? {
@@ -107,9 +107,9 @@ class AppointmentTable(
     }
 
 
-    fun clearTutors(appointment: Appointment) = update("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)
+    fun clearTutors(appointment: Appointment) = execute("DELETE FROM tutor_appointments WHERE appointment = ?", appointment.id)
     fun addTutor(user: User, appointment: Appointment) {
-        insert("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?)", user.id, appointment.id)
+        execute("INSERT INTO tutor_appointments(user, appointment) VALUES (?,?)", user.id, appointment.id)
     }
 
     companion object : SelectableSqlTableSchema<Appointment> {

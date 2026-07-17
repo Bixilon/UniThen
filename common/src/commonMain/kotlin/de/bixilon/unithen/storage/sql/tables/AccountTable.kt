@@ -99,16 +99,16 @@ class AccountTable(
 
 
     fun clearCourses(account: Account) {
-        insert("DELETE FROM account_courses WHERE account=?", account.id)
+        execute("DELETE FROM account_courses WHERE account=?", account.id)
     }
 
     fun addToCourse(account: Account, course: Course) {
-        insert("INSERT OR REPLACE INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
+        execute("INSERT OR REPLACE INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
     }
 
     fun remove(account: Account) = storage.transaction {
-        insert("DELETE FROM account_courses WHERE account=?", account.id)
-        insert("DELETE FROM accounts WHERE id=?", account.id)
+        execute("DELETE FROM account_courses WHERE account=?", account.id)
+        execute("DELETE FROM accounts WHERE id=?", account.id)
     }
 
     companion object : SelectableSqlTableSchema<Account> {

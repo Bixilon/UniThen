@@ -50,7 +50,7 @@ class SqlStorage(val helper: SQLiteHelper) : Closeable {
         return helper.query(sql, *parameters).use { runnable.invoke(it) }
     }
 
-    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Long {
+    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
         return helper.insert(sql, *parameters).apply { notifyState() }
     }
 

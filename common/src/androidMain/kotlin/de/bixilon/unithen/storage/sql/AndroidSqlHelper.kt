@@ -67,10 +67,10 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         return statement.use { it.executeUpdateDelete() }
     }
 
-    override fun insert(sql: String, vararg parameters: Any?): Long {
+    override fun insert(sql: String, vararg parameters: Any?): Int {
         val statement = createStatement(false, sql, *parameters)
 
-        return statement.use { it.executeInsert() }
+        return statement.use { it.executeInsert().toInt() }  // TODO: That is bad, it is returning the row id, not the id
     }
 
     override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
