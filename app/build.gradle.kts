@@ -116,5 +116,6 @@ dependencies {
 
     baselineProfile(project(":baselineprofile"))
     implementation(project(":common"))
+    api(project(":debug"))
     debugImplementation(project(":debug"))
 }
