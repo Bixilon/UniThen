@@ -44,8 +44,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>>().con
 }
 
 kotlin {
-    jvmToolchain(11)
-
     compilerOptions {
         languageVersion.set(KotlinVersion.KOTLIN_2_4)
         freeCompilerArgs.add("-Xwarning-level=NOTHING_TO_INLINE:disabled")
