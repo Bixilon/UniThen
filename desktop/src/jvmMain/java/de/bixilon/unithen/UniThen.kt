@@ -20,14 +20,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
+import de.bixilon.kutil.os.OSTypes
+import de.bixilon.kutil.os.PlatformInfo
 import de.bixilon.unithen.debug.DebugMainActivity
 import de.bixilon.unithen.storage.sql.JvmSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
-import de.bixilon.kutil.os.PlatformInfo
-import de.bixilon.kutil.os.OSTypes
 import java.nio.file.Path
 import kotlin.io.path.div
 
@@ -66,7 +66,7 @@ fun ApplicationScope.UniThenApplication() {
                     CompositionLocalProvider(
                         LocalStorage provides STORAGE,
                     ) {
-                        if(RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
+                        if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                     }
                 }
             }
@@ -76,8 +76,9 @@ fun ApplicationScope.UniThenApplication() {
 
 
 fun main(args: Array<String>) {
+    val debug = args.contains("--debug")
     RuntimeInfo.RuntimeInfo0.actual = object : RuntimeInfo {
-        override val debug get() = true // TODO
+        override val debug get() = debug
     }
     application { UniThenApplication() }
 }
