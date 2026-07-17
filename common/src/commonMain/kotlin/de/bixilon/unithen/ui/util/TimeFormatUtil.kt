@@ -44,7 +44,8 @@ object TimeFormatUtil {
     fun LocalDateTime.formatDate(locale: Locale): String {
 
         return remember {
-            val months = MonthNames(DateFormatSymbols.getInstance(locale).months.toList())
+            val names = DateFormatSymbols.getInstance(locale).months.toList()
+            val months = MonthNames(names[Calendar.JANUARY], names[Calendar.FEBRUARY], names[Calendar.MARCH], names[Calendar.APRIL], names[Calendar.MAY], names[Calendar.JUNE], names[Calendar.JULY], names[Calendar.AUGUST], names[Calendar.SEPTEMBER], names[Calendar.OCTOBER], names[Calendar.NOVEMBER], names[Calendar.DECEMBER])
             val short = DateFormatSymbols.getInstance(locale).shortWeekdays
             val days = DayOfWeekNames(short[Calendar.MONDAY], short[Calendar.TUESDAY], short[Calendar.WEDNESDAY], short[Calendar.THURSDAY], short[Calendar.FRIDAY], short[Calendar.SATURDAY], short[Calendar.SUNDAY])
 

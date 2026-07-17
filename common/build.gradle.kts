@@ -59,7 +59,7 @@ kotlin {
         androidResources.enable = true
     }
 
-    jvm("desktop") {
+    jvm("jvm") {
         compilerOptions {
             jvmTarget = JvmTarget.JVM_11
         }
@@ -93,20 +93,11 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.androidx.core.ktx)
-            implementation(libs.androidx.lifecycle.runtime.ktx)
             implementation(libs.androidx.activity.compose)
-            implementation(libs.androidx.ui)
-            implementation(libs.androidx.ui.graphics)
-            implementation(libs.androidx.material3)
 
             implementation(libs.zxing)
             implementation(libs.zxingcpp)
 
-            implementation(libs.kutil)
-
-
-            implementation(libs.kotlinx.datetime)
 
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)
@@ -119,9 +110,12 @@ kotlin {
             implementation(libs.androidx.camera.camera2)
         }
 
+        jvmMain.dependencies {
+            implementation(libs.zxing)
+        }
+
         commonTest.dependencies {
             implementation(kotlin("test"))
-            implementation(libs.kutil)
         }
     }
 }

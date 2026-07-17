@@ -10,13 +10,13 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.error
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import de.bixilon.unithen.ui.error.ErrorBox
 
 @Composable
-actual fun QrCode(data: String, modifier: Modifier) {
-    ErrorBox("TODO: $data")
+actual fun useSendCrashMail(): (stack: String) -> Unit {
+    // TODO
+
+    return {}
 }

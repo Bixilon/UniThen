@@ -17,7 +17,7 @@ import org.jetbrains.compose.resources.StringResource
 
 @Composable
 actual fun useToast(): ToastInvoker {
-    return object : ToastInvoker {
+    return object : ToastInvoker { // TODO
         override suspend fun invoke(message: String, long: Boolean) = Unit
 
         override suspend fun invoke(message: StringResource, long: Boolean) = Unit
