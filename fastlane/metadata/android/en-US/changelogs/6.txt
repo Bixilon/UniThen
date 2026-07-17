@@ -1,3 +1,4 @@
 This release contains various improvements:
  - Translation fixes
  - More robust login process
+ - Various (internal) changes for KMP
