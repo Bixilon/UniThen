@@ -29,6 +29,7 @@ import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
 import java.io.IOException
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 
 data class AsyncNetworkState<T>(
     val active: Boolean,
@@ -38,7 +39,7 @@ data class AsyncNetworkState<T>(
 @Composable
 fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
     val storage = LocalStorage.current
-    val navigation = LocalNavigation.current
+    val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
     val active = remember { mutableStateOf(false) }
 
@@ -56,14 +57,14 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
                 toast.invoke(Res.string.error_reauthenticate)
                 if (account != null) {
                     storage.accounts.logout(account)
-                    navigation.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
+                    navigation?.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
                 }
             } catch (error: IOException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))
             } catch (error: Throwable) {
                 error.printStackTrace()
-                navigation.navigate(CrashRoute(error))
+                navigation?.navigate(CrashRoute(error))
             } finally {
                 active.value = false
             }
