@@ -20,10 +20,9 @@ import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.util.CookieParser
-import java.net.URI
 
 open class WebAuthClient(
-    val expected: URI,
+    val host: String,
     val callback: (Authentication) -> Unit,
 ) : WebViewClient() {
 
@@ -36,7 +35,7 @@ open class WebAuthClient(
     override fun onPageFinished(view: WebView, url: String) {
         try {
             val current = url.toURI()
-            if (current.host != expected.host) return
+            if (current.host != host) return
         } catch (error: Throwable) {
             return
         }

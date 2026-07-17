@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.uri.URIUtil.toURI
-import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
@@ -71,10 +70,8 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
             WebView(context).apply {
                 view = this
 
-                val uri = host.toURI()
 
-
-                webViewClient = object : WebAuthClient(uri, {
+                webViewClient = object : WebAuthClient(host, {
                     loadDataWithBaseURL("", "<html>Logged in!</html>", "text/html", "utf-8", "")
                     callback.invoke(it)
                 }) {
@@ -95,7 +92,7 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
 
                 settings.javaScriptEnabled = true
 
-                loadUrl(uri.with(path = "/auth/login").toString())
+                loadUrl("https://$host/auth/login")
             }
         })
     }
