@@ -28,7 +28,5 @@ actual fun useToast(): ToastInvoker {
         override suspend fun invoke(message: String, long: Boolean) {
             withContext(Dispatchers.Main) { Toast.makeText(context, message, if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show() }
         }
-
-        override suspend fun invoke(message: StringResource, long: Boolean) = invoke(getString(message, long))
     }
 }

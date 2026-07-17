@@ -13,13 +13,36 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.resources.StringResource
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.useContents
+import platform.CoreGraphics.CGPointMake
+import platform.CoreGraphics.CGRectMake
+import platform.UIKit.*
 
+@OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun useToast(): ToastInvoker {
-    return object : ToastInvoker { // TODO: https://stackoverflow.com/questions/31540375/how-to-create-a-toast-message-in-swift
-        override suspend fun invoke(message: String, long: Boolean) = Unit
+actual fun useToast(): ToastInvoker { // thanks: https://github.com/DaaniDev/Toastix/blob/master/composeApp/src/iosMain/kotlin/ShowToastMsg.ios.kt
+    return object : ToastInvoker {
+        override suspend fun invoke(message: String, long: Boolean) {
+            val toast = UILabel(frame = CGRectMake(0.0, 0.0, UIScreen.mainScreen.bounds.useContents { size.width } - 40, 35.0))
 
-        override suspend fun invoke(message: StringResource, long: Boolean) = Unit
+            toast.center = CGPointMake(UIScreen.mainScreen.bounds.useContents { size.width } / 2, UIScreen.mainScreen.bounds.useContents { size.height } - 100.0)
+            toast.textAlignment = NSTextAlignmentCenter
+            toast.backgroundColor = UIColor.blackColor.colorWithAlphaComponent(0.6)
+            toast.textColor = UIColor.whiteColor
+            toast.text = message
+            toast.alpha = 1.0
+            toast.layer.cornerRadius = 15.0
+            toast.clipsToBounds = true
+
+            UIApplication.sharedApplication.keyWindow?.rootViewController?.view?.addSubview(toast)
+
+            UIView.animateWithDuration(
+                if (long) 10.0 else 5.0,
+                delay = 0.1,
+                options = UIViewAnimationOptionCurveEaseOut,
+                animations = { toast.alpha = 0.0 },
+                completion = { if (it) toast.removeFromSuperview() })
+        }
     }
 }
