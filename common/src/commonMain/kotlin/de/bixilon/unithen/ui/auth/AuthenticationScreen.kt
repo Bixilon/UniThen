@@ -49,7 +49,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
 
     val fetch = useAsyncNetwork<Unit>(null) {
         val first = storage.accounts.count == 0
-        val api = AuthenticatedUniNowApi(site.url, authentication)
+        val api = AuthenticatedUniNowApi(site.host, authentication)
         val details = api.getUserDetails()
 
         val account = storage.transaction { it.accounts.add(site, details, authentication) }
@@ -89,7 +89,7 @@ fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
     var authentication: Authentication? by remember { mutableStateOf(null) }
 
     if (authentication == null) {
-        WebAuthenticationView(url = site.url) { authentication = it }
+        WebAuthenticationView(host = site.host) { authentication = it }
         return
     }
 

@@ -10,20 +10,16 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.api.authentication
+package de.bixilon.unithen.http
 
-import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import kotlin.time.Duration.Companion.seconds
 
-data class CookieAuthentication(
-    val session: String,
-) : Authentication {
-
-    init {
-        if (session.isBlank()) throw AuthenticationException("Authentication cookie can not be empty!")
-    }
-
-    override fun authenticate(request: HttpRequestBuilder) {
-        request.headers["Cookie"] = "ory-session=$session"
+val CLIENT by lazy {
+    HttpClient(CIO) {
+        install(HttpTimeout) { requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
+        followRedirects = false
     }
 }

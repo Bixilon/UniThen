@@ -13,12 +13,17 @@
 package de.bixilon.unithen.api.user
 
 import com.fleeksoft.ksoup.Ksoup
-import de.bixilon.kutil.stream.InputStreamUtil.readAll
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
-import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
-import okhttp3.OkHttpClient
-import java.net.URI
+import de.bixilon.unithen.http.CLIENT
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
+import kotlin.time.Duration.Companion.seconds
 
 data class SiteDetails(
     val name: String,
@@ -43,26 +48,28 @@ data class SiteDetails(
             return transformed
         }
 
-        private fun fetchIcon(url: URI) = url.toURL().openStream().readAll()
+        private fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
 
-        suspend fun fetch(url: URI): SiteDetails {
-            val request = HttpUtil.create(url, "/")
-                .get()
-                .build()
+        suspend fun fetch(host: String): SiteDetails {
+            val request = HttpUtil.create(host, "/")
 
-            val client = OkHttpClient().newBuilder()
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .build()
+            val client = HttpClient(CIO) {
+                install(HttpTimeout) { requestTimeoutMillis = 15.seconds.inWholeMilliseconds }
+                followRedirects = true
+            }
+            try {
 
-            val response = client.newCall(request).execute()
+                val response = client.get(request)
 
-            if (response.code != 200) throw IllegalStateException("Request is not OK")
+                if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK")
 
-            return parse(response.body.string(), this::fetchIcon)
+                return parse(response.bodyAsText(), this::fetchIcon)
+            } finally {
+                client.close()
+            }
         }
 
-        fun parse(html: String, fetcher: ((URI) -> ByteArray)?): SiteDetails {
+        fun parse(html: String, fetcher: ((host: String) -> ByteArray)?): SiteDetails {
             val parsed = Ksoup.parse(html)
 
             val name = parsed.head()
@@ -80,7 +87,6 @@ data class SiteDetails(
                 .maxBy { it.attribute("sizes")?.value?.split("x")?.first()?.toInt() ?: 0 }
                 .attribute("href")?.value
                 ?.takeIf { it.endsWith(".png") }
-                ?.toURI()
 
             val icon = iconUrl?.let { fetcher?.invoke(it) }
 

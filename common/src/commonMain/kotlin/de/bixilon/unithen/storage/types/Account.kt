@@ -41,7 +41,7 @@ data class Account(
     fun api(site: Site): AuthenticatedUniNowApi {
         if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
 
-        return AuthenticatedUniNowApi(site.url, CookieAuthentication(sessionKey))
+        return AuthenticatedUniNowApi(site.host, CookieAuthentication(sessionKey))
     }
 
 

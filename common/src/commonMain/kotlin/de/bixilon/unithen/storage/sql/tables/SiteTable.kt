@@ -46,8 +46,7 @@ class SiteTable(
 
     suspend fun add(host: String): Site {
         val fixed = SiteDetails.fix(host)
-        val url = "https://${fixed}".toURI()
-        val details = SiteDetails.fetch(url)
+        val details = SiteDetails.fetch(host)
 
         return add(fixed, details.name, details.icon)
     }

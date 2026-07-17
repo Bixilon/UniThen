@@ -23,18 +23,17 @@ import de.bixilon.unithen.api.ory.Whoami
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
+import io.ktor.client.request.HttpRequestBuilder
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonPrimitive
-import okhttp3.Request
-import java.net.URI
 import kotlin.uuid.Uuid
 
 open class AuthenticatedUniNowApi(
-    url: URI,
+    host: String,
     val authentication: Authentication,
-) : UniNowApi(url) {
+) : UniNowApi(host) {
 
-    override suspend fun buildRequest(endpoint: String): Request.Builder {
+    override suspend fun buildRequest(endpoint: String): HttpRequestBuilder {
         val request = super.buildRequest(endpoint)
 
         authentication.authenticate(request)

@@ -12,31 +12,31 @@
 
 package de.bixilon.unithen.api
 
-import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.authentication.Authentication
+import io.ktor.client.request.*
 import kotlinx.coroutines.delay
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
-import java.net.URI
 import kotlin.time.Duration.Companion.seconds
 
 object HttpUtil {
-    val JSON = "application/json; charset=utf-8".toMediaType()
     val USER_AGENT = "UniThen (version=${BuildInfo.VERSION})"
 
-    suspend fun create(base: URI, endpoint: String): Request.Builder {
-        require(base.scheme == "https") { "Insecure requests are forbidden!" }
+    suspend fun create(host: String, endpoint: String): HttpRequestBuilder {
         if (RuntimeInfo.debug) {
             delay(3.seconds)
         }
-        val request = Request.Builder()
-            .url(base.with(path = endpoint).toURL())
-            .header("User-Agent", USER_AGENT)
+        val request = HttpRequestBuilder()
+        request.apply {
+            url {
+                this.host = host
+                pathSegments = endpoint.split("/")
+            }
+            headers.apply { set("User-Agent", USER_AGENT) }
+        }
 
         return request
     }
 
-    fun Request.Builder.authenticate(authentication: Authentication) = apply { authentication.authenticate(this) }
+    fun HttpRequestBuilder.authenticate(authentication: Authentication) = apply { authentication.authenticate(this) }
 }

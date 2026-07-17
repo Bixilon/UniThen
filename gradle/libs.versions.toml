@@ -15,7 +15,6 @@ lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
 composeBom = "2026.06.01"
 datastoreCore = "1.2.1"
-okhttp = "5.4.0"
 cameraCore = "1.6.1"
 composeMultiplatform = "1.11.1"
 kotlinxCoroutines = "1.11.0"
@@ -65,7 +64,6 @@ kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime",
 kutil = { group = "de.bixilon", name = "kutil", version.ref = "kutil" }
 
 
-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 
 zxing = { group = "com.google.zxing", name = "core", version.ref = "zxing" }

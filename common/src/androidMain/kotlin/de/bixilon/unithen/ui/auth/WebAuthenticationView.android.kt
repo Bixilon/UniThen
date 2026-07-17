@@ -35,14 +35,13 @@ import de.bixilon.kutil.uri.URIUtil.with
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
-import java.net.URI
 
 
 @Composable
-actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
+actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
     var view: WebView? by remember { mutableStateOf(null) }
     var canGoBack by remember { mutableStateOf(false) }
-    var host by remember { mutableStateOf("") }
+    var _host by remember { mutableStateOf("") }
 
     BackHandler(enabled = canGoBack) { view?.goBack() }
     val hasWebView = remember { runCatching { CookieManager.getInstance() }.isSuccess }
@@ -53,12 +52,12 @@ actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
     }
 
     Column {
-        if (host.isNotBlank()) {
+        if (_host.isNotBlank()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                text = host,
+                text = _host,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 14.sp,
@@ -72,15 +71,17 @@ actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
             WebView(context).apply {
                 view = this
 
+                val uri = host.toURI()
 
-                webViewClient = object : WebAuthClient(url, {
+
+                webViewClient = object : WebAuthClient(uri, {
                     loadDataWithBaseURL("", "<html>Logged in!</html>", "text/html", "utf-8", "")
                     callback.invoke(it)
                 }) {
                     override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
                         super.onPageStarted(view, url, favicon)
                         canGoBack = view.canGoBack()
-                        host = catchAll { url.toURI().host } ?: ""
+                        _host = catchAll { url.toURI().host } ?: ""
                     }
                 }
 
@@ -94,7 +95,7 @@ actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
 
                 settings.javaScriptEnabled = true
 
-                loadUrl(url.with(path = "/auth/login").toString())
+                loadUrl(uri.with(path = "/auth/login").toString())
             }
         })
     }

@@ -12,10 +12,10 @@
 
 package de.bixilon.unithen.api.authentication
 
-import okhttp3.Request
+import io.ktor.client.request.HttpRequestBuilder
 
 
 interface Authentication {
 
-    fun authenticate(request: Request.Builder)
+    fun authenticate(request: HttpRequestBuilder)
 }

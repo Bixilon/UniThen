@@ -14,8 +14,7 @@ package de.bixilon.unithen.ui.auth
 
 import androidx.compose.runtime.Composable
 import de.bixilon.unithen.api.authentication.Authentication
-import java.net.URI
 
 
 @Composable
-expect fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit)
+expect fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit)

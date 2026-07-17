@@ -26,10 +26,11 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import java.net.URI
 
 @Composable
-actual fun WebAuthenticationView(url: URI, callback: (Authentication) -> Unit) {
+actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
     val state = rememberTextFieldState()
     Column {
         Text("So, this web view stuff is not implemented on desktop, feel free to paste your session cookie (ory-session) below:")
+        Text("($host)")
         TextField(state)
 
         val disabled = state.text.isBlank() || state.text.length < 30

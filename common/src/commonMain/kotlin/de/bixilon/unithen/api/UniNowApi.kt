@@ -18,57 +18,46 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
+import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
-import okhttp3.OkHttpClient
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.net.URI
-import java.util.concurrent.TimeUnit
 
 open class UniNowApi(
-    val url: URI,
+    val host: String,
 ) {
-    protected val client by lazy {
-        OkHttpClient().newBuilder()
-            .readTimeout(60, TimeUnit.SECONDS)
-            .followRedirects(false)
-            .build()
-    }
 
-    protected open suspend fun buildRequest(endpoint: String) = HttpUtil.create(url, endpoint)
+    protected open suspend fun buildRequest(endpoint: String) = HttpUtil.create(host, endpoint)
 
     suspend inline fun <reified I> postJson(endpoint: String, payload: I): String {
-        val payload = Jackson.MAPPER.encodeToString(payload).toRequestBody(HttpUtil.JSON)
+        val payload = Jackson.MAPPER.encodeToString(payload)
         return postJson(endpoint, payload)
     }
 
     suspend fun get(endpoint: String): String {
-        val request = buildRequest(endpoint)
-            .get()
-            .build()
+        val request = buildRequest(endpoint).apply { method = HttpMethod.Get }
 
-        val response = client.newCall(request).execute()
+        val response = CLIENT.get(request)
 
-        if (response.code != 200) throw IllegalStateException("Request is not OK: ${response.code}: ${response.body.string()}")
+        if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
-        return response.body.string()
+        return response.bodyAsText()
     }
 
-    suspend fun postJson(endpoint: String, payload: RequestBody = RequestBody.EMPTY): String {
-        val request = buildRequest(endpoint)
-            .post(payload)
-            .build()
+    suspend fun postJson(endpoint: String, payload: String): String {
+        val request = buildRequest(endpoint).apply { method = HttpMethod.Post; setBody(payload) }
 
 
-        val response = client.newCall(request).execute()
+        val response = CLIENT.post(request)
 
-        if (response.code != 200) throw IllegalStateException("Request is not OK: ${response.code}: ${response.body.string()}")
+        if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
-        return response.body.string()
+        return response.bodyAsText()
     }
 
     suspend inline fun <reified T> graphql(name: String, vararg variables: Pair<String, JsonElement>) = graphql<T>(QueryLoader[name], *variables)

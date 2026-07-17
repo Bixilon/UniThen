@@ -48,7 +48,7 @@ fun AccountDetailsScreen(account: Account) {
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
             Text(
-                text = "${site.name} (${site.url})",
+                text = "${site.name} (https://${site.host})",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )

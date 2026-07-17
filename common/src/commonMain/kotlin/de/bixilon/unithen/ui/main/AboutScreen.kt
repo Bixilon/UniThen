@@ -31,16 +31,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.HttpUtil
+import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberIsFdroid
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import okhttp3.OkHttpClient
+import io.ktor.client.request.request
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.about_license
 import unithen.common.generated.resources.about_unofficial
@@ -59,21 +62,14 @@ fun UpdateChecker() {
     }
 
     val check = useAsyncNetwork<Unit>(null) {
-        val request = HttpUtil.create("https://gitlab.bixilon.de".toURI(), "/bixilon/unithen/-/raw/master/fdroid.txt")
-            .get()
-            .build()
+        val request = HttpUtil.create("gitlab.bixilon.de", "/bixilon/unithen/-/raw/master/fdroid.txt").apply { method = HttpMethod.Get }
 
-        val client = OkHttpClient().newBuilder()
-            .followRedirects(true)
-            .followSslRedirects(true)
-            .build()
+        val response = CLIENT.request(request)
 
-        val response = client.newCall(request).execute()
-
-        if (response.code != 200) throw IllegalStateException("Request is not OK")
+        if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK")
 
         // Same regex as for fdroid: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/de.bixilon.unithen.yml
-        next = Regex("^(\\d+)$", RegexOption.MULTILINE).find(response.body.string())!!.groups[1]!!.value.toInt()
+        next = Regex("^(\\d+)$", RegexOption.MULTILINE).find(response.bodyAsText())!!.groups[1]!!.value.toInt()
     }
 
 
