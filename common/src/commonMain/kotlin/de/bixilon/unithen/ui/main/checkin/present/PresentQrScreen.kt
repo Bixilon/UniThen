@@ -78,7 +78,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
                 data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f, matchHeightConstraintsFirst = true)
+                    .aspectRatio(1f, matchHeightConstraintsFirst = true) // TODO: broken in scroll container
                     .clip(RoundedCornerShape(5.dp))
                     .background(Color.White)
                     .padding(6.dp)

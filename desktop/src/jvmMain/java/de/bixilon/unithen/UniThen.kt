@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
 import de.bixilon.kutil.os.OSTypes
 import de.bixilon.kutil.os.PlatformInfo
+import de.bixilon.kutil.shutdown.ShutdownManager
 import de.bixilon.unithen.debug.DebugMainActivity
 import de.bixilon.unithen.storage.sql.JvmSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -90,5 +91,6 @@ fun main(args: Array<String>) {
     RuntimeInfo.RuntimeInfo0.actual = object : RuntimeInfo {
         override val debug get() = debug
     }
+    ShutdownManager += { STORAGE.close() }
     application { UniThenApplication() }
 }

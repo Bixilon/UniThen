@@ -13,8 +13,9 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
+import kotlin.system.exitProcess
 
 @Composable
 actual fun useAppRestart(): () -> Unit {
-    TODO("Not yet implemented")
+    exitProcess(0)
 }
