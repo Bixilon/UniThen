@@ -24,12 +24,12 @@ plugins {
 
 android {
     namespace = "de.bixilon.unithen"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "de.bixilon.unithen"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = project.extra.get("versionCode").toString().toInt()
 
         versionName = project.extra.get("version").toString()

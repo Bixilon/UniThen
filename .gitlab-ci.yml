@@ -1,7 +1,7 @@
 # https://gitlab.bixilon.de/bixnet/ci/android
 
 variables:
- ANDROID_SDK_VERSION: 36
+  ANDROID_SDK_VERSION: 37
 
 stages:
   - build

@@ -37,12 +37,12 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
-import okio.IOException
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.scan_unknown_error_server
 import unithen.common.generated.resources.scan_unknown_user_server
+import java.io.IOException
 import kotlin.time.TimeSource
 
 
