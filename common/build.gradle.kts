@@ -81,8 +81,8 @@ kotlin {
             implementation(libs.compose.material.icons.core)
             implementation(libs.compose.material.icons.extended)
 
-            implementation("io.ktor:ktor-client-core:3.5.1")
-            implementation("io.ktor:ktor-client-cio:3.5.1")
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.cio)
             implementation(libs.ksoup)
             implementation(libs.kutil)
 

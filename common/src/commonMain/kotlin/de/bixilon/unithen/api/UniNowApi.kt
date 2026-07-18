@@ -39,8 +39,8 @@ open class UniNowApi(
         return postJson(endpoint, payload)
     }
 
-    suspend fun get(endpoint: String): String {
-        val request = buildRequest(endpoint).apply { method = HttpMethod.Get }
+    suspend fun get(endpoint: String, data: Map<String, String>? = null): String {
+        val request = buildRequest(endpoint).apply { method = HttpMethod.Get } // TODO: data
 
         val response = CLIENT.get(request)
 
