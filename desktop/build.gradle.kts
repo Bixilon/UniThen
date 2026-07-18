@@ -35,8 +35,8 @@ kotlin {
 
             implementation(libs.kutil)
 
-            implementation("org.xerial:sqlite-jdbc:3.53.2.0")
-            runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.11.0")
+            implementation(libs.sqlite.jdbc)
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }
