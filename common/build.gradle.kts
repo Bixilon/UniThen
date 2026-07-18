@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.android.multiplatform.library)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization) version "2.4.0"
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val generatedSources = layout.buildDirectory.dir("generated/info/commonMain/kotlin")
