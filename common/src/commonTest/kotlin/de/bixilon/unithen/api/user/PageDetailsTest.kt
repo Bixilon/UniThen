@@ -23,7 +23,7 @@ class PageDetailsTest {
 
     // @Test
     suspend fun `fetch zhs`() {
-        val details = SiteDetails.fetch("https://kurse.zhs-muenchen.de".toURI())
+        val details = SiteDetails.fetch("kurse.zhs-muenchen.de")
         assertEquals(details.name, "ZHS München")
     }
 
@@ -32,7 +32,7 @@ class PageDetailsTest {
         val html = PageDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
         val array = ByteArray(0)
 
-        val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png".toURI()) array else Broken() }
+        val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png") array else Broken() }
         assertEquals(details.name, "ZHS München")
         assertSame(details.icon, array)
     }
@@ -42,7 +42,7 @@ class PageDetailsTest {
         val html = PageDetailsTest::class.java.getResourceAsStream("/http/aaa_front_page.html")!!.readAsString()
         val array = ByteArray(0)
 
-        val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png".toURI()) array else Broken() }
+        val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png") array else Broken() }
         assertEquals(details.name, "Deutschkurse Buchungsplattform")
         assertSame(details.icon, array)
     }

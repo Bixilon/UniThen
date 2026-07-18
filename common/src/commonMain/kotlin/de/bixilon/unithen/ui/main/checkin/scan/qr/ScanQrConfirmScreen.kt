@@ -48,7 +48,7 @@ import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
-import okio.IOException
+import java.io.IOException
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
 import kotlin.uuid.Uuid
