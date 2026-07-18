@@ -23,14 +23,13 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
-import java.net.URI
 
 @Composable
-actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
+fun SessionCookieAuthentication(host: String, callback: (Authentication) -> Unit) {
     val state = rememberTextFieldState()
     Column {
-        Text("So, this web view stuff is not implemented on desktop, feel free to paste your session cookie (ory-session) below:")
-        Text("($host)")
+        Text("Please paste your session cookie from $host (ory-session) below:")
+        Text("If you don't know how this works, you must visit the website, login and then press [F12], check in the network tab and find the \"Cookie\" header and extract it.")
         TextField(state)
 
         val disabled = state.text.isBlank() || state.text.length < 30

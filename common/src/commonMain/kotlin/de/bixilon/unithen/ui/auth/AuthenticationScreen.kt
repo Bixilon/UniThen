@@ -22,5 +22,5 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 fun AuthenticationScreen(site: Site, callback: () -> Unit) {
     val navigation = LocalNavigation.current
 
-    WebAuthenticationView(host = site.host) { callback.invoke(); navigation.navigate(AuthenticationCallbackRoute(site, it)) }
+    LegacyWebviewAuthentication(host = site.host) { callback.invoke(); navigation.navigate(AuthenticationCallbackRoute(site, it)) }
 }

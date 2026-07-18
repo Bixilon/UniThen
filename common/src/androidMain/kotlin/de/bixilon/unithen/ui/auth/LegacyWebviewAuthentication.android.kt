@@ -37,7 +37,7 @@ import de.bixilon.unithen.ui.error.SimpleErrorScreen
 
 
 @Composable
-actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
+actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit) {
     var view: WebView? by remember { mutableStateOf(null) }
     var canGoBack by remember { mutableStateOf(false) }
     var _host by remember { mutableStateOf("") }

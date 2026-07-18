@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
-import de.bixilon.unithen.ui.auth.WebViewWarmup
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
@@ -111,7 +110,6 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
 
         AddSiteButton(callback) // TODO: FloatingActionButton?
     }
-    WebViewWarmup()
 }
 
 
