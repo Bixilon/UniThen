@@ -16,6 +16,7 @@ import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.authentication.Authentication
 import io.ktor.client.request.*
+import io.ktor.http.URLProtocol
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -29,6 +30,7 @@ object HttpUtil {
         val request = HttpRequestBuilder()
         request.apply {
             url {
+                protocol = URLProtocol.HTTPS
                 this.host = host
                 pathSegments = endpoint.split("/")
             }
