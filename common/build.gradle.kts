@@ -100,12 +100,15 @@ kotlin {
             implementation(libs.androidx.datastore.core)
             implementation(libs.androidx.datastore.preferences)
 
-            // TODO: exclude appcompat
-            implementation(libs.androidx.camera.core) // { exclude("androidx.appcompat", "appcompat") }
-            implementation(libs.androidx.camera.view) // { exclude("androidx.appcompat", "appcompat") }
+            implementation(libs.androidx.camera.core)
+            implementation(libs.androidx.camera.view)
             implementation(libs.androidx.camera.lifecycle)
             implementation(libs.androidx.camera.compose)
             implementation(libs.androidx.camera.camera2)
+
+            configurations.configureEach {
+                exclude("androidx.appcompat", "appcompat")
+            }
         }
 
         jvmMain.dependencies {

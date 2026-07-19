@@ -101,7 +101,7 @@ dependencies {
     implementation(libs.androidx.datastore.core)
     implementation(libs.androidx.datastore.preferences)
 
-    implementation(libs.androidx.camera.core) { exclude("androidx.appcompat", "appcompat") }
+    implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.camera2)
 
     implementation(libs.androidx.profileinstaller)
@@ -117,4 +117,9 @@ dependencies {
     implementation(project(":common"))
     api(project(":debug"))
     debugImplementation(project(":debug"))
+
+
+    configurations.configureEach {
+        exclude("androidx.appcompat", "appcompat")
+    }
 }
