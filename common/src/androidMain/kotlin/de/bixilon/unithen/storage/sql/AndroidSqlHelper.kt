@@ -26,7 +26,7 @@ import kotlin.uuid.Uuid
 class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
 
     private fun SQLiteDatabase.executeBatch(path: String) {
-        val statements = SqlUtil.split(path)
+        val statements = SqlUtil.split(SqlUtil.load(path))
         transaction { statements.forEach { execSQL(it) } }
     }
 

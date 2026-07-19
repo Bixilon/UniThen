@@ -12,13 +12,16 @@
 
 package de.bixilon.unithen.storage.sql
 
-import de.bixilon.kutil.stream.InputStreamUtil.readAsString
+import kotlinx.coroutines.runBlocking
+import unithen.common.generated.resources.Res
 
 object SqlUtil {
 
-    fun split(path: String): List<String> {
-        val raw = SqlUtil::class.java.getResourceAsStream("/sql/$path.sql")!!.readAsString()
+    fun load(path: String): String {
+        return runBlocking { Res.readBytes("files/sql/$path.sql").decodeToString() }
+    }
 
+    fun split(raw: String): List<String> {
         val statements: MutableList<String> = mutableListOf()
         val builder = StringBuilder()
         var begin = false

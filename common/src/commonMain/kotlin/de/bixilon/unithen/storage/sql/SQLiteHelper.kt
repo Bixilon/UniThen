@@ -26,7 +26,7 @@ interface SQLiteHelper : Closeable {
     fun insert(sql: String, vararg parameters: Any?): Int
 
     fun executeBatch(path: String) {
-        val statements = SqlUtil.split(path)
+        val statements = SqlUtil.split(SqlUtil.load(path))
         transaction { statements.forEach { execute(it) } }
     }
 

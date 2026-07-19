@@ -13,6 +13,7 @@
 package de.bixilon.unithen.api.graphql.query
 
 import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
+import kotlin.jvm.JvmInline
 
 @JvmInline
 value class QlQuery(val query: String) {
