@@ -20,7 +20,7 @@ class CookieParserTest {
     @Test
     fun `no cookies`() {
         val cookies = CookieParser.parse("")
-        assertEquals(cookies, emptyMap<String, String>())
+        assertEquals(cookies, emptyMap())
     }
 
     @Test

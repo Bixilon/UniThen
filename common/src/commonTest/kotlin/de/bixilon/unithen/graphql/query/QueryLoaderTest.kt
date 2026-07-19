@@ -14,6 +14,7 @@ package de.bixilon.unithen.graphql.query
 
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 
 class QueryLoaderTest {
@@ -21,7 +22,7 @@ class QueryLoaderTest {
     @Test
     fun `load and cache coruses query`() {
         val name = "courses"
-        val query = QueryLoader[name]
+        val query = runBlocking { QueryLoader[name] }
 
         assertTrue(query.query.startsWith("query"))
     }
