@@ -41,7 +41,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
 
-            implementation(project(":common"))
+            // This is to workaround https://youtrack.jetbrains.com/issue/IDEA-391773/IntelliJ-does-not-resolve-dependencies-with-multiple-Kotlin-native-libraries-that-depend-on-the-common-module
+            val sync = System.getProperties()["idea.sync.active"]
+            if (sync != "true") {
+                api(project(":common"))
+            }
         }
 
     }
