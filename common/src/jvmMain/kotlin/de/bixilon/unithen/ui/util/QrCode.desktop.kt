@@ -13,10 +13,6 @@
 package de.bixilon.unithen.ui.util
 
 
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -25,7 +21,7 @@ import com.google.zxing.qrcode.encoder.Encoder
 
 val PAINT = Paint().apply { color = Color.White }
 
-private fun encode(data: String): ImageBitmap {
+actual fun encodeQr(data: String): ImageBitmap {
     val matrix = Encoder.encode(data, ErrorCorrectionLevel.H, mapOf(
         EncodeHintType.CHARACTER_SET to "UTF-8",
         EncodeHintType.MARGIN to 16,
@@ -45,11 +41,4 @@ private fun encode(data: String): ImageBitmap {
     }
 
     return bitmap
-}
-
-@Composable
-actual fun QrCode(data: String, modifier: Modifier) {
-    val matrix = remember(data) { encode(data) }
-
-    Image(matrix, data, modifier = modifier, filterQuality = FilterQuality.None)
 }

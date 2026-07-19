@@ -12,9 +12,19 @@
 
 package de.bixilon.unithen.ui.util
 
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
 
+
+expect fun encodeQr(data: String): ImageBitmap
 
 @Composable
-expect fun QrCode(data: String, modifier: Modifier = Modifier)
+fun QrCode(data: String, modifier: Modifier = Modifier) {
+    val matrix = remember(data) { encodeQr(data) }
+
+    Image(matrix, data, modifier = modifier, filterQuality = FilterQuality.None)
+}
