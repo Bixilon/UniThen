@@ -14,11 +14,7 @@ package de.bixilon.unithen.storage.sql
 
 import java.io.File
 import java.io.IOException
-import java.sql.DriverManager
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.Statement
-import java.sql.Types
+import java.sql.*
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -125,16 +121,19 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
     }
 
     class SqlCursor(val cursor: ResultSet) : SQLiteHelper.Cursor {
-        override fun getBlob(index: Int) = cursor.getBytes(index +1)
-        override fun getBlobOrNull(index: Int) = cursor.getBytes(index+1)
+        override fun getBlob(index: Int) = cursor.getBytes(index + 1)
+        override fun getBlobOrNull(index: Int) = cursor.getBytes(index + 1)
 
-        override fun getString(index: Int) = cursor.getString(index+1)
-        override fun getStringOrNull(index: Int) = cursor.getString(index+1)
+        override fun getString(index: Int) = cursor.getString(index + 1)
+        override fun getStringOrNull(index: Int) = cursor.getString(index + 1)
 
-        override fun getInt(index: Int) = cursor.getInt(index+1)
-        override fun getLong(index: Int) = cursor.getLong(index+1)
+        override fun getInt(index: Int) = cursor.getInt(index + 1)
+        override fun getLong(index: Int) = cursor.getLong(index + 1)
 
-        override fun isNull(index: Int) = false // TODO
+        override fun isNull(index: Int): Boolean {
+            cursor.getObject(index + 1)
+            return cursor.wasNull()
+        }
 
         override fun moveToNext() = cursor.next()
 
