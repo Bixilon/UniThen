@@ -12,7 +12,8 @@
 
 package de.bixilon.unithen.ui.auth
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -21,20 +22,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.ScreenTitle
 
 @Composable
 fun SessionCookieAuthentication(host: String, callback: (Authentication) -> Unit) {
     val state = rememberTextFieldState()
-    Column {
+
+    Screen {
+        ScreenTitle("Cookie authentication")
         Text("Please paste your session cookie from $host (ory-session) below:")
         Text("If you don't know how this works, you must visit the website, login and then press [F12], check in the network tab and find the \"Cookie\" header and extract it.")
-        TextField(state)
+        TextField(state, modifier = Modifier.fillMaxWidth(), lineLimits = TextFieldLineLimits.SingleLine)
 
         val disabled = state.text.isBlank() || state.text.length < 30
 
-        Button({ callback.invoke(CookieAuthentication(state.text.toString())) }, enabled = !disabled) {
+        Button({ callback.invoke(CookieAuthentication(state.text.toString())) }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Default.Add, "")
             Text("Add")
         }

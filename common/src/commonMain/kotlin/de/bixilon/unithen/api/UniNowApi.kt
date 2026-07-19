@@ -19,6 +19,7 @@ import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import de.bixilon.unithen.api.ory.LoginFlow
+import de.bixilon.unithen.api.ory.LoginResponse
 import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
@@ -108,5 +109,13 @@ open class UniNowApi(
             "return_session_token_exchange_code" to true.toString(),
         )
         return getJson<LoginFlow>("/services/identity/self-service/login/api", parameters)
+    }
+
+    suspend fun loginOidc(provider: String): String {
+        TODO()
+    }
+
+    suspend fun loginEmail(email: String, password: String): LoginResponse {
+        TODO()
     }
 }

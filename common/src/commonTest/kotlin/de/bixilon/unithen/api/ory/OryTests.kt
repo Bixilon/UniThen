@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.api.ory
 
+import de.bixilon.unithen.ui.auth.ory.OryConfig
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.runBlocking
@@ -40,5 +41,15 @@ class OryTests {
 
 
         assertEquals(parsed.id, "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e".toUuid())
+    }
+
+    @Test
+    fun `convert to ory config`() {
+        val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
+
+        val config = Jackson.MAPPER.decodeFromString<LoginFlow>(data).toConfig()
+
+        assertEquals(config.id, "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e".toUuid())
+        assertEquals(config.oidc.first(), OryConfig.OryOidc("oidc-tum", "oidc-tum", "Sign in with oidc-tum"))
     }
 }

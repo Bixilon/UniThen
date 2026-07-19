@@ -32,6 +32,7 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.TextCard
+import de.bixilon.unithen.ui.main.AuthenticateRoute
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage

@@ -114,13 +114,13 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
 
 
 @Composable
-fun AddAccountScreen(callback: () -> Unit) {
+fun AddAccountScreen() {
     var site: Site? by remember { mutableStateOf(null) }
 
     BackHandler(site != null) { site = null }
 
     site?.let {
-        AuthenticationScreen(it) { callback.invoke() }
+        AuthenticationScreen(it)
         return
     }
 

@@ -22,20 +22,14 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
+import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberAsync
@@ -59,19 +53,7 @@ private val READER by lazy { BarcodeReader(BarcodeReader.Options(formats = setOf
 
 @Composable
 private fun Loading(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .padding(24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(modifier = Modifier.size(300.dp))
-
-            Spacer(Modifier.height(30.dp))
-
-            Text(Res.string.scan_starting_camera.i18n(), textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
-    }
+    LoadingContainer(Res.string.scan_starting_camera.i18n(), modifier = modifier)
 }
 
 @Composable

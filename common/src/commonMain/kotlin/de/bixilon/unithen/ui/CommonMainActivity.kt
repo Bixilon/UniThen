@@ -12,19 +12,16 @@
 
 package de.bixilon.unithen.ui
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
+import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
+import de.bixilon.unithen.ui.auth.ory.EmailAuthenticationScreen
+import de.bixilon.unithen.ui.auth.ory.OryOidcPrepareScreen
+import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.main.*
@@ -117,6 +114,11 @@ fun Navigator.MainNavigator() {
         composable<FeatureFlagRoute> { FeatureFlagScreen() }
 
         composable<CrashRoute> { CrashScreen(null, it.exception) }
+
+        composable<AuthenticateRoute> { AuthenticationScreen(it.site) }
+        composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it.host) }
+        composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.ory) }
+        composable<OidcAuthenticationRoute> { OryOidcPrepareScreen(it.ory, it.provider) }
     }
 
     CompositionLocalProvider(
@@ -148,23 +150,7 @@ fun Loader(content: @Composable () -> Unit) {
 
     if (!loaded) {
         DelayedContent(100.milliseconds) {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        Logo,
-                        contentDescription = "logo",
-                        modifier = Modifier
-                            .size(300.dp)
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        CircularProgressIndicator()
-                        Spacer(Modifier.width(16.dp))
-                        Text(Res.string.loading_database.i18n())
-                    }
-                }
-            }
+            LoadingContainer(Res.string.loading_database.i18n(), Logo)
         }
         return
     }

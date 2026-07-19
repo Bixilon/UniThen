@@ -17,6 +17,7 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.auth.ory.OryConfig
 import de.bixilon.unithen.ui.navigation.NavigationRoute
 import kotlin.uuid.Uuid
 
@@ -53,3 +54,11 @@ object SettingsRoute : NavigationRoute
 object FeatureFlagRoute : NavigationRoute
 
 data class CrashRoute(val exception: Throwable) : NavigationRoute
+
+data class AuthenticateRoute(val site: Site) : NavigationRoute
+
+data class LegacyAuthenticationRoute(val host: String) : NavigationRoute
+data class EmailAuthenticationRoute(val ory: OryConfig) : NavigationRoute
+data class OidcAuthenticationRoute(val ory: OryConfig, val provider: OryConfig.OryOidc) : NavigationRoute
+
+data class OidcAuthenticationCallbackRoute(val code: String) : NavigationRoute

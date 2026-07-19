@@ -14,9 +14,8 @@ package de.bixilon.unithen.api
 
 import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.api.authentication.Authentication
 import io.ktor.client.request.*
-import io.ktor.http.URLProtocol
+import io.ktor.http.*
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
@@ -39,6 +38,4 @@ object HttpUtil {
 
         return request
     }
-
-    fun HttpRequestBuilder.authenticate(authentication: Authentication) = apply { authentication.authenticate(this) }
 }

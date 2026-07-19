@@ -56,7 +56,7 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
                 block.invoke()
             } catch (error: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
-                navigation?.navigate(ReauthenticateRoute(storage!!.sites[error.host]!!))
+                navigation?.navigate(AuthenticateRoute(storage!!.sites[error.host]!!))
             } catch (error: NetworkException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))

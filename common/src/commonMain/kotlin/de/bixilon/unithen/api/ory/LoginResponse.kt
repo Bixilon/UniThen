@@ -10,13 +10,12 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.auth
+package de.bixilon.unithen.api.ory
 
-import androidx.compose.runtime.Composable
-import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.ui.auth.ory.OryAuthentication
+import kotlinx.serialization.Serializable
 
-@Composable
-fun AuthenticationScreen(site: Site) {
-    OryAuthentication(site.host)
+@Serializable
+data class LoginResponse(
+    val code: String,
+) {
 }

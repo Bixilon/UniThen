@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.api.ory
 
+import de.bixilon.unithen.ui.auth.ory.OryConfig
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
@@ -59,5 +60,11 @@ data class LoginFlow(
                 }
             }
         }
+    }
+
+    fun toConfig(): OryConfig {
+        val oidc = ui.nodes.filter { it.attributes.type == "submit" && !it.attributes.disabled && it.meta?.label?.context?.providerId != null }.map { OryConfig.OryOidc(it.meta!!.label!!.context!!.providerId!!, it.attributes.value!!, it.meta.label?.text) }
+
+        return OryConfig(id, ui.action, oidc)
     }
 }
