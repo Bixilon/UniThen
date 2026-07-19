@@ -15,9 +15,9 @@ kotlin {
         freeCompilerArgs.add("-Xintrinsic-const-evaluation")
     }
 
-    androidLibrary {
+    android {
         namespace = "de.bixilon.unithen.debug"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
         androidResources.enable = true
     }
