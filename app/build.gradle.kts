@@ -45,6 +45,9 @@ android {
             }
             // jniLibs.useLegacyPackaging = false
             // dex.useLegacyPackaging = false
+            resources {
+                excludes += "DebugProbesKt.bin"
+            }
         }
         androidResources {
             localeFilters += "de"
