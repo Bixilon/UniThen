@@ -39,10 +39,12 @@ import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.network_error
 import java.io.IOException
 import java.net.UnknownHostException
+import java.nio.channels.UnresolvedAddressException
 
 
 fun formatDetails(error: Throwable): String? = when (error) {
     is IOException -> error.message + "\nDo you have internet?"
+    is UnresolvedAddressException -> error.message + "\nDo you have internet?"
     is AuthenticationException -> "Unauthenticated!"
     is GraphQlException -> error.format()
     else -> null

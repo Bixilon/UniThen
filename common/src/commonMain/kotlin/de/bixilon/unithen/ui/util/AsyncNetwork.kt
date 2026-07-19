@@ -30,6 +30,7 @@ import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
 import java.io.IOException
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import java.nio.channels.UnresolvedAddressException
 
 data class AsyncNetworkState<T>(
     val active: Boolean,
@@ -60,6 +61,9 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
                     navigation?.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
                 }
             } catch (error: IOException) {
+                error.printStackTrace()
+                toast.invoke(getString(Res.string.error_network, error.message ?: ""))
+            } catch (error: UnresolvedAddressException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))
             } catch (error: Throwable) {

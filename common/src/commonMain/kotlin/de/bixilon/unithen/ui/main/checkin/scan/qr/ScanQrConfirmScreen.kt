@@ -51,6 +51,7 @@ import de.bixilon.unithen.ui.util.useHapticFeedback
 import java.io.IOException
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
+import java.nio.channels.UnresolvedAddressException
 import kotlin.uuid.Uuid
 
 
@@ -157,6 +158,13 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
                 pop()
             }
             throw error
+        } catch (error: UnresolvedAddressException) {
+            if (await && !offline) {
+                message = getString(Res.string.error_network, error.message ?: "")
+            } else if (!fast) {
+                pop()
+            }
+            throw IOException(error)
         } catch (_: CheckInUnknownUserException) {
             message = getString(Res.string.scan_unknown_user_server)
             haptic.invoke(HapticFeedbackType.Reject)

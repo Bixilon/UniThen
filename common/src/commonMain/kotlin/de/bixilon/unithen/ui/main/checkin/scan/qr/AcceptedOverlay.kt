@@ -43,6 +43,7 @@ import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.scan_unknown_error_server
 import unithen.common.generated.resources.scan_unknown_user_server
 import java.io.IOException
+import java.nio.channels.UnresolvedAddressException
 import kotlin.time.TimeSource
 
 
@@ -78,6 +79,9 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
             haptic.invoke(HapticFeedbackType.Reject)
             errorMessage = getString(Res.string.scan_unknown_error_server, error.message ?: "")
         } catch (error: IOException) {
+            okay = true
+            errorMessage = getString(Res.string.error_network, error.message ?: "")
+        } catch (error: UnresolvedAddressException) {
             okay = true
             errorMessage = getString(Res.string.error_network, error.message ?: "")
         } finally {
