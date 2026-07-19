@@ -40,8 +40,11 @@ open class UniNowApi(
     }
 
     suspend fun get(endpoint: String, data: Map<String, String>? = null): String {
-        val request = buildRequest(endpoint).apply { method = HttpMethod.Get } // TODO: data
+        val request = buildRequest(endpoint).apply {
+            method = HttpMethod.Get
 
+            data?.forEach { (key, value) -> url.parameters.append(key, value) }
+        }
         val response = CLIENT.get(request)
 
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
@@ -50,7 +53,11 @@ open class UniNowApi(
     }
 
     suspend fun postJson(endpoint: String, payload: String): String {
-        val request = buildRequest(endpoint).apply { method = HttpMethod.Post; setBody(payload) }
+        val request = buildRequest(endpoint).apply {
+            method = HttpMethod.Post
+            contentType(ContentType.Application.Json)
+            setBody(payload)
+        }
 
 
         val response = CLIENT.post(request)
