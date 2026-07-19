@@ -117,7 +117,7 @@ object SqlBuilder {
         private val executable: Executable,
         private val limit: Int,
     ) : Executable {
-        override fun toSql() = executable + SqlStatement("LIMIT ?", listOf(limit))
+        override fun toSql() = executable + SqlStatement("LIMIT $limit", emptyList())
 
         init {
             assert(limit > 0)
