@@ -21,17 +21,17 @@ import de.bixilon.unithen.ui.util.useAsyncNetwork
 @Composable
 fun EmailAuthenticationScreen(config: OryConfig) {
     var password by remember { mutableStateOf("") }
-    var mail by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
-    val auth = useAsyncNetwork<Unit>(null) {}
+    val auth = useAsyncNetwork<Unit>(null) { config.loginEmail(email, password) } // TODO: handle error, callback screen
 
     Screen {
         ScreenTitle("Login")
         Text("Please login with your email and password:")
 
         TextField(
-            value = mail,
-            onValueChange = { mail = it },
+            value = email,
+            onValueChange = { email = it },
             label = { Text("E-Mail") },
             singleLine = true,
             placeholder = { Text("E-Mail") },
@@ -52,9 +52,9 @@ fun EmailAuthenticationScreen(config: OryConfig) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Text("Forgot password?") // TODO: open /authq/recovery
+        Text("Forgot password?") // TODO: open /auth/recovery
 
-        val disabled = password.isBlank() || '@' !in mail || auth.active
+        val disabled = password.isBlank() || '@' !in email || auth.active
 
         Button({ auth.invoke(Unit) }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
             if (auth.active) CircularProgressIndicator() else Text("Login")

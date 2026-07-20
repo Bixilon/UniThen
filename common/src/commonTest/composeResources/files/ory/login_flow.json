@@ -196,5 +196,6 @@
   },
   "refresh": false,
   "requested_aal": "aal1",
+  "session_token_exchange_code": "abc",
   "state": "choose_method"
 }

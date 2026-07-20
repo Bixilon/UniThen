@@ -37,7 +37,7 @@ class OryTests {
     fun `parse login flow`() {
         val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
 
-        val parsed = Jackson.MAPPER.decodeFromString<LoginFlow>(data)
+        val parsed = Jackson.MAPPER.decodeFromString<OryLoginFlow>(data)
 
 
         assertEquals(parsed.id, "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e".toUuid())
@@ -47,7 +47,7 @@ class OryTests {
     fun `convert to ory config`() {
         val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
 
-        val config = Jackson.MAPPER.decodeFromString<LoginFlow>(data).toConfig()
+        val config = Jackson.MAPPER.decodeFromString<OryLoginFlow>(data).toConfig()
 
         assertEquals(config.id, "aaaaaaaa-63cd-4704-8bb9-2f2640e9577e".toUuid())
         assertEquals(config.oidc.first(), OryConfig.OryOidc("oidc-tum", "oidc-tum", "Sign in with oidc-tum"))

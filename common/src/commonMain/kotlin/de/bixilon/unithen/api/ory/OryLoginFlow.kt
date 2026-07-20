@@ -18,9 +18,10 @@ import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
 @Serializable
-data class LoginFlow(
+data class OryLoginFlow(
     val id: Uuid,
     val ui: Ui,
+    @SerialName("session_token_exchange_code") val sessionTokenExchangeToken: String,
 ) {
     @Serializable
     data class Ui(
@@ -63,7 +64,7 @@ data class LoginFlow(
     }
 
     fun toConfig(): OryConfig {
-        val oidc = ui.nodes.filter { it.attributes.type == "submit" && !it.attributes.disabled && it.meta?.label?.context?.providerId != null }.map { OryConfig.OryOidc(it.meta!!.label!!.context!!.providerId!!, it.attributes.value!!, it.meta.label?.text) }
+        val oidc = ui.nodes.filter { it.attributes.type == "submit" && !it.attributes.disabled && it.meta?.label?.context?.providerId != null }.map { OryConfig.OryOidc(it.meta!!.label!!.context!!.providerId!!, it.attributes.value!!, it.meta.label.text) }
 
         return OryConfig(id, ui.action, oidc)
     }

@@ -21,7 +21,7 @@ The general procedure is simple, but puts a lot of logic into the app itself:
 4. Get a 422 error with the field `redirect_browser_to`
 5. Open custom tab/browser with that url
 6. Handle redirect (`uninow://COURSE/login?code=abc`)
-7. Exchange code for session token
+7. Exchange code for session token (`GET /services/identity/sessions/token-exchange` with `init_code=$session_token_exchange_code` and `return_to_code=$code`)
 
 ## OAuth
 They apparently don't use Hydra, so proper OAuth is not possible. Sadly.

@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.UniNowApi
-import de.bixilon.unithen.api.ory.LoginFlow
+import de.bixilon.unithen.api.ory.OryLoginFlow
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -23,14 +23,16 @@ import de.bixilon.unithen.ui.main.EmailAuthenticationRoute
 import de.bixilon.unithen.ui.main.LegacyAuthenticationRoute
 import de.bixilon.unithen.ui.main.OidcAuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 
 
 @Composable
 fun OryAuthentication(host: String) {
-    var flow by remember { mutableStateOf<LoginFlow?>(null) }
+    val storage = LocalStorage.current
+    var flow by remember { mutableStateOf<OryLoginFlow?>(null) }
 
-    val flowFetch = useAsyncNetwork<Unit>(null) { flow = UniNowApi(host).login() }
+    val flowFetch = useAsyncNetwork<Unit>(null) { flow = UniNowApi(host).getLoginFlow() }
 
     LaunchedEffect(Unit) { flowFetch.invoke(Unit) }
 
@@ -55,7 +57,7 @@ private fun FlowError(host: String) {
 
 
 @Composable
-private fun WithFlow(host: String, flow: LoginFlow) {
+private fun WithFlow(host: String, flow: OryLoginFlow) {
     val navigation = LocalNavigation.current
     val config = remember { flow.toConfig() }
 

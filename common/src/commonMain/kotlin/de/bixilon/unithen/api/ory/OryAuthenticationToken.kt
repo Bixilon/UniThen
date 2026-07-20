@@ -12,10 +12,10 @@
 
 package de.bixilon.unithen.api.ory
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoginResponse(
-    val code: String,
-) {
-}
+data class OryAuthenticationToken(
+    @SerialName("session_token") val sessionToken: String,
+)
