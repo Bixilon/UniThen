@@ -33,3 +33,5 @@ WHERE id NOT IN (
 );
 
 DROP TABLE temp.orphan_courses;
+
+DELETE FROM login_flows WHERE id NOT IN(SELECT id FROM login_flows ORDER BY expires DESC LIMIT 100);

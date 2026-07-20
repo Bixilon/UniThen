@@ -173,3 +173,15 @@ CREATE TRIGGER users_fts_ai AFTER INSERT ON users
 BEGIN
   INSERT INTO users_fts(docid, fullname) VALUES (new.id, new.firstname || ' ' || new.lastname);
 END;
+
+
+CREATE TABLE login_flows (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  site INTEGER,
+
+  exchange_token VARCHAR(1024) NULL,
+
+  expires INTEGER,
+
+  FOREIGN KEY (site) REFERENCES sites(id),
+);

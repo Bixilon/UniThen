@@ -32,6 +32,7 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     val courses = CourseTable(this)
     val appointments = AppointmentTable(this)
     val checkInQueue = CheckInQueueTable(this)
+    val flows = LoginFlowTable(this)
 
 
     fun notifyState() {
@@ -97,6 +98,6 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     }
 
     companion object {
-        const val VERSION = 10
+        const val VERSION = 11
     }
 }
