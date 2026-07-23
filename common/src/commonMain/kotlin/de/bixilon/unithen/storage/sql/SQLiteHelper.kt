@@ -13,11 +13,10 @@
 package de.bixilon.unithen.storage.sql
 
 import de.bixilon.kutil.enums.ValuesEnum
-import java.io.Closeable
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-interface SQLiteHelper : Closeable {
+interface SQLiteHelper : AutoCloseable {
 
     fun load()
 
@@ -33,7 +32,7 @@ interface SQLiteHelper : Closeable {
     fun <T> transaction(block: () -> T): T
 
 
-    interface Cursor : Closeable {
+    interface Cursor : AutoCloseable {
         fun getBlob(index: Int): ByteArray
         fun getBlobOrNull(index: Int): ByteArray?
 

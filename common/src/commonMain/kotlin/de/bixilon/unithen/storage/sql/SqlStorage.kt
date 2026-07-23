@@ -20,10 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.intellij.lang.annotations.Language
-import java.io.Closeable
 
-class SqlStorage(val helper: SQLiteHelper) : Closeable {
-
+class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     val scope = CoroutineScope(Dispatchers.Main)
     val notify = mutableIntStateOf(0) // TODO: Kind of a hack
 

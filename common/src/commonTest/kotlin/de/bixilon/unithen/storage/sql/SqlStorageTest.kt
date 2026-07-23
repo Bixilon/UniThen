@@ -12,13 +12,24 @@
 
 package de.bixilon.unithen.storage.sql
 
-import kotlin.test.Test
-import kotlin.test.assertFalse
+import de.bixilon.unithen.debug.DebugUtil.initializeDummy
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
+import kotlin.test.*
+
+fun create() = SqlStorage(createMemoryHelper())
+fun dummy() = create().apply { helper.load(); this.initializeDummy() }
 
 
 class SqlStorageTest {
 
-    private fun create() = SqlStorage(createMemoryHelper())
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @BeforeTest
+    fun setup() {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
 
     @Test
     fun `create and initialize tables`() {
@@ -28,5 +39,15 @@ class SqlStorageTest {
         val next = storage.helper.query("SELECT host FROM sites WHERE id=1").moveToNext()
 
         assertFalse(next)
+    }
+
+    @Test
+    fun `create dummy database`() {
+        val storage = dummy()
+
+        val cursor = storage.helper.query("SELECT host FROM sites WHERE id=901")
+
+        assertTrue(cursor.moveToNext())
+        assertEquals("test.local", cursor.getString(0))
     }
 }

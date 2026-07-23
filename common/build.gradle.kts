@@ -140,7 +140,9 @@ kotlin {
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(project(":debug"))
             implementation(libs.compose.components.resources)
+            implementation(libs.kotlinx.coroutines.test)
         }
     }
 }
