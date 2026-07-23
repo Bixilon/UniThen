@@ -12,28 +12,28 @@
 
 package de.bixilon.unithen.graphql
 
-import de.bixilon.kutil.stream.InputStreamUtil.readAsString
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.toInstant
-import java.io.FileNotFoundException
+import unithen.common.generated.resources.Res
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class GraphQlQueryTest {
 
     private inline fun <reified T> readResponse(name: String): T {
-        val resource = GraphQlQueryTest::class.java.getResourceAsStream("/graphql/$name.json") ?: throw FileNotFoundException("Can not find resource $name")
+        val resource = runBlocking { Res.readBytes("files/graphql/$name.json") }.decodeToString()
 
 
-        return Jackson.GRAPHQL.decodeFromString<T>(resource.readAsString())
+        return Jackson.GRAPHQL.decodeFromString<T>(resource)
     }
 
     @Test

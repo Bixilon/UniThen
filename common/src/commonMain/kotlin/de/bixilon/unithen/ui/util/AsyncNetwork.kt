@@ -15,6 +15,8 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
@@ -28,9 +30,6 @@ import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
-import java.io.IOException
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
-import java.nio.channels.UnresolvedAddressException
 
 data class AsyncNetworkState<T>(
     val active: Boolean,
@@ -60,10 +59,7 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
                     storage.accounts.logout(account)
                     navigation?.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
                 }
-            } catch (error: IOException) {
-                error.printStackTrace()
-                toast.invoke(getString(Res.string.error_network, error.message ?: ""))
-            } catch (error: UnresolvedAddressException) {
+            } catch (error: NetworkException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))
             } catch (error: Throwable) {

@@ -34,8 +34,6 @@ android {
 
         versionName = project.extra.get("version").toString()
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
         packaging {
             jniLibs {
                 // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
@@ -108,12 +106,6 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
 
     implementation(libs.androidx.profileinstaller)
-
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
 
 
     baselineProfile(project(":baselineprofile"))

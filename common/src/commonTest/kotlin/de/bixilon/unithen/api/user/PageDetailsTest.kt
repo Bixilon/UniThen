@@ -13,8 +13,8 @@
 package de.bixilon.unithen.api.user
 
 import de.bixilon.kutil.exception.Broken
-import de.bixilon.kutil.stream.InputStreamUtil.readAsString
-import de.bixilon.kutil.uri.URIUtil.toURI
+import kotlinx.coroutines.runBlocking
+import unithen.common.generated.resources.Res
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -29,7 +29,7 @@ class PageDetailsTest {
 
     @Test
     fun `parse zhs`() {
-        val html = PageDetailsTest::class.java.getResourceAsStream("/http/zhs_front_page.html")!!.readAsString()
+        val html = runBlocking { Res.readBytes("files/http/zhs_front_page.html") }.decodeToString()
         val array = ByteArray(0)
 
         val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png") array else Broken() }
@@ -39,7 +39,7 @@ class PageDetailsTest {
 
     @Test
     fun `parse aaa`() {
-        val html = PageDetailsTest::class.java.getResourceAsStream("/http/aaa_front_page.html")!!.readAsString()
+        val html = runBlocking { Res.readBytes("files/http/aaa_front_page.html") }.decodeToString()
         val array = ByteArray(0)
 
         val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png") array else Broken() }

@@ -16,9 +16,8 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
-import org.junit.Rule
-import org.junit.Test
+import androidx.compose.ui.test.v2.runComposeUiTest
+import kotlin.test.Test
 
 
 object NoDateRoute : NavigationRoute
@@ -58,55 +57,61 @@ fun TestNavigator(effect: (Navigator) -> Unit) {
     LaunchedEffect(Unit) { effect.invoke(navigator) }
 }
 
+@OptIn(ExperimentalTestApi::class)
 class NavigatorTest {
-    @get:Rule val rule = createComposeRule()
 
     @Test
-    fun test_setup() {
-        rule.setContent { NoDataScreen() }
+    fun `test basic setup`() = runComposeUiTest {
+        setContent {
+            setContent { NoDataScreen() }
+        }
 
-        rule.onNodeWithText("hello A").assertIsDisplayed()
+        onNodeWithText("hello A").assertIsDisplayed()
     }
 
     @Test
-    fun correct_home_text() {
-        rule.setContent { TestNavigator {} }
+    fun `initial home`() = runComposeUiTest {
+        setContent { TestNavigator {} }
 
-        rule.onNodeWithText("hello A").assertIsDisplayed()
+        onNodeWithText("hello A").assertIsDisplayed()
     }
 
     @Test
-    fun correct_navigation_to_b() {
-        rule.setContent { TestNavigator { it.navigate(RouteData("yes")) } }
+    fun `navigation to b`() = runComposeUiTest {
+        setContent { TestNavigator { it.navigate(RouteData("yes")) } }
 
-        rule.onNodeWithText("hello A").assertIsNotDisplayed()
-        rule.onNodeWithText("hello yes").assertIsDisplayed()
+        onNodeWithText("hello A").assertIsNotDisplayed()
+        onNodeWithText("hello yes").assertIsDisplayed()
     }
 
     @Test
-    fun correct_popping() {
+    fun `popping of screen`() = runComposeUiTest {
         var navigator: Navigator? = null
-        rule.setContent { TestNavigator { navigator = it } }
+        setContent { TestNavigator { navigator = it } }
 
         navigator!!.navigate(RouteData("yes"))
-        navigator!!.pop()
+        navigator.pop()
 
-        rule.onNodeWithText("hello A").assertIsDisplayed()
-        rule.onNodeWithText("hello yes").assertIsNotDisplayed()
+        waitUntilDoesNotExist(hasText("hello yes"))
+
+        onNodeWithText("hello A").assertIsDisplayed()
+        onNodeWithText("hello yes").assertIsNotDisplayed()
     }
 
     @Test
-    fun state_preserved_when_getting_back() {
+    fun `state preserved when popping`() = runComposeUiTest {
         var navigator: Navigator? = null
-        rule.setContent { TestNavigator { navigator = it } }
+        setContent { TestNavigator { navigator = it } }
         navigator!!.navigate(StateRoute)
 
-        rule.onNode(isEditable()).performClick()
-        rule.onNodeWithText("clicked true").assertIsDisplayed()
+
+        waitUntilAtLeastOneExists(isEditable())
+        onNode(isEditable()).performClick()
+        onNodeWithText("clicked true").assertIsDisplayed()
 
         navigator.navigate(NoDateRoute)
         navigator.pop()
 
-        rule.onNodeWithText("clicked true").assertIsDisplayed()
+        onNodeWithText("clicked true").assertIsDisplayed()
     }
 }

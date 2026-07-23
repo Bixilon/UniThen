@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.ui.containers.Screen
@@ -37,14 +38,10 @@ import de.bixilon.unithen.ui.util.Copy2Clipboard
 import de.bixilon.unithen.ui.util.i18n
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.network_error
-import java.io.IOException
-import java.net.UnknownHostException
-import java.nio.channels.UnresolvedAddressException
 
 
 fun formatDetails(error: Throwable): String? = when (error) {
-    is IOException -> error.message + "\nDo you have internet?"
-    is UnresolvedAddressException -> error.message + "\nDo you have internet?"
+    is NetworkException -> error.message + "\nDo you have internet?"
     is AuthenticationException -> "Unauthenticated!"
     is GraphQlException -> error.format()
     else -> null
@@ -53,7 +50,7 @@ fun formatDetails(error: Throwable): String? = when (error) {
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
-    if (exception is UnknownHostException) {
+    if (exception is NetworkException) {
         return SimpleErrorScreen(Res.string.network_error.i18n(), exception.message)
     }
     Screen(

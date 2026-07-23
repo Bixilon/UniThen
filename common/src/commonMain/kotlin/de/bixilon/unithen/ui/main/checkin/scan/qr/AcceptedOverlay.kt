@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
@@ -42,8 +43,6 @@ import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.scan_unknown_error_server
 import unithen.common.generated.resources.scan_unknown_user_server
-import java.io.IOException
-import java.nio.channels.UnresolvedAddressException
 import kotlin.time.TimeSource
 
 
@@ -78,10 +77,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
         } catch (error: CheckInError) {
             haptic.invoke(HapticFeedbackType.Reject)
             errorMessage = getString(Res.string.scan_unknown_error_server, error.message ?: "")
-        } catch (error: IOException) {
-            okay = true
-            errorMessage = getString(Res.string.error_network, error.message ?: "")
-        } catch (error: UnresolvedAddressException) {
+        } catch (error: NetworkException) {
             okay = true
             errorMessage = getString(Res.string.error_network, error.message ?: "")
         } finally {

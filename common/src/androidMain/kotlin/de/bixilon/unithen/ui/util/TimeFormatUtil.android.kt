@@ -15,7 +15,6 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
-import de.bixilon.unithen.ui.util.TimeFormatUtil.formatDate
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatTime
 import kotlinx.datetime.LocalDateTime
 

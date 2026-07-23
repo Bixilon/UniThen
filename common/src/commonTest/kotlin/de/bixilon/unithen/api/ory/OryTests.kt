@@ -14,7 +14,8 @@ package de.bixilon.unithen.api.ory
 
 import de.bixilon.unithen.util.Jackson
 import de.bixilon.unithen.util.Kutil.toUuid
-import de.bixilon.kutil.stream.InputStreamUtil.readAsString
+import kotlinx.coroutines.runBlocking
+import unithen.common.generated.resources.Res
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +23,7 @@ class OryTests {
 
     @Test
     fun `parse zhs`() {
-        val data = OryTests::class.java.getResourceAsStream("/ory/whoami.json")!!.readAsString()
+        val data = runBlocking { Res.readBytes("files/ory/whoami.json") }.decodeToString()
 
         val parsed = Jackson.MAPPER.decodeFromString<Whoami>(data)
 

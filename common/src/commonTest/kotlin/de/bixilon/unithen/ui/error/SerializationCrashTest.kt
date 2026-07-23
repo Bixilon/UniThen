@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui.error
 
 import kotlinx.serialization.SerializationException
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SerializationCrashTest {

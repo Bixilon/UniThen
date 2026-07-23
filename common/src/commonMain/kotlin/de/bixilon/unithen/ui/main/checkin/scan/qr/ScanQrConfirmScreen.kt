@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
@@ -48,10 +49,8 @@ import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
-import java.io.IOException
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
-import java.nio.channels.UnresolvedAddressException
 import kotlin.uuid.Uuid
 
 
@@ -151,20 +150,13 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
             haptic.invoke(HapticFeedbackType.Confirm)
             if (!fast) pop()
-        } catch (error: IOException) {
+        } catch (error: NetworkException) {
             if (await && !offline) {
                 message = getString(Res.string.error_network, error.message ?: "")
             } else if (!fast) {
                 pop()
             }
             throw error
-        } catch (error: UnresolvedAddressException) {
-            if (await && !offline) {
-                message = getString(Res.string.error_network, error.message ?: "")
-            } else if (!fast) {
-                pop()
-            }
-            throw IOException(error)
         } catch (_: CheckInUnknownUserException) {
             message = getString(Res.string.scan_unknown_user_server)
             haptic.invoke(HapticFeedbackType.Reject)

@@ -3,6 +3,7 @@ agp = "9.1.1"
 kotlinxCoroutinesSwing = "1.11.0"
 ktor = "3.5.1"
 sqliteJdbc = "3.53.2.0"
+uiTest = "1.11.1"
 zxing = "3.5.4"
 zxingcpp = "3.1.0"
 kotlinxSerializationJson = "1.11.0"
@@ -63,6 +64,7 @@ kutil = { group = "de.bixilon", name = "kutil", version.ref = "kutil" }
 ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 
 sqlite-jdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqliteJdbc" }
+ui-test = { group = "org.jetbrains.compose.ui", name = "ui-test", version.ref = "uiTest" }
 zxing = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
 zxingcpp = { group = "io.github.zxing-cpp", name = "android", version.ref = "zxingcpp" }
 

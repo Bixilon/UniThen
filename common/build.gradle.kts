@@ -63,7 +63,16 @@ kotlin {
         }
     }
 
+    applyDefaultHierarchyTemplate()
+
     sourceSets {
+        val androidJvm = create("androidJvm") {
+            dependsOn(commonMain.get())
+            dependencies {
+                implementation(libs.zxing)
+            }
+        }
+
 
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -88,6 +97,9 @@ kotlin {
 
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.kotlinx.datetime)
+
+            implementation(libs.ui.test)
+
         }
 
         androidMain.dependencies {
@@ -111,12 +123,20 @@ kotlin {
             }
         }
 
-        jvmMain.dependencies {
-            implementation(libs.zxing)
+        jvmTest.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+
+        named(androidMain.name) {
+            dependsOn(androidJvm)
+        }
+        named(jvmMain.name) {
+            dependsOn(androidJvm)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.compose.components.resources)
         }
     }
 }

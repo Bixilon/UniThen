@@ -13,9 +13,9 @@
 package de.bixilon.unithen.graphql.query
 
 import de.bixilon.unithen.api.graphql.query.QueryLoader
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class QueryLoaderTest {
 

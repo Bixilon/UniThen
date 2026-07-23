@@ -13,10 +13,9 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import kotlinx.datetime.LocalDateTime
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatTime
-import de.bixilon.unithen.ui.util.TimeFormatUtil.formatDate
-import java.util.Locale
+import kotlinx.datetime.LocalDateTime
+import java.util.*
 
 @Composable
 actual fun LocalDateTime.formatTime() = formatTime(true)
