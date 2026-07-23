@@ -50,4 +50,39 @@ class SqlStorageTest {
         assertTrue(cursor.moveToNext())
         assertEquals("test.local", cursor.getString(0))
     }
+
+    @Test
+    fun `get site by id dummy database`() {
+        val site = dummy().sites[901]
+
+        assertEquals("test.local", site?.host)
+    }
+
+    @Test
+    fun `get event by id`() {
+        val event = dummy().events[901]
+
+        assertEquals("Test Event (a)", event?.name)
+    }
+
+    @Test
+    fun `get user by id`() {
+        val user = dummy().users[901]
+
+        assertEquals("Hans", user?.firstname)
+    }
+
+    @Test
+    fun `get account by id`() {
+        val account = dummy().accounts[903]
+
+        assertEquals("Marie", account?.firstname)
+    }
+
+    @Test
+    fun `get course by id`() {
+        val course = dummy().courses[901]
+
+        assertEquals("First course", course?.name)
+    }
 }
