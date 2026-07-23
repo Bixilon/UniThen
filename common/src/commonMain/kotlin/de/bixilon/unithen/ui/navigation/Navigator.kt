@@ -91,7 +91,7 @@ class Navigator(
 
     @Synchronized
     fun pop() {
-        assert(stack.size > 1) { "Can not pop start element!" }
+        require(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)
     }
 

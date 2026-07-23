@@ -12,7 +12,7 @@
 
 package de.bixilon.unithen.ui.navigation
 
-import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
@@ -26,19 +26,19 @@ object StateRoute : NavigationRoute
 
 @Composable
 fun NoDataScreen() {
-    Text("hello A")
+    Text("nothing")
 }
 
 @Composable
 fun DataScreen(text: String) {
-    Text("hello $text")
+    Text("data: $text")
 }
 
 @Composable
 fun StateScreen() {
-    var state by remember { mutableStateOf(false) }
-    Text("clicked: $state")
-    Checkbox(state, { state = it })
+    var clicks by remember { mutableStateOf(0) }
+    Text("clicked: $clicks")
+    Button({ clicks++ }) { Text("Click me!") }
 }
 
 @Composable
@@ -66,22 +66,22 @@ class NavigatorTest {
             setContent { NoDataScreen() }
         }
 
-        onNodeWithText("hello A").assertIsDisplayed()
+        onNodeWithText("nothing").assertIsDisplayed()
     }
 
     @Test
     fun `initial home`() = runComposeUiTest {
         setContent { TestNavigator {} }
 
-        onNodeWithText("hello A").assertIsDisplayed()
+        onNodeWithText("nothing").assertIsDisplayed()
     }
 
     @Test
     fun `navigation to b`() = runComposeUiTest {
         setContent { TestNavigator { it.navigate(RouteData("yes")) } }
 
-        onNodeWithText("hello A").assertIsNotDisplayed()
-        onNodeWithText("hello yes").assertIsDisplayed()
+        onNodeWithText("nothing").assertIsNotDisplayed()
+        onNodeWithText("data: yes").assertIsDisplayed()
     }
 
     @Test
@@ -92,10 +92,9 @@ class NavigatorTest {
         navigator!!.navigate(RouteData("yes"))
         navigator.pop()
 
-        waitUntilDoesNotExist(hasText("hello yes"))
+        waitUntilDoesNotExist(hasText("data: yes"))
 
-        onNodeWithText("hello A").assertIsDisplayed()
-        onNodeWithText("hello yes").assertIsNotDisplayed()
+        onNodeWithText("nothing").assertIsDisplayed()
     }
 
     @Test
@@ -105,13 +104,13 @@ class NavigatorTest {
         navigator!!.navigate(StateRoute)
 
 
-        waitUntilAtLeastOneExists(isEditable())
-        onNode(isEditable()).performClick()
-        onNodeWithText("clicked true").assertIsDisplayed()
+        waitUntilAtLeastOneExists(hasText("Click me!"))
+        onNode(hasText("Click me!")).performClick()
+        onNodeWithText("clicked: 1").assertIsDisplayed()
 
         navigator.navigate(NoDateRoute)
         navigator.pop()
 
-        onNodeWithText("clicked true").assertIsDisplayed()
+        onNodeWithText("clicked: 1").assertIsDisplayed()
     }
 }
