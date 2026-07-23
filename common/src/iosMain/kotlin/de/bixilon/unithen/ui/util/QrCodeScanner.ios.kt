@@ -14,9 +14,75 @@ package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.ui.error.ErrorBox
+import androidx.compose.ui.viewinterop.UIKitView
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.readValue
+import platform.AVFoundation.*
+import platform.CoreGraphics.CGRectZero
+import platform.UIKit.UIView
+import platform.darwin.NSObject
+import platform.darwin.dispatch_get_main_queue
+
+@OptIn(ExperimentalForeignApi::class)
+private class QrUiView(onResult: (Set<ScannedQrCode>) -> Unit) : UIView(frame = CGRectZero.readValue()) {
+    private val session = AVCaptureSession()
+    private val previewLayer = AVCaptureVideoPreviewLayer(session = session)
+
+    private val delegate = QrDelegate(onResult)
+
+    init {
+        setupCamera()
+
+        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
+        layer.addSublayer(previewLayer)
+    }
+
+    override fun layoutSubviews() {
+        super.layoutSubviews()
+        previewLayer.frame = bounds
+    }
+
+    private fun setupCamera() {
+        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: return
+        val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) as AVCaptureDeviceInput
+        if (!session.canAddInput(input)) return stop()
+
+        session.addInput(input)
+
+        val output = AVCaptureMetadataOutput()
+
+        if (!session.canAddOutput(output)) return stop()
+
+        session.addOutput(output)
+
+        output.metadataObjectTypes = listOf(AVMetadataObjectTypeQRCode)
+
+        output.setMetadataObjectsDelegate(delegate, dispatch_get_main_queue())
+
+        session.startRunning()
+    }
+
+    fun stop() {
+        session.stopRunning()
+    }
+}
+
+private class QrDelegate(val onResult: (Set<ScannedQrCode>) -> Unit) : NSObject(), AVCaptureMetadataOutputObjectsDelegateProtocol {
+
+    override fun captureOutput(output: AVCaptureOutput, didOutputMetadataObjects: List<*>, fromConnection: AVCaptureConnection) {
+        val code = didOutputMetadataObjects.mapNotNull { (it as? AVMetadataMachineReadableCodeObject)?.stringValue?.let { ScannedQrCode(it) } }.toSet()
+
+        onResult.invoke(code)
+    }
+}
 
 @Composable
 actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
-    ErrorBox("Unsupported!")
+    UIKitView(
+        modifier = modifier,
+        factory = {
+            QrUiView(onResult)
+        },
+        onRelease = { it.stop() }
+    )
 }
