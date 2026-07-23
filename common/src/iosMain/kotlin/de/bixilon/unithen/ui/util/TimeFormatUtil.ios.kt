@@ -13,8 +13,14 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatTime
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DayOfWeekNames
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.char
 import platform.Foundation.NSDateFormatter
 import platform.Foundation.NSLocale
 import platform.Foundation.currentLocale
@@ -35,5 +41,19 @@ actual fun LocalDateTime.formatDate() = formatDate(NSLocale.currentLocale)
 
 @Composable
 fun LocalDateTime.formatDate(locale: NSLocale): String {
-    return this.toString() // TODO
+
+    return remember {
+        val formatter = NSDateFormatter().apply { this.locale = locale }
+        val names = formatter.monthSymbols.cast<List<String>>()
+        val months = MonthNames(names[0], names[1], names[2], names[3], names[4], names[5], names[6], names[7], names[8], names[9], names[10], names[11])
+
+        val short = formatter.shortWeekdaySymbols.cast<List<String>>()
+        val days = DayOfWeekNames(short[1], short[2], short[3], short[4], short[5], short[6], short[0])
+
+
+        val format = LocalDateTime.Format { dayOfWeek(days); chars(", "); day(); chars(". "); monthName(months); char(' '); year(); }
+
+
+        return@remember this.format(format)
+    }
 }
