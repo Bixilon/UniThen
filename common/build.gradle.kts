@@ -148,8 +148,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.test)
         }
 
-        iosMain.dependencies {
+        nativeMain.dependencies {
             implementation(libs.zxingcpp.native)
+            implementation(libs.sqliter.driver)
         }
     }
 }
