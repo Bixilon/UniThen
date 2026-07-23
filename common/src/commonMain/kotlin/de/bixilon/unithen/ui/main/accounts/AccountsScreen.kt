@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.time.DurationUtil.weeks
+import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses

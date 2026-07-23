@@ -14,12 +14,13 @@ package de.bixilon.unithen.storage.sql
 
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
+import de.bixilon.unithen.storage.sql.SqlStorage.Transactions.TRANSACTIONS
 import de.bixilon.unithen.storage.sql.tables.*
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.Language
+import kotlin.native.concurrent.ThreadLocal
 
 class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     val scope = CoroutineScope(Dispatchers.Main)
@@ -35,7 +36,7 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
 
 
     fun notifyState() {
-        TRANSACTIONS.get()?.let { it += notify; return }
+        TRANSACTIONS?.let { it += notify; return }
 
         scope.launch { notify.intValue++ }
     }
@@ -44,27 +45,27 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     fun <T> query(statement: SqlBuilder.Executable, runnable: (SQLiteHelper.Cursor) -> T) = query(statement.toSql(), runnable)
     fun <T> query(statement: SqlBuilder.SqlStatement, runnable: (SQLiteHelper.Cursor) -> T) = query(statement.sql, parameters = statement.parameters.toTypedArray(), runnable)
 
-    fun <T> query(@Language("SQL") sql: String, vararg parameters: Any?, runnable: (SQLiteHelper.Cursor) -> T): T {
+    fun <T> query(sql: String, vararg parameters: Any?, runnable: (SQLiteHelper.Cursor) -> T): T {
         return helper.query(sql, *parameters).use { runnable.invoke(it) }
     }
 
-    fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+    fun insert(sql: String, vararg parameters: Any?): Int {
         return helper.insert(sql, *parameters).apply { notifyState() }
     }
 
-    fun update(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+    fun update(sql: String, vararg parameters: Any?): Int {
         return helper.execute(sql, *parameters).apply { notifyState() }
     }
 
     inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T {
-        if (TRANSACTIONS.get() != null) throw IllegalStateException("Nested transactions are forbidden!")
+        if (TRANSACTIONS != null) throw IllegalStateException("Nested transactions are forbidden!")
         val set: MutableSet<MutableIntState> = mutableSetOf()
         try {
-            TRANSACTIONS.set(set)
+            TRANSACTIONS = set
             return helper.transaction { block.invoke(this@SqlStorage) }
         } finally {
             scope.launch { set.forEach { it.intValue++ } }
-            TRANSACTIONS.remove()
+            TRANSACTIONS = null
         }
     }
 
@@ -84,6 +85,10 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
 
     companion object {
         const val VERSION = 9
-        val TRANSACTIONS = ThreadLocal<MutableSet<MutableIntState>>()
+    }
+
+    @ThreadLocal
+    object Transactions {
+        var TRANSACTIONS: MutableSet<MutableIntState>? = null
     }
 }

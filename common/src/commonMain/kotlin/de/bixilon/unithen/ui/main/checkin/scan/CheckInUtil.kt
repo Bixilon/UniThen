@@ -18,6 +18,7 @@ import de.bixilon.unithen.storage.types.*
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes

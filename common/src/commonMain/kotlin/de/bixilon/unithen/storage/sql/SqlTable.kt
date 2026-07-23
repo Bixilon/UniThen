@@ -18,7 +18,6 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
-import org.intellij.lang.annotations.Language
 
 abstract class SqlTable<T : DbObject>(
     protected val storage: SqlStorage,
@@ -41,15 +40,15 @@ abstract class SqlTable<T : DbObject>(
         update("UPDATE $table SET ${filter.sql} WHERE id=?", parameters = arrayOf(*filter.parameters.toTypedArray(), id))
     }
 
-    protected fun update(@Language("SQL") sql: String, vararg parameters: Any?) {
+    protected fun update(sql: String, vararg parameters: Any?) {
         storage.update(sql, parameters = parameters)
     }
 
-    protected fun insert(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+    protected fun insert(sql: String, vararg parameters: Any?): Int {
         return storage.insert(sql, *parameters)
     }
 
-    protected fun execute(@Language("SQL") sql: String, vararg parameters: Any?): Int {
+    protected fun execute(sql: String, vararg parameters: Any?): Int {
         return storage.update(sql, *parameters)
     }
 

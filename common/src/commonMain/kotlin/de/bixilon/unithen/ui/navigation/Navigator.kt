@@ -69,13 +69,12 @@ class Navigator(
         }
     }
 
-    @Synchronized
     fun navigate(route: NavigationRoute, policy: NavigationStackPolicy = this.policy) {
         val composable = routes[route::class] ?: throw IllegalStateException("No route registered for $route!")
 
         when (policy) {
             NavigationStackPolicy.NORMAL -> Unit
-            NavigationStackPolicy.IGNORE_SAME_TYPE -> stack.removeIf { it.route::class.java == route::class.java }
+            NavigationStackPolicy.IGNORE_SAME_TYPE -> stack.removeAll { it.route::class == route::class }
             NavigationStackPolicy.IGNORE_SAME -> {
                 val existing = stack.find { it.route == route }
                 if (existing != null) {
@@ -89,7 +88,6 @@ class Navigator(
         stack += Frame(route, composable)
     }
 
-    @Synchronized
     fun pop() {
         require(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)

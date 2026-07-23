@@ -12,16 +12,15 @@
 
 package de.bixilon.unithen.storage.sql.util
 
-import org.intellij.lang.annotations.Language
 
 data class SqlFilter(
-    @param:Language("SQL") val sql: String,
+    val sql: String,
     val parameters: List<Any> = emptyList(),
 ) {
 
     constructor(sql: String, vararg parameters: Any) : this(sql, parameters.toList())
 
-    private fun connect(@Language("SQL") conjunction: String, other: SqlFilter?): SqlFilter {
+    private fun connect(conjunction: String, other: SqlFilter?): SqlFilter {
         if (other == null || other.sql.isBlank()) return this
 
         return SqlFilter("($sql) $conjunction (${other.sql})", parameters + other.parameters)

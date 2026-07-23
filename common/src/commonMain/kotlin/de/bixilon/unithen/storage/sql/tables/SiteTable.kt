@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SQLiteHelper
@@ -39,7 +38,7 @@ class SiteTable(
     }
 
     fun add(host: String, name: String, icon: ByteArray?): Site {
-        assert(!host.startsWith("https://"))
+        require(!host.startsWith("https://"))
         this[host]?.let { return it } // TODO: update
 
         return insert(host, name, icon)

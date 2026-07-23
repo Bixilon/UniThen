@@ -47,10 +47,7 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.loading_database
 import kotlin.time.Duration.Companion.milliseconds

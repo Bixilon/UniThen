@@ -120,7 +120,7 @@ object SqlBuilder {
         override fun toSql() = executable + SqlStatement("LIMIT $limit", emptyList())
 
         init {
-            assert(limit > 0)
+            require(limit > 0)
         }
     }
 

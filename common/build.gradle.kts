@@ -63,6 +63,7 @@ kotlin {
         }
     }
 
+    iosSimulatorArm64()
     iosArm64()
 
     applyDefaultHierarchyTemplate()
@@ -148,7 +149,7 @@ kotlin {
         }
 
         iosMain.dependencies {
-            implementation("io.github.zxing-cpp:kotlin-native:3.1.0")
+            implementation(libs.zxingcpp.native)
         }
     }
 }

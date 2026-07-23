@@ -116,9 +116,9 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     LaunchedEffect(Unit) {
         while (true) {
             val now = TimeSource.Monotonic.markNow()
-            errors.removeIf { (now - it.time) > 1.seconds }
-            accepted.removeIf { (it.done != null && (now - it.done!!) > 5.seconds) }
-            accepted.removeIf { (now - it.time) > if (await) 30.seconds else 5.seconds }
+            errors.removeAll { (now - it.time) > 1.seconds }
+            accepted.removeAll { (it.done != null && (now - it.done!!) > 5.seconds) }
+            accepted.removeAll { (now - it.time) > if (await) 30.seconds else 5.seconds }
             delay(100.milliseconds)
         }
     }

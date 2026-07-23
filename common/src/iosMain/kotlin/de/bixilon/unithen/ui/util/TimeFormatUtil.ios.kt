@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.intl.Locale
-import de.bixilon.unithen.ui.util.TimeFormatUtil.formatDate
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatTime
 import kotlinx.datetime.LocalDateTime
 import platform.Foundation.NSDateFormatter
@@ -33,3 +31,9 @@ actual fun LocalDateTime.formatTime() = formatTime(!is12HourFormat())
 
 @Composable
 actual fun LocalDateTime.formatDate() = formatDate(NSLocale.currentLocale)
+
+
+@Composable
+fun LocalDateTime.formatDate(locale: NSLocale): String {
+    return this.toString() // TODO
+}

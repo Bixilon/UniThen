@@ -15,6 +15,7 @@ package de.bixilon.unithen.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import de.bixilon.kutil.enums.ValuesEnum
+import kotlin.jvm.JvmName
 
 
 @Composable

@@ -12,23 +12,14 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.foundation.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Canvas
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.FilterQuality
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageBitmapConfig
-import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.*
 import zxingcpp.*
 
 val PAINT = Paint().apply { color = Color.White }
 operator fun ImageView.get(x: Int, y: Int): Boolean = data.get((x * pixStride) + (y * rowStride)).toInt() > 0
 
 @OptIn(ExperimentalWriterApi::class)
-private fun encode(data: String): ImageBitmap {
+actual fun encodeQr(data: String): ImageBitmap {
     val options = CreatorOptions(BarcodeFormat.QRCode)
     val barcode = Barcode(data, options)
     val writer = WriterOptions().apply { }
@@ -49,11 +40,4 @@ private fun encode(data: String): ImageBitmap {
     }
 
     return bitmap
-}
-
-@Composable
-actual fun QrCode(data: String, modifier: Modifier) {
-    val matrix = remember(data) { encode(data) }
-
-    Image(matrix, data, modifier = modifier, filterQuality = FilterQuality.None)
 }
