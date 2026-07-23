@@ -12,24 +12,11 @@
 
 package de.bixilon.unithen.http
 
-import de.bixilon.unithen.api.errors.NetworkException
-import io.ktor.client.*
-import io.ktor.client.plugins.*
-import kotlin.time.Duration.Companion.seconds
+import io.ktor.util.network.*
+import kotlinx.io.IOException
 
-expect fun isNetworkError(error: Throwable): Boolean
-
-val CLIENT by lazy {
-    HttpClient {
-        install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
-        HttpResponseValidator {
-            handleResponseException {
-                if (isNetworkError(it)) {
-                    throw NetworkException(it)
-                }
-                throw it
-            }
-        }
-        followRedirects = false
-    }
+actual fun isNetworkError(error: Throwable) = when (error) {
+    is UnresolvedAddressException -> true
+    is IOException -> true
+    else -> false
 }
