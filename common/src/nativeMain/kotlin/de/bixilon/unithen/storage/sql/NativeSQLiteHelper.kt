@@ -16,8 +16,8 @@ import co.touchlab.sqliter.*
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-class NativeSQLiteHelper : SQLiteHelper {
-    val driver by lazy { createDatabaseManager(DatabaseConfiguration("uninow", SqlStorage.VERSION, create = this::create, upgrade = this::upgrade)).createMultiThreadedConnection() }
+class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
+    val driver by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade)).createMultiThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
