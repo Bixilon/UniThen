@@ -13,30 +13,81 @@
 package de.bixilon.unithen.ui.auth
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.text.input.rememberTextFieldState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import platform.Foundation.NSHTTPCookie
+import platform.Foundation.NSURL
+import platform.Foundation.NSURLRequest
+import platform.WebKit.WKNavigation
+import platform.WebKit.WKNavigationDelegateProtocol
+import platform.WebKit.WKWebView
+import platform.darwin.NSObject
+
 
 @Composable
 actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
-    val state = rememberTextFieldState()
+    var _host by remember { mutableStateOf("") }
+
     Column {
-        Text("So, this web view stuff is not implemented on desktop, feel free to paste your session cookie (ory-session) below:")
-        Text("($host)")
-        TextField(state)
-
-        val disabled = state.text.isBlank() || state.text.length < 30
-
-        Button({ callback.invoke(CookieAuthentication(state.text.toString())) }, enabled = !disabled) {
-            Icon(Icons.Default.Add, "")
-            Text("Add")
+        if (_host.isNotBlank()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                text = _host,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Center,
+            )
         }
+        UIKitView(
+            modifier = Modifier.fillMaxHeight(),
+            factory = {
+                val view = WKWebView()
+
+                view.customUserAgent = HttpUtil.USER_AGENT
+                view.navigationDelegate = WebViewUrlDelegate {
+                    _host = it.host ?: ""
+
+                    if (it.host != host) return@WebViewUrlDelegate
+
+                    val cookies = view.configuration.websiteDataStore.httpCookieStore
+
+                    cookies.getAllCookies {
+                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == "ory-session" } ?: return@getAllCookies
+
+                        view.loadHTMLString("<html>Logged in!</html>", null)
+                        callback.invoke(CookieAuthentication(token.value()))
+                    }
+                }
+
+                val url = NSURL.URLWithString("https://$host/auth/login")!!
+                val request = NSURLRequest.requestWithURL(url)
+
+                view.loadRequest(request)
+
+                return@UIKitView view
+            },
+        )
+    }
+}
+
+private class WebViewUrlDelegate(val onNavigate: (NSURL) -> Unit) : NSObject(), WKNavigationDelegateProtocol {
+
+    override fun webView(webView: WKWebView, didFinishNavigation: WKNavigation?) {
+        webView.URL?.let { onNavigate.invoke(it) }
     }
 }
