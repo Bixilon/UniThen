@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.unithen.ui.waitUntilText
 import kotlin.test.Test
 
 
@@ -104,8 +105,7 @@ class NavigatorTest {
         navigator!!.navigate(StateRoute)
 
 
-        waitUntilAtLeastOneExists(hasText("Click me!"))
-        onNode(hasText("Click me!")).performClick()
+        waitUntilText("Click me!").performClick()
         onNodeWithText("clicked: 1").assertIsDisplayed()
 
         navigator.navigate(NoDateRoute)
