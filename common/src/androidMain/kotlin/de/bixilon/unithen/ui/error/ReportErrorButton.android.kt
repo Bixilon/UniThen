@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.error
 
 import android.content.Intent
+import android.os.Build
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import de.bixilon.unithen.BuildInfo
@@ -26,7 +27,7 @@ actual fun useSendCrashMail(): (stack: String) -> Unit {
             type = "text/plain"
             putExtra(Intent.EXTRA_EMAIL, arrayOf(CRASH_ADDRESS))
             putExtra(Intent.EXTRA_SUBJECT, "UniThen Crash")
-            putExtra(Intent.EXTRA_TEXT, "Hi there,\nApp version: ${BuildInfo.VERSION}\nPlease see the exception below:\n\n${it}\n\n\nCan you please fix this issue?\nThanks!")
+            putExtra(Intent.EXTRA_TEXT, "Hi there,\nApp version: ${BuildInfo.VERSION} on Android ${Build.VERSION.SDK_INT}\nPlease see the exception below:\n\n${it}\n\n\nCan you please fix this issue?\nThanks!")
         }
 
 
