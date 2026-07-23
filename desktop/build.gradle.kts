@@ -35,7 +35,7 @@ kotlin {
 
             implementation(libs.kutil)
 
-            implementation(libs.sqlite.jdbc)
+            //   implementation(libs.sqlite.jdbc)
             implementation(libs.kotlinx.coroutines.swing)
         }
     }

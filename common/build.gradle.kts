@@ -130,8 +130,12 @@ kotlin {
         named(androidMain.name) {
             dependsOn(androidJvm)
         }
+
         named(jvmMain.name) {
             dependsOn(androidJvm)
+            dependencies {
+                implementation(libs.sqlite.jdbc)
+            }
         }
 
         commonTest.dependencies {
