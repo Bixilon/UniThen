@@ -102,8 +102,8 @@ class AccountTable(
         execute("DELETE FROM account_courses WHERE account=?", account.id)
     }
 
-    fun addToCourse(account: Account, course: Course) {
-        execute("INSERT OR REPLACE INTO account_courses(account, course) VALUES (?,?)", account.id, course.id)
+    fun addToCourse(account: Account, course: Course, tutor: Boolean) {
+        execute("INSERT OR REPLACE INTO account_courses(account, course, tutor) VALUES (?,?,?)", account.id, course.id, tutor)
     }
 
     fun remove(account: Account) = storage.transaction {

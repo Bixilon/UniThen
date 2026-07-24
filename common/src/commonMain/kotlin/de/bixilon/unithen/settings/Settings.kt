@@ -26,8 +26,6 @@ object Settings {
     val SCAN_CONFIRMATION_SCREEN = Setting("scan_confirmation_screen", false)
     val SCAN_ALLOW_OFFLINE = Setting("scan_allow_offline", true)
 
-    val FETCH_APPOINTMENTS = Setting("fetch_appointments", false)
-
     val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
 
     val ATTENDEE_ORDER = Setting("attendee_order", Order.ASC)

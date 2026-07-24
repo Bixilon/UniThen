@@ -23,17 +23,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
-import de.bixilon.unithen.settings.Settings
-import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
@@ -58,7 +54,6 @@ fun CoursesScreen() {
     val events = rememberStorageAsync { events.all().sortedByDescending { it.start } } ?: emptyList() // TODO: sort in database
 
     val toast = useToast()
-    val fetchAppointments by rememberSetting(Settings.FETCH_APPOINTMENTS)
 
     val refresh = useAsyncNetwork<Unit>(null) {
         toast.invoke(Res.string.courses_synchronize_started, true)
@@ -67,7 +62,7 @@ fun CoursesScreen() {
 
         storage.accounts.all().forEach {
             try {
-                if (fetchAppointments) storage.fetchFromAppointments(it, false) else storage.fetchFromCourses(it, false)
+                storage.fetchFromCourses(it, false)
             } catch (_: AuthenticationException) {
                 storage.accounts.logout(it)
                 loginSite = it.site

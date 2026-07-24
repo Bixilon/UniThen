@@ -32,10 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromAppointments
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
-import de.bixilon.unithen.settings.Settings
-import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -55,8 +52,7 @@ import unithen.common.generated.resources.*
 @Composable
 private fun Sync(account: Account): (() -> Unit)? {
     val storage = LocalStorage.current
-    val fetchAppointments by rememberSetting(Settings.FETCH_APPOINTMENTS)
-    val synchronize = useAsyncNetwork<Unit>(account) { if (fetchAppointments) storage.fetchFromAppointments(account, true) else storage.fetchFromCourses(account, true) }
+    val synchronize = useAsyncNetwork<Unit>(account) { storage.fetchFromCourses(account, true) }
 
     var running by remember { mutableStateOf(false) } // TODO: Abort actually
 

@@ -80,7 +80,6 @@ fun SettingsScreen() {
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle(Res.string.settings_advanced.i18n())
             BooleanSetting(Settings.QR_CODE_REMOVE_NAME, Res.string.settings_advanced_remove_name.i18n(), Res.string.settings_advanced_remove_name_description.i18n())
-            BooleanSetting(Settings.FETCH_APPOINTMENTS, Res.string.settings_advanced_fetch_appointments.i18n(), Res.string.settings_advanced_fetch_appointments_description.i18n())
         }
         HorizontalDivider()
 

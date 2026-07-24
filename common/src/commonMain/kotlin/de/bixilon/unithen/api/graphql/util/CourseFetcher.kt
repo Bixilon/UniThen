@@ -100,46 +100,6 @@ object CourseFetcher {
         accounts.update(account.id, fetched = Clock.System.now())
     }
 
-    suspend fun SqlStorage.fetchFromAppointments(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
-        val site = sites[account.site]!!
-        val api = account.api(site)
-        if (!force && !account.isStale()) return
-
-        val appointmentsQl = api.getAppointments() ?: throw NullPointerException("No appointments?")
-        val coursesIds = appointmentsQl.map { it.course!!.id }.toSet()
-
-        progress?.invoke(CourseFetchProgress(0, coursesIds.size))
-
-        val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
-
-        setCourses(account, site, coursesIds)
-
-        var done = 0
-        var total = coursesIds.size
-
-        coroutineScope {
-            coursesIds.mapNotNull { courseId ->
-                val course = this@fetchFromAppointments.courses[site, courseId]
-
-                if (course != null && !course.isDataStale()) {
-                    total--
-                    progress?.invoke(CourseFetchProgress(done, total))
-                    return@mapNotNull null
-                }
-
-                async {
-                    val appointments = appointmentsQl.filter { it.course!!.id == courseId }
-                    fetchCourse(account, courseId, true, semaphore, appointments)
-
-                    progress?.invoke(CourseFetchProgress(done++, total))
-                }
-            }.awaitAll()
-        }
-
-
-        accounts.update(account.id, fetched = Clock.System.now())
-    }
-
     suspend fun SqlStorage.fetch(account: Account, course: Course) {
         val site = sites[account.site]!!
         val api = account.api(site)
