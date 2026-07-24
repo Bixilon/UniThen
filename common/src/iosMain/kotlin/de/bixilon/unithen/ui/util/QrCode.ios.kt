@@ -18,16 +18,15 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import org.jetbrains.skia.Image
-import platform.CoreImage.*
-import platform.Foundation.NSData
-import platform.Foundation.NSString
-import platform.Foundation.NSUTF8StringEncoding
-import platform.Foundation.dataUsingEncoding
+import platform.CoreImage.CIContext
+import platform.CoreImage.CIFilter
+import platform.CoreImage.QRCodeGenerator
+import platform.CoreImage.createCGImage
+import platform.Foundation.*
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePNGRepresentation
 import platform.posix.memcpy
 
-// TODO: This is so trashy
 
 @Suppress("CAST_NEVER_SUCCEEDS")
 fun String.nsdata(): NSData? {
@@ -35,13 +34,16 @@ fun String.nsdata(): NSData? {
 }
 
 @OptIn(ExperimentalForeignApi::class)
-fun NSData.toByteArray(): ByteArray =
-    ByteArray(length.toInt()).apply {
-        usePinned {
-            memcpy(it.addressOf(0), bytes, length)
-        }
+fun NSData.toByteArray(): ByteArray {
+    val array = ByteArray(length.toInt())
+    array.usePinned {
+        memcpy(it.addressOf(0), bytes, length)
     }
 
+    return array
+}
+
+// TODO: This is so hacks
 fun UIImage.asImageBitmap(): ImageBitmap {
     val data = UIImagePNGRepresentation(this)!!
     val bytes = data.toByteArray()
@@ -53,12 +55,11 @@ fun UIImage.asImageBitmap(): ImageBitmap {
 actual fun encodeQr(data: String): ImageBitmap {
     val filter = CIFilter.QRCodeGenerator()
 
-    if (filter is CIQRCodeGeneratorProtocol) {
-        filter.correctionLevel = "H"
-        filter.message = data.nsdata()!!
-    }
+    filter.setValue(data.nsdata(), forKey = "message")
+    filter.setValue("H", forKey = "correctionLevel")
 
-    val output = filter.outputImage ?: throw IllegalArgumentException("Failed to generate QR image")
+    val output = filter.outputImage ?: throw IllegalArgumentException("Failed to generate image")
+
 
     val context = CIContext.context()
 
