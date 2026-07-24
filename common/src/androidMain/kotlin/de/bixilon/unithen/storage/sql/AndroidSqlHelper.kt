@@ -48,6 +48,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         writableDatabase.executeBatch(path)
     }
 
+    @Synchronized
     override fun <T> transaction(block: () -> T): T {
         return writableDatabase.transaction { block.invoke() }
     }
