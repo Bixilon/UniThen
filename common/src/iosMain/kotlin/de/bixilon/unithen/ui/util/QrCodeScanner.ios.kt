@@ -12,9 +12,10 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.util.camera.useCameraPermission
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
@@ -29,16 +30,25 @@ import unithen.common.generated.resources.scan_camera_permission
 @OptIn(ExperimentalForeignApi::class)
 private class QrUiView(
     val onResult: (Set<ScannedQrCode>) -> Unit,
+    val onError: (Throwable) -> Unit,
 ) : UIView(frame = CGRectZero.readValue()) {
     private val session = AVCaptureSession()
     private val preview = AVCaptureVideoPreviewLayer(session = session).apply {
         videoGravity = AVLayerVideoGravityResizeAspectFill
     }
+    private var errored = false
 
     init {
         layer.addSublayer(preview)
 
-        setup()
+        try {
+            setup()
+        } catch (error: Throwable) {
+            errored = true
+            error.printStackTrace()
+            stop()
+            onError(error)
+        }
     }
 
     override fun layoutSubviews() {
@@ -49,7 +59,7 @@ private class QrUiView(
     override fun didMoveToWindow() {
         super.didMoveToWindow()
 
-        if (window != null && !session.running) {
+        if (window != null && !session.running && !errored) {
             session.startRunning()
         }
     }
@@ -60,15 +70,15 @@ private class QrUiView(
     }
 
     private fun setup() {
-        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: return stop()
-        val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null)
-        if (input == null || !session.canAddInput(input)) return stop()
+        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: throw IllegalStateException("No video devices!")
+        val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) ?: throw IllegalStateException("No capture input devices!")
+        if (!session.canAddInput(input)) throw IllegalStateException("Can not add input device!")
 
         session.addInput(input)
 
         val output = AVCaptureMetadataOutput()
 
-        if (!session.canAddOutput(output)) return stop()
+        if (!session.canAddOutput(output)) throw IllegalStateException("Can not add output!")
 
         session.addOutput(output)
 
@@ -101,12 +111,15 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) ->
         CameraMessage(modifier, Res.string.scan_camera_permission.i18n())
         return
     }
+    var error by remember { mutableStateOf<String?>(null) }
+
+    if (error != null) {
+        ErrorBox("Camera error: $error")
+        return
+    }
 
     UIKitView(
         modifier = modifier,
-        factory = {
-            QrUiView(onResult)
-        },
-        onRelease = { it.stop() }
+        factory = { QrUiView(onResult) { error = it.message ?: it::class.simpleName } },
     )
 }
