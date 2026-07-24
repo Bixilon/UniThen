@@ -1,0 +1,8 @@
+xcuserdata/
+
+*.hmap
+*.ipa
+*.dSYN
+*.dSYN.zip
+
+.build/
