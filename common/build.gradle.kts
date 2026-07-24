@@ -69,13 +69,13 @@ kotlin {
 
     iosSimulatorArm64 {
         binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.shared")
+            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
             baseName = xcfName
         }
     }
     iosArm64 {
         binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.shared")
+            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
             baseName = xcfName
         }
     }
