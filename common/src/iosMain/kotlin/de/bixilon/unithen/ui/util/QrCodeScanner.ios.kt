@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.unithen.ui.util.camera.useCameraPermission
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.AVFoundation.*
@@ -22,30 +23,46 @@ import platform.CoreGraphics.CGRectZero
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.dispatch_get_main_queue
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.scan_camera_permission
 
 @OptIn(ExperimentalForeignApi::class)
-private class QrUiView(onResult: (Set<ScannedQrCode>) -> Unit) : UIView(frame = CGRectZero.readValue()) {
+private class QrUiView(
+    val onResult: (Set<ScannedQrCode>) -> Unit,
+) : UIView(frame = CGRectZero.readValue()) {
     private val session = AVCaptureSession()
-    private val previewLayer = AVCaptureVideoPreviewLayer(session = session)
-
-    private val delegate = QrDelegate(onResult)
+    private val preview = AVCaptureVideoPreviewLayer(session = session).apply {
+        videoGravity = AVLayerVideoGravityResizeAspectFill
+    }
 
     init {
-        setupCamera()
+        layer.addSublayer(preview)
 
-        previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill
-        layer.addSublayer(previewLayer)
+        setup()
     }
 
     override fun layoutSubviews() {
         super.layoutSubviews()
-        previewLayer.frame = bounds
+        preview.frame = bounds
     }
 
-    private fun setupCamera() {
-        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: return
-        val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) as AVCaptureDeviceInput
-        if (!session.canAddInput(input)) return stop()
+    override fun didMoveToWindow() {
+        super.didMoveToWindow()
+
+        if (window != null && !session.running) {
+            session.startRunning()
+        }
+    }
+
+    override fun removeFromSuperview() {
+        stop()
+        super.removeFromSuperview()
+    }
+
+    private fun setup() {
+        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: return stop()
+        val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null)
+        if (input == null || !session.canAddInput(input)) return stop()
 
         session.addInput(input)
 
@@ -57,13 +74,13 @@ private class QrUiView(onResult: (Set<ScannedQrCode>) -> Unit) : UIView(frame = 
 
         output.metadataObjectTypes = listOf(AVMetadataObjectTypeQRCode)
 
-        output.setMetadataObjectsDelegate(delegate, dispatch_get_main_queue())
-
-        session.startRunning()
+        output.setMetadataObjectsDelegate(QrDelegate(onResult), dispatch_get_main_queue())
     }
 
     fun stop() {
-        session.stopRunning()
+        if (session.isRunning()) {
+            session.stopRunning()
+        }
     }
 }
 
@@ -78,6 +95,13 @@ private class QrDelegate(val onResult: (Set<ScannedQrCode>) -> Unit) : NSObject(
 
 @Composable
 actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
+    val permission = useCameraPermission()
+
+    if (!permission) {
+        CameraMessage(modifier, Res.string.scan_camera_permission.i18n())
+        return
+    }
+
     UIKitView(
         modifier = modifier,
         factory = {
