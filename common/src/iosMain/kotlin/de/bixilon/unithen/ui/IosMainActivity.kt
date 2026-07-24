@@ -1,12 +1,13 @@
 package de.bixilon.unithen.ui
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
@@ -31,12 +32,7 @@ fun IosMainActivity(): UIViewController = ComposeUIViewController {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        top = innerPadding.calculateTopPadding(),
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        bottom = 0.dp
-                    )
+                    .padding(innerPadding)
             ) {
                 CompositionLocalProvider(
                     LocalStorage provides STORAGE,
