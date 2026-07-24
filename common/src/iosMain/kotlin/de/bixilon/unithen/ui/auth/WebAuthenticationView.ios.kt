@@ -24,16 +24,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import platform.Foundation.NSHTTPCookie
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
-import platform.WebKit.WKNavigationAction
-import platform.WebKit.WKNavigationActionPolicy
-import platform.WebKit.WKNavigationDelegateProtocol
-import platform.WebKit.WKWebView
+import platform.WebKit.*
 import platform.darwin.NSObject
 
 
@@ -56,17 +54,19 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
             modifier = Modifier.fillMaxSize(),
             factory = {
                 val view = WKWebView()
+                if (!RuntimeInfo.debug) {
+                    view.configuration.websiteDataStore = WKWebsiteDataStore.nonPersistentDataStore()
+                }
+
+                val cookies = view.configuration.websiteDataStore.httpCookieStore
 
                 view.customUserAgent = HttpUtil.USER_AGENT
                 view.navigationDelegate = WebViewUrlDelegate {
                     _host = it.host ?: ""
 
-                    if (it.host != host) return@WebViewUrlDelegate
-
-                    val cookies = view.configuration.websiteDataStore.httpCookieStore
 
                     cookies.getAllCookies {
-                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == WEB_SESSION_COOKIE_NAME } ?: return@getAllCookies
+                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == WEB_SESSION_COOKIE_NAME && it.domain == host } ?: return@getAllCookies
 
                         view.loadHTMLString("<html>Logged in!</html>", null)
                         callback.invoke(CookieAuthentication(token.value()))
