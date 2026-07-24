@@ -11,7 +11,7 @@ import SwiftUI
 struct UniThenApp: App {
     var body: some Scene {
         WindowGroup {
-            ComposeViewController()
+            ComposeViewController().ignoresSafeArea(.all)
         }
     }
 }
