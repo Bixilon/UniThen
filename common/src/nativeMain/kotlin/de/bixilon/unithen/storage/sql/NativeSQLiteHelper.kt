@@ -13,14 +13,18 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
-import de.bixilon.kutil.concurrent.lock.Lock
-import de.bixilon.kutil.concurrent.lock.LockUtil.locked
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
+@ThreadLocal
+private object Connection {
+    var connection: DatabaseConnection? = null
+}
+
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
-    private val lock = Lock.lock()
-    val driver by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createMultiThreadedConnection() }
+    private val manager by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)) }
+    private val connection by lazy { manager.createMultiThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
@@ -43,7 +47,7 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
     }
 
     override fun load() {
-        driver
+        manager
     }
 
     private fun Statement.bind(vararg parameters: Any?) {
@@ -63,8 +67,10 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         }
     }
 
+    private fun getConnection() = Connection.connection ?: connection
+
     private fun createStatement(sql: String, vararg parameters: Any?): Statement {
-        val statement = driver.createStatement(sql)
+        val statement = getConnection().createStatement(sql)
         statement.bind(*parameters)
 
         return statement
@@ -90,11 +96,20 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
     }
 
     override fun <T> transaction(block: () -> T): T {
-        return lock.locked { driver.withTransaction { block.invoke() } }
+        if (Connection.connection != null) throw IllegalArgumentException("Nested transactions are forbidden!")
+        val connection = manager.createMultiThreadedConnection()
+        try {
+            Connection.connection = connection
+            return connection.withTransaction { block.invoke() }
+        } finally {
+            Connection.connection = null
+            connection.close()
+        }
     }
 
     override fun close() {
-        driver.close()
+        Connection.connection?.close()
+        connection.close()
     }
 
     class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {
