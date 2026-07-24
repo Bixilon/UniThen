@@ -100,10 +100,10 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
 
     inner class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {
         override fun getBlob(index: Int) = cursor.getBytes(index)
-        override fun getBlobOrNull(index: Int) = cursor.getBytes(index)
+        override fun getBlobOrNull(index: Int) = if (isNull(index)) null else cursor.getBytes(index)
 
         override fun getString(index: Int) = cursor.getString(index)
-        override fun getStringOrNull(index: Int) = cursor.getString(index)
+        override fun getStringOrNull(index: Int) = if (isNull(index)) null else cursor.getString(index)
 
         override fun getInt(index: Int) = cursor.getLong(index).toInt()
         override fun getLong(index: Int) = cursor.getLong(index)
