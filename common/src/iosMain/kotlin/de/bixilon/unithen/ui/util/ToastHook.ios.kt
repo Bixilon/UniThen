@@ -15,6 +15,9 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.Composable
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import platform.CoreGraphics.CGPointMake
 import platform.CoreGraphics.CGRectMake
 import platform.UIKit.*
@@ -24,25 +27,27 @@ import platform.UIKit.*
 actual fun useToast(): ToastInvoker { // thanks: https://github.com/DaaniDev/Toastix/blob/master/composeApp/src/iosMain/kotlin/ShowToastMsg.ios.kt
     return object : ToastInvoker {
         override suspend fun invoke(message: String, long: Boolean) {
-            val toast = UILabel(frame = CGRectMake(0.0, 0.0, UIScreen.mainScreen.bounds.useContents { size.width } - 40, 35.0))
+            CoroutineScope(Dispatchers.Main).launch {
+                val toast = UILabel(frame = CGRectMake(0.0, 0.0, UIScreen.mainScreen.bounds.useContents { size.width } - 40, 35.0))
 
-            toast.center = CGPointMake(UIScreen.mainScreen.bounds.useContents { size.width } / 2, UIScreen.mainScreen.bounds.useContents { size.height } - 100.0)
-            toast.textAlignment = NSTextAlignmentCenter
-            toast.backgroundColor = UIColor.blackColor.colorWithAlphaComponent(0.6)
-            toast.textColor = UIColor.whiteColor
-            toast.text = message
-            toast.alpha = 1.0
-            toast.layer.cornerRadius = 15.0
-            toast.clipsToBounds = true
+                toast.center = CGPointMake(UIScreen.mainScreen.bounds.useContents { size.width } / 2, UIScreen.mainScreen.bounds.useContents { size.height } - 100.0)
+                toast.textAlignment = NSTextAlignmentCenter
+                toast.backgroundColor = UIColor.blackColor.colorWithAlphaComponent(0.6)
+                toast.textColor = UIColor.whiteColor
+                toast.text = message
+                toast.alpha = 1.0
+                toast.layer.cornerRadius = 15.0
+                toast.clipsToBounds = true
 
-            UIApplication.sharedApplication.keyWindow?.rootViewController?.view?.addSubview(toast)
+                UIApplication.sharedApplication.keyWindow?.rootViewController?.view?.addSubview(toast)
 
-            UIView.animateWithDuration(
-                if (long) 10.0 else 5.0,
-                delay = 0.1,
-                options = UIViewAnimationOptionCurveEaseOut,
-                animations = { toast.alpha = 0.0 },
-                completion = { if (it) toast.removeFromSuperview() })
+                UIView.animateWithDuration(
+                    if (long) 10.0 else 5.0,
+                    delay = 0.1,
+                    options = UIViewAnimationOptionCurveEaseOut,
+                    animations = { toast.alpha = 0.0 },
+                    completion = { if (it) toast.removeFromSuperview() })
+            }
         }
     }
 }
