@@ -84,7 +84,7 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     }
 
     companion object {
-        const val VERSION = 9
+        const val VERSION = 10
     }
 
     @ThreadLocal

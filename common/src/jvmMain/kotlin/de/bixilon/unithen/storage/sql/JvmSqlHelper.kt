@@ -106,9 +106,6 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
             val result = block.invoke()
             connection.commit()
             return result
-        } catch (error: Throwable) {
-            connection.rollback()
-            throw error
         } finally {
             connection.autoCommit = true
         }
