@@ -13,23 +13,20 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
-import kotlin.native.concurrent.ThreadLocal
+import de.bixilon.kutil.concurrent.lock.Lock
+import de.bixilon.kutil.concurrent.lock.LockUtil.locked
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-@ThreadLocal
-private object Connection {
-    var connection: DatabaseConnection? = null
-}
 
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
-    private val manager by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)) }
-    private val connection by lazy { manager.createMultiThreadedConnection() }
+    private val lock = Lock.lock()
+    private val connection by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createSingleThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        statements.forEach { this.rawExecSql(it) }
+        lock.locked { statements.forEach { this.rawExecSql(it) } }
     }
 
     private fun create(database: DatabaseConnection) {
@@ -47,7 +44,7 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
     }
 
     override fun load() {
-        manager
+        connection
     }
 
     private fun Statement.bind(vararg parameters: Any?) {
@@ -67,10 +64,8 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         }
     }
 
-    private fun getConnection() = Connection.connection ?: connection
-
     private fun createStatement(sql: String, vararg parameters: Any?): Statement {
-        val statement = getConnection().createStatement(sql)
+        val statement = connection.createStatement(sql)
         statement.bind(*parameters)
 
         return statement
@@ -78,41 +73,32 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
 
 
     override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
+        lock.lock()
         val statement = createStatement(sql, *parameters)
 
         return NativeCursor(statement, statement.query())
     }
 
-    override fun execute(sql: String, vararg parameters: Any?): Int {
+    override fun execute(sql: String, vararg parameters: Any?) = lock.locked {
         val statement = createStatement(sql, *parameters)
 
-        return statement.executeUpdateDelete()
+        return@locked statement.executeUpdateDelete()
     }
 
-    override fun insert(sql: String, vararg parameters: Any?): Int {
+    override fun insert(sql: String, vararg parameters: Any?) = lock.locked {
         val statement = createStatement(sql, *parameters)
 
-        return statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
+        return@locked statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
     }
 
-    override fun <T> transaction(block: () -> T): T {
-        if (Connection.connection != null) throw IllegalArgumentException("Nested transactions are forbidden!")
-        val connection = manager.createMultiThreadedConnection()
-        try {
-            Connection.connection = connection
-            return connection.withTransaction { block.invoke() }
-        } finally {
-            Connection.connection = null
-            connection.close()
-        }
-    }
+    override fun <T> transaction(block: () -> T) = lock.locked { connection.withTransaction { block.invoke() } }
 
-    override fun close() {
-        Connection.connection?.close()
+
+    override fun close() = lock.locked {
         connection.close()
     }
 
-    class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {
+    inner class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {
         override fun getBlob(index: Int) = cursor.getBytes(index)
         override fun getBlobOrNull(index: Int) = cursor.getBytes(index)
 
@@ -126,7 +112,10 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
 
         override fun moveToNext() = cursor.next()
 
-        override fun close() = statement.finalizeStatement()
+        override fun close() {
+            statement.finalizeStatement()
+            lock.unlock()
+        }
 
         override fun isEmpty() = !cursor.next()
     }
