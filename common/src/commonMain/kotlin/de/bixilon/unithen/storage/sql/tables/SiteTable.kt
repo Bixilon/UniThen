@@ -22,6 +22,7 @@ import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Site
+import org.jetbrains.compose.resources.decodeToImageBitmap
 import kotlin.time.Clock
 
 class SiteTable(
@@ -48,7 +49,17 @@ class SiteTable(
         val fixed = SiteDetails.fix(host)
         val details = SiteDetails.fetch(host)
 
-        return add(fixed, details.name, details.icon)
+        var icon = details.icon
+
+        if (icon != null) {
+            try {
+                icon.decodeToImageBitmap()
+            } catch (error: Throwable) {
+                icon = null
+            }
+        }
+
+        return add(fixed, details.name, icon)
     }
 
     companion object : SelectableSqlTableSchema<Site> {
