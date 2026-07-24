@@ -19,15 +19,17 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.getBlobOrNull
 import androidx.core.database.sqlite.transaction
+import de.bixilon.kutil.primitive.IntUtil.toInt
 import java.io.IOException
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
+    private var transaction = false
 
     private fun SQLiteDatabase.executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        transaction { statements.forEach { execSQL(it) } }
+        statements.forEach { execSQL(it) }
     }
 
     override fun onCreate(database: SQLiteDatabase) {
@@ -50,7 +52,13 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
 
     @Synchronized
     override fun <T> transaction(block: () -> T): T {
-        return writableDatabase.transaction { block.invoke() }
+        if (transaction) throw IllegalStateException("Nested transactions are unsupported!")
+        this.transaction = true
+        try {
+            return writableDatabase.transaction { block.invoke() }
+        } finally {
+            transaction = false
+        }
     }
 
     private fun createStatement(readonly: Boolean, sql: String, vararg parameters: Any?): SQLiteStatement {
@@ -88,6 +96,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         is Uuid -> this.toString()
         is Instant -> epochSeconds.toString()
         is Enum<*> -> name
+        is Boolean -> this.toString()
         else -> throw IllegalArgumentException("Unknown parameter type: $this")
     }
 
@@ -104,6 +113,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
                 is Uuid -> bindString(actual, parameter.toString())
                 is ByteArray -> bindBlob(actual, parameter)
                 is Enum<*> -> bindString(actual, parameter.name)
+                is Boolean -> bindLong(actual, parameter.toInt().toLong())
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
             }
         }

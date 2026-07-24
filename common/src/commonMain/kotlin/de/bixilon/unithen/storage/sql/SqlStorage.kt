@@ -74,12 +74,12 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     }
 
     fun cleanup() {
-        helper.executeBatch("cleanup")
+        helper.transaction { helper.executeBatch("cleanup") }
         insert("VACUUM")
     }
 
     fun clearCache() {
-        helper.executeBatch("clear_cache")
+        helper.transaction { helper.executeBatch("clear_cache") }
         insert("VACUUM")
     }
 

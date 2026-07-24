@@ -13,13 +13,13 @@
 package de.bixilon.unithen.storage.sql
 
 import java.io.File
-import java.io.IOException
 import java.sql.*
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class JvmSqlHelper(file: File?) : SQLiteHelper {
     private val connection by lazy { DriverManager.getConnection(if (file == null) "jdbc:sqlite::memory:" else "jdbc:sqlite:$file") }
+    private var transaction = false
 
     init {
         Class.forName("org.sqlite.JDBC", true, JvmSqlHelper::class.java.classLoader)
@@ -43,13 +43,12 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
                     try {
                         executeBatch("migrations/${version}")
                     } catch (error: Throwable) {
-                        throw IOException("Error during database migration $version: ${error.message}", error)
+                        throw SQLException("Error during database migration $version: ${error.message}", error)
                     }
                 }
             }
+            execute("PRAGMA user_version = ${SqlStorage.VERSION};")
         }
-
-        execute("PRAGMA user_version = ${SqlStorage.VERSION};")
     }
 
 
@@ -65,6 +64,7 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
                 is Uuid -> setString(actual, parameter.toString())
                 is ByteArray -> setBytes(actual, parameter)
                 is Enum<*> -> setString(actual, parameter.name)
+                is Boolean -> setBoolean(actual, parameter)
                 else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
             }
         }
@@ -101,6 +101,8 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
 
     @Synchronized
     override fun <T> transaction(block: () -> T): T {
+        if (transaction) throw IllegalStateException("Nested transactions are unsupported!")
+        this.transaction = true
         connection.autoCommit = false
         try {
             val result = block.invoke()
@@ -108,6 +110,7 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
             return result
         } finally {
             connection.autoCommit = true
+            this.transaction = false
         }
     }
 

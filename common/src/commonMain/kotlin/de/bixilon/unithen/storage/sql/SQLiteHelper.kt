@@ -26,7 +26,7 @@ interface SQLiteHelper : AutoCloseable {
 
     fun executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        transaction { statements.forEach { execute(it) } }
+        statements.forEach { execute(it) }
     }
 
     fun <T> transaction(block: () -> T): T
