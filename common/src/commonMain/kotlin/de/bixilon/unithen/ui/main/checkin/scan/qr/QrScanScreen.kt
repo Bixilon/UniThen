@@ -219,7 +219,7 @@ fun ScanQrAppointmentScreen() {
 @Composable
 fun QrScanAnyScreen() {
     val time = useTime()
-    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, member = true, tutor = true) }
+    val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
 
     QrScanScreen(appointments)
 }

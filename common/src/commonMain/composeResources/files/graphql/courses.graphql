@@ -1,7 +1,7 @@
-query ($user: ID!) {
+query ($user: ID!, $isEnrolled: Boolean!, $isTutor: Boolean!) {
     user_pk(userID: $user) {
         id
-        courses {
+        courses(isEnrolled: $isEnrolled, isTutor: $isTutor) {
             id
         }
     }

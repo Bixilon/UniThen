@@ -67,30 +67,17 @@ class AccountTable(
 
     fun getTutorAccount(course: Course): Account? {
         val query = SqlBuilder.select(AccountTable)
-            .innerJoin(UserTable, (UserTable.uuid eq uuid) and (UserTable.site eq site))
             .innerJoin(AccountCourses, AccountCourses.account eq id)
-            .innerJoin(TutorCourses, TutorCourses.user eq UserTable.id)
-            .where(AccountCourses.course eq course.id)
-            .and(TutorCourses.course eq course.id)
+            .where((AccountCourses.tutor eq true) and (AccountCourses.course eq course.id))
             .limit(1)
 
-        return storage.query(query) { it.collectAll() }.firstOrNull()
+        return storage.query(query) { it.first() }
     }
 
     fun getTutorAccount(appointment: Appointment): Account? {
         val course = storage.courses[appointment.course]!!
-        getTutorAccount(course)?.let { return it }
 
-        val query = SqlBuilder.select(AccountTable)
-            .innerJoin(UserTable, (UserTable.uuid eq uuid) and (UserTable.site eq site))
-            .innerJoin(AccountCourses, AccountCourses.account eq id)
-            .innerJoin(CourseTable, AccountCourses.course eq CourseTable.id)
-            .innerJoin(TutorAppointments, TutorAppointments.user eq UserTable.id)
-            .where(AccountCourses.course eq appointment.course)
-            .and(TutorAppointments.appointment eq appointment.id)
-            .limit(1)
-
-        return storage.query(query) { it.collectAll() }.firstOrNull()
+        return getTutorAccount(course)
     }
 
     fun logout(account: Account) {
@@ -109,6 +96,14 @@ class AccountTable(
     fun remove(account: Account) = storage.transaction {
         execute("DELETE FROM account_courses WHERE account=?", account.id)
         execute("DELETE FROM accounts WHERE id=?", account.id)
+    }
+
+    fun isTutor(account: Account, course: Course): Boolean {
+        val query = SqlBuilder.select("1").from(AccountCourses)
+            .where((AccountCourses.account eq account.id) and (AccountCourses.course eq course.id) and (AccountCourses.tutor eq true))
+            .limit(1)
+
+        return storage.query(query) { it.isNotEmpty() }
     }
 
     companion object : SelectableSqlTableSchema<Account> {

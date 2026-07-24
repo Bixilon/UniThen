@@ -88,6 +88,7 @@ CREATE TABLE appointments (
 CREATE TABLE account_courses (
   account INTEGER,
   course INTEGER,
+  tutor INTEGER,
 
   PRIMARY KEY (account, course),
   FOREIGN KEY (account) REFERENCES accounts(id),

@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
@@ -62,7 +62,7 @@ fun CoursesScreen() {
 
         storage.accounts.all().forEach {
             try {
-                storage.fetchFromCourses(it, false)
+                storage.updateCourses(it, false)
             } catch (_: AuthenticationException) {
                 storage.accounts.logout(it)
                 loginSite = it.site

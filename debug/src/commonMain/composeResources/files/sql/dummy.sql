@@ -39,12 +39,12 @@ INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(903, 902
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(904, 901, "00000000-0000-0000-0000-000000000004", 10, 60, "Somewhere");
 
 
-INSERT INTO account_courses(account, course) VALUES(901, 901);
-INSERT INTO account_courses(account, course) VALUES(901, 902);
-INSERT INTO account_courses(account, course) VALUES(902, 903);
-INSERT INTO account_courses(account, course) VALUES(903, 901);
-INSERT INTO account_courses(account, course) VALUES(903, 902);
-INSERT INTO account_courses(account, course) VALUES(903, 903);
+INSERT INTO account_courses(account, course, tutor) VALUES(901, 901, 1);
+INSERT INTO account_courses(account, course, tutor) VALUES(901, 902, 0);
+INSERT INTO account_courses(account, course, tutor) VALUES(902, 903, 0);
+INSERT INTO account_courses(account, course, tutor) VALUES(903, 901, 0);
+INSERT INTO account_courses(account, course, tutor) VALUES(903, 902, 0);
+INSERT INTO account_courses(account, course, tutor) VALUES(903, 903, 0);
 
 INSERT INTO tutor_courses(user, course) VALUES(901, 901);
 INSERT INTO tutor_courses(user, course) VALUES(905, 902);

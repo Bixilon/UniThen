@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.api.graphql.util
 
-import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
@@ -33,55 +32,45 @@ import kotlin.uuid.Uuid
 object CourseFetcher {
     const val MAX_PARALLEL_REQUESTS = 6
 
-
-    private fun CourseQl.isTutor(account: Account): Boolean {
-        if (tutors == null) throw NullPointerException("Tutors not fetched!")
-        val tutors = tutors.toMutableSet()
-
-        appointments?.let {
-            for (appointment in appointments) {
-                tutors += appointment.tutors ?: continue
-            }
-        }
-
-        return tutors.any { account.uuid == it.id }
-    }
-
-    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, slim: Boolean, semaphore: Semaphore, appointments: List<AppointmentQl>?) {
+    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, semaphore: Semaphore, tutor: Boolean) {
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        val detailsQl = semaphore.withPermit { if (slim) api.getCourseSlim(id) else api.getCourse(id) }!!.let { it.copy(appointments = appointments ?: it.appointments) }
+        val detailsQl = semaphore.withPermit { api.getCourse(id) }!!
 
-        val course = store(site, detailsQl)
-        accounts.addToCourse(account, course)
+        val course = storeCourse(site, detailsQl)
+        accounts.addToCourse(account, course, tutor)
 
-        if (detailsQl.isTutor(account)) {
+        if (tutor) {
             val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
-            store(site, course, enrolled!!)
+            storeEnrolled(site, course, enrolled!!)
         }
     }
 
 
-    suspend fun SqlStorage.fetchFromCourses(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
+    suspend fun SqlStorage.updateCourses(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
         val site = sites[account.site]!!
         val api = account.api(site)
         if (!force && !account.isStale()) return
 
-        val coursesQl = api.getCourses(account.uuid) ?: throw NullPointerException("No courses?")
+        // TODO: do both requests in parallel
+        val enrolled = api.getCourses(account.uuid, isEnrolled = true, isTutor = false)?.map { it.id }?.toSet() ?: emptySet()
+        val tutor = api.getCourses(account.uuid, isEnrolled = false, isTutor = true)?.map { it.id }?.toSet() ?: emptySet()
 
-        progress?.invoke(CourseFetchProgress(0, coursesQl.size))
+        val all = enrolled + tutor
+
+        progress?.invoke(CourseFetchProgress(0, all.size))
 
         val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
 
-        setCourses(account, site, coursesQl.map { it.id }.toSet())
+        setCourses(account, site, all, tutor)
 
         var done = 0
-        var total = coursesQl.size
+        var total = all.size
 
         coroutineScope {
-            coursesQl.mapNotNull { courseQl ->
-                val course = this@fetchFromCourses.courses[site, courseQl.id]
+            all.mapNotNull { id ->
+                val course = this@updateCourses.courses[site, id]
 
                 if (course != null && !course.isDataStale()) {
                     total--
@@ -90,7 +79,7 @@ object CourseFetcher {
                 }
 
                 async {
-                    fetchCourse(account, courseQl.id, false, semaphore, null)
+                    fetchCourse(account, id, semaphore, id in tutor)
                     progress?.invoke(CourseFetchProgress(done++, total))
                 }
             }.awaitAll()
@@ -100,37 +89,35 @@ object CourseFetcher {
         accounts.update(account.id, fetched = Clock.System.now())
     }
 
-    suspend fun SqlStorage.fetch(account: Account, course: Course) {
+    suspend fun SqlStorage.updateCourse(account: Account, course: Course) {
         val site = sites[account.site]!!
         val api = account.api(site)
 
         if (!course.isDataStale()) return
 
         val detailsQl = api.getCourse(course.uuid)!!
-        store(site, detailsQl)
-        accounts.addToCourse(account, course)
+        storeCourse(site, detailsQl)
 
-
-        if (detailsQl.isTutor(account)) {
+        if (accounts.isTutor(account, course)) {
             val enrolled = api.getEnrolled(course.uuid)
-            store(site, course, enrolled!!)
+            storeEnrolled(site, course, enrolled!!)
         }
     }
 
-    private fun SqlStorage.setCourses(account: Account, site: Site, ids: Set<Uuid>) {
+    private fun SqlStorage.setCourses(account: Account, site: Site, ids: Set<Uuid>, tutor: Set<Uuid>) {
         transaction {
             accounts.clearCourses(account)
 
             for (id in ids) {
                 val course = courses[site, id] ?: continue
-                accounts.addToCourse(account, course)
+                accounts.addToCourse(account, course, id in tutor)
             }
         }
         cleanup()
     }
 
 
-    private fun SqlStorage.store(site: Site, courseQl: CourseQl) = transaction {
+    private fun SqlStorage.storeCourse(site: Site, courseQl: CourseQl) = transaction {
         if (courseQl.name == null) throw NullPointerException("Course details not fetched, wrong query?")
         val evenQl = courseQl.event!!
 
@@ -165,7 +152,7 @@ object CourseFetcher {
     }
 
 
-    private fun SqlStorage.store(site: Site, course: Course, enrolled: List<CourseUserQl>) = transaction {
+    private fun SqlStorage.storeEnrolled(site: Site, course: Course, enrolled: List<CourseUserQl>) = transaction {
         courses.clearEnrolled(course)
         for (enrolledQl in enrolled) {
             val enrolled = users.add(site, enrolledQl.id, enrolledQl.firstname!!, enrolledQl.lastname!!)
@@ -175,7 +162,7 @@ object CourseFetcher {
         courses.update(course.id, fetchedEnrolled = Clock.System.now())
     }
 
-    private fun SqlStorage.store(site: Site, appointment: Appointment, attendees: List<CourseUserQl>, attempts: List<CheckInAttemptQl>) = transaction {
+    private fun SqlStorage.storeAttendees(site: Site, appointment: Appointment, attendees: List<CourseUserQl>, attempts: List<CheckInAttemptQl>) = transaction {
         appointments.clearAttendees(appointment)
         checkInQueue.clearPendingCheckout(appointment)
 
@@ -200,7 +187,7 @@ object CourseFetcher {
 
         val enrolled = api.getEnrolled(course.uuid)
 
-        store(site, course, enrolled!!)
+        storeEnrolled(site, course, enrolled!!)
     }
 
     suspend fun SqlStorage.fetchAttendees(account: Account, appointment: Appointment, force: Boolean) {
@@ -210,6 +197,6 @@ object CourseFetcher {
         if (!force && !appointment.isAttendeesStale()) return
 
         val attemptsQl = api.getCheckInAttempts(appointment.uuid) ?: return
-        store(site, appointment, attemptsQl.attendees!!, attemptsQl.checkInAttempts!!)
+        storeAttendees(site, appointment, attemptsQl.attendees!!, attemptsQl.checkInAttempts!!)
     }
 }

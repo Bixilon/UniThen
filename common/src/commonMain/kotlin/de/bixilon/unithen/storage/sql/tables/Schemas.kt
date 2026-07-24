@@ -21,6 +21,7 @@ object AccountCourses : SqlTableSchema<DbObject> {
 
     val account = SqlTableSchema.SqlColumn<Key>(table, "account")
     val course = SqlTableSchema.SqlColumn<Key>(table, "course")
+    val tutor = SqlTableSchema.SqlColumn<Boolean>(table, "tutor")
 }
 
 object TutorCourses : SqlTableSchema<DbObject> {

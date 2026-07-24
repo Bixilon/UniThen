@@ -23,7 +23,7 @@ import de.bixilon.unithen.api.ory.Whoami
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
-import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.uuid.Uuid
@@ -41,16 +41,12 @@ open class AuthenticatedUniNowApi(
         return request
     }
 
-    suspend fun getCourses(user: Uuid): List<CourseQl>? {
-        return graphql<Queries>("courses", "user" to JsonPrimitive(user.toString())).userPk?.courses
+    suspend fun getCourses(user: Uuid, isEnrolled: Boolean, isTutor: Boolean): List<CourseQl>? {
+        return graphql<Queries>("courses", "user" to JsonPrimitive(user.toString()), "isEnrolled" to JsonPrimitive(isEnrolled), "isTutor" to JsonPrimitive(isTutor)).userPk?.courses
     }
 
     suspend fun getCourse(course: Uuid): CourseQl? {
         return graphql<Queries>("course", "course" to JsonPrimitive(course.toString())).course
-    }
-
-    suspend fun getCourseSlim(course: Uuid): CourseQl? {
-        return graphql<Queries>("course_slim", "course" to JsonPrimitive(course.toString())).course
     }
 
     suspend fun getEnrolled(course: Uuid): List<CourseUserQl>? {

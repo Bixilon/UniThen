@@ -90,6 +90,11 @@ abstract class SqlTable<T : DbObject>(
         return result
     }
 
+    protected fun SQLiteHelper.Cursor.first(): T? {
+        if (!moveToNext()) return null
+        return schema.map(this)
+    }
+
 
     protected fun all(filter: SqlFilter) = all(select().where(filter))
 

@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchFromCourses
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Site
@@ -56,7 +56,7 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
 
         message = getString(Res.string.authentication_course_list)
 
-        storage.fetchFromCourses(account, true) { message = runBlocking { getString(Res.string.authentication_fetching, it.course, it.courses) } }
+        storage.updateCourses(account, true) { message = runBlocking { getString(Res.string.authentication_fetching, it.course, it.courses) } }
 
         when {
             !first -> Unit
