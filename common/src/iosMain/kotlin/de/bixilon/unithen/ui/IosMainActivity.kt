@@ -16,7 +16,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import platform.UIKit.UIViewController
 
-val STORAGE = SqlStorage(NativeSQLiteHelper(null))
+val STORAGE = SqlStorage(NativeSQLiteHelper("uninow"))
 
 fun IosMainActivity(): UIViewController = ComposeUIViewController {
     RuntimeInfo0.actual = object : RuntimeInfo {
