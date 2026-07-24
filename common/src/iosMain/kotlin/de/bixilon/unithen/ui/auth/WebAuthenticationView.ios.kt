@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui.auth
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +30,8 @@ import de.bixilon.unithen.api.authentication.CookieAuthentication
 import platform.Foundation.NSHTTPCookie
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
-import platform.WebKit.WKNavigation
+import platform.WebKit.WKNavigationAction
+import platform.WebKit.WKNavigationActionPolicy
 import platform.WebKit.WKNavigationDelegateProtocol
 import platform.WebKit.WKWebView
 import platform.darwin.NSObject
@@ -41,20 +42,18 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
     var _host by remember { mutableStateOf("") }
 
     Column {
-        if (_host.isNotBlank()) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                text = _host,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            )
-        }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            text = _host.takeIf { it.isNotBlank() } ?: "Loading...",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+        )
         UIKitView(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.fillMaxSize(),
             factory = {
                 val view = WKWebView()
 
@@ -67,7 +66,7 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
                     val cookies = view.configuration.websiteDataStore.httpCookieStore
 
                     cookies.getAllCookies {
-                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == "ory-session" } ?: return@getAllCookies
+                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == WEB_SESSION_COOKIE_NAME } ?: return@getAllCookies
 
                         view.loadHTMLString("<html>Logged in!</html>", null)
                         callback.invoke(CookieAuthentication(token.value()))
@@ -87,7 +86,9 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
 
 private class WebViewUrlDelegate(val onNavigate: (NSURL) -> Unit) : NSObject(), WKNavigationDelegateProtocol {
 
-    override fun webView(webView: WKWebView, didFinishNavigation: WKNavigation?) {
-        webView.URL?.let { onNavigate.invoke(it) }
+    override fun webView(webView: WKWebView, decidePolicyForNavigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Unit) {
+        webView.URL?.let(onNavigate)
+
+        decisionHandler(WKNavigationActionPolicy.WKNavigationActionPolicyAllow)
     }
 }

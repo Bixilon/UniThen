@@ -51,18 +51,16 @@ actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Uni
     }
 
     Column {
-        if (_host.isNotBlank()) {
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                text = _host,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center,
-            )
-        }
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            text = _host.takeIf { it.isNotBlank() } ?: "Loading...",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Center,
+        )
 
         // TODO: Use Android Custom tabs, but that kind of sucks, cookie sniffing is not possible. This can probably only be done better with cooperation with UniNow (proper oauth flow)
 

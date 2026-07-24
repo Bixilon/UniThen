@@ -41,7 +41,7 @@ open class WebAuthClient(
         }
         val cookies = CookieManager.getInstance().getCookie(url)?.let(CookieParser::parse) ?: return
 
-        val session = cookies["ory-session"] ?: return
+        val session = cookies[WEB_SESSION_COOKIE_NAME] ?: return
 
         Log.v("WebView", "Found session cookie on $url")
 

@@ -1,5 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -63,8 +65,20 @@ kotlin {
         }
     }
 
-    iosSimulatorArm64()
-    iosArm64()
+    val xcfName = "shared"
+
+    iosSimulatorArm64 {
+        binaries.framework {
+            binaryOption("bundleId", "de.bixilon.unithen.shared")
+            baseName = xcfName
+        }
+    }
+    iosArm64 {
+        binaries.framework {
+            binaryOption("bundleId", "de.bixilon.unithen.shared")
+            baseName = xcfName
+        }
+    }
 
     applyDefaultHierarchyTemplate()
 
@@ -73,6 +87,7 @@ kotlin {
             dependsOn(commonMain.get())
             dependencies {
                 implementation(libs.zxing)
+                implementation(libs.ktor.client.cio)
             }
         }
 
@@ -94,7 +109,6 @@ kotlin {
             implementation(libs.compose.material.icons.extended)
 
             implementation(libs.ktor.client.core)
-            implementation(libs.ktor.client.cio)
             implementation(libs.ksoup)
             implementation(libs.kutil)
 
@@ -149,8 +163,20 @@ kotlin {
         }
 
         nativeMain.dependencies {
-            implementation(libs.zxingcpp.native)
+            //    implementation(libs.zxingcpp.native)
             implementation(libs.sqliter.driver)
         }
+
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
     }
+}
+
+// https://github.com/touchlab/SQLiter/issues/77
+project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
+    targets
+        .filterIsInstance<KotlinNativeTarget>()
+        .flatMap { it.binaries }
+        .forEach { compilationUnit -> compilationUnit.linkerOpts("-lsqlite3") }
 }

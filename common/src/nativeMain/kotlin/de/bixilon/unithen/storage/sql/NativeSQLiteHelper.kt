@@ -17,12 +17,12 @@ import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
-    val driver by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade)).createMultiThreadedConnection() }
+    val driver by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createMultiThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        withTransaction { statements.forEach { execute(it) } }
+        statements.forEach { this.rawExecSql(it) }
     }
 
     private fun create(database: DatabaseConnection) {
@@ -93,16 +93,16 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
     }
 
     class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {
-        override fun getBlob(index: Int) = cursor.getBytes(index + 1)
-        override fun getBlobOrNull(index: Int) = cursor.getBytes(index + 1)
+        override fun getBlob(index: Int) = cursor.getBytes(index)
+        override fun getBlobOrNull(index: Int) = cursor.getBytes(index)
 
-        override fun getString(index: Int) = cursor.getString(index + 1)
-        override fun getStringOrNull(index: Int) = cursor.getString(index + 1)
+        override fun getString(index: Int) = cursor.getString(index)
+        override fun getStringOrNull(index: Int) = cursor.getString(index)
 
-        override fun getInt(index: Int) = cursor.getLong(index + 1).toInt()
-        override fun getLong(index: Int) = cursor.getLong(index + 1)
+        override fun getInt(index: Int) = cursor.getLong(index).toInt()
+        override fun getLong(index: Int) = cursor.getLong(index)
 
-        override fun isNull(index: Int) = cursor.isNull(index + 1)
+        override fun isNull(index: Int) = cursor.isNull(index)
 
         override fun moveToNext() = cursor.next()
 

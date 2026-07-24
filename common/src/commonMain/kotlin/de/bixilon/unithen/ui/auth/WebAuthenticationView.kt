@@ -16,5 +16,7 @@ import androidx.compose.runtime.Composable
 import de.bixilon.unithen.api.authentication.Authentication
 
 
+const val WEB_SESSION_COOKIE_NAME = "ory-session"
+
 @Composable
 expect fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit)
