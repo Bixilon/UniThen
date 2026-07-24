@@ -13,10 +13,13 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
+import de.bixilon.kutil.concurrent.lock.Lock
+import de.bixilon.kutil.concurrent.lock.LockUtil.locked
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
+    private val lock = Lock.lock()
     val driver by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createMultiThreadedConnection() }
 
 
@@ -86,7 +89,9 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         return statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
     }
 
-    override fun <T> transaction(block: () -> T) = driver.withTransaction { block.invoke() }
+    override fun <T> transaction(block: () -> T): T {
+        return lock.locked { driver.withTransaction { block.invoke() } }
+    }
 
     override fun close() {
         driver.close()
