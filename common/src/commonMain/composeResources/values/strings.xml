@@ -20,7 +20,7 @@
     <string name="set_accept">I understand and accept those terms</string>
     <string name="setup_login">Continue to login</string>
     <string name="add_account_title">Please choose your booking site</string>
-    <string name="add_account_help">Can\'t find your site?</string>
+    <string name="add_account_help">Can't find your site?</string>
     <string name="authentication_fetching_user_details">Loading user details...</string>
     <string name="authentication_fetching">Synchronized %1$d courses (out of %2$d).</string>
     <string name="authentication_course_list">Loading course list...</string>
@@ -135,7 +135,7 @@
     <string name="settings_scan_await_server_description">Awaits the server confirmation on check in. This may be slower. Enable if multiple devices are scanning QR codes or bookings need to be approved.</string>
 
     <string name="settings_scan_confirmation_screen">Scan confirmation</string>
-    <string name="settings_scan_confirmation_screen_description">Shows a confirmation screen after scanning a QR code. The user is only checked in after clicking \"Confirm\".</string>
+    <string name="settings_scan_confirmation_screen_description">Shows a confirmation screen after scanning a QR code. The user is only checked in after clicking "Confirm".</string>
 
     <string name="settings_scan_offline">Ignore network errors</string>
     <string name="settings_scan_offline_description">Allows checkin in users when no network is available. Pending check ins are synchronized automatically in the background when the connection is restored.</string>
