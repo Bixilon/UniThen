@@ -68,11 +68,10 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
         return helper.update().use { it.execute(sql, *parameters).apply { notifyState() } }
     }
 
-    inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T {
-        val connection = helper.update()
+    inline fun <T> transaction(crossinline block: (SqlStorage) -> T): T = helper.update().use {
         try {
-            transaction = connection
-            return connection.transaction { block.invoke(this@SqlStorage) }
+            transaction = it
+            return it.transaction { block.invoke(this@SqlStorage) }
         } finally {
             transaction = null
             notifyState()

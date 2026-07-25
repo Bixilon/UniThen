@@ -19,6 +19,8 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import kotlin.test.*
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.seconds
 
 fun create() = SqlStorage(createMemoryHelper())
 suspend fun empty() = create().apply { helper.load() }
@@ -157,5 +159,34 @@ class SqlStorageTest {
         val course = storage.transaction { storage.courses[901] }
 
         assertEquals("First course", course?.name)
+    }
+
+    @Test
+    fun `create multiple transactions and get value`() = runBlocking {
+        val storage = dummy()
+
+        val a = storage.transaction { storage.courses[901] }
+        val b = storage.transaction { storage.courses[901] }
+        val c = storage.transaction { storage.courses[901] }
+
+        assertEquals("First course", a?.name)
+        assertEquals("First course", b?.name)
+        assertEquals("First course", c?.name)
+    }
+
+    @Test
+    fun `queue take item`() = runBlocking {
+        val storage = dummy()
+
+        val now = Clock.System.now() - 5.seconds
+
+        var item = storage.checkInQueue.take()
+
+        assertTrue(item!!.sync!! < now)
+        assertEquals(901, item.appointment)
+
+        item = storage.checkInQueue[storage.appointments[item.appointment]!!, storage.users[item.user]!!]
+
+        assertTrue(item!!.sync!! > now)
     }
 }
