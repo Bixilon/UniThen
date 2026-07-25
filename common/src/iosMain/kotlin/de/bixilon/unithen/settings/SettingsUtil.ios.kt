@@ -8,7 +8,7 @@ import platform.Foundation.NSUserDefaultsDidChangeNotification
 
 
 private operator fun NSUserDefaults.contains(setting: Setting<*>): Boolean {
-    return objectForKey(setting.key) == null
+    return objectForKey(setting.key) != null
 }
 
 private operator fun NSUserDefaults.get(setting: Setting<Boolean>): Boolean {
@@ -52,74 +52,59 @@ private fun NSUserDefaults.Observer(callback: () -> Unit) {
 }
 
 
+private fun <T> MutableState<T>.createState(onChange: (T) -> Unit): MutableState<T> {
+    value
+
+    return object : MutableState<T> {
+        override var value: T
+            get() = this@createState.value
+            set(next) {
+                if (value == next) return
+                onChange(next)
+            }
+
+        override fun component1() = this.value
+        override fun component2(): (T) -> Unit = { this.value = it }
+    }
+}
+
 @Composable
 actual fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
     val defaults = NSUserDefaults.standardUserDefaults
-    val store = remember { mutableStateOf(defaults[setting]) }
+    val value = remember { mutableStateOf(defaults[setting]) }
 
-    defaults.Observer { store.value = defaults[setting] }
+    defaults.Observer { value.value = defaults[setting] }
 
-    LaunchedEffect(store) {
-        defaults.setBool(store.value, setting.key)
-        defaults.synchronize()
-    }
-
-    return store
+    return remember { value.createState { defaults.setBool(it, setting.key) } }
 }
 
 @Composable
 actual fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
     val defaults = NSUserDefaults.standardUserDefaults
-    val store = remember { mutableStateOf(defaults[setting, values]) }
+    val value = remember { mutableStateOf(defaults[setting, values]) }
 
-    defaults.Observer { store.value = defaults[setting, values] }
+    defaults.Observer { value.value = defaults[setting, values] }
 
-    LaunchedEffect(store) {
-        defaults.setObject(store.value.name, setting.key)
-        defaults.synchronize()
-    }
-
-    return remember {
-        object : MutableState<T> {
-            override var value: T
-                get() = store.value
-                set(next) {
-                    store.value = next
-                }
-
-            override fun component1() = value
-            override fun component2(): (T) -> Unit = { this.value = it }
-        }
-    }
+    return remember { value.createState { defaults.setObject(it.name, setting.key) } }
 }
 
 @Composable
 actual fun rememberSetting(setting: Setting<Int>): MutableState<Int> {
     val defaults = NSUserDefaults.standardUserDefaults
-    val store = remember { mutableStateOf(defaults[setting]) }
+    val value = remember { mutableStateOf(defaults[setting]) }
 
-    defaults.Observer { store.value = defaults[setting] }
+    defaults.Observer { value.value = defaults[setting] }
 
-    LaunchedEffect(store) {
-        defaults.setInteger(store.value.toLong(), setting.key)
-        defaults.synchronize()
-    }
-
-    return store
+    return remember { value.createState { defaults.setInteger(it.toLong(), setting.key) } }
 }
 
 @Composable
 actual fun rememberSetting(setting: Setting<String>): MutableState<String> {
     val defaults = NSUserDefaults.standardUserDefaults
-    val store = remember { mutableStateOf(defaults[setting]) }
+    val value = remember { mutableStateOf(defaults[setting]) }
 
-    defaults.Observer { store.value = defaults[setting] }
+    defaults.Observer { value.value = defaults[setting] }
 
-    LaunchedEffect(store) {
-        defaults.setObject(store.value, setting.key)
-        defaults.synchronize()
-    }
-
-    return store
+    return remember { value.createState { defaults.setObject(it, setting.key) } }
 }
 

@@ -28,7 +28,7 @@ import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.util.QrCode
 
 val A = Setting("test_a", true)
-val B = Setting("test_b", true)
+val B = Setting("test_b", false)
 
 
 @Composable
