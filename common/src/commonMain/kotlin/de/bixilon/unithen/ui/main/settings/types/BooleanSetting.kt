@@ -44,7 +44,7 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .letIf(supported) { clickable { value = !value }; alpha(0.5f) }
+            .letIf(!supported) { clickable { value = !value }; alpha(0.5f) }
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
