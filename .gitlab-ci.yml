@@ -33,7 +33,7 @@ stages:
         - .home/wrapper
 
 .jvm:
-  image: azul/zulu-openjdk-alpine:21-latest
+  image: azul/zulu-openjdk-debian:21-latest
   extends: .gradle
 
 .android:
