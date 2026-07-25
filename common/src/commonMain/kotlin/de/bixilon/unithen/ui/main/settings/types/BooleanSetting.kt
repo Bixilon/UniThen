@@ -26,21 +26,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.settings.Setting
+import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.settings.rememberSetting
 
 
 @Composable
 fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String) {
+    val supported = isSettingSupported(setting)
     var value by rememberSetting(setting)
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable { value = !value }
+            .letIf(supported) { clickable { value = !value }; alpha(0.5f) }
             .padding(horizontal = 8.dp, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -52,6 +56,6 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
             Text(modifier = Modifier.padding(start = 4.dp, top = 2.dp), text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
-        Switch(value, { value = it })
+        Switch(value, { value = it }, enabled = supported)
     }
 }
