@@ -12,10 +12,8 @@
 
 package de.bixilon.unithen.ui.main.checkin.present
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,8 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -78,10 +74,6 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
                 data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1f, matchHeightConstraintsFirst = true) // TODO: broken in scroll container
-                    .clip(RoundedCornerShape(5.dp))
-                    .background(Color.White)
-                    .padding(6.dp)
             )
         }
 

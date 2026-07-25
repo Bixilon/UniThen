@@ -13,11 +13,18 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.unit.dp
 
 
 expect fun encodeQr(data: String): ImageBitmap
@@ -26,5 +33,13 @@ expect fun encodeQr(data: String): ImageBitmap
 fun QrCode(data: String, modifier: Modifier = Modifier) {
     val matrix = remember(data) { encodeQr(data) }
 
-    Image(matrix, data, modifier = modifier, filterQuality = FilterQuality.None)
+    Image(
+        matrix, data,
+        modifier = modifier
+            .aspectRatio(1f, matchHeightConstraintsFirst = true)
+            .clip(RoundedCornerShape(5.dp))
+            .background(Color.White)
+            .padding(6.dp),
+        filterQuality = FilterQuality.None,
+    )
 }
