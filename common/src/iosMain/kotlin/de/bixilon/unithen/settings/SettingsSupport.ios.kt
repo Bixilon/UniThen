@@ -12,12 +12,14 @@
 
 package de.bixilon.unithen.settings
 
-import platform.AVFoundation.AVAssetExportPresetHighestQuality
-import platform.AVFoundation.AVCaptureSession
+import platform.AVFoundation.*
 
-val HIGH_QUALITY by lazy { AVCaptureSession().canSetSessionPreset(AVAssetExportPresetHighestQuality) }
+val SCANNING by lazy { AVCaptureDevice.defaultDeviceWithDeviceType(null, AVMediaTypeVideo, AVCaptureDevicePositionBack) != null }
+val HIGH_QUALITY by lazy { SCANNING && AVCaptureSession().canSetSessionPreset(AVAssetExportPresetHighestQuality) }
 
 actual fun isNativeSettingSupported(setting: Setting<*>) = when (setting) {
+    Settings.SCAN_CONFIRMATION_SCREEN -> SCANNING
+    Settings.SCAN_QR_AUTO_SCAN -> SCANNING
     Settings.SCAN_QR_HIGH_RESOLUTION -> HIGH_QUALITY
     else -> true
 }

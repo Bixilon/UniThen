@@ -56,6 +56,6 @@ fun BooleanSetting(setting: Setting<Boolean>, title: String, description: String
             Text(modifier = Modifier.padding(start = 4.dp, top = 2.dp), text = description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
 
-        Switch(value, { value = it }, enabled = supported)
+        Switch(value && supported, { value = it }, enabled = supported)
     }
 }

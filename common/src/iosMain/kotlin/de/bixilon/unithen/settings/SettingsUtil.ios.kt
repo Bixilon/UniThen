@@ -70,6 +70,18 @@ private fun <T> MutableState<T>.createState(onChange: (T) -> Unit): MutableState
 
 @Composable
 actual fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
+    val supported = remember { isSettingSupported(setting) }
+    if (!supported) return remember {
+        object : MutableState<Boolean> {
+            override var value
+                get() = false
+                set(next) = Unit
+
+            override fun component1() = value
+            override fun component2(): (Boolean) -> Unit = { }
+        }
+    }
+
     val defaults = NSUserDefaults.standardUserDefaults
     val value = remember { mutableStateOf(defaults[setting]) }
 

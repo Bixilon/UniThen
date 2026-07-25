@@ -48,6 +48,17 @@ fun <T> rememberSetting(key: Preferences.Key<T>, default: T): MutableState<T> {
 @Composable
 @JvmName("rememberBooleanSetting")
 actual fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
+    val supported = remember { isSettingSupported(setting) }
+    if (!supported) return remember {
+        object : MutableState<Boolean> {
+            override var value
+                get() = false
+                set(next) = Unit
+
+            override fun component1() = value
+            override fun component2(): (Boolean) -> Unit = { }
+        }
+    }
     return rememberSetting(booleanPreferencesKey(setting.key), setting.default)
 }
 
