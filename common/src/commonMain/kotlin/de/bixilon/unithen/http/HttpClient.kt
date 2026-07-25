@@ -22,13 +22,14 @@ import kotlin.time.Duration.Companion.seconds
 
 val CLIENT by lazy {
     HttpClient(CIO) {
-        install(HttpTimeout) { requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
+        install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
         HttpResponseValidator {
             handleResponseException {
                 when (it) {
                     is UnresolvedAddressException -> throw NetworkException(it)
                     is IOException -> throw NetworkException(it)
                 }
+                throw it
             }
         }
         followRedirects = false
