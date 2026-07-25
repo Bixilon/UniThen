@@ -13,7 +13,7 @@
 package de.bixilon.unithen.storage.sql
 
 open class TestSqlHelper : SQLiteHelper {
-    override fun load() = Unit
+    override suspend fun load() = Unit
 
     override fun query(sql: String, vararg parameters: Any?) = TODO()
 

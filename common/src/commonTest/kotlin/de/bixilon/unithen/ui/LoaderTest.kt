@@ -25,7 +25,6 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.TestSqlHelper
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -51,8 +50,8 @@ class LoaderTest {
         setContent {
             setContent {
                 TestLoader(object : TestSqlHelper() {
-                    override fun load() {
-                        runBlocking { delay(100.seconds) }
+                    override suspend fun load() {
+                        delay(100.seconds)
                     }
                 })
             }
@@ -68,7 +67,7 @@ class LoaderTest {
         setContent {
             setContent {
                 TestLoader(object : TestSqlHelper() {
-                    override fun load() {
+                    override suspend fun load() {
                         throw IllegalStateException("Expected crash")
                     }
                 })
@@ -83,8 +82,8 @@ class LoaderTest {
         setContent {
             setContent {
                 TestLoader(object : TestSqlHelper() {
-                    override fun load() {
-                        runBlocking { delay(10.seconds) }
+                    override suspend fun load() {
+                        delay(10.seconds)
                     }
                 })
             }

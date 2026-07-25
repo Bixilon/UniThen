@@ -13,20 +13,20 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
-import de.bixilon.kutil.concurrent.lock.Lock
-import de.bixilon.kutil.concurrent.lock.LockUtil.locked
+import kotlinx.atomicfu.locks.ReentrantLock
+import kotlinx.atomicfu.locks.withLock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
-    private val lock = Lock.lock()
+    val lock = ReentrantLock()
     private val connection by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createSingleThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        lock.locked { statements.forEach { this.rawExecSql(it) } }
+        lock.withLock { statements.forEach { this@executeBatch.rawExecSql(it) } }
     }
 
     private fun create(database: DatabaseConnection) {
@@ -43,7 +43,7 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         }
     }
 
-    override fun load() {
+    override suspend fun load() {
         connection
     }
 
@@ -84,22 +84,22 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         }
     }
 
-    override fun execute(sql: String, vararg parameters: Any?) = lock.locked {
+    override fun execute(sql: String, vararg parameters: Any?) = lock.withLock {
         val statement = createStatement(sql, *parameters)
 
-        return@locked statement.executeUpdateDelete()
+        return@withLock statement.executeUpdateDelete()
     }
 
-    override fun insert(sql: String, vararg parameters: Any?) = lock.locked {
+    override fun insert(sql: String, vararg parameters: Any?) = lock.withLock {
         val statement = createStatement(sql, *parameters)
 
-        return@locked statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
+        return@withLock statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
     }
 
-    override fun <T> transaction(block: () -> T) = lock.locked { connection.withTransaction { block.invoke() } }
+    override fun <T> transaction(block: () -> T) = lock.withLock { connection.withTransaction { block.invoke() } }
 
 
-    override fun close() = lock.locked {
+    override fun close() = lock.withLock {
         connection.close()
     }
 

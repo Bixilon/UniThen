@@ -12,22 +12,21 @@
 
 package de.bixilon.unithen.api.graphql.query
 
-import de.bixilon.kutil.concurrent.lock.LockUtil.acquired
-import de.bixilon.kutil.concurrent.lock.LockUtil.locked
-import de.bixilon.kutil.concurrent.lock.RWLock
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import unithen.common.generated.resources.Res
 
 object QueryLoader {
-    private val lock = RWLock.rwlock()
+    private val lock = Mutex()
     private val cache: HashMap<String, QlQuery> = HashMap()
 
     suspend operator fun get(name: String): QlQuery {
-        lock.acquired { this.cache[name]?.let { return it } }
+        lock.withLock { this.cache[name]?.let { return it } }
 
         val raw = Res.readBytes("files/graphql/$name.graphql").decodeToString()
 
         val query = QlQuery.of(raw)
-        lock.locked { cache[name] = query }
+        lock.withLock { cache[name] = query }
 
         return query
     }

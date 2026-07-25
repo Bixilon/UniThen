@@ -29,6 +29,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
 
 
@@ -62,8 +63,8 @@ fun DebugScreen() {
         Spacer(Modifier.height(20.dp))
 
 
-        Button({ storage.helper.load(); storage.initializeDummy() }) { Text("Initiate dummy database") }
-        Button({ storage.helper.load(); storage.insert1000Users() }) { Text("Insert 1000 users") }
+        Button({ runBlocking { storage.helper.load(); storage.initializeDummy() } }) { Text("Initiate dummy database") }
+        Button({ runBlocking { storage.helper.load(); storage.insert1000Users() } }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
 
         var progress by remember { mutableStateOf<String?>(null) }

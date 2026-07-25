@@ -18,7 +18,7 @@ import kotlin.uuid.Uuid
 
 interface SQLiteHelper : AutoCloseable {
 
-    fun load()
+    suspend fun load()
 
     fun query(sql: String, vararg parameters: Any?): Cursor
     fun execute(sql: String, vararg parameters: Any?): Int

@@ -15,12 +15,13 @@ package de.bixilon.unithen.storage.sql
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import kotlin.test.*
 
 fun create() = SqlStorage(createMemoryHelper())
-fun dummy() = create().apply { helper.load(); this.initializeDummy() }
+suspend fun dummy() = create().apply { helper.load(); this.initializeDummy() }
 
 
 class SqlStorageTest {
@@ -32,7 +33,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `create and initialize tables`() {
+    fun `create and initialize tables`() = runBlocking {
         val storage = create()
         storage.helper.load()
 
@@ -42,7 +43,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `create dummy database`() {
+    fun `create dummy database`() = runBlocking {
         val storage = dummy()
 
         val cursor = storage.helper.query("SELECT host FROM sites WHERE id=901")
@@ -52,35 +53,35 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get site by id dummy database`() {
+    fun `get site by id dummy database`() = runBlocking {
         val site = dummy().sites[901]
 
         assertEquals("test.local", site?.host)
     }
 
     @Test
-    fun `get event by id`() {
+    fun `get event by id`() = runBlocking {
         val event = dummy().events[901]
 
         assertEquals("Test Event (a)", event?.name)
     }
 
     @Test
-    fun `get user by id`() {
+    fun `get user by id`() = runBlocking {
         val user = dummy().users[901]
 
         assertEquals("Hans", user?.firstname)
     }
 
     @Test
-    fun `get account by id`() {
+    fun `get account by id`() = runBlocking {
         val account = dummy().accounts[903]
 
         assertEquals("Marie", account?.firstname)
     }
 
     @Test
-    fun `get course by id`() {
+    fun `get course by id`() = runBlocking {
         val course = dummy().courses[901]
 
         assertEquals("First course", course?.name)

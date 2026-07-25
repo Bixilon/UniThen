@@ -113,7 +113,7 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         super.close()
     }
 
-    override fun load() {
+    override suspend fun load() {
         writableDatabase
     }
 

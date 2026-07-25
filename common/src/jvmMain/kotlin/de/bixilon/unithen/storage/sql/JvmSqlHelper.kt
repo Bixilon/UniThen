@@ -28,8 +28,7 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
 
     private val version get() = createStatement("PRAGMA user_version;").executeQuery().use { it.next(); it.getInt(1) }
 
-    @Synchronized
-    override fun load() {
+    override suspend fun load() {
         val version = version
         if (version == SqlStorage.VERSION) return
         if (version > SqlStorage.VERSION) {
