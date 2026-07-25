@@ -62,7 +62,7 @@ private fun SQLiteStatement.bind(vararg parameters: Any?) {
     }
 }
 
-class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
+class AndroidSqlHelper(context: Context, name: String?) : SQLiteOpenHelper(context, name, null, SqlStorage.VERSION), SQLiteHelper {
     private var lock = Mutex(false)
 
     override fun onCreate(database: SQLiteDatabase) {
@@ -163,9 +163,5 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         override fun moveToNext() = cursor.moveToNext()
 
         override fun close() = cursor.close()
-    }
-
-    companion object {
-        const val NAME = "uninow"
     }
 }

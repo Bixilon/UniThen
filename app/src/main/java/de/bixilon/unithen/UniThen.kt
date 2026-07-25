@@ -46,7 +46,7 @@ class UniThen : Application(), CameraXConfig.Provider {
         super.onCreate()
         SETTINGS = SettingsStore(this)
         CoroutineScope(Dispatchers.IO).launch { SETTINGS.preload() }
-        STORAGE = SqlStorage(AndroidSqlHelper(applicationContext))
+        STORAGE = SqlStorage(AndroidSqlHelper(applicationContext, "uninow"))
     }
 
     override fun onTerminate() {

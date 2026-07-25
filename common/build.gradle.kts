@@ -55,8 +55,12 @@ kotlin {
     android {
         namespace = "de.bixilon.unithen.common"
         compileSdk = 37
-        minSdk = 26
+        //noinspection WrongGradleMethod
+        val deviceTest = gradle.startParameter.taskNames.any { "android" in it.lowercase() && "test" in it.lowercase() }
+        minSdk = if (deviceTest) 30 else 26
         androidResources.enable = true
+
+        withDeviceTest { animationsDisabled = true }
     }
 
     jvm("jvm") {
@@ -64,6 +68,7 @@ kotlin {
             jvmTarget = JvmTarget.JVM_11
         }
     }
+
 
     iosSimulatorArm64()
     iosArm64()
@@ -142,6 +147,12 @@ kotlin {
                 implementation(libs.sqlite.jdbc)
             }
         }
+        named("androidDeviceTest") {
+            dependsOn(commonTest.get())
+            dependencies {
+                implementation("androidx.test:runner:1.7.0")
+            }
+        }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -157,6 +168,7 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
     }
 }
 
