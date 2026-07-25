@@ -147,10 +147,11 @@ kotlin {
                 implementation(libs.sqlite.jdbc)
             }
         }
+
         named("androidDeviceTest") {
             dependsOn(commonTest.get())
             dependencies {
-                implementation("androidx.test:runner:1.7.0")
+                implementation(libs.androidx.runner)
             }
         }
 
@@ -168,7 +169,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
-
     }
 }
 

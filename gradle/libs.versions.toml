@@ -1,13 +1,14 @@
 [versions]
 agp = "9.1.1"
-kotlinxCoroutinesSwing = "1.11.0"
+coroutines = "1.11.0"
 ktor = "3.5.1"
-sqliteJdbc = "3.53.2.0"
-sqliterDriver = "1.3.3"
+androidTestRunner = "1.7.0"
+sqliteJdbc = "3.53.2.1"
+sqliterNative = "1.3.3"
 uiTest = "1.11.1"
 zxing = "3.5.4"
 zxingcpp = "3.1.0"
-kotlinxSerializationJson = "1.11.0"
+serialization = "1.11.0"
 datastorePreferences = "1.2.1"
 ksoup = "0.2.6"
 kotlin = "2.4.10"
@@ -40,8 +41,8 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "androidTestRunner" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-datastore-core = { group = "androidx.datastore", name = "datastore-core", version.ref = "datastoreCore" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
@@ -52,16 +53,16 @@ androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", 
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCore" }
 
 
-sqliter-driver = { module = "co.touchlab:sqliter-driver", version.ref = "sqliterDriver" }
-kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutinesSwing" }
-kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesSwing" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+sqliter-driver = { group = "co.touchlab", name = "sqliter-driver", version.ref = "sqliterNative" }
+kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
 
 ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 kutil = { group = "de.bixilon", name = "kutil", version.ref = "kutil" }
 
 
