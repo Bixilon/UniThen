@@ -17,7 +17,6 @@ import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.http.CLIENT
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -53,12 +52,11 @@ data class SiteDetails(
         suspend fun fetch(host: String): SiteDetails {
             val request = HttpUtil.create(host, "/")
 
-            val client = HttpClient(CIO) {
+            val client = HttpClient {
                 install(HttpTimeout) { requestTimeoutMillis = 15.seconds.inWholeMilliseconds }
                 followRedirects = true
             }
             try {
-
                 val response = client.get(request)
 
                 if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK")

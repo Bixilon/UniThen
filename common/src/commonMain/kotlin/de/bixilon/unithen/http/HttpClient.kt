@@ -14,14 +14,13 @@ package de.bixilon.unithen.http
 
 import de.bixilon.unithen.api.errors.NetworkException
 import io.ktor.client.*
-import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import java.io.IOException
 import java.nio.channels.UnresolvedAddressException
 import kotlin.time.Duration.Companion.seconds
 
 val CLIENT by lazy {
-    HttpClient(CIO) {
+    HttpClient {
         install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
         HttpResponseValidator {
             handleResponseException {
