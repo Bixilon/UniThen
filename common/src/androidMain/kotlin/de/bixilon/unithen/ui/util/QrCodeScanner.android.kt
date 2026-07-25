@@ -122,7 +122,7 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) ->
             .build()
             .apply {
                 setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
-                    val results = imageProxy.use { ignoreAll { READER.read(it) } ?: READER.read(it.toBitmap()) }
+                    val results = imageProxy.use { ignoreAll { READER.read(it) } ?: ignoreAll { READER.read(it.toBitmap()) } } ?: return@setAnalyzer
                     val now = Clock.System.now()
                     if (results.isNotEmpty()) {
                         last = now
