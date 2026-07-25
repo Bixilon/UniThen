@@ -20,8 +20,17 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "UniThen"
-include(":app")
-include(":baselineprofile")
+
+// Common
 include(":common")
 include(":debug")
+
+// Android
+include(":app")
+include(":baselineprofile")
+
+// iOS
+include(":iosAppKt")
+
+// Desktop
 include(":desktop")

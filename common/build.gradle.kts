@@ -65,20 +65,8 @@ kotlin {
         }
     }
 
-    val xcfName = "shared"
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
-            baseName = xcfName
-        }
-    }
-    iosArm64 {
-        binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
-            baseName = xcfName
-        }
-    }
+    iosSimulatorArm64()
+    iosArm64()
 
     applyDefaultHierarchyTemplate()
 
@@ -163,7 +151,6 @@ kotlin {
         }
 
         nativeMain.dependencies {
-            //    implementation(libs.zxingcpp.native)
             implementation(libs.sqliter.driver)
         }
 

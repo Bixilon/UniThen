@@ -5,7 +5,7 @@
 //  Created by Moritz on 24.07.26.
 //
 
-import shared
+import unithen
 import SwiftUI
 
 struct ComposeViewController: UIViewControllerRepresentable {

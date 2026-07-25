@@ -73,12 +73,11 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
 
 
     override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
+        lock.lock()
         try {
-            lock.lock()
             val statement = createStatement(sql, *parameters)
 
             return NativeCursor(statement, statement.query())
-
         } catch (error: Throwable) {
             lock.unlock()
             throw error

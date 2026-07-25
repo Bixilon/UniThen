@@ -28,20 +28,8 @@ kotlin {
         }
     }
 
-    val xcfName = "debug"
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
-            baseName = xcfName
-        }
-    }
-    iosArm64 {
-        binaries.framework {
-            binaryOption("bundleId", "de.bixilon.unithen.$xcfName")
-            baseName = xcfName
-        }
-    }
+    iosSimulatorArm64()
+    iosArm64()
 
     sourceSets {
 

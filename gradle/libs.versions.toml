@@ -53,7 +53,6 @@ androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", 
 
 
 sqliter-driver = { module = "co.touchlab:sqliter-driver", version.ref = "sqliterDriver" }
-zxingcpp-native = { group = "io.github.zxing-cpp", name = "kotlin-native", version.ref = "zxingcpp" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinxCoroutinesSwing" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesSwing" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
