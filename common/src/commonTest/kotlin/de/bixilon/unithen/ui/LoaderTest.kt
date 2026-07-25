@@ -48,13 +48,11 @@ class LoaderTest {
     // @Test
     fun `initial view while loading`() = runComposeUiTest {
         setContent {
-            setContent {
                 TestLoader(object : TestSqlHelper() {
                     override suspend fun load() {
                         delay(100.seconds)
                     }
                 })
-            }
         }
 
         waitUntilText("Content")
@@ -65,13 +63,11 @@ class LoaderTest {
     // @Test
     fun `crash while loading`() = runComposeUiTest {
         setContent {
-            setContent {
                 TestLoader(object : TestSqlHelper() {
                     override suspend fun load() {
                         throw IllegalStateException("Expected crash")
                     }
                 })
-            }
         }
 
         waitUntilText("Expected crash").assertIsDisplayed()
@@ -80,13 +76,11 @@ class LoaderTest {
     // @Test
     fun `load content after 10ms`() = runComposeUiTest {
         setContent {
-            setContent {
                 TestLoader(object : TestSqlHelper() {
                     override suspend fun load() {
                         delay(10.seconds)
                     }
                 })
-            }
         }
 
         waitUntilText("Content").assertIsDisplayed()

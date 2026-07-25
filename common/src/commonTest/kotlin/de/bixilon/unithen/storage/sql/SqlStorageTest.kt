@@ -21,7 +21,8 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.*
 
 fun create() = SqlStorage(createMemoryHelper())
-suspend fun dummy() = create().apply { helper.load(); this.initializeDummy() }
+suspend fun empty() = create().apply { helper.load() }
+suspend fun dummy() = empty().apply { this.initializeDummy() }
 
 
 class SqlStorageTest {
@@ -119,5 +120,33 @@ class SqlStorageTest {
         val appointment = storage.appointments[901]!!
         val user = storage.users[906]!!
         assertFalse(storage.users.isAttendee(appointment, user))
+    }
+
+    @Test
+    fun `not enrolled in empty database`() = runBlocking {
+        val storage = empty()
+
+        assertFalse(storage.courses.isEnrolled())
+    }
+
+    @Test
+    fun `enrolled in dummy database`() = runBlocking {
+        val storage = dummy()
+
+        assertTrue(storage.courses.isEnrolled())
+    }
+
+    @Test
+    fun `not tutor in empty database`() = runBlocking {
+        val storage = empty()
+
+        assertFalse(storage.courses.isTutor())
+    }
+
+    @Test
+    fun `tutor in dummy database`() = runBlocking {
+        val storage = dummy()
+
+        assertTrue(storage.courses.isTutor())
     }
 }

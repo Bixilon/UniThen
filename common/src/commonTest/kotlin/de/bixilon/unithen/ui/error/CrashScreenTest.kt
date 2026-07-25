@@ -32,7 +32,7 @@ class CrashScreenTest {
     @Test
     fun `crash screen openes without dependencies`() = runComposeUiTest {
         setContent {
-            setContent { CrashScreen("Message", Throwable("ABC")) }
+            CrashScreen("Message", Throwable("ABC"))
         }
 
         waitUntilText("Message").assertIsDisplayed()

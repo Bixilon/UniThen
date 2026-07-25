@@ -67,7 +67,7 @@ class CourseTable(
         return storage.query(query) { it.isNotEmpty() }
     }
 
-    fun isNotTutor(): Boolean {
+    fun isEnrolled(): Boolean {
         val query = SqlBuilder.select("1").from(AccountCourses)
             .where((AccountCourses.tutor eq false))
             .limit(1)

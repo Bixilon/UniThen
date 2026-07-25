@@ -64,7 +64,7 @@ class NavigatorTest {
     @Test
     fun `test basic setup`() = runComposeUiTest {
         setContent {
-            setContent { NoDataScreen() }
+            NoDataScreen()
         }
 
         onNodeWithText("nothing").assertIsDisplayed()
