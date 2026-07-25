@@ -147,10 +147,7 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
 
         override fun moveToNext() = cursor.next()
 
-        override fun close() {
-            statement.finalizeStatement()
-            lock.unlock()
-        }
+        override fun close() = statement.finalizeStatement()
 
         override fun isEmpty() = !cursor.next()
     }
