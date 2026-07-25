@@ -29,7 +29,7 @@ and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9
 (This app requires Android 9+).
 
 ### iOS
-Ongoing, see [#3](https://gitlab.bixilon.de/bixilon/unithen/-/issues/3) for more details.
+iOS is fully supported. There is no distribution yet, so you must build the app yourself (requires iOS 15.6+).
 
 ### Desktop
 This app is ported to the jvm with compose multiplatform and runs on desktop, however this is a show off and not an offical supported platform. Please build it yourself.
