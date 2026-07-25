@@ -11,14 +11,13 @@ import SwiftUI
 @main
 struct UniThenApp: App {
 
-init() {
-#if
-DEBUG
-UniThenKt.DebugApplication()
-#else
-UniThenKt.Application()
-#endif
-}
+    init() {
+        #if DEBUG
+            UniThenKt.DebugApplication()
+        #else
+            UniThenKt.Application()
+        #endif
+    }
 
 
     var body: some Scene {
