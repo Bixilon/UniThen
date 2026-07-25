@@ -61,7 +61,7 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         database.executeBatch("schema")
     }
 
-    private fun upgrade(database: DatabaseConnection, start: Int, end: Int) = database.withTransaction {
+    private fun upgrade(database: DatabaseConnection, start: Int, end: Int) {
         for (version in (start + 1)..end) {
             try {
                 database.executeBatch("migrations/${version}")
