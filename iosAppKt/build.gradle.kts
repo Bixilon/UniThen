@@ -10,7 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
@@ -25,7 +27,7 @@ kotlin {
         freeCompilerArgs.add("-Xintrinsic-const-evaluation")
     }
 
-    val xcfName = "unithen"
+    val xcfName = "unithenios"
 
     iosSimulatorArm64 {
         binaries.framework {
@@ -47,4 +49,12 @@ kotlin {
             implementation(project(":debug"))
         }
     }
+}
+
+// https://github.com/touchlab/SQLiter/issues/77
+project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
+    targets
+        .filterIsInstance<KotlinNativeTarget>()
+        .flatMap { it.binaries }
+        .forEach { compilationUnit -> compilationUnit.linkerOpts("-lsqlite3") }
 }

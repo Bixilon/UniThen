@@ -20,7 +20,7 @@ object UniThen {
 }
 
 @Suppress("UNUSED")
-fun ReleaseApplication() {
+fun Application() {
     RuntimeInfo.RuntimeInfo0.actual = object : RuntimeInfo {
         override val debug get() = false
     }
@@ -29,7 +29,7 @@ fun ReleaseApplication() {
 }
 
 @Suppress("UNUSED")
-fun Application() {
+fun DebugApplication() {
     RuntimeInfo.RuntimeInfo0.actual = object : RuntimeInfo {
         override val debug get() = true
     }
