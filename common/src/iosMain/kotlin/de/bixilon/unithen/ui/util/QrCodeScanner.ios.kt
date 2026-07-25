@@ -15,6 +15,8 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.unithen.settings.Settings
+import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.util.camera.useCameraPermission
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -29,6 +31,7 @@ import unithen.common.generated.resources.scan_camera_permission
 
 @OptIn(ExperimentalForeignApi::class)
 private class QrUiView(
+    val highQuality: Boolean,
     val onResult: (Set<ScannedQrCode>) -> Unit,
     val onError: (Throwable) -> Unit,
 ) : UIView(frame = CGRectZero.readValue()) {
@@ -70,14 +73,17 @@ private class QrUiView(
     }
 
     private fun setup() {
-        val device = AVCaptureDevice.defaultDeviceWithMediaType(AVMediaTypeVideo) ?: throw IllegalStateException("No video devices!")
+        val device = AVCaptureDevice.defaultDeviceWithDeviceType(null, AVMediaTypeVideo, AVCaptureDevicePositionBack) ?: throw IllegalStateException("No video devices!")
         val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) ?: throw IllegalStateException("No capture input devices!")
         if (!session.canAddInput(input)) throw IllegalStateException("Can not add input device!")
 
         session.addInput(input)
 
-        val output = AVCaptureMetadataOutput()
+        if (highQuality && session.canSetSessionPreset(AVAssetExportPresetHighestQuality)) {
+            session.sessionPreset = AVAssetExportPresetHighestQuality
+        }
 
+        val output = AVCaptureMetadataOutput()
         if (!session.canAddOutput(output)) throw IllegalStateException("Can not add output!")
 
         session.addOutput(output)
@@ -118,8 +124,10 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) ->
         return
     }
 
+    val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
+
     UIKitView(
         modifier = modifier,
-        factory = { QrUiView(onResult) { error = it.message ?: it::class.simpleName } },
+        factory = { QrUiView(highResolution, onResult) { error = it.message ?: it::class.simpleName } },
     )
 }
