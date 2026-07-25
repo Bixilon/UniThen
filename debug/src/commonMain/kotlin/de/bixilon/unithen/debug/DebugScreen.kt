@@ -12,9 +12,15 @@
 
 package de.bixilon.unithen.debug
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -43,18 +49,22 @@ fun DebugScreen() {
     Screen {
         ScreenTitle("Debug menu")
 
-        Button({ navigator.navigate(SetupRoute) }) { Text("Open setup") }
+        Button({ navigator.navigate(MainRoute) }, modifier = Modifier.fillMaxWidth().height(100.dp)) { Text("Main") }
+
+        Spacer(Modifier.height(20.dp))
 
 
-        Button({ navigator.navigate(MainRoute) }) { Text("Main") }
-        Button({
-            storage.helper.load()
+        Button({ navigator.navigate(SetupRoute) }) { Text("Setup") }
+        Button({ navigator.navigate(UiTestRoute) }) { Text("UI Test") }
+        Button({ navigator.navigate(CrashRoute(IllegalStateException("It crashed!"))) }) { Text("Crash screen") }
 
-            storage.transaction { DebugUtil.DUMMY.forEach { storage.helper.execute(it) } }
-        }) { Text("Initiate dummy database") }
+
+        Spacer(Modifier.height(20.dp))
+
+
+        Button({ storage.helper.load(); storage.initializeDummy() }) { Text("Initiate dummy database") }
         Button({ storage.helper.load(); storage.insert1000Users() }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
-        Button({ navigator.navigate(CrashRoute(IllegalStateException("It crashed!"))) }) { Text("Open crash screen") }
 
         var progress by remember { mutableStateOf<String?>(null) }
 

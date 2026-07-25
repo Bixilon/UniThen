@@ -32,6 +32,7 @@ fun DebugMainActivity() {
         composable<DebugRoute> { DebugScreen() }
         composable<SetupRoute> { SetupScreen() }
         composable<CrashRoute> { CrashScreen(null, it.exception) }
+        composable<UiTestRoute> { UiTestScreen() }
     }
 
     CompositionLocalProvider(
