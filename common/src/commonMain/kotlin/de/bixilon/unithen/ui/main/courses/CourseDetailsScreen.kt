@@ -22,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
@@ -34,6 +33,7 @@ import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURAT
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.containers.FloatingActionButtons
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
@@ -110,12 +110,7 @@ fun CourseDetailsScreen(course: Course) {
             }
         }
 
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(-15.dp, -15.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        FloatingActionButtons(Modifier.offset(x = -8.dp)) {
             val time = useTime()
 
             val present = rememberStorageAsync(course, time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = false).find { it.course == course.id } }

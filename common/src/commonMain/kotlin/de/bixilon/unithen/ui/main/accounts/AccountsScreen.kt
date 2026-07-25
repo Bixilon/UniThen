@@ -34,6 +34,7 @@ import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.types.Account
+import de.bixilon.unithen.ui.containers.FloatingActionButtons
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
@@ -275,11 +276,10 @@ fun AccountsScreen() {
                 items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
             }
 
-            FloatingActionButton({ navigator.navigate(AddAccountRoute) }, modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(bottom = 8.dp)
-            ) {
-                Icon(Icons.Filled.Add, "add")
+            FloatingActionButtons {
+                FloatingActionButton({ navigator.navigate(AddAccountRoute) }) {
+                    Icon(Icons.Filled.Add, "add")
+                }
             }
         }
     }

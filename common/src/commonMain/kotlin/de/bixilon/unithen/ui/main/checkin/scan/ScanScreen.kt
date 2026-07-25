@@ -13,7 +13,9 @@
 package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -21,7 +23,6 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
@@ -30,6 +31,7 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
+import de.bixilon.unithen.ui.containers.FloatingActionButtons
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
@@ -43,23 +45,6 @@ import de.bixilon.unithen.ui.util.useTime
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.scan_choose_appointment_title
 
-
-@Composable
-private fun BoxScope.Actions() {
-    val navigation = LocalNavigation.current
-
-    Column(
-        modifier = Modifier
-            .align(Alignment.BottomEnd),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        if (isSettingSupported(SCAN_QR_AUTO_SCAN)) {
-            FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
-                Icon(Icons.Filled.QrCodeScanner, "scan")
-            }
-        }
-    }
-}
 
 @Composable
 private fun ChooseAppointment(appointments: List<Appointment>) {
@@ -82,7 +67,13 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
                 }
             }
 
-            Actions()
+            FloatingActionButtons {
+                if (isSettingSupported(SCAN_QR_AUTO_SCAN)) {
+                    FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
+                        Icon(Icons.Filled.QrCodeScanner, "scan")
+                    }
+                }
+            }
         }
     }
 }

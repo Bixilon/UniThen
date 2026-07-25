@@ -24,10 +24,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.containers.InfoContainer
-import de.bixilon.unithen.ui.containers.InfoPair
-import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
@@ -138,13 +135,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                 ScanAttendeeList()
             }
 
-            Column(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-
+            FloatingActionButtons {
                 if (canSync) {
                     var showSyncButton by remember(Unit) { mutableStateOf(pending > 0) }
 
