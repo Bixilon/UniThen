@@ -61,6 +61,7 @@ actual fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
 
     LaunchedEffect(store) {
         defaults.setBool(store.value, setting.key)
+        defaults.synchronize()
     }
 
     return store
@@ -75,6 +76,7 @@ actual fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum
 
     LaunchedEffect(store) {
         defaults.setObject(store.value.name, setting.key)
+        defaults.synchronize()
     }
 
     return remember {
@@ -100,6 +102,7 @@ actual fun rememberSetting(setting: Setting<Int>): MutableState<Int> {
 
     LaunchedEffect(store) {
         defaults.setInteger(store.value.toLong(), setting.key)
+        defaults.synchronize()
     }
 
     return store
@@ -114,6 +117,7 @@ actual fun rememberSetting(setting: Setting<String>): MutableState<String> {
 
     LaunchedEffect(store) {
         defaults.setObject(store.value, setting.key)
+        defaults.synchronize()
     }
 
     return store
