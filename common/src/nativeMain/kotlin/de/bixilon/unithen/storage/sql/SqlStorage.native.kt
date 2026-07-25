@@ -12,11 +12,16 @@
 
 package de.bixilon.unithen.storage.sql
 
-open class TestSqlHelper : SQLiteHelper {
-    override suspend fun load() = Unit
+import kotlin.native.concurrent.ThreadLocal
 
-    override fun query(): SQLiteHelper.QueryConnection = TODO()
-    override fun update(): SQLiteHelper.UpdateConnection = TODO()
-
-    override fun close() = Unit
+@ThreadLocal
+private object Current {
+    var transaction: SQLiteHelper.UpdateConnection? = null
 }
+
+actual var transaction: SQLiteHelper.UpdateConnection?
+    get() = Current.transaction
+    set(value) {
+        if (Current.transaction != null) throw IllegalStateException("Nested transaction!")
+        Current.transaction = value
+    }

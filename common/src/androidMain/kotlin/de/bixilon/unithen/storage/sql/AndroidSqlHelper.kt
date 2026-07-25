@@ -20,17 +20,50 @@ import android.database.sqlite.SQLiteStatement
 import androidx.core.database.getBlobOrNull
 import androidx.core.database.sqlite.transaction
 import de.bixilon.kutil.primitive.IntUtil.toInt
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
-class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
-    private var transaction = false
+private fun SQLiteDatabase.executeBatch(path: String) {
+    val statements = SqlUtil.split(SqlUtil.load(path))
+    statements.forEach { execSQL(it) }
+}
 
-    private fun SQLiteDatabase.executeBatch(path: String) {
-        val statements = SqlUtil.split(SqlUtil.load(path))
-        statements.forEach { execSQL(it) }
+private fun Any?.db(): String? = when (this) {
+    null -> null
+    is Int -> this.toString()
+    is Long -> this.toString()
+    is String -> this
+    is Uuid -> this.toString()
+    is Instant -> epochSeconds.toString()
+    is Enum<*> -> name
+    is Boolean -> this.toString()
+    else -> throw IllegalArgumentException("Unknown parameter type: $this")
+}
+
+
+private fun SQLiteStatement.bind(vararg parameters: Any?) {
+    for ((index, parameter) in parameters.withIndex()) {
+        val actual = index + 1
+        when (parameter) {
+            null -> bindNull(actual)
+            is Int -> bindLong(actual, parameter.toLong())
+            is Long -> bindLong(actual, parameter)
+            is String -> bindString(actual, parameter)
+            is Instant -> bindLong(actual, parameter.epochSeconds)
+            is Uuid -> bindString(actual, parameter.toString())
+            is ByteArray -> bindBlob(actual, parameter)
+            is Enum<*> -> bindString(actual, parameter.name)
+            is Boolean -> bindLong(actual, parameter.toInt().toLong())
+            else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
+        }
     }
+}
+
+class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null, SqlStorage.VERSION), SQLiteHelper {
+    private var lock = Mutex(false)
 
     override fun onCreate(database: SQLiteDatabase) {
         database.executeBatch("schema")
@@ -46,77 +79,14 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
         }
     }
 
-    override fun executeBatch(path: String) {
-        writableDatabase.executeBatch(path)
+    override fun query(): SQLiteHelper.QueryConnection {
+        runBlocking { lock.lock() }
+        return AndroidQueryConnection(readableDatabase)
     }
 
-    @Synchronized
-    override fun <T> transaction(block: () -> T): T {
-        if (transaction) throw IllegalStateException("Nested transactions are unsupported!")
-        this.transaction = true
-        try {
-            return writableDatabase.transaction { block.invoke() }
-        } finally {
-            transaction = false
-        }
-    }
-
-    private fun createStatement(readonly: Boolean, sql: String, vararg parameters: Any?): SQLiteStatement {
-        val database = if (readonly) readableDatabase else writableDatabase
-
-        val statement = database.compileStatement(sql)
-        statement.bind(*parameters)
-
-        return statement
-    }
-
-    override fun execute(sql: String, vararg parameters: Any?): Int {
-        val statement = createStatement(false, sql, *parameters)
-
-        return statement.use { it.executeUpdateDelete() }
-    }
-
-    override fun insert(sql: String, vararg parameters: Any?): Int {
-        val statement = createStatement(false, sql, *parameters)
-
-        return statement.use { it.executeInsert().toInt() }  // TODO: That is bad, it is returning the row id, not the id
-    }
-
-    override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
-        // TODO: That sucks, we must convert all parameters to a string...
-        return AndroidCursor(readableDatabase.rawQuery(sql, parameters.map { it.db() }.toTypedArray()))
-    }
-
-
-    fun Any?.db(): String? = when (this) {
-        null -> null
-        is Int -> this.toString()
-        is Long -> this.toString()
-        is String -> this
-        is Uuid -> this.toString()
-        is Instant -> epochSeconds.toString()
-        is Enum<*> -> name
-        is Boolean -> this.toString()
-        else -> throw IllegalArgumentException("Unknown parameter type: $this")
-    }
-
-
-    private fun SQLiteStatement.bind(vararg parameters: Any?) {
-        for ((index, parameter) in parameters.withIndex()) {
-            val actual = index + 1
-            when (parameter) {
-                null -> bindNull(actual)
-                is Int -> bindLong(actual, parameter.toLong())
-                is Long -> bindLong(actual, parameter)
-                is String -> bindString(actual, parameter)
-                is Instant -> bindLong(actual, parameter.epochSeconds)
-                is Uuid -> bindString(actual, parameter.toString())
-                is ByteArray -> bindBlob(actual, parameter)
-                is Enum<*> -> bindString(actual, parameter.name)
-                is Boolean -> bindLong(actual, parameter.toInt().toLong())
-                else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
-            }
-        }
+    override fun update(): SQLiteHelper.UpdateConnection {
+        runBlocking { lock.lock() }
+        return AndroidUpdateConnection(writableDatabase)
     }
 
     override fun close() {
@@ -125,6 +95,57 @@ class AndroidSqlHelper(context: Context) : SQLiteOpenHelper(context, NAME, null,
 
     override suspend fun load() {
         writableDatabase
+    }
+
+    private open inner class AndroidQueryConnection(val database: SQLiteDatabase) : SQLiteHelper.QueryConnection {
+
+        override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
+            // TODO: That sucks, we must convert all parameters to a string...
+            return AndroidCursor(database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()))
+        }
+
+        override fun close() {
+            lock.unlock()
+        }
+
+    }
+
+    private inner class AndroidUpdateConnection(database: SQLiteDatabase) : AndroidQueryConnection(database), SQLiteHelper.UpdateConnection {
+        private var transaction = false
+
+        override fun executeBatch(path: String) {
+            database.executeBatch(path)
+        }
+
+        @Synchronized
+        override fun <T> transaction(block: () -> T): T {
+            if (transaction) throw IllegalStateException("Nested transactions are unsupported!")
+            this.transaction = true
+            try {
+                return database.transaction { block.invoke() }
+            } finally {
+                transaction = false
+            }
+        }
+
+        private fun createStatement(sql: String, vararg parameters: Any?): SQLiteStatement {
+            val statement = database.compileStatement(sql)
+            statement.bind(*parameters)
+
+            return statement
+        }
+
+        override fun execute(sql: String, vararg parameters: Any?): Int {
+            val statement = createStatement(sql, *parameters)
+
+            return statement.use { it.executeUpdateDelete() }
+        }
+
+        override fun insert(sql: String, vararg parameters: Any?): Int {
+            val statement = createStatement(sql, *parameters)
+
+            return statement.use { it.executeInsert().toInt() }  // TODO: That is bad, it is returning the row id, not the id
+        }
     }
 
     class AndroidCursor(val cursor: Cursor) : SQLiteHelper.Cursor {

@@ -20,16 +20,27 @@ interface SQLiteHelper : AutoCloseable {
 
     suspend fun load()
 
-    fun query(sql: String, vararg parameters: Any?): Cursor
-    fun execute(sql: String, vararg parameters: Any?): Int
-    fun insert(sql: String, vararg parameters: Any?): Int
+    fun query(): QueryConnection
+    fun update(): UpdateConnection
 
-    fun executeBatch(path: String) {
-        val statements = SqlUtil.split(SqlUtil.load(path))
-        statements.forEach { execute(it) }
+
+    interface QueryConnection : AutoCloseable {
+        fun query(sql: String, vararg parameters: Any?): Cursor
     }
 
-    fun <T> transaction(block: () -> T): T
+    interface UpdateConnection : QueryConnection {
+
+        fun execute(sql: String, vararg parameters: Any?): Int
+        fun insert(sql: String, vararg parameters: Any?): Int
+
+
+        fun executeBatch(path: String) {
+            val statements = SqlUtil.split(SqlUtil.load(path))
+            statements.forEach { execute(it) }
+        }
+
+        fun <T> transaction(block: () -> T): T
+    }
 
 
     interface Cursor : AutoCloseable {

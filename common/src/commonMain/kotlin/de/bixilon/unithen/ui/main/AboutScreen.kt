@@ -40,10 +40,9 @@ import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberIsFdroid
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import io.ktor.client.request.request
-import io.ktor.client.statement.bodyAsText
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.about_license
 import unithen.common.generated.resources.about_unofficial
@@ -121,7 +120,7 @@ fun AboutScreen() {
         Card(
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Column(modifier = Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text("Version: ${BuildInfo.VERSION} (${BuildInfo.VERSION_CODE})", textAlign = TextAlign.Center)
 
                 if (RuntimeInfo.debug) {

@@ -25,6 +25,7 @@ object DebugUtil {
     }
 
     fun SqlStorage.initializeDummy() {
-        transaction { DUMMY.forEach { helper.execute(it) } }
+        val connection = helper.update()
+        connection.use { connection.transaction { DUMMY.forEach { connection.execute(it) } } }
     }
 }

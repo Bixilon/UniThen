@@ -13,20 +13,48 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
-import kotlinx.atomicfu.locks.ReentrantLock
-import kotlinx.atomicfu.locks.withLock
+import de.bixilon.kutil.primitive.IntUtil.toInt
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 
+private fun Statement.bind(vararg parameters: Any?) {
+    for ((index, parameter) in parameters.withIndex()) {
+        val actual = index + 1
+        when (parameter) {
+            null -> bindNull(actual)
+            is Int -> bindLong(actual, parameter.toLong())
+            is Long -> bindLong(actual, parameter)
+            is String -> bindString(actual, parameter)
+            is Instant -> bindLong(actual, parameter.epochSeconds)
+            is Uuid -> bindString(actual, parameter.toString())
+            is ByteArray -> bindBlob(actual, parameter)
+            is Enum<*> -> bindString(actual, parameter.name)
+            is Boolean -> bindLong(actual, parameter.toInt().toLong())
+            else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
+        }
+    }
+}
+
+private fun DatabaseConnection.createStatement(sql: String, vararg parameters: Any?): Statement {
+    val statement = createStatement(sql)
+    statement.bind(*parameters)
+
+    return statement
+}
+
+
 class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
-    val lock = ReentrantLock()
+    val lock = Mutex()
     private val connection by lazy { createDatabaseManager(DatabaseConfiguration(name, SqlStorage.VERSION, create = this::create, upgrade = this::upgrade, inMemory = name == null)).createSingleThreadedConnection() }
 
 
     private fun DatabaseConnection.executeBatch(path: String) {
         val statements = SqlUtil.split(SqlUtil.load(path))
-        lock.withLock { statements.forEach { this@executeBatch.rawExecSql(it) } }
+        statements.forEach { this@executeBatch.rawExecSql(it) }
     }
 
     private fun create(database: DatabaseConnection) {
@@ -47,60 +75,62 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
         connection
     }
 
-    private fun Statement.bind(vararg parameters: Any?) {
-        for ((index, parameter) in parameters.withIndex()) {
-            val actual = index + 1
-            when (parameter) {
-                null -> bindNull(actual)
-                is Int -> bindLong(actual, parameter.toLong())
-                is Long -> bindLong(actual, parameter)
-                is String -> bindString(actual, parameter)
-                is Instant -> bindLong(actual, parameter.epochSeconds)
-                is Uuid -> bindString(actual, parameter.toString())
-                is ByteArray -> bindBlob(actual, parameter)
-                is Enum<*> -> bindString(actual, parameter.name)
-                else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
-            }
+    override fun query(): SQLiteHelper.QueryConnection {
+        runBlocking { lock.lock() }
+
+        return NativeQueryConnection(connection)
+    }
+
+    override fun update(): SQLiteHelper.UpdateConnection {
+        runBlocking { lock.lock() }
+
+        return NativeUpdateConnection(connection)
+    }
+
+    override fun close() = runBlocking {
+        lock.withLock {
+            connection.close()
         }
     }
 
-    private fun createStatement(sql: String, vararg parameters: Any?): Statement {
-        val statement = connection.createStatement(sql)
-        statement.bind(*parameters)
+    private open inner class NativeQueryConnection(val connection: DatabaseConnection) : SQLiteHelper.QueryConnection {
 
-        return statement
-    }
-
-
-    override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
-        lock.lock()
-        try {
-            val statement = createStatement(sql, *parameters)
+        override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
+            val statement = connection.createStatement(sql, *parameters)
 
             return NativeCursor(statement, statement.query())
-        } catch (error: Throwable) {
+        }
+
+        override fun close() {
             lock.unlock()
-            throw error
         }
     }
 
-    override fun execute(sql: String, vararg parameters: Any?) = lock.withLock {
-        val statement = createStatement(sql, *parameters)
+    private inner class NativeUpdateConnection(connection: DatabaseConnection) : NativeQueryConnection(connection), SQLiteHelper.UpdateConnection {
+        private var transaction = false
 
-        return@withLock statement.executeUpdateDelete()
-    }
+        override fun execute(sql: String, vararg parameters: Any?): Int {
+            val statement = connection.createStatement(sql, *parameters)
 
-    override fun insert(sql: String, vararg parameters: Any?) = lock.withLock {
-        val statement = createStatement(sql, *parameters)
+            return statement.executeUpdateDelete()
+        }
 
-        return@withLock statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
-    }
+        override fun insert(sql: String, vararg parameters: Any?): Int {
+            val statement = connection.createStatement(sql, *parameters)
 
-    override fun <T> transaction(block: () -> T) = lock.withLock { connection.withTransaction { block.invoke() } }
+            return statement.executeInsert().toInt() // TODO: This returns the rowid, not the auto increment id
+        }
 
+        override fun <T> transaction(block: () -> T): T {
+            if (transaction) throw IllegalStateException("Nested transactions are unsupported!")
 
-    override fun close() = lock.withLock {
-        connection.close()
+            try {
+                this.transaction = true
+                return connection.withTransaction { block.invoke() }
+            } finally {
+                this.transaction = false
+            }
+        }
     }
 
     inner class NativeCursor(val statement: Statement, val cursor: Cursor) : SQLiteHelper.Cursor {

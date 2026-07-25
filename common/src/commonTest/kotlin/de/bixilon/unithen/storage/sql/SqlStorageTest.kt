@@ -18,7 +18,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 fun create() = SqlStorage(createMemoryHelper())
 suspend fun dummy() = create().apply { helper.load(); this.initializeDummy() }
@@ -37,7 +40,7 @@ class SqlStorageTest {
         val storage = create()
         storage.helper.load()
 
-        val next = storage.helper.query("SELECT host FROM sites WHERE id=1").moveToNext()
+        val next = storage.query("SELECT host FROM sites WHERE id=1") { it.moveToNext() }
 
         assertFalse(next)
     }
@@ -46,10 +49,9 @@ class SqlStorageTest {
     fun `create dummy database`() = runBlocking {
         val storage = dummy()
 
-        val cursor = storage.helper.query("SELECT host FROM sites WHERE id=901")
+        val host = storage.query("SELECT host FROM sites WHERE id=901") { it.moveToNext(); it.getString(0) }
 
-        assertTrue(cursor.moveToNext())
-        assertEquals("test.local", cursor.getString(0))
+        assertEquals("test.local", host)
     }
 
     @Test
