@@ -21,6 +21,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
+import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
@@ -165,7 +167,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                         }
                     }
                 }
-                if (appointment.canPerformCheckIn()) {
+                if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {
                     FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
                         Icon(Icons.Filled.QrCodeScanner, "scan")
                     }

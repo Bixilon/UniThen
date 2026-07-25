@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
+import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
+import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
@@ -125,7 +127,7 @@ fun CourseDetailsScreen(course: Course) {
             }
 
             val scan = rememberStorageAsync(course, time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true).find { it.course == course.id } }
-            if (scan != null) {
+            if (scan != null && isSettingSupported(SCAN_QR_AUTO_SCAN)) {
                 FloatingActionButton({ navigator.navigate(ScanAppointmentRoute(scan)) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")
                 }
