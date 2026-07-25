@@ -18,10 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
+import kotlin.test.*
 
 fun create() = SqlStorage(createMemoryHelper())
 suspend fun dummy() = create().apply { helper.load(); this.initializeDummy() }
@@ -87,5 +84,40 @@ class SqlStorageTest {
         val course = dummy().courses[901]
 
         assertEquals("First course", course?.name)
+    }
+
+    @Test
+    fun `is user attendee of appointment`() = runBlocking {
+        val storage = dummy()
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[906]!!
+        assertTrue(storage.users.isAttendee(appointment, user))
+    }
+
+    @Test
+    fun `unreferenced course created in dummy`() = runBlocking {
+        val storage = dummy()
+
+        assertEquals("Unreferenced course", storage.courses[904]?.name)
+    }
+
+    @Test
+    fun `cleanup database and remove unreferenced courses`() = runBlocking {
+        val storage = dummy().apply { cleanup() }
+
+        assertEquals("First course", storage.courses[901]?.name)
+        assertNull(storage.courses[904])
+    }
+
+    @Test
+    fun `clear database cache`() = runBlocking {
+        val storage = dummy().apply { clearCache() }
+
+        assertEquals("First course", storage.courses[901]?.name)
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[906]!!
+        assertFalse(storage.users.isAttendee(appointment, user))
     }
 }

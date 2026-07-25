@@ -83,16 +83,14 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
         helper.close()
     }
 
-    fun cleanup() {
-        val connection = helper.update()
-        connection.transaction { connection.executeBatch("cleanup") }
-        connection.execute("VACUUM")
+    fun cleanup(): Unit = helper.update().use {
+        it.transaction { it.executeBatch("cleanup") }
+        it.execute("VACUUM")
     }
 
-    fun clearCache() {
-        val connection = helper.update()
-        connection.transaction { connection.executeBatch("clear_cache") }
-        connection.execute("VACUUM")
+    fun clearCache(): Unit = helper.update().use {
+        it.transaction { it.executeBatch("clear_cache") }
+        it.execute("VACUUM")
     }
 
     companion object {
