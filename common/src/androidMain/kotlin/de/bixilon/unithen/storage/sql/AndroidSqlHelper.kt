@@ -19,7 +19,6 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.getBlobOrNull
 import androidx.core.database.sqlite.transaction
-import de.bixilon.kutil.primitive.IntUtil.toInt
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import java.io.IOException
@@ -39,7 +38,7 @@ private fun Any?.db(): String? = when (this) {
     is Uuid -> this.toString()
     is Instant -> epochSeconds.toString()
     is Enum<*> -> name
-    is Boolean -> this.toString()
+    is Boolean -> if (this) "1" else "0"
     else -> throw IllegalArgumentException("Unknown parameter type: $this")
 }
 
@@ -56,7 +55,7 @@ private fun SQLiteStatement.bind(vararg parameters: Any?) {
             is Uuid -> bindString(actual, parameter.toString())
             is ByteArray -> bindBlob(actual, parameter)
             is Enum<*> -> bindString(actual, parameter.name)
-            is Boolean -> bindLong(actual, parameter.toInt().toLong())
+            is Boolean -> bindLong(actual, if (parameter) 1 else 0)
             else -> throw IllegalArgumentException("Unknown parameter type: $parameter")
         }
     }
