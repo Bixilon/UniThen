@@ -21,9 +21,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Clock
@@ -78,7 +76,7 @@ object CourseFetcher {
                     return@mapNotNull null
                 }
 
-                async {
+                async(Dispatchers.IO) {
                     fetchCourse(account, id, semaphore, id in tutor)
                     progress?.invoke(CourseFetchProgress(done++, total))
                 }

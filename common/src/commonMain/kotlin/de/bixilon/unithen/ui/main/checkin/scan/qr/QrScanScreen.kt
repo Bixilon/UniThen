@@ -14,9 +14,12 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
@@ -200,6 +203,8 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                 }
             }
         }
+
+        QrUpdateIndicator(Modifier.align(Alignment.TopEnd).padding(4.dp), appointments)
     }
 
     val courses = rememberStorage { appointments.map { storage.courses[it.course]!! }.toSet() }
