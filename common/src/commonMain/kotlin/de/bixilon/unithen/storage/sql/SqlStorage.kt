@@ -35,7 +35,7 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
 
 
     fun notifyState() {
-        transaction?.let { return }
+        if (transaction != null) return
 
         scope.launch { notify.intValue++ }
     }

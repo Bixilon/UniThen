@@ -22,6 +22,7 @@ private object Current {
 actual var transaction: SQLiteHelper.UpdateConnection?
     get() = Current.transaction
     set(value) {
-        if (Current.transaction != null) throw IllegalStateException("Nested transaction!")
+        if (value != null && Current.transaction != null) throw IllegalStateException("Nested transaction!")
+
         Current.transaction = value
     }

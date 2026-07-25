@@ -149,4 +149,13 @@ class SqlStorageTest {
 
         assertTrue(storage.courses.isTutor())
     }
+
+    @Test
+    fun `create transaction and get value`() = runBlocking {
+        val storage = dummy()
+
+        val course = storage.transaction { storage.courses[901] }
+
+        assertEquals("First course", course?.name)
+    }
 }

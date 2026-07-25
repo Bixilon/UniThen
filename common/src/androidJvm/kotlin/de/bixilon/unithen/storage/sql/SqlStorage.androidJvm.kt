@@ -17,6 +17,6 @@ private val THREAD_LOCAL = ThreadLocal<SQLiteHelper.UpdateConnection?>()
 actual var transaction
     get() = THREAD_LOCAL.get()
     set(value) {
-        if (THREAD_LOCAL.get() != null) throw IllegalStateException("Nested transaction!")
+        if (value != null && THREAD_LOCAL.get() != null) throw IllegalStateException("Nested transaction!")
         THREAD_LOCAL.set(value)
     }
