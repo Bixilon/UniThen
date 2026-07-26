@@ -20,27 +20,25 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.sync.SyncLock
 import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
 import kotlinx.coroutines.*
-import kotlinx.coroutines.sync.Semaphore
-import kotlinx.coroutines.sync.withPermit
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
 object CourseFetcher {
-    const val MAX_PARALLEL_REQUESTS = 6
 
-    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, semaphore: Semaphore, tutor: Boolean) {
+    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, tutor: Boolean) {
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        val detailsQl = semaphore.withPermit { api.getCourse(id) }!!
+        val detailsQl = SyncLock.withPermit(site.host) { api.getCourse(id) }!!
 
         val course = storeCourse(site, detailsQl)
         accounts.addToCourse(account, course, tutor)
 
         if (tutor) {
-            val enrolled = semaphore.withPermit { api.getEnrolled(course.uuid) }
+            val enrolled = SyncLock.withPermit(site.host) { api.getEnrolled(course.uuid) }
             storeEnrolled(site, course, enrolled!!)
         }
     }
@@ -59,8 +57,6 @@ object CourseFetcher {
 
         progress?.invoke(CourseFetchProgress(0, all.size))
 
-        val semaphore = Semaphore(MAX_PARALLEL_REQUESTS)
-
         setCourses(account, site, all, tutor)
 
         var done = 0
@@ -77,7 +73,7 @@ object CourseFetcher {
                 }
 
                 async(Dispatchers.IO) {
-                    fetchCourse(account, id, semaphore, id in tutor)
+                    fetchCourse(account, id, id in tutor)
                     progress?.invoke(CourseFetchProgress(done++, total))
                 }
             }.awaitAll()
