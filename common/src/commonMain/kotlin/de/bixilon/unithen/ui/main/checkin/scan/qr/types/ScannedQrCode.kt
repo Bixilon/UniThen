@@ -10,19 +10,18 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan.qr
+package de.bixilon.unithen.ui.main.checkin.scan.qr.types
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.components.SyncStatusIndicator
-import de.bixilon.unithen.ui.sync.useSyncEngine
-import kotlin.time.Duration.Companion.minutes
+import de.bixilon.kutil.exception.ExceptionUtil
 
+sealed interface ScannedQrCode {
 
-@Composable
-fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
-    val status = useSyncEngine(1.minutes) { syncAttendees(appointments, callback = it) }
+    companion object {
 
-    SyncStatusIndicator(status, modifier, count = true)
+        fun decode(data: ByteArray): ScannedQrCode? {
+            ExceptionUtil.catchAll { ScannedQrCodeV1.decode(data) }?.let { return it }
+
+            return null
+        }
+    }
 }

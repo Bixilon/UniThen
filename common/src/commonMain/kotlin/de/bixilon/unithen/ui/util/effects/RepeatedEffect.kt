@@ -10,19 +10,34 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan.qr
+package de.bixilon.unithen.ui.util.effects
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.components.SyncStatusIndicator
-import de.bixilon.unithen.ui.sync.useSyncEngine
-import kotlin.time.Duration.Companion.minutes
-
+import androidx.compose.runtime.LaunchedEffect
+import de.bixilon.kutil.time.Interval
+import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import kotlinx.coroutines.delay
+import kotlin.time.Duration
 
 @Composable
-fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
-    val status = useSyncEngine(1.minutes) { syncAttendees(appointments, callback = it) }
+fun RepeatedEffect(interval: Interval, executor: suspend () -> Unit) {
+    val navigation = LocalNavigation.current
 
-    SyncStatusIndicator(status, modifier, count = true)
+    LaunchedEffect(Unit) {
+        while (true) {
+            try {
+                executor.invoke()
+            } catch (error: Throwable) {
+                error.printStackTrace()
+                navigation.navigate(CrashRoute(error))
+                break
+            }
+            if (interval == Duration.INFINITE) {
+                return@LaunchedEffect
+            }
+
+            delay(interval)
+        }
+    }
 }

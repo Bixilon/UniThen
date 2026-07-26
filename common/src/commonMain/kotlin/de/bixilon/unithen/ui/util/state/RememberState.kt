@@ -10,19 +10,21 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan.qr
+package de.bixilon.unithen.ui.util.state
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.components.SyncStatusIndicator
-import de.bixilon.unithen.ui.sync.useSyncEngine
-import kotlin.time.Duration.Companion.minutes
-
+import androidx.compose.runtime.*
 
 @Composable
-fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
-    val status = useSyncEngine(1.minutes) { syncAttendees(appointments, callback = it) }
+inline fun <T> rememberStateOf(value: T): MutableState<T> {
+    return remember { mutableStateOf(value) }
+}
 
-    SyncStatusIndicator(status, modifier, count = true)
+@Composable
+inline fun rememberStateOf(value: Int): MutableIntState {
+    return remember { mutableIntStateOf(value) }
+}
+
+@Composable
+inline fun <T> rememberStateOf(crossinline lazy: () -> T): MutableState<T> {
+    return remember { mutableStateOf(lazy.invoke()) }
 }

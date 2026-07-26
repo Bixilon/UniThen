@@ -51,7 +51,6 @@ fun <T> rememberStorageAsync(key: Any?, block: SqlStorage.() -> T): T? {
     return value
 }
 
-
 @Composable
 fun <T> rememberStorageAsync(vararg keys: Any?, block: SqlStorage.() -> T): T? {
     if (!LocalVisibility.current) return null

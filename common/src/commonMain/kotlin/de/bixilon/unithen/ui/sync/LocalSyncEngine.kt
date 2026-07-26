@@ -10,10 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan.qr
+package de.bixilon.unithen.ui.sync
 
-import de.bixilon.kutil.exception.FastException
+import androidx.compose.runtime.staticCompositionLocalOf
+import de.bixilon.unithen.sync.SyncEngine
 
-class ScanError(val error: QrErrorReasons, val details: String?) : FastException("$error: $details")
-
-object ScanUtil
+val LocalSyncEngine = staticCompositionLocalOf<SyncEngine> { throw IllegalStateException("No sync engine set!") }

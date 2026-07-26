@@ -12,23 +12,10 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr.types
 
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.util.Jackson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
-
-sealed interface ScannedQrCode {
-
-    companion object {
-
-        fun decode(data: ByteArray): ScannedQrCode? {
-            catchAll { ScannedQrCodeV1.decode(data) }?.let { return it }
-
-            return null
-        }
-    }
-}
 
 @Serializable
 data class ScannedQrCodeV1(
