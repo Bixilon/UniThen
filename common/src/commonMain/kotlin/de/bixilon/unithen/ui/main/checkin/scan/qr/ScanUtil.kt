@@ -10,13 +10,10 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.main.checkin.scan.qr
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import de.bixilon.kutil.exception.FastException
 
+class ScanError(val error: QrErrorReasons, val details: String?) : FastException("$error: $details")
 
-data class QrCodeResult(val data: ByteArray)
-
-@Composable
-expect fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (Set<QrCodeResult>) -> Unit)
+object ScanUtil

@@ -17,6 +17,6 @@ import androidx.compose.ui.Modifier
 import de.bixilon.unithen.ui.error.ErrorBox
 
 @Composable
-actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
+actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> Unit) {
     ErrorBox("Scanning on desktop unsupported!")
 }

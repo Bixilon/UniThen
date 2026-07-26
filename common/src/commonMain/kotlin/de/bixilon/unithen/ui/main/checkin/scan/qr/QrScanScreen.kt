@@ -31,6 +31,7 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -38,21 +39,13 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
-import de.bixilon.unithen.util.Jackson
 import kotlinx.coroutines.delay
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 import kotlin.uuid.Uuid
 
-@Serializable
-data class ScannedQrCode(
-    @SerialName("appointment_id") val appointmentId: Uuid,
-    @SerialName("user_id") val userId: Uuid,
-)
 
 private data class AcceptedResult(
     val course: Course,
@@ -137,13 +130,11 @@ private fun QrScanScreen(appointments: List<Appointment>) {
             }
             for (code in it) {
                 try {
-                    val text = code.text?.trim() ?: continue
-                    if (!text.startsWith("{")) {
+                    val scanned = ScannedQrCodeV1.decode(code.data)
+                    if (scanned == null) {
                         errors += ErrorResult(QrErrorReasons.INVALID_FORMAT)
                         continue
                     }
-
-                    val scanned = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
 
                     if (accepted.find { it.appointment.uuid == scanned.appointmentId && it.user.uuid == scanned.userId } != null) continue
 

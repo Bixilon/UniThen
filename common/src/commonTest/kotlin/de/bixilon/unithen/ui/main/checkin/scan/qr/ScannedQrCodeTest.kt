@@ -12,29 +12,30 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
-import de.bixilon.unithen.util.Jackson
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
+import de.bixilon.unithen.util.Kutil.toUuid
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.uuid.Uuid
 
 
 class ScannedQrCodeTest {
 
     @Test
     fun `read scanned data no username`() {
-        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}"""
+        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}""".encodeToByteArray()
 
-        val read = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
+        val read = ScannedQrCodeV1.decode(text)
 
-        assertEquals(read, ScannedQrCode(Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2"), Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2")))
+        assertEquals(read, ScannedQrCodeV1("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid()))
     }
 
     @Test
     fun `read scanned data with username`() {
-        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}"""
+        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}""".encodeToByteArray()
 
-        val read = Jackson.MAPPER.decodeFromString<ScannedQrCode>(text)
+        val read = ScannedQrCodeV1.decode(text)
 
-        assertEquals(read, ScannedQrCode(Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2"), Uuid.parse("2efdc1bd-5963-43cf-b3b5-df5aa092cff2")))
+
+        assertEquals(read, ScannedQrCodeV1("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid()))
     }
 }

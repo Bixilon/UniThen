@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
+import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
@@ -24,6 +25,8 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.AVFoundation.*
 import platform.CoreGraphics.CGRectZero
+import platform.Foundation.NSData
+import platform.Foundation.valueForKeyPath
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.dispatch_get_main_queue
@@ -33,7 +36,7 @@ import unithen.common.generated.resources.scan_camera_permission
 @OptIn(ExperimentalForeignApi::class)
 private class QrUiView(
     val highQuality: Boolean,
-    val onResult: (Set<ScannedQrCode>) -> Unit,
+    val onResult: (Set<QrCodeResult>) -> Unit,
     val onError: (Throwable) -> Unit,
 ) : UIView(frame = CGRectZero.readValue()) {
     private val session = AVCaptureSession()
@@ -101,17 +104,24 @@ private class QrUiView(
     }
 }
 
-private class QrDelegate(val onResult: (Set<ScannedQrCode>) -> Unit) : NSObject(), AVCaptureMetadataOutputObjectsDelegateProtocol {
+private class QrDelegate(val onResult: (Set<QrCodeResult>) -> Unit) : NSObject(), AVCaptureMetadataOutputObjectsDelegateProtocol {
 
     override fun captureOutput(output: AVCaptureOutput, didOutputMetadataObjects: List<*>, fromConnection: AVCaptureConnection) {
-        val code = didOutputMetadataObjects.mapNotNull { (it as? AVMetadataMachineReadableCodeObject)?.stringValue?.let { ScannedQrCode(it) } }.toSet()
+        val code = didOutputMetadataObjects.mapNotNull {
+            if (it !is AVMetadataMachineReadableCodeObject) return@mapNotNull null
+            // https://stackoverflow.com/questions/32429480/how-to-read-binary-qr-code-with-avfoundation
+
+            val raw = it.valueForKeyPath("_internal.basicDescriptor").cast<Map<*, *>>()["BarcodeRawData"] as NSData
+
+            return@mapNotNull QrCodeResult(raw.toByteArray())
+        }.toSet()
 
         onResult.invoke(code)
     }
 }
 
 @Composable
-actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
+actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> Unit) {
     val permission = useCameraPermission()
 
     if (!permission) {

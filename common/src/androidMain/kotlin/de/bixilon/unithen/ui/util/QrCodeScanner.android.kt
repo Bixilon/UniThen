@@ -71,7 +71,7 @@ private fun Loading(modifier: Modifier = Modifier) {
 }
 
 @Composable
-actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) -> Unit) {
+actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> Unit) {
     val permission = usePermissionRequest(Manifest.permission.CAMERA)
 
     if (!permission) {
@@ -131,7 +131,7 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<ScannedQrCode>) ->
                         return@setAnalyzer
                     }
 
-                    scope.launch { onResult(results.map { ScannedQrCode(it.text) }.toSet()) }
+                    scope.launch { onResult(results.map { QrCodeResult(it.bytes!!) }.toSet()) }
                 }
             }
 
