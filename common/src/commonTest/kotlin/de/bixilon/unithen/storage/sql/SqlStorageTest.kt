@@ -153,6 +153,20 @@ class SqlStorageTest {
     }
 
     @Test
+    fun `tutor for course in dummy database`() = runBlocking {
+        val storage = dummy()
+
+        assertTrue(storage.accounts.isTutor(storage.courses[901]!!))
+    }
+
+    @Test
+    fun `not tutor for course in dummy database`() = runBlocking {
+        val storage = dummy()
+
+        assertFalse(storage.accounts.isTutor(storage.courses[902]!!))
+    }
+
+    @Test
     fun `create transaction and get value`() = runBlocking {
         val storage = dummy()
 

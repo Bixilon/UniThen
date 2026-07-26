@@ -106,6 +106,14 @@ class AccountTable(
         return storage.query(query) { it.isNotEmpty() }
     }
 
+    fun isTutor(course: Course): Boolean {
+        val query = SqlBuilder.select("1").from(AccountCourses)
+            .where((AccountCourses.course eq course.id) and (AccountCourses.tutor eq true))
+            .limit(1)
+
+        return storage.query(query) { it.isNotEmpty() }
+    }
+
     companion object : SelectableSqlTableSchema<Account> {
         override val table get() = "accounts"
 

@@ -118,8 +118,8 @@ fun CoursesScreen() {
                         }
                     }
                     items(items = courses, key = Course::id) { course ->
-                        val account = rememberStorage { accounts.getTutorAccount(course) }
-                        val color = if (account != null) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
+                        val tutor = rememberStorage { accounts.isTutor(course) }
+                        val color = if (tutor) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
                         TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
                     }
                 }

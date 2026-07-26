@@ -99,7 +99,7 @@ fun CourseAppointments(course: Course) {
     val appointments = rememberStorageAsync(course) { appointments[course].sortedByDescending { it.start } } ?: return
 
     if (appointments.isEmpty()) return
-    val isTutor = rememberStorage { accounts.getTutorAccount(course) != null }
+    val isTutor = rememberStorage { accounts.isTutor(course) }
 
     val state = rememberLazyListState()
     val now = useTime()
