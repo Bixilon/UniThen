@@ -4,7 +4,8 @@
 
 ![](https://shields-io.bixilon.de/f-droid/v/de.bixilon.unithen?style=for-the-badge&logo=fdroid)
 ![](https://shields-io.bixilon.de/gitlab/v/release/bixilon/unithen?branch=master&gitlab_url=https%3A%2F%2Fgitlab.bixilon.de&style=for-the-badge)
-This app is for doing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
+<br>
+This app is for performing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
 It can be used for any digital booking system (DBS) hosted by them, e.g. for the [ZHS München](https://kurse.zhs-muenchen.de).
 
 This app is **NOT** affiliated with UniNow GmbH, the provider/developer of the booking system.
@@ -33,7 +34,6 @@ iOS is fully supported. There is no distribution yet, so you must build the app 
 
 ### Desktop
 This app is ported to the jvm with compose multiplatform and runs on desktop, however this is a show off and not an offical supported platform. Please build it yourself.
-There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
 
 ## Screenshots
 
@@ -79,3 +79,5 @@ IntelliJ breaks reproducible builds, build with:
 6. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk` (`app/build/outputs/apk/release/app-release-unsigned.apk`)
 7. Create package in lipstick (name: `apk`, version: `1.2.3`, file name: `app-release.apk`)
 8. `git push v1.2.3` & create release with package
+
+There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
