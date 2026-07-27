@@ -28,7 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.ui.sync.SyncEngineReport
+import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 
 private enum class SyncStatus {
@@ -63,13 +63,13 @@ private fun RunningIndicator(status: SyncStatus?) {
 }
 
 @Composable
-fun SyncStatusIndicator(report: SyncEngineReport?, modifier: Modifier = Modifier, count: Boolean = false) {
+fun SyncStatusIndicator(progress: SyncEngineProgress?, modifier: Modifier = Modifier, count: Boolean = false) {
     var running by rememberStateOf(false)
     var status by rememberStateOf<SyncStatus?>(null)
 
 
-    LaunchedEffect(report) {
-        val report = report
+    LaunchedEffect(progress) {
+        val report = progress
         if (report == null) {
             running = false
             return@LaunchedEffect
@@ -89,9 +89,9 @@ fun SyncStatusIndicator(report: SyncEngineReport?, modifier: Modifier = Modifier
     val _status = status ?: return
 
     if (running) {
-        if (report == null) return
+        if (progress == null) return
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${report.completed}/${report.total}")
+            Text("${progress.completed}/${progress.total}")
 
             RunningIndicator(_status)
         }

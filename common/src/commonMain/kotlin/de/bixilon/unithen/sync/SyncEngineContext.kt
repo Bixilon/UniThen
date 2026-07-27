@@ -12,22 +12,77 @@
 
 package de.bixilon.unithen.sync
 
+import de.bixilon.unithen.api.errors.NetworkException
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
+import kotlin.time.Clock
 
 
 class SyncEngineContext(
     val engine: SyncEngine,
     val force: Boolean,
-    val scope: CoroutineScope,
+    progress: (SyncEngineProgress) -> Unit,
 ) {
+    val scope = CoroutineScope(Dispatchers.IO)
+    private val storage get() = engine.storage
+    private val progress = SyncProgressBuilder(progress)
 
-    suspend fun syncEnrolled(course: Course, force: Boolean = this.force) = engine.syncEnrolled(course, force)
-    suspend fun syncAttendees(appointment: Appointment, force: Boolean = this.force) = engine.syncAttendees(appointment, force)
+    private suspend fun handlErrors(block: suspend () -> Unit) {
+        try {
+            block.invoke()
+            progress.addComplete()
+        } catch (error: NetworkException) {
+            error.printStackTrace()
+            progress.addWarning()
+        } catch (error: Exception) {
+            error.printStackTrace()
+            engine.onError.invoke(error)
+            progress.addError()
+        }
+    }
+
+    private suspend inline fun execute(noinline block: suspend () -> Unit) {
+        progress.addTotal()
+        handlErrors(block)
+    }
+
+
+    suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = false) {
+        if (appointments.isEmpty()) return
+
+        val now = Clock.System.now()
+
+        progress.addTotal(appointments.size)
+
+        coroutineScope {
+            for (appointment in appointments) {
+                if (!force && !appointment.isAttendeesStale(now)) {
+                    progress.addSkipped()
+                    continue
+                }
+                val account = storage.accounts.getTutorAccount(appointment)
+                if (account == null) {
+                    progress.addSkipped()
+                    continue
+                }
+
+                async { storage.fetchAttendees(account, appointment, false) }
+            }
+        }
+    }
+
+    suspend fun syncEnrolled(course: Course, force: Boolean = this.force) = execute {
+        val account = storage.accounts.getTutorAccount(course) ?: return@execute
+        storage.fetchEnrolled(account, course, force)
+    }
+
+    suspend fun syncAttendees(appointment: Appointment, force: Boolean = this.force) = execute {
+        val account = storage.accounts.getTutorAccount(appointment) ?: return@execute
+        storage.fetchAttendees(account, appointment, force)
+    }
 
 
     fun async(block: suspend () -> Unit) {

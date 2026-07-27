@@ -12,9 +12,16 @@
 
 package de.bixilon.unithen.ui.sync
 
-import androidx.compose.runtime.Composable
+import de.bixilon.unithen.sync.SyncEngineProgress
 
-@Composable
-fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnanle: () -> Unit) {
-    TODO()
+
+typealias SyncEngineInvoker = (force: Boolean) -> Unit
+
+data class SyncEngineHook(
+    val active: Boolean,
+    val progress: SyncEngineProgress?,
+    private val invoke: SyncEngineInvoker,
+) {
+
+    operator fun invoke(force: Boolean = false) = this.invoke.invoke(false)
 }

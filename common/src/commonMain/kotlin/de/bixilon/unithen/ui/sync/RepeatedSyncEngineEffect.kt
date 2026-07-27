@@ -10,14 +10,22 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.sync.status
+package de.bixilon.unithen.ui.sync
 
-sealed interface SyncStatusUpdate
+import androidx.compose.runtime.Composable
+import de.bixilon.kutil.time.Interval
+import de.bixilon.unithen.sync.SyncEngineContext
+import de.bixilon.unithen.ui.util.effects.RepeatedEffect
+import kotlin.time.Duration
 
-data class SyncProgressUpdate(
-    val completed: Int,
-    val synchonized: Int,
-    val warnings: Int,
-    val errored: Int,
-    val total: Int,
-) : SyncStatusUpdate
+
+@Composable
+fun useRepeatedSyncEngine(interval: Interval = Duration.INFINITE, block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
+    val hook = useSyncEngine(block)
+
+    RepeatedEffect(interval) {
+        hook.invoke()
+    }
+
+    return hook
+}

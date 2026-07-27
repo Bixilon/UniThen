@@ -12,14 +12,13 @@
 
 package de.bixilon.unithen.sync
 
-import de.bixilon.unithen.sync.status.SyncProgressUpdate
 import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 import kotlin.concurrent.atomics.incrementAndFetch
 
 @OptIn(ExperimentalAtomicApi::class)
 class SyncProgressBuilder(
-    val callback: (SyncProgressUpdate) -> Unit,
+    val callback: (SyncEngineProgress) -> Unit,
     total: Int = 0,
 ) {
     private val completed = AtomicInt(0)
@@ -29,12 +28,16 @@ class SyncProgressBuilder(
     private val total = AtomicInt(total)
 
     private fun call() {
-        val update = SyncProgressUpdate(completed.load(), synchronized.load(), warning.load(), errored.load(), total.load())
-        callback.invoke(update)
+        val progress = SyncEngineProgress(completed.load(), synchronized.load(), warning.load(), errored.load(), total.load())
+        callback.invoke(progress)
     }
 
     fun addTotal() {
         total.incrementAndFetch()
+        call()
+    }
+    fun addTotal(count: Int) {
+        total.addAndFetch(count)
         call()
     }
 

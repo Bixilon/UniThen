@@ -10,11 +10,13 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.sync
+package de.bixilon.unithen.sync
 
-import androidx.compose.runtime.Composable
 
-@Composable
-fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnanle: () -> Unit) {
-    TODO()
-}
+data class SyncEngineProgress(
+    val completed: Int,
+    val synchonized: Int,
+    val warnings: Int,
+    val errored: Int,
+    val total: Int,
+)

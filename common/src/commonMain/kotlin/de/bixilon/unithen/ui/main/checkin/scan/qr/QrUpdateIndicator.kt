@@ -16,13 +16,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.components.SyncStatusIndicator
-import de.bixilon.unithen.ui.sync.useSyncEngine
+import de.bixilon.unithen.ui.sync.useRepeatedSyncEngine
 import kotlin.time.Duration.Companion.minutes
 
 
 @Composable
 fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
-    val status = useSyncEngine(1.minutes) { syncAttendees(appointments, callback = it) }
+    val status = useRepeatedSyncEngine(1.minutes) { syncAttendees(appointments) }
 
-    SyncStatusIndicator(status, modifier, count = true)
+    SyncStatusIndicator(status.progress, modifier, count = true)
 }

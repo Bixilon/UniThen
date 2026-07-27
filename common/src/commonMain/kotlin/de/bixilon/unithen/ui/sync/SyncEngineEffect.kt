@@ -14,39 +14,37 @@ package de.bixilon.unithen.ui.sync
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import de.bixilon.kutil.time.Interval
-import de.bixilon.unithen.sync.SyncEngine
-import de.bixilon.unithen.sync.status.SyncProgressUpdate
-import de.bixilon.unithen.sync.status.SyncStatusUpdate
-import de.bixilon.unithen.ui.util.effects.RepeatedEffect
+import de.bixilon.unithen.sync.SyncEngineContext
+import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.util.state.rememberStateOf
-import kotlin.time.Duration
+import kotlinx.coroutines.launch
 
-data class SyncEngineReport(
-    val completed: Int,
-    val errored: Int,
-    val warnings: Int,
-    val total: Int,
-)
 
 @Composable
-fun useSyncEngine(interval: Interval = Duration.INFINITE, block: suspend SyncEngine.(reporter: (SyncStatusUpdate) -> Unit) -> Unit): SyncEngineReport? {
+fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
     val engine = LocalSyncEngine.current
-    var state by rememberStateOf<SyncEngineReport?> { null }
+    var active by rememberStateOf { false }
+    var progress by rememberStateOf<SyncEngineProgress?> { null }
 
-    // TODO: That does only work with a single call, port to SyncEngineContext
-    RepeatedEffect(interval) {
-        val callback: (it: SyncStatusUpdate) -> Unit = {
-            when (it) {
-                is SyncProgressUpdate -> state = SyncEngineReport(it.completed, it.errored, it.warnings, it.total)
+    val sync = remember {
+        val invokeable: SyncEngineInvoker = { force ->
+            try {
+                active = true
+                val context = SyncEngineContext(engine, force) { progress = it }
+
+
+                context.scope.launch { block.invoke(context) }
+            } finally {
+                active = false
+                progress = null
             }
         }
 
-        block.invoke(engine, callback)
-
-        state = null
+        return@remember invokeable
     }
 
-    return state
+
+    return SyncEngineHook(active, progress, sync)
 }

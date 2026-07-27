@@ -42,7 +42,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
-import de.bixilon.unithen.ui.sync.useLazySyncEngine
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -192,7 +192,7 @@ fun ScanAttendeeList() {
 
     val state = rememberLazyListState()
 
-    val synchronize = useLazySyncEngine {
+    val synchronize = useSyncEngine {
         async { syncEnrolled(course) }
         async { syncAttendees(appointment) }
     }
@@ -205,7 +205,7 @@ fun ScanAttendeeList() {
 
     LaunchedEffect(Unit) {
         if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
-            synchronize.invoke(false)
+            synchronize.invoke()
         }
     }
 
