@@ -69,7 +69,6 @@ package:
   script: ./gradlew --build-cache assembleRelease
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
   artifacts:
     paths:
       - app/build/outputs/apk/release/app-release-unsigned.apk
