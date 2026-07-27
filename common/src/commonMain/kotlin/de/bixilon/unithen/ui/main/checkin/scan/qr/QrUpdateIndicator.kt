@@ -24,5 +24,5 @@ import kotlin.time.Duration.Companion.minutes
 fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
     val status = useRepeatedSyncEngine(1.minutes) { syncAttendees(appointments) }
 
-    SyncStatusIndicator(status, modifier, count = true)
+    SyncStatusIndicator(status, modifier, text = true, hide = false)
 }

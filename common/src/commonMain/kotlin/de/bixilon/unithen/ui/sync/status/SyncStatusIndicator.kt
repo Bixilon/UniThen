@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.sync.SyncEngineHook
 import de.bixilon.unithen.ui.util.state.rememberStateOf
+import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.seconds
 
 private enum class SyncStatus {
     SUCCESS,
@@ -40,14 +42,28 @@ private enum class SyncStatus {
 }
 
 @Composable
-private fun CicleIndicator(status: SyncStatus, modifier: Modifier) {
+private fun CicleIndicator(status: SyncStatus, modifier: Modifier, hide: Boolean) {
+    var dismissed by rememberStateOf { true }
+
+    LaunchedEffect(status, hide) {
+        dismissed = false
+        val duration = when (status) {
+            SyncStatus.SUCCESS -> 3.seconds
+            SyncStatus.WARNING -> 5.seconds
+            SyncStatus.ERROR -> 10.seconds
+        }
+        delay(duration)
+        dismissed = true
+    }
     val color = when (status) {
         SyncStatus.SUCCESS -> Color.Green
         SyncStatus.WARNING -> Color.Yellow
         SyncStatus.ERROR -> MaterialTheme.colorScheme.error
     }
 
-    Canvas(modifier = modifier.size(18.dp)) {
+    if (hide && dismissed) return
+
+    Canvas(modifier = modifier.size(12.dp)) {
         drawCircle(color = color)
     }
 }
@@ -71,7 +87,7 @@ private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress) 
 }
 
 @Composable
-fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, count: Boolean = false) {
+fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, text: Boolean = false, hide: Boolean = true) {
     var status by rememberStateOf<SyncStatus?>(null)
 
 
@@ -90,13 +106,13 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, cou
     if (hook.active) {
         val progress = hook.progress ?: return
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (count) {
+            if (text) {
                 Text("${progress.completed}/${progress.total}")
             }
 
             RunningIndicator(_status, progress)
         }
     } else {
-        CicleIndicator(_status, modifier)
+        CicleIndicator(_status, modifier, hide)
     }
 }

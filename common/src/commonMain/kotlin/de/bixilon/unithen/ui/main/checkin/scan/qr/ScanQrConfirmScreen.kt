@@ -23,10 +23,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.errors.NetworkException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
@@ -43,6 +41,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserExceptio
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.TimeFormatUtil.formatNow
@@ -91,17 +90,15 @@ private fun Warning(confirming: Boolean, user: User?, enrolled: Boolean, attende
 }
 
 @Composable
-private fun EnrolledListWarning(account: Account, course: Course) {
-    val storage = LocalStorage.current
-
+private fun EnrolledListWarning(course: Course) {
     if (!course.isEnrolledStale()) return
 
-    val refresh = useAsyncNetwork<Unit>(account) { storage.fetchEnrolled(account, course, false) }
+    val synchronize = useSyncEngine { syncEnrolled(course) }
 
-    LaunchedEffect(Unit) { refresh.invoke(Unit) }
+    LaunchedEffect(Unit) { synchronize.invoke() }
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-        if (refresh.active) {
+        if (synchronize.active) {
             CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(Res.string.scan_updating_enrolled.i18n())
         } else {
             Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(Res.string.scan_enrolled_outdated.i18n(course.fetched.formatNow()))
@@ -175,7 +172,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
 
 
         if (user == null || !enrolled) {
-            EnrolledListWarning(account, course)
+            EnrolledListWarning(course)
             Spacer(Modifier.height(16.dp))
         }
 

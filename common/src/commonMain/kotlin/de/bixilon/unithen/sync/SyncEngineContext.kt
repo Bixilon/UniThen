@@ -15,6 +15,7 @@ package de.bixilon.unithen.sync
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import kotlinx.coroutines.*
@@ -22,8 +23,8 @@ import kotlin.time.Clock
 
 
 class SyncEngineContext(
-    val engine: SyncEngine,
-    val force: Boolean,
+    private val engine: SyncEngine,
+    private val force: Boolean,
     progress: (SyncEngineProgress) -> Unit,
 ) {
     val scope = CoroutineScope(Dispatchers.IO)
@@ -50,7 +51,7 @@ class SyncEngineContext(
     }
 
 
-    suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = false) {
+    suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = this.force) {
         if (appointments.isEmpty()) return
 
         val now = Clock.System.now()
@@ -69,19 +70,25 @@ class SyncEngineContext(
                     continue
                 }
 
-                async { storage.fetchAttendees(account, appointment, false) }
+                async { storage.fetchAttendees(account, appointment, force) }
             }
         }
     }
 
-    suspend fun syncEnrolled(course: Course, force: Boolean = this.force) = execute {
-        val account = storage.accounts.getTutorAccount(course) ?: return@execute
+    suspend fun syncEnrolled(course: Course, force: Boolean = this.force) {
+        val account = storage.accounts.getTutorAccount(course) ?: return
         storage.fetchEnrolled(account, course, force)
     }
 
-    suspend fun syncAttendees(appointment: Appointment, force: Boolean = this.force) = execute {
-        val account = storage.accounts.getTutorAccount(appointment) ?: return@execute
-        storage.fetchAttendees(account, appointment, force)
+    suspend fun syncAttendees(appointment: Appointment, force: Boolean = this.force) {
+        val account = storage.accounts.getTutorAccount(appointment) ?: return
+        execute { storage.fetchAttendees(account, appointment, force) }
+    }
+
+    suspend fun syncCourse(course: Course) {
+        val account = storage.accounts.getTutorAccount(course) ?: storage.accounts[course].firstOrNull() ?: return
+
+        execute { storage.updateCourse(account, course) }
     }
 
 

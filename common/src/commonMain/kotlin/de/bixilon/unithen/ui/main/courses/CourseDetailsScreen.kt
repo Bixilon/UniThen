@@ -22,9 +22,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Account
@@ -43,7 +43,9 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
-import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
+import de.bixilon.unithen.ui.sync.status.SyncStatusIndicator
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.useToast
 import unithen.common.generated.resources.Res
@@ -87,28 +89,27 @@ fun CourseDetailsScreen(course: Course) {
     val accounts = rememberStorage { accounts[course].sortedBy { it.lastname } }
 
 
+    val toast = useToast()
+    val synchronize = useSyncEngine { syncCourse(course) }
+
+    SyncEngineCompleteEffect(synchronize) {
+        toast.invoke(Res.string.course_synchronize_done)
+    }
+
     Box {
         Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Header(site, event, course, accounts)
 
-            val tutor = storage.accounts.getTutorAccount(course) ?: accounts.firstOrNull() // TODO: get tutor account of appointment
-            val toast = useToast()
-            val refresh = tutor?.let {
-                useAsyncNetwork<Unit>(tutor) {
-                    storage.updateCourse(tutor, course)
-
-                    toast.invoke(Res.string.course_synchronize_done)
-                }
-            }
-
             // TODO: This is bad, this is not scrollable
-            PullToRefreshBox(refresh?.active ?: false, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh?.invoke(Unit) }) {
+            PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke() }) {
                 Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                     CourseAppointments(course)
                     CourseEnrolled(course)
                 }
             }
         }
+
+        SyncStatusIndicator(synchronize, modifier = Modifier.align(Alignment.TopEnd), text = false)
 
         FloatingActionButtons(Modifier.offset(x = -8.dp)) {
             val time = useTime()

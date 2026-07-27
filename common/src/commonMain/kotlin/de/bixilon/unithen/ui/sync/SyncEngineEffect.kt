@@ -30,16 +30,18 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
 
     val sync = remember {
         val invokeable: SyncEngineInvoker = { force ->
-            try {
-                active = true
-                val context = SyncEngineContext(engine, force) { progress = it }
+            active = true
+            val context = SyncEngineContext(engine, force) { progress = it }
 
-
-                context.scope.launch { block.invoke(context) }
-            } finally {
-                active = false
-                progress = null
+            context.scope.launch {
+                try {
+                    block.invoke(context)
+                } finally {
+                    active = false
+                    progress = null
+                }
             }
+
         }
 
         return@remember invokeable

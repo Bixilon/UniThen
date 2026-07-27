@@ -13,8 +13,21 @@
 package de.bixilon.unithen.ui.sync
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import de.bixilon.unithen.ui.util.state.rememberStateOf
+
 
 @Composable
-fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnanle: () -> Unit) {
-    TODO()
+fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnable: suspend () -> Unit) {
+    var active by rememberStateOf(hook.active)
+
+    LaunchedEffect(hook) {
+        if (active == hook.active) return@LaunchedEffect
+        active = hook.active
+        if (!hook.active) return@LaunchedEffect
+
+        runnable.invoke()
+    }
 }
