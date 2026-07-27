@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.sync
+package de.bixilon.unithen.api
 
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
@@ -20,7 +20,7 @@ import kotlinx.coroutines.sync.withPermit
 const val MAX_PARALLEL_REQUEST = 10
 const val MAX_PARALLEL_REQUESTS_HOST = 6
 
-object SyncLock {
+object ApiLock {
     val mutex = Mutex()
     val global = Semaphore(MAX_PARALLEL_REQUEST)
     val host: MutableMap<String, Semaphore> = mutableMapOf()

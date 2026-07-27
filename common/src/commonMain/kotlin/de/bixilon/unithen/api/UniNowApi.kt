@@ -19,7 +19,6 @@ import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
 import de.bixilon.unithen.http.CLIENT
-import de.bixilon.unithen.sync.SyncLock
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
 import io.ktor.client.request.*
@@ -46,7 +45,7 @@ open class UniNowApi(
 
             data?.forEach { (key, value) -> url.parameters.append(key, value) }
         }
-        val response = SyncLock.withPermit(this.host) { CLIENT.get(request) }
+        val response = ApiLock.withPermit(this.host) { CLIENT.get(request) }
 
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
@@ -61,7 +60,7 @@ open class UniNowApi(
         }
 
 
-        val response = SyncLock.withPermit(this.host) { CLIENT.post(request) }
+        val response = ApiLock.withPermit(this.host) { CLIENT.post(request) }
 
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
