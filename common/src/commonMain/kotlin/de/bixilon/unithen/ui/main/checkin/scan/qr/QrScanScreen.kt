@@ -29,6 +29,7 @@ import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURA
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.components.qr.QrCameraPreview
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
@@ -36,7 +37,6 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.QrCameraPreview
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay

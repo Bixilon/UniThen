@@ -10,13 +10,13 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.components.qr
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.ui.error.ErrorBox
+
+
+data class QrCodeResult(val data: ByteArray)
 
 @Composable
-actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> Unit) {
-    ErrorBox("Scanning on desktop unsupported!")
-}
+expect fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (Set<QrCodeResult>) -> Unit)

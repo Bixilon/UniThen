@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.components.qr
 
 import android.Manifest
 import androidx.camera.compose.CameraXViewfinder
@@ -37,6 +37,10 @@ import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.rememberAsync
+import de.bixilon.unithen.ui.util.rememberForeground
+import de.bixilon.unithen.ui.util.usePermissionRequest
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

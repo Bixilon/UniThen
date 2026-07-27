@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util
+package de.bixilon.unithen.ui.components.qr
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
@@ -43,7 +43,7 @@ fun NSData.toByteArray(): ByteArray {
     return array
 }
 
-// TODO: This is so hacks
+// TODO: This is so hacky
 fun UIImage.asImageBitmap(): ImageBitmap {
     val data = UIImagePNGRepresentation(this)!!
     val bytes = data.toByteArray()

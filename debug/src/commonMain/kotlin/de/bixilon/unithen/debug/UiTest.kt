@@ -20,9 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Setting
-import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.components.qr.QrCode
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
-import de.bixilon.unithen.ui.util.QrCode
 
 val A = Setting("test_a", true)
 val B = Setting("test_b", false)
@@ -40,6 +39,11 @@ private fun SettingsTest() {
         BooleanSetting(B, "B", "")
         BooleanSetting(B, "B", "")
     }
+}
+
+@Composable
+fun ScreenTitle(x0: String) {
+    TODO("Not yet implemented")
 }
 
 @Composable

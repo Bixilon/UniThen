@@ -31,10 +31,10 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.components.qr.QrCode
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.navigation.LocalVisibility
-import de.bixilon.unithen.ui.util.QrCode
 import de.bixilon.unithen.ui.util.ScreenBrightnessOverride
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
