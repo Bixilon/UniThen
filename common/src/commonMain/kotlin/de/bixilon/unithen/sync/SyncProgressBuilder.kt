@@ -52,5 +52,4 @@ class SyncProgressBuilder(
         errored.incrementAndFetch()
         call()
     }
-
 }

@@ -20,7 +20,6 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.sync.SyncLock
 import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
 import kotlinx.coroutines.*
 import kotlin.time.Clock
@@ -32,13 +31,13 @@ object CourseFetcher {
         val site = sites[account.site]!!
         val api = account.api(site)
 
-        val detailsQl = SyncLock.withPermit(site.host) { api.getCourse(id) }!!
+        val detailsQl = api.getCourse(id)!!
 
         val course = storeCourse(site, detailsQl)
         accounts.addToCourse(account, course, tutor)
 
         if (tutor) {
-            val enrolled = SyncLock.withPermit(site.host) { api.getEnrolled(course.uuid) }
+            val enrolled = api.getEnrolled(course.uuid)
             storeEnrolled(site, course, enrolled!!)
         }
     }

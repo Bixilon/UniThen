@@ -60,10 +60,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
-fun MainNavigator() {
-    val navigator = remember { Navigator(MainRoute) }
+fun Navigator.MainNavigator() {
 
-    navigator.routes {
+    routes {
         composable<MainRoute> { MainScreen() }
         composable<AboutRoute> { AboutScreen() }
 
@@ -79,14 +78,14 @@ fun MainNavigator() {
             PresentQrAppointmentScreen(it.course, it.appointment)
 
             if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
-                LocalNavigation.current.pop()
+                pop()
             }
         }
         composable<PresentQrRoute> {
             PresentQrScreen(it.account, it.course, it.appointment)
 
             if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
-                LocalNavigation.current.pop()
+                pop()
             }
         }
 
@@ -94,7 +93,7 @@ fun MainNavigator() {
             ScanAppointmentScreen(it.appointment)
 
             if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                LocalNavigation.current.pop()
+                pop()
             }
         }
         composable<ScanQrAppointmentRoute> {
@@ -104,7 +103,7 @@ fun MainNavigator() {
                 ScanQrAppointmentScreen()
             }
             if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                LocalNavigation.current.pop()
+                pop()
             }
         }
         composable<ScanQrConfirmRoute> {
@@ -114,15 +113,15 @@ fun MainNavigator() {
                 ScanQrConfirmScreen(it.userId)
             }
             if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                LocalNavigation.current.pop()
+                pop()
             }
         }
 
         composable<ScanAnyRoute> { QrScanAnyScreen() }
 
 
-        composable<AddAccountRoute> { AddAccountScreen { navigator.pop() } }
-        composable<ReauthenticateRoute> { AuthenticationScreen(it.site) { navigator.pop() } }
+        composable<AddAccountRoute> { AddAccountScreen { pop() } }
+        composable<ReauthenticateRoute> { AuthenticationScreen(it.site) { pop() } }
 
         composable<SettingsRoute> { SettingsScreen() }
 
@@ -130,9 +129,9 @@ fun MainNavigator() {
     }
 
     CompositionLocalProvider(
-        LocalNavigation provides navigator,
+        LocalNavigation provides this,
     ) {
-        navigator.Host()
+        Host()
     }
 }
 
@@ -197,12 +196,13 @@ fun Loader(content: @Composable () -> Unit) {
 fun CommonMainActivity() {
     Loader {
         val storage = LocalStorage.current
-        val engine = remember { SyncEngine(storage) }
+        val navigator = remember { Navigator(MainRoute) }
+        val engine = remember { SyncEngine(storage) { navigator.navigate(CrashRoute(it)) } }
 
         CompositionLocalProvider(
             LocalSyncEngine provides engine
         ) {
-            MainNavigator()
+            navigator.MainNavigator()
         }
     }
 }

@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.sync
 
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
@@ -20,9 +21,30 @@ import kotlinx.coroutines.*
 import kotlin.time.Clock
 
 
-class SyncEngine(val storage: SqlStorage) {
+class SyncEngine(
+    val storage: SqlStorage,
+    val onError: (Throwable) -> Unit,
+) {
 
     // TODO: withPermit per request (don't duplicate them)
+
+    private suspend fun handlErrors(progress: SyncProgressBuilder, block: suspend () -> Unit) {
+        try {
+            block.invoke()
+            progress.addComplete()
+        } catch (error: NetworkException) {
+            error.printStackTrace()
+            progress.addWarning()
+        } catch (error: Exception) {
+            error.printStackTrace()
+            this@SyncEngine.onError.invoke(error)
+            progress.addError()
+        }
+    }
+
+    private suspend fun CoroutineScope.execute(progress: SyncProgressBuilder, block: suspend () -> Unit) = async(Dispatchers.IO) {
+        handlErrors(progress, block)
+    }
 
     suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = false, callback: (SyncProgressUpdate) -> Unit) {
         if (appointments.isEmpty()) return
@@ -32,31 +54,19 @@ class SyncEngine(val storage: SqlStorage) {
         val progress = SyncProgressBuilder(callback, appointments.size)
 
         coroutineScope {
-            appointments.mapNotNull {
-                val site = storage.sites[storage.courses[it.course]!!.site]!!
-
-                if (!it.isAttendeesStale(now)) {
+            for (appointment in appointments) {
+                if (!force && !appointment.isAttendeesStale(now)) {
                     progress.addSkipped()
-                    return@mapNotNull null
+                    continue
                 }
-                val account = storage.accounts.getTutorAccount(it)
+                val account = storage.accounts.getTutorAccount(appointment)
                 if (account == null) {
                     progress.addSkipped()
-                    return@mapNotNull null
+                    continue
                 }
 
-                SyncLock.withPermit(site.host) {
-                    async(Dispatchers.IO) {
-                        try {
-                            storage.fetchAttendees(account, it, false)
-                            progress.addComplete()
-                        } catch (error: Exception) {
-                            error.printStackTrace()
-                            progress.addError() // TODO: distinguish with warning (network error)
-                        }
-                    }
-                }
+                execute(progress) { storage.fetchAttendees(account, appointment, false) }
             }
-        }.awaitAll()
+        }
     }
 }
