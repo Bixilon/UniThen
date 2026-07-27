@@ -32,12 +32,14 @@ import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
 
+@Deprecated("sync engine")
 data class AsyncNetworkState<T>(
     val active: Boolean,
     val invoke: (T) -> Unit,
 )
 
 @Composable
+@Deprecated("sync engine")
 fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
     val storage = LocalStorage.current
     val navigation = catchAll { LocalNavigation.current }
