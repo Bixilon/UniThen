@@ -12,13 +12,17 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
 
 @Composable
 fun DelayedContent(delay: Duration, content: @Composable () -> Unit) {
-    var visible by remember { mutableStateOf(false) }
+    var visible by rememberStateOf(false)
 
     LaunchedEffect(Unit) {
         delay(delay)
