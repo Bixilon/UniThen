@@ -45,9 +45,13 @@ import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.DelayedContent
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.launch
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.loading_database
 import kotlin.time.Duration.Companion.milliseconds
@@ -136,14 +140,6 @@ fun Loader(content: @Composable () -> Unit) {
 
     var error by remember { mutableStateOf<Throwable?>(null) }
     var loaded by remember { mutableStateOf(false) }
-    var loader by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) { // don't flash loader
-        if (!loaded) {
-            delay(100.milliseconds)
-            loader = true
-        }
-    }
 
     LaunchedEffect(Unit) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -154,26 +150,27 @@ fun Loader(content: @Composable () -> Unit) {
                 error = thrown
             } finally {
                 loaded = true
-                loader = false
             }
         }
     }
 
-    if (!loaded && loader) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    Logo,
-                    contentDescription = "logo",
-                    modifier = Modifier
-                        .size(300.dp)
-                )
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    CircularProgressIndicator()
-                    Spacer(Modifier.width(16.dp))
-                    Text(Res.string.loading_database.i18n())
+    if (!loaded) {
+        DelayedContent(100.milliseconds) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Image(
+                        Logo,
+                        contentDescription = "logo",
+                        modifier = Modifier
+                            .size(300.dp)
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        CircularProgressIndicator()
+                        Spacer(Modifier.width(16.dp))
+                        Text(Res.string.loading_database.i18n())
+                    }
                 }
             }
         }
