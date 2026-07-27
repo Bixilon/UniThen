@@ -16,6 +16,8 @@ import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
+import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import kotlinx.coroutines.*
@@ -89,6 +91,16 @@ class SyncEngineContext(
         val account = storage.accounts.getTutorAccount(course) ?: storage.accounts[course].firstOrNull() ?: return
 
         execute { storage.updateCourse(account, course) }
+    }
+
+    suspend fun syncCourses(account: Account, force: Boolean = this.force) = execute {
+        storage.updateCourses(account, force)
+    }
+
+    suspend fun syncCourses(force: Boolean = this.force) {
+        for (account in storage.accounts.all()) {
+            async { syncCourses(account, force) }
+        }
     }
 
 

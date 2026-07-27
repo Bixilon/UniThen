@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.FloatingActionButtons
 import de.bixilon.unithen.ui.containers.Screen
@@ -43,7 +42,11 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
+import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
+import de.bixilon.unithen.ui.sync.SyncEngineStartedEffect
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,27 +55,22 @@ import unithen.common.generated.resources.*
 
 @Composable
 private fun Sync(account: Account): (() -> Unit)? {
-    val storage = LocalStorage.current
-    val synchronize = useAsyncNetwork<Unit>(account) { storage.updateCourses(account, true) }
+    var dismissed by rememberStateOf { false }
+    val synchronize = useSyncEngine { syncCourses(account) }
 
-    var running by remember { mutableStateOf(false) } // TODO: Abort actually
+    SyncEngineCompleteEffect(synchronize) { dismissed = true }
+    SyncEngineStartedEffect(synchronize) { dismissed = false }
 
-
-    if (running || !synchronize.active) return {
-        try {
-            running = true
-            synchronize.invoke(Unit)
-        } finally {
-            running = false
-        }
+    if (!synchronize.active) {
+        return { synchronize.invoke(force = true) }
     }
 
-
+    if (dismissed) return null
 
 
     AlertDialog(
         confirmButton = {},
-        onDismissRequest = { running = false },
+        onDismissRequest = { dismissed = false },
         title = { Text(Res.string.accounts_sync_title.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {

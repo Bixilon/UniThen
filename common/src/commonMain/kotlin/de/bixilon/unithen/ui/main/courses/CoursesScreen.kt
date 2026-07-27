@@ -28,21 +28,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
-import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.TextCard
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
-import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
-import de.bixilon.unithen.ui.util.*
-import unithen.common.generated.resources.*
+import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
+import de.bixilon.unithen.ui.sync.SyncEngineStartedEffect
+import de.bixilon.unithen.ui.sync.useSyncEngine
+import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.toBitmap
+import de.bixilon.unithen.ui.util.useToast
+import de.bixilon.unithen.ui.util.verticalScroll
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.courses_synchronize_done
+import unithen.common.generated.resources.courses_synchronize_started
+import unithen.common.generated.resources.courses_title
 
 
 @Composable
@@ -55,36 +60,19 @@ fun CoursesScreen() {
 
     val toast = useToast()
 
-    val refresh = useAsyncNetwork<Unit>(null) {
+    val sync = useSyncEngine { syncCourses() }
+
+    SyncEngineStartedEffect(sync) {
         toast.invoke(Res.string.courses_synchronize_started, true)
-        var loginSite: Key? = null
-        var caught: Throwable? = null
-
-        storage.accounts.all().forEach {
-            try {
-                storage.updateCourses(it, false)
-            } catch (_: AuthenticationException) {
-                storage.accounts.logout(it)
-                loginSite = it.site
-            } catch (error: Throwable) {
-                error.printStackTrace()
-                caught = error
-            }
-        }
-        caught?.let { throw it }
-        if (loginSite != null) {
-            toast.invoke(Res.string.error_reauthenticate)
-            navigation.navigate(ReauthenticateRoute(storage.sites[loginSite]!!))
-        } else {
-            toast.invoke(Res.string.courses_synchronize_done)
-        }
     }
-
+    SyncEngineCompleteEffect(sync) { // TODO: Only on success
+        toast.invoke(Res.string.courses_synchronize_done)
+    }
 
     Screen {
         ScreenTitle(Res.string.courses_title.i18n(courseCount))
 
-        PullToRefreshBox(refresh.active, modifier = Modifier.weight(1.0f), onRefresh = { refresh.invoke(Unit) }) {
+        PullToRefreshBox(sync.active, modifier = Modifier.weight(1.0f), onRefresh = { sync.invoke() }) {
             val state = rememberLazyListState()
             LazyColumn(
                 modifier = Modifier
