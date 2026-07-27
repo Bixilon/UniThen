@@ -25,6 +25,7 @@ import kotlinx.coroutines.*
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
+@Deprecated("sync engine")
 object CourseFetcher {
 
     private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, tutor: Boolean) {

@@ -30,8 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
@@ -43,6 +41,8 @@ import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
+import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
+import de.bixilon.unithen.ui.sync.useLazySyncEngine
 import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
@@ -177,7 +177,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 @Composable
 fun ScanAttendeeList() {
     val visible = LocalVisibility.current
-    val (account, course, appointment) = LocalScanContext.current
+    val (_, course, appointment) = LocalScanContext.current
     val scope = rememberCoroutineScope()
 
     val filter = rememberUserFilter()
@@ -192,11 +192,12 @@ fun ScanAttendeeList() {
 
     val state = rememberLazyListState()
 
-    val storage = LocalStorage.current
-    val refresh = useAsyncNetwork<Boolean>(account) {
-        storage.fetchEnrolled(account, course, it)
-        storage.fetchAttendees(account, appointment, it)
+    val synchronize = useLazySyncEngine {
+        async { syncEnrolled(course) }
+        async { syncAttendees(appointment) }
+    }
 
+    SyncEngineCompleteEffect(synchronize) {
         if (appointment.fetchedAttendees == null) { // only on inital fetch
             scope.launch { state.animateScrollToItem(0, 0) }
         }
@@ -204,7 +205,7 @@ fun ScanAttendeeList() {
 
     LaunchedEffect(Unit) {
         if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
-            refresh.invoke(false)
+            synchronize.invoke(false)
         }
     }
 
@@ -225,7 +226,7 @@ fun ScanAttendeeList() {
         val time = useTime()
         val readonly = !appointment.canPerformCheckIn(time)
 
-        PullToRefreshBox(refresh.active, modifier = Modifier.fillMaxHeight(), onRefresh = { refresh.invoke(true) }) {
+        PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke(force = true) }) {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -237,7 +238,7 @@ fun ScanAttendeeList() {
                 // Unique keys, otherwise the app might crash because of duplicated keys (async storage)
                 items(items = attendees, key = { "a" + it.id }) { AttendeeCard(it, readonly) }
                 items(items = queue, key = { "q" + it.user }) { QueueCard(it, readonly) }
-                items(items = not, key = { "n" + it.id }) { EnrolledCard(it, readonly) }
+                items(items = not, key = { "e" + it.id }) { EnrolledCard(it, readonly) }
             }
         }
     }

@@ -20,16 +20,22 @@ import kotlin.concurrent.atomics.incrementAndFetch
 @OptIn(ExperimentalAtomicApi::class)
 class SyncProgressBuilder(
     val callback: (SyncProgressUpdate) -> Unit,
-    val total: Int,
+    total: Int = 0,
 ) {
     private val completed = AtomicInt(0)
     private val synchronized = AtomicInt(0)
     private val warning = AtomicInt(0)
     private val errored = AtomicInt(0)
+    private val total = AtomicInt(total)
 
     private fun call() {
-        val update = SyncProgressUpdate(completed.load(), synchronized.load(), warning.load(), errored.load(), total)
+        val update = SyncProgressUpdate(completed.load(), synchronized.load(), warning.load(), errored.load(), total.load())
         callback.invoke(update)
+    }
+
+    fun addTotal() {
+        total.incrementAndFetch()
+        call()
     }
 
     fun addComplete() {

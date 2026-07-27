@@ -14,8 +14,10 @@ package de.bixilon.unithen.sync
 
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.sync.status.SyncProgressUpdate
 import kotlinx.coroutines.*
 import kotlin.time.Clock
@@ -68,5 +70,15 @@ class SyncEngine(
                 execute(progress) { storage.fetchAttendees(account, appointment, false) }
             }
         }
+    }
+
+    suspend fun syncEnrolled(course: Course, force: Boolean = false) {
+        val account = storage.accounts.getTutorAccount(course) ?: return
+        storage.fetchEnrolled(account, course, force)
+    }
+
+    suspend fun syncAttendees(appointment: Appointment, force: Boolean = false) {
+        val account = storage.accounts.getTutorAccount(appointment) ?: return
+        storage.fetchAttendees(account, appointment, force)
     }
 }

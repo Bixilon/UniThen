@@ -35,6 +35,7 @@ fun useSyncEngine(interval: Interval = Duration.INFINITE, block: suspend SyncEng
     val engine = LocalSyncEngine.current
     var state by rememberStateOf<SyncEngineReport?> { null }
 
+    // TODO: That does only work with a single call, port to SyncEngineContext
     RepeatedEffect(interval) {
         val callback: (it: SyncStatusUpdate) -> Unit = {
             when (it) {
