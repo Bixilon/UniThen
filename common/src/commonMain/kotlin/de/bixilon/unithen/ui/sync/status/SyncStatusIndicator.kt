@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.components
+package de.bixilon.unithen.ui.sync.status
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.sync.SyncEngineProgress
+import de.bixilon.unithen.ui.sync.SyncEngineHook
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 
 private enum class SyncStatus {
@@ -46,54 +47,54 @@ private fun CicleIndicator(status: SyncStatus, modifier: Modifier) {
         SyncStatus.ERROR -> MaterialTheme.colorScheme.error
     }
 
-    Canvas(modifier = modifier.size(12.dp)) {
+    Canvas(modifier = modifier.size(18.dp)) {
         drawCircle(color = color)
     }
 }
 
 @Composable
-private fun RunningIndicator(status: SyncStatus?) {
+private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress) {
     val color = when (status) {
         SyncStatus.WARNING -> Color.Yellow
         SyncStatus.ERROR -> MaterialTheme.colorScheme.error
         else -> ProgressIndicatorDefaults.circularColor
     }
 
-    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = color)
+    val modifier = Modifier.size(24.dp)
+
+
+    if (progress.total > 3 && progress.synchonized > 0) {
+        CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total }, modifier = modifier, color = color)
+    } else {
+        CircularProgressIndicator(modifier = modifier, color = color)
+    }
 }
 
 @Composable
-fun SyncStatusIndicator(progress: SyncEngineProgress?, modifier: Modifier = Modifier, count: Boolean = false) {
-    var running by rememberStateOf(false)
+fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, count: Boolean = false) {
     var status by rememberStateOf<SyncStatus?>(null)
 
 
-    LaunchedEffect(progress) {
-        val report = progress
-        if (report == null) {
-            running = false
-            return@LaunchedEffect
-        }
-        if (!running) {
-            running = true
-            status = null
-        }
+    LaunchedEffect(hook) {
+        val progress = hook.progress ?: return@LaunchedEffect
 
         when {
-            report.errored > 0 -> status = SyncStatus.ERROR
-            report.warnings > 0 -> status = SyncStatus.WARNING
-            report.completed == report.total -> status = SyncStatus.SUCCESS
+            progress.errored > 0 -> status = SyncStatus.ERROR
+            progress.warnings > 0 -> status = SyncStatus.WARNING
+            progress.completed == progress.total -> status = SyncStatus.SUCCESS
         }
     }
 
     val _status = status ?: return
 
-    if (running) {
-        if (progress == null) return
+    if (hook.active) {
+        val progress = hook.progress ?: return
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text("${progress.completed}/${progress.total}")
+            if (count) {
+                Text("${progress.completed}/${progress.total}")
+            }
 
-            RunningIndicator(_status)
+            RunningIndicator(_status, progress)
         }
     } else {
         CicleIndicator(_status, modifier)

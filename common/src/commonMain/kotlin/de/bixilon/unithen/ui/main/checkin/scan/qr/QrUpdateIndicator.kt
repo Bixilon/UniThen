@@ -15,7 +15,7 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.ui.components.SyncStatusIndicator
+import de.bixilon.unithen.ui.sync.status.SyncStatusIndicator
 import de.bixilon.unithen.ui.sync.useRepeatedSyncEngine
 import kotlin.time.Duration.Companion.minutes
 
@@ -24,5 +24,5 @@ import kotlin.time.Duration.Companion.minutes
 fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
     val status = useRepeatedSyncEngine(1.minutes) { syncAttendees(appointments) }
 
-    SyncStatusIndicator(status.progress, modifier, count = true)
+    SyncStatusIndicator(status, modifier, count = true)
 }
