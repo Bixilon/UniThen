@@ -10,10 +10,9 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util.progress
+package de.bixilon.unithen.test
 
-@Deprecated("sync engine")
-class CourseFetchProgress(
-    val course: Int,
-    val courses: Int,
-)
+@Suppress("ExperimentalAnnotationRetention")
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@Retention(AnnotationRetention.BINARY)
+annotation class UniThenTestOnly

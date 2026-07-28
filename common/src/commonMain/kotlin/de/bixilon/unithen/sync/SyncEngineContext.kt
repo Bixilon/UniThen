@@ -20,6 +20,7 @@ import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.test.UniThenTestOnly
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import kotlinx.coroutines.*
 import kotlin.time.Clock
@@ -115,7 +116,7 @@ class SyncEngineContext(
         }
     }
 
-    @Deprecated("test only")
+    @UniThenTestOnly
     internal suspend fun test(block: suspend () -> Unit) = execute { block.invoke() }
 
     suspend fun async(block: suspend () -> Unit) {

@@ -13,6 +13,7 @@
 package de.bixilon.unithen.sync
 
 import de.bixilon.unithen.storage.sql.dummy
+import de.bixilon.unithen.test.UniThenTestOnly
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -21,6 +22,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(UniThenTestOnly::class)
 class SyncEngineTest {
 
     private fun use(block: suspend SyncEngineContext.() -> Unit): SyncEngineProgress? {
