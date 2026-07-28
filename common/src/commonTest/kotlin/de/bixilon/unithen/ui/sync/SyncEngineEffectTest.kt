@@ -12,12 +12,11 @@
 
 package de.bixilon.unithen.ui.sync
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.InternalComposeApi
-import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.sync.SyncEngineContext
@@ -25,7 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalTestApi::class)
@@ -43,6 +42,17 @@ class SyncEngineEffectTest {
         return hook
     }
 
+    private fun ComposeUiTest.leakTestSyncEngine(block: @Composable () -> SyncEngineHook): State<SyncEngineHook> {
+        val state = mutableStateOf<SyncEngineHook?>(null)
+        setContent {
+            state.value = block.invoke()
+        }
+
+        waitUntil { state.value != null }
+
+        return state.cast()
+    }
+
     @Test
     fun `create basic sync engine`() = runComposeUiTest {
         setContent {
@@ -54,33 +64,60 @@ class SyncEngineEffectTest {
 
     @Test
     fun `active when invoking`() = runComposeUiTest {
-        setContent {
+        val hook by leakTestSyncEngine {
+            useTestSyncEngine { delay(100.milliseconds) }
+        }
+        hook.invoke(force = true)
+
+        waitUntil(10.milliseconds) { hook.active }
+    }
+
+    @Test
+    fun `not firing when engine not active`() = runComposeUiTest {
+        var fired = false
+        val hook by leakTestSyncEngine {
             val synchronize = useTestSyncEngine { delay(100.milliseconds) }
 
-            assertTrue { synchronize.active }
+            SyncEngineStartedEffect(synchronize) { fired = true }
+            SyncEngineCompleteEffect(synchronize) { fired = true }
+
+            return@leakTestSyncEngine synchronize
         }
+        delay(10.milliseconds)
+        assertFalse { fired }
     }
 
     @Test
     fun `start effect fires`() = runComposeUiTest {
         var fired = false
-        setContent {
+        val hook by leakTestSyncEngine {
             val synchronize = useTestSyncEngine { delay(100.milliseconds) }
 
             SyncEngineStartedEffect(synchronize) { fired = true }
+
+            return@leakTestSyncEngine synchronize
         }
-        assertTrue(fired)
+        hook.invoke(force = true)
+
+        waitUntil(10.milliseconds) { fired }
     }
 
     @Test
     fun `complete effect fires`() = runComposeUiTest {
         var fired = false
-        setContent {
+        val hook by leakTestSyncEngine {
             val synchronize = useTestSyncEngine { delay(100.milliseconds) }
 
             SyncEngineCompleteEffect(synchronize) { fired = true }
-            waitUntil { !synchronize.active }
+
+            return@leakTestSyncEngine synchronize
         }
-        assertTrue(fired)
+        hook.invoke(force = true)
+
+        waitUntil(200.milliseconds) { fired }
+    }
+
+    private fun ComposeUiTest.waitUntil(timeout: Duration, block: () -> Boolean) {
+        waitUntil("", timeout.inWholeMilliseconds, block)
     }
 }

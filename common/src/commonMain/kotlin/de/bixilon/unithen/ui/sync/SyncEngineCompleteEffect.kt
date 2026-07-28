@@ -28,8 +28,8 @@ fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnable: suspend (progress: 
     LaunchedEffect(hook) {
         hook.progress?.let { progress = it }
         val progress = progress
-        if (progress != null && active && !hook.active) {
-            runnable.invoke(progress)
+        if (active && !hook.active) {
+            runnable.invoke(progress ?: SyncEngineProgress.EMPTY)
         }
         active = hook.active
     }

@@ -19,4 +19,8 @@ data class SyncEngineProgress(
     val warnings: Int,
     val errored: Int,
     val total: Int,
-)
+) {
+    companion object {
+        val EMPTY = SyncEngineProgress(0, 0, 0, 0, 0)
+    }
+}
