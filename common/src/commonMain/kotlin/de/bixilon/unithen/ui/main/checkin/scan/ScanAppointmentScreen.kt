@@ -12,15 +12,13 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Sync
-import androidx.compose.material3.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Appointment
@@ -28,37 +26,21 @@ import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.syncQueue
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
+import de.bixilon.unithen.ui.sync.buttons.SyncFloatingButton
+import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
+import de.bixilon.unithen.ui.sync.useRepeatedSyncEngine
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
 import unithen.common.generated.resources.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-
-@Composable
-@Deprecated("sync engine/status dialog")
-private fun SyncProgress(done: Int, pending: Int, dismiss: () -> Unit) {
-    AlertDialog(
-        confirmButton = {},
-        dismissButton = { Button({ dismiss() }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
-        onDismissRequest = { dismiss() },
-        icon = { Icon(Icons.Default.Sync, "") },
-        title = { Text(Res.string.scan_synchronizing_attendees.i18n()) },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("$done / $pending")
-            }
-        },
-    )
-}
 
 @Composable
 fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
@@ -77,45 +59,14 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val time = useTime()
     val canSync = appointment.canSyncCheckIn(time)
 
-    var synced by remember { mutableIntStateOf(0) }
     val pending = rememberStorageAsync(appointment) { checkInQueue.getCount(appointment) } ?: 0
+    val synchronize = useRepeatedSyncEngine(SYNC_BACKOFF_NORMAL + 1.minutes) {
+        syncQueue(appointment)
+    }
+    var visible by rememberStateOf(false)
 
-    var syncing by remember { mutableStateOf(false) }
-    var forceSync by remember { mutableStateOf(false) }
-    var showSyncProgress by remember { mutableStateOf(false) }
-
-
-    if (canSync && pending > 0) {
-        if (showSyncProgress) {
-            val pending = remember { pending } // Don't update number of pending during sync
-            SyncProgress(synced, pending) { showSyncProgress = false }
-        }
-
-        LaunchedEffect(syncing) {
-            if (!syncing) return@LaunchedEffect
-
-            while (true) {
-                val item = storage.checkInQueue.take(appointment, forceSync) ?: break
-                synced++
-
-                try {
-                    syncQueue(storage, item)
-                } catch (error: Throwable) {
-                    error.printStackTrace()
-                }
-            }
-            forceSync = false
-            showSyncProgress = false
-            syncing = false
-            synced = 0
-        }
-
-        LaunchedEffect(Unit) {
-            while (true) {
-                syncing = true
-                delay(SYNC_BACKOFF_NORMAL + 1.minutes) // additional minute (take does take the time when the sync started, and we'd always be a couple of seconds over it)
-            }
-        }
+    if (visible) {
+        SyncStatusDialog(synchronize, Res.string.scan_synchronizing_attendees.i18n(), Res.string.scan_synchronizing_attendees.i18n())
     }
 
     Screen {
@@ -150,13 +101,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                     }
 
                     if (showSyncButton) {
-                        val color = if (syncing) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
-                        FloatingActionButton({ showSyncProgress = true; if (!syncing) forceSync = true; syncing = true }, containerColor = color) {
-                            if (syncing) {
-                                CircularProgressIndicator()
-                            }
-                            Icon(Icons.Filled.Sync, "sync")
-                        }
+                        SyncFloatingButton(synchronize, Icons.Filled.Sync) { visible = true }
                     }
                 }
                 if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {

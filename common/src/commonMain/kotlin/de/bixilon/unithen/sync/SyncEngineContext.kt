@@ -20,6 +20,7 @@ import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import kotlinx.coroutines.*
 import kotlin.time.Clock
 
@@ -100,6 +101,14 @@ class SyncEngineContext(
     suspend fun syncCourses(force: Boolean = this.force) {
         for (account in storage.accounts.all()) {
             async { syncCourses(account, force) }
+        }
+    }
+
+    suspend fun syncQueue(appointment: Appointment, force: Boolean = this.force) {
+        while (true) {
+            val item = storage.checkInQueue.take(appointment, force) ?: break
+
+            async { execute { CheckInUtil.syncQueue(storage, item) } }
         }
     }
 

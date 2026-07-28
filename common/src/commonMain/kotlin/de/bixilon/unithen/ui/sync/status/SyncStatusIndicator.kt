@@ -70,7 +70,7 @@ private fun CicleIndicator(status: SyncStatus, modifier: Modifier, hide: Boolean
 }
 
 @Composable
-private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress) {
+private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress?) {
     val color = when (status) {
         SyncStatus.WARNING -> Color.Yellow
         SyncStatus.ERROR -> MaterialTheme.colorScheme.error
@@ -80,7 +80,7 @@ private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress) 
     val modifier = Modifier.size(24.dp)
 
 
-    if (progress.isDeterminate) {
+    if (progress != null && progress.isDeterminate) {
         CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total }, modifier = modifier, color = color)
     } else {
         CircularProgressIndicator(modifier = modifier, color = color)
@@ -93,9 +93,11 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
 
 
     LaunchedEffect(hook) {
-        val progress = hook.progress ?: return@LaunchedEffect
+        if (!hook.active) return@LaunchedEffect
+        val progress = hook.progress
 
         when {
+            progress == null -> SyncStatus.SUCCESS
             progress.errored > 0 -> status = SyncStatus.ERROR
             progress.warnings > 0 -> status = SyncStatus.WARNING
             progress.completed == progress.total -> status = SyncStatus.SUCCESS
@@ -105,9 +107,9 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
     val _status = status ?: return
 
     if (hook.active) {
-        val progress = hook.progress ?: return
+        val progress = hook.progress
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (text) {
+            if (progress != null && text) {
                 Text("${progress.completed}/${progress.total}")
             }
 

@@ -25,10 +25,8 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.CrashRoute
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlinx.coroutines.runBlocking
 import kotlin.uuid.Uuid
 
@@ -66,21 +64,5 @@ fun DebugScreen() {
         Button({ runBlocking { storage.helper.load(); storage.initializeDummy() } }) { Text("Initiate dummy database") }
         Button({ runBlocking { storage.helper.load(); storage.insert1000Users() } }) { Text("Insert 1000 users") }
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
-
-        var progress by remember { mutableStateOf<String?>(null) }
-
-        val synchronize = useAsyncNetwork<Unit>(null) {
-            try {
-                CheckInUtil.synchronizeDatabase(storage) { current, total -> progress = "$current/$total" }
-                progress = null
-            } catch (error: Throwable) {
-                progress = "Error: ${error.message}"
-                throw error
-            }
-        }
-        Button({
-            progress = "..."
-            synchronize.invoke(Unit)
-        }, enabled = progress == null) { Text(if (progress != null) "Synchronizing $progress" else "Synchronize checkins") }
     }
 }

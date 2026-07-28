@@ -134,20 +134,4 @@ object CheckInUtil {
             throw CheckInError(attemptQl.message)
         }
     }
-
-
-    suspend fun synchronizeDatabase(storage: SqlStorage, progress: (current: Int, total: Int) -> Unit) {
-        val count = storage.checkInQueue.count
-
-        if (count == 0) return
-
-        var done = 0
-        while (true) {
-            val item = storage.checkInQueue.take() ?: break
-
-            progress.invoke(done++, count)
-
-            syncQueue(storage, item)
-        }
-    }
 }

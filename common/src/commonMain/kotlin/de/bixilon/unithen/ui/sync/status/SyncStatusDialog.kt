@@ -32,26 +32,27 @@ import de.bixilon.unithen.ui.util.state.rememberStateOf
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.sync_dialog_dismiss
 
+
 @Composable
 fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String) {
-    var dismissed by rememberStateOf { false }
+    var visible by rememberStateOf { false }
 
-    SyncEngineCompleteEffect(hook) { dismissed = true }
-    SyncEngineStartedEffect(hook) { dismissed = false }
+    SyncEngineCompleteEffect(hook) { visible = false }
+    SyncEngineStartedEffect(hook) { visible = true }
 
     if (!hook.active) return
-    if (dismissed) return
-    val progress = hook.progress ?: return
+    if (!visible) return
+    val progress = hook.progress
 
 
     AlertDialog(
         confirmButton = {},
-        dismissButton = { Button({ dismissed = true }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
-        onDismissRequest = { dismissed = false },
+        dismissButton = { Button({ visible = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
+        onDismissRequest = { visible = false },
         title = { Text(title) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                if (progress.isDeterminate) {
+                if (progress != null && progress.isDeterminate) {
                     CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total })
                 } else {
                     CircularProgressIndicator()
@@ -59,7 +60,7 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (progress.isDeterminate) {
+                if (progress != null && progress.isDeterminate) {
                     Text(description + "(${progress.synchonized}/${progress.total})")
                 } else {
                     Text(description)
