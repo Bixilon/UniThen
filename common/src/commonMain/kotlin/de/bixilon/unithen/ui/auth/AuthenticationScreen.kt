@@ -40,6 +40,7 @@ import unithen.common.generated.resources.*
 
 
 @Composable
+@Deprecated("sync engine/status dialog")
 fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
     val storage = LocalStorage.current
     var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)

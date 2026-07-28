@@ -17,11 +17,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Setting
+import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.components.qr.QrCode
+import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
+import de.bixilon.unithen.ui.util.effects.RepeatedEffect
+import kotlin.time.Duration.Companion.seconds
 
 val A = Setting("test_a", true)
 val B = Setting("test_b", false)
@@ -32,18 +38,17 @@ private fun SettingsTest() {
     Column {
         ScreenTitle("Settings")
 
-        Text("Both setting groups should be synchronized")
+        Text("Both setting groups should be synchronized, A should toggle every second.")
+
+        var a by rememberSetting(A)
+
+        RepeatedEffect(1.seconds) { a = !a }
 
         BooleanSetting(A, "A", "")
         BooleanSetting(A, "A", "")
         BooleanSetting(B, "B", "")
         BooleanSetting(B, "B", "")
     }
-}
-
-@Composable
-fun ScreenTitle(x0: String) {
-    TODO("Not yet implemented")
 }
 
 @Composable

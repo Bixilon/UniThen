@@ -42,47 +42,13 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
-import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
-import de.bixilon.unithen.ui.sync.SyncEngineStartedEffect
+import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
-import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import unithen.common.generated.resources.*
-
-
-@Composable
-private fun Sync(account: Account): (() -> Unit)? {
-    var dismissed by rememberStateOf { false }
-    val synchronize = useSyncEngine { syncCourses(account) }
-
-    SyncEngineCompleteEffect(synchronize) { dismissed = true }
-    SyncEngineStartedEffect(synchronize) { dismissed = false }
-
-    if (!synchronize.active) {
-        return { synchronize.invoke(force = true) }
-    }
-
-    if (dismissed) return null
-
-
-    AlertDialog(
-        confirmButton = {},
-        onDismissRequest = { dismissed = false },
-        title = { Text(Res.string.accounts_sync_title.i18n()) },
-        text = {
-            Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(Res.string.accounts_sync_description.i18n())
-            }
-        },
-    )
-
-    return null
-}
 
 @Composable
 private fun Remove(account: Account): (() -> Unit)? {
@@ -148,7 +114,9 @@ private fun Remove(account: Account): (() -> Unit)? {
 private fun AccountOptions(account: Account, modifier: Modifier) {
     var expanded by remember { mutableStateOf(false) }
 
-    val sync = Sync(account)
+    val synchronize = useSyncEngine { syncCourses(account) }
+    SyncStatusDialog(synchronize, Res.string.accounts_sync_title.i18n(), Res.string.accounts_sync_description.i18n())
+
     val remove = Remove(account)
 
     Box(modifier = modifier) {
@@ -166,7 +134,8 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
                         Text(Res.string.accounts_option_sync.i18n())
                     }
                 },
-                onClick = { expanded = false; sync?.invoke() }
+                enabled = !synchronize.active,
+                onClick = { expanded = false; synchronize.invoke() }
             )
             DropdownMenuItem(
                 text = {

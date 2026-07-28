@@ -42,10 +42,11 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
+@Deprecated("sync engine/status dialog")
 private fun SyncProgress(done: Int, pending: Int, dismiss: () -> Unit) {
     AlertDialog(
         confirmButton = {},
-        dismissButton = { Button({ dismiss() }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text("Hide") } },
+        dismissButton = { Button({ dismiss() }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
         onDismissRequest = { dismiss() },
         icon = { Icon(Icons.Default.Sync, "") },
         title = { Text(Res.string.scan_synchronizing_attendees.i18n()) },

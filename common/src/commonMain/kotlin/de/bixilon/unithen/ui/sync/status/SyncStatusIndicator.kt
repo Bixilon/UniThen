@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.sync.SyncEngineHook
+import de.bixilon.unithen.ui.sync.status.SyncIndicatorUtil.isDeterminate
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -79,7 +80,7 @@ private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress) 
     val modifier = Modifier.size(24.dp)
 
 
-    if (progress.total > 3 && progress.synchonized > 0) {
+    if (progress.isDeterminate) {
         CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total }, modifier = modifier, color = color)
     } else {
         CircularProgressIndicator(modifier = modifier, color = color)

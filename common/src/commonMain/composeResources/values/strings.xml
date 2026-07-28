@@ -147,4 +147,5 @@
     <string name="database_cleanup_description">Clearing cache and removing dangling courses.</string>
     <string name="database_cleanup_success">Database was cleaned up!</string>
     <string name="loading_database">Loading database...</string>
+    <string name="sync_dialog_dismiss">Dismiss</string>
 </resources>
