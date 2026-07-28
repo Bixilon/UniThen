@@ -16,18 +16,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 
 
 @Composable
-fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnable: suspend () -> Unit) {
+fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnable: suspend (progress: SyncEngineProgress) -> Unit) {
     var active by rememberStateOf(hook.active)
+    var progress by rememberStateOf<SyncEngineProgress?>(null)
 
     LaunchedEffect(hook) {
-        if (active == hook.active) return@LaunchedEffect
+        hook.progress?.let { progress = it }
+        val progress = progress
+        if (progress != null && active && !hook.active) {
+            runnable.invoke(progress)
+        }
         active = hook.active
-        if (!hook.active) return@LaunchedEffect
-
-        runnable.invoke()
     }
 }

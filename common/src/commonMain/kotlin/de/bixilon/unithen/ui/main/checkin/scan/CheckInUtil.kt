@@ -19,7 +19,6 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -31,7 +30,6 @@ object CheckInUtil {
     val SYNC_BACKOFF_NORMAL = 5.minutes
 
     suspend fun syncQueue(storage: SqlStorage, item: CheckInQueue) {
-        delay(1.seconds)
         val user = storage.users[item.user]!!
 
         val appointment = storage.appointments[item.appointment]!!

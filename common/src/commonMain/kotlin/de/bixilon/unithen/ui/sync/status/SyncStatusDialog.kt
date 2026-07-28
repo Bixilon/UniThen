@@ -32,16 +32,25 @@ import de.bixilon.unithen.ui.util.state.rememberStateOf
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.sync_dialog_dismiss
 
+data class SyncStatusDialogHook(
+    val hide: () -> Unit,
+    val show: () -> Unit,
+    val visible: Boolean,
+)
 
 @Composable
-fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String) {
+fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, manual: Boolean = false): SyncStatusDialogHook {
     var visible by rememberStateOf { false }
 
     SyncEngineCompleteEffect(hook) { visible = false }
-    SyncEngineStartedEffect(hook) { visible = true }
+    if (!manual) {
+        SyncEngineStartedEffect(hook) { visible = true }
+    }
 
-    if (!hook.active) return
-    if (!visible) return
+    val dialog = SyncStatusDialogHook({ visible = false }, { visible = true }, visible)
+
+    if (!hook.active) return dialog
+    if (!visible) return dialog
     val progress = hook.progress
 
 
@@ -60,7 +69,7 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (progress != null && progress.isDeterminate) {
+                if (progress != null && progress.total > 0) {
                     Text(description + "(${progress.synchonized}/${progress.total})")
                 } else {
                     Text(description)
@@ -68,4 +77,6 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String) {
             }
         },
     )
+
+    return dialog
 }

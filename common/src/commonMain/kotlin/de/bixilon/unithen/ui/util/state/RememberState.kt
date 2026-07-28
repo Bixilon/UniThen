@@ -16,15 +16,15 @@ import androidx.compose.runtime.*
 
 @Composable
 inline fun <T> rememberStateOf(value: T): MutableState<T> {
-    return remember { mutableStateOf(value) }
+    return remember(Unit) { mutableStateOf(value) }
 }
 
 @Composable
 inline fun rememberStateOf(value: Int): MutableIntState {
-    return remember { mutableIntStateOf(value) }
+    return remember(Unit) { mutableIntStateOf(value) }
 }
 
 @Composable
 inline fun <T> rememberStateOf(crossinline lazy: () -> T): MutableState<T> {
-    return remember { mutableStateOf(lazy.invoke()) }
+    return remember(Unit) { mutableStateOf(lazy.invoke()) }
 }

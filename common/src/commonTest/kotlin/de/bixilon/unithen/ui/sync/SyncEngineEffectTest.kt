@@ -21,9 +21,12 @@ import androidx.compose.ui.test.v2.runComposeUiTest
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.sync.SyncEngineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalTestApi::class)
 class SyncEngineEffectTest {
@@ -49,4 +52,35 @@ class SyncEngineEffectTest {
         }
     }
 
+    @Test
+    fun `active when invoking`() = runComposeUiTest {
+        setContent {
+            val synchronize = useTestSyncEngine { delay(100.milliseconds) }
+
+            assertTrue { synchronize.active }
+        }
+    }
+
+    @Test
+    fun `start effect fires`() = runComposeUiTest {
+        var fired = false
+        setContent {
+            val synchronize = useTestSyncEngine { delay(100.milliseconds) }
+
+            SyncEngineStartedEffect(synchronize) { fired = true }
+        }
+        assertTrue(fired)
+    }
+
+    @Test
+    fun `complete effect fires`() = runComposeUiTest {
+        var fired = false
+        setContent {
+            val synchronize = useTestSyncEngine { delay(100.milliseconds) }
+
+            SyncEngineCompleteEffect(synchronize) { fired = true }
+            waitUntil { !synchronize.active }
+        }
+        assertTrue(fired)
+    }
 }

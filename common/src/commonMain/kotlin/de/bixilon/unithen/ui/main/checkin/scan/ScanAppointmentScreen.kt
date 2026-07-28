@@ -18,7 +18,8 @@ import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Appointment
@@ -33,11 +34,10 @@ import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.buttons.SyncFloatingButton
 import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
 import de.bixilon.unithen.ui.sync.useRepeatedSyncEngine
+import de.bixilon.unithen.ui.util.DelayedContent
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.delay
 import unithen.common.generated.resources.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -63,11 +63,8 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val synchronize = useRepeatedSyncEngine(SYNC_BACKOFF_NORMAL + 1.minutes) {
         syncQueue(appointment)
     }
-    var visible by rememberStateOf(false)
 
-    if (visible) {
-        SyncStatusDialog(synchronize, Res.string.scan_synchronizing_attendees.i18n(), Res.string.scan_synchronizing_attendees.i18n())
-    }
+    val dialog = SyncStatusDialog(synchronize, Res.string.scan_synchronizing_attendees.i18n(), Res.string.scan_synchronizing_attendees.i18n(), manual = true)
 
     Screen {
         ScreenTitle(course.name)
@@ -89,19 +86,10 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
 
             FloatingActionButtons {
                 if (canSync) {
-                    var showSyncButton by remember(Unit) { mutableStateOf(pending > 0) }
-
-                    LaunchedEffect(pending > 0) {
-                        if (pending == 0) {
-                            showSyncButton = false
-                        } else {
-                            delay(2.seconds)
-                            showSyncButton = true
+                    if (pending > 0) {
+                        DelayedContent(1.seconds) {
+                            SyncFloatingButton(synchronize, Icons.Filled.Sync) { dialog.show() }
                         }
-                    }
-
-                    if (showSyncButton) {
-                        SyncFloatingButton(synchronize, Icons.Filled.Sync) { visible = true }
                     }
                 }
                 if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {

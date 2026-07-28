@@ -24,10 +24,9 @@ fun SyncEngineStartedEffect(hook: SyncEngineHook, runnable: suspend () -> Unit) 
     var active by rememberStateOf(hook.active)
 
     LaunchedEffect(hook) {
-        if (active == hook.active) return@LaunchedEffect
+        if (!active && hook.active) {
+            runnable.invoke()
+        }
         active = hook.active
-        if (hook.active) return@LaunchedEffect
-
-        runnable.invoke()
     }
 }
