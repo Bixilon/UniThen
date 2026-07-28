@@ -23,5 +23,5 @@ data class SyncEngineHook(
     private val invoke: SyncEngineInvoker,
 ) {
 
-    operator fun invoke(force: Boolean = false) = this.invoke.invoke(false)
+    operator fun invoke(force: Boolean = false) = this.invoke.invoke(force)
 }

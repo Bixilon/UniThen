@@ -23,14 +23,15 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import kotlinx.coroutines.*
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class SyncEngineContext(
     private val engine: SyncEngine,
     private val force: Boolean,
+    private val scope: CoroutineScope,
     progress: (SyncEngineProgress) -> Unit,
 ) {
-    val scope = CoroutineScope(Dispatchers.IO)
     private val storage get() = engine.storage
     private val progress = SyncProgressBuilder(progress)
 
@@ -54,27 +55,25 @@ class SyncEngineContext(
     }
 
 
-    suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = this.force) {
-        if (appointments.isEmpty()) return
+    suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = this.force) = coroutineScope {
+        if (appointments.isEmpty()) return@coroutineScope
 
         val now = Clock.System.now()
 
         progress.addTotal(appointments.size)
 
-        coroutineScope {
-            for (appointment in appointments) {
-                if (!force && !appointment.isAttendeesStale(now)) {
-                    progress.addSkipped()
-                    continue
-                }
-                val account = storage.accounts.getTutorAccount(appointment)
-                if (account == null) {
-                    progress.addSkipped()
-                    continue
-                }
-
-                async { storage.fetchAttendees(account, appointment, force) }
+        for (appointment in appointments) {
+            if (!force && !appointment.isAttendeesStale(now)) {
+                progress.addSkipped()
+                continue
             }
+            val account = storage.accounts.getTutorAccount(appointment)
+            if (account == null) {
+                progress.addSkipped()
+                continue
+            }
+
+            async { storage.fetchAttendees(account, appointment, force) }
         }
     }
 
@@ -98,22 +97,28 @@ class SyncEngineContext(
         storage.updateCourses(account, force)
     }
 
-    suspend fun syncCourses(force: Boolean = this.force) {
+    suspend fun syncCourses(force: Boolean = this.force) = coroutineScope {
         for (account in storage.accounts.all()) {
             async { syncCourses(account, force) }
         }
     }
 
-    suspend fun syncQueue(appointment: Appointment, force: Boolean = this.force) {
+    suspend fun syncQueue(appointment: Appointment, force: Boolean = this.force) = coroutineScope {
+        var started = 0
         while (true) {
             val item = storage.checkInQueue.take(appointment, force) ?: break
+            if (started++ > 30) {
+                delay(10.milliseconds)
+            }
 
             async { execute { CheckInUtil.syncQueue(storage, item) } }
         }
     }
 
+    @Deprecated("test only")
+    internal suspend fun test(block: suspend () -> Unit) = execute { block.invoke() }
 
-    fun async(block: suspend () -> Unit) {
+    suspend fun async(block: suspend () -> Unit) {
         scope.async(Dispatchers.IO) { block.invoke() }
     }
 }

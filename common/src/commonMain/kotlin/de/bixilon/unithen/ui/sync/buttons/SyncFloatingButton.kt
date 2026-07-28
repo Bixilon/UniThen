@@ -25,7 +25,7 @@ import de.bixilon.unithen.ui.sync.status.SyncIndicatorUtil.isDeterminate
 fun SyncFloatingButton(hook: SyncEngineHook, icon: ImageVector, onClick: () -> Unit = {}) {
     val color = if (hook.active) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.errorContainer
 
-    FloatingActionButton({ if (!hook.active) hook.invoke(true); onClick.invoke() }, containerColor = color) {
+    FloatingActionButton({ if (!hook.active) hook.invoke(force = true); onClick.invoke() }, containerColor = color) {
         if (hook.active) {
             val progress = hook.progress
 

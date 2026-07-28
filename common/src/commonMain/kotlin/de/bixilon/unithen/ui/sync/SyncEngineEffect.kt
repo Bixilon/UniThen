@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import de.bixilon.unithen.sync.SyncEngineContext
 import de.bixilon.unithen.sync.SyncEngineProgress
 import de.bixilon.unithen.ui.util.state.rememberStateOf
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 @Composable
@@ -31,17 +31,18 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
     val sync = remember {
         val invokeable: SyncEngineInvoker = { force ->
             active = true
-            val context = SyncEngineContext(engine, force) { progress = it }
+            CoroutineScope(Dispatchers.IO).launch {
+                coroutineScope {
+                    val context = SyncEngineContext(engine, force, this) { progress = it }
 
-            context.scope.launch {
-                try {
-                    block.invoke(context)
-                } finally {
-                    active = false
-                    progress = null
+                    try {
+                        block.invoke(context)
+                    } finally {
+                        active = false
+                        progress = null
+                    }
                 }
             }
-
         }
 
         return@remember invokeable
