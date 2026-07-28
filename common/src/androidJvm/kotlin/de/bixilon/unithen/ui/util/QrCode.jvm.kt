@@ -25,7 +25,7 @@ actual fun encodeQr(data: String): ImageBitmap {
     val matrix = Encoder.encode(data, ErrorCorrectionLevel.H, mapOf(
         EncodeHintType.CHARACTER_SET to "UTF-8",
         EncodeHintType.MARGIN to 16,
-        EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.H,
+        EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
     )).matrix
 
     val bitmap = ImageBitmap(matrix.width, matrix.height, ImageBitmapConfig.Alpha8)

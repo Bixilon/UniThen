@@ -56,7 +56,7 @@ actual fun encodeQr(data: String): ImageBitmap {
     val filter = CIFilter.QRCodeGenerator()
 
     filter.setValue(data.nsdata(), forKey = "message")
-    filter.setValue("H", forKey = "correctionLevel")
+    filter.setValue("M", forKey = "correctionLevel")
 
     val output = filter.outputImage ?: throw IllegalArgumentException("Failed to generate image")
 
