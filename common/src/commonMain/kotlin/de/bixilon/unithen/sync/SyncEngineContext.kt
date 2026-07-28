@@ -14,9 +14,10 @@ package de.bixilon.unithen.sync
 
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCourse
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
+import de.bixilon.unithen.api.graphql.util.CourseFetcher.setCourses
 import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -25,6 +26,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import kotlinx.coroutines.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.uuid.Uuid
 
 
 class SyncEngineContext(
@@ -94,8 +96,38 @@ class SyncEngineContext(
         execute { storage.updateCourse(account, course) }
     }
 
-    suspend fun syncCourses(account: Account, force: Boolean = this.force) = execute {
-        storage.updateCourses(account, force)
+    suspend fun syncCourses(account: Account, force: Boolean = this.force) = handlErrors {
+        val site = storage.sites[account.site]!!
+        val api = account.api(site)
+        if (!force && !account.isStale()) return@handlErrors
+
+        val enrolled: Set<Uuid>
+        val tutor: Set<Uuid>
+
+        coroutineScope {
+            val _enrolled = async { api.getCourses(account.uuid, isEnrolled = true, isTutor = false)?.map { it.id }?.toSet() ?: emptySet() }
+            val _tutor = async { api.getCourses(account.uuid, isEnrolled = false, isTutor = true)?.map { it.id }?.toSet() ?: emptySet() }
+            enrolled = _enrolled.await()
+            tutor = _tutor.await()
+        }
+
+        val all = enrolled + tutor
+
+        storage.setCourses(account, site, all, tutor)
+
+        coroutineScope {
+            for (uuid in all) {
+                val course = storage.courses[site, uuid]
+
+                if (course != null && !course.isDataStale()) continue
+
+                async(Dispatchers.IO) {
+                    execute { storage.fetchCourse(account, uuid, uuid in tutor) }
+                }
+            }
+        }
+
+        storage.accounts.update(account.id, fetched = Clock.System.now())
     }
 
     suspend fun syncCourses(force: Boolean = this.force) = coroutineScope {

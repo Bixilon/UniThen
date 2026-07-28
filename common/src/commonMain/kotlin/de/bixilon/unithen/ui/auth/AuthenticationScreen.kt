@@ -26,46 +26,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourses
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
+import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
+import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
 
-
 @Composable
-@Deprecated("sync engine/status dialog")
-fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
+fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Account) -> Unit) {
     val storage = LocalStorage.current
-    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
-
-    var message by remember { mutableStateOf(runBlocking { getString(Res.string.authentication_fetching_user_details) }) }
-
 
     val fetch = useAsyncNetwork<Unit>(null) {
-        val first = storage.accounts.count == 0
         val api = AuthenticatedUniNowApi(site.host, authentication)
         val details = api.getUserDetails()
 
         val account = storage.transaction { it.accounts.add(site, details, authentication) }
-
-        message = getString(Res.string.authentication_course_list)
-
-        storage.updateCourses(account, true) { message = runBlocking { getString(Res.string.authentication_fetching, it.course, it.courses) } }
-
-        when {
-            !first -> Unit
-            storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
-            storage.courses.isEnrolled() -> entrypoint = MainScreens.CHECKIN_PRESENT
-        }
-
-        callback.invoke()
+        callback.invoke(account)
     }
 
     LaunchedEffect(Unit) { fetch.invoke(Unit) }
@@ -78,21 +62,46 @@ fun Fetch(site: Site, authentication: Authentication, callback: () -> Unit) {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(message)
+                Text(Res.string.authentication_fetching_user_details.i18n())
                 Text(Res.string.authentication_take_a_while.i18n(), color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
     )
 }
 
+
 @Composable
-fun AuthenticationScreen(site: Site, callback: (Authentication) -> Unit) {
-    var authentication: Authentication? by remember { mutableStateOf(null) }
+fun AuthenticationScreen(site: Site, callback: (Account) -> Unit) {
+    val storage = LocalStorage.current
+    var authentication: Authentication? by rememberStateOf { null }
+    var account: Account? by rememberStateOf { null }
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
 
     if (authentication == null) {
         WebAuthenticationView(host = site.host) { authentication = it }
         return
     }
 
-    Fetch(site, authentication!!) { callback.invoke(authentication!!) }
+    val first = remember(Unit) { storage.accounts.count == 0 }
+
+    if (account == null) {
+        FetchUserDetails(site, authentication!!) { account = it }
+        return
+    }
+
+    val synchronize = useSyncEngine { syncCourses(account!!) }
+    LaunchedEffect(Unit) { synchronize.invoke() }
+
+    SyncEngineCompleteEffect(synchronize) {
+        when {
+            !first -> Unit
+            storage.courses.isTutor() -> entrypoint = MainScreens.CHECKIN_SCAN
+            storage.courses.isEnrolled() -> entrypoint = MainScreens.CHECKIN_PRESENT
+        }
+    }
+
+    SyncEngineCompleteEffect(synchronize) { callback.invoke(account!!) }
+
+
+    SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n())
 }

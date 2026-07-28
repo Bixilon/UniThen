@@ -20,15 +20,13 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.ui.util.progress.CourseFetchProgress
-import kotlinx.coroutines.*
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
 @Deprecated("sync engine")
 object CourseFetcher {
 
-    private suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, tutor: Boolean) {
+    suspend fun SqlStorage.fetchCourse(account: Account, id: Uuid, tutor: Boolean) {
         val site = sites[account.site]!!
         val api = account.api(site)
 
@@ -43,45 +41,6 @@ object CourseFetcher {
         }
     }
 
-
-    suspend fun SqlStorage.updateCourses(account: Account, force: Boolean, progress: ((CourseFetchProgress) -> Unit)? = null) {
-        val site = sites[account.site]!!
-        val api = account.api(site)
-        if (!force && !account.isStale()) return
-
-        // TODO: do both requests in parallel
-        val enrolled = api.getCourses(account.uuid, isEnrolled = true, isTutor = false)?.map { it.id }?.toSet() ?: emptySet()
-        val tutor = api.getCourses(account.uuid, isEnrolled = false, isTutor = true)?.map { it.id }?.toSet() ?: emptySet()
-
-        val all = enrolled + tutor
-
-        progress?.invoke(CourseFetchProgress(0, all.size))
-
-        setCourses(account, site, all, tutor)
-
-        var done = 0
-        var total = all.size
-
-        coroutineScope {
-            all.mapNotNull { id ->
-                val course = this@updateCourses.courses[site, id]
-
-                if (course != null && !course.isDataStale()) {
-                    total--
-                    progress?.invoke(CourseFetchProgress(done, total))
-                    return@mapNotNull null
-                }
-
-                async(Dispatchers.IO) {
-                    fetchCourse(account, id, id in tutor)
-                    progress?.invoke(CourseFetchProgress(done++, total))
-                }
-            }.awaitAll()
-        }
-
-
-        accounts.update(account.id, fetched = Clock.System.now())
-    }
 
     suspend fun SqlStorage.updateCourse(account: Account, course: Course) {
         val site = sites[account.site]!!
@@ -98,7 +57,7 @@ object CourseFetcher {
         }
     }
 
-    private fun SqlStorage.setCourses(account: Account, site: Site, ids: Set<Uuid>, tutor: Set<Uuid>) {
+    fun SqlStorage.setCourses(account: Account, site: Site, ids: Set<Uuid>, tutor: Set<Uuid>) {
         transaction {
             accounts.clearCourses(account)
 
