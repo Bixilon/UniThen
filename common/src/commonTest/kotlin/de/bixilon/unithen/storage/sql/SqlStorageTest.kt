@@ -26,12 +26,10 @@ fun create() = SqlStorage(createMemoryHelper())
 suspend fun empty() = create().apply { helper.load() }
 suspend fun dummy() = empty().apply { this.initializeDummy() }
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class SqlStorageTest {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @BeforeTest
-    fun setup() {
+    init {
         Dispatchers.setMain(UnconfinedTestDispatcher())
     }
 

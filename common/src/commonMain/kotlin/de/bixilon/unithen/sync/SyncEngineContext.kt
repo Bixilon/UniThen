@@ -13,11 +13,10 @@
 package de.bixilon.unithen.sync
 
 import de.bixilon.unithen.api.errors.NetworkException
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchAttendees
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchCourse
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.fetchEnrolled
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.setCourses
-import de.bixilon.unithen.api.graphql.util.CourseFetcher.updateCourse
+import de.bixilon.unithen.storage.StorageUtil.setCourses
+import de.bixilon.unithen.storage.StorageUtil.storeAttendees
+import de.bixilon.unithen.storage.StorageUtil.storeCourse
+import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -76,24 +75,72 @@ class SyncEngineContext(
                 continue
             }
 
-            async { storage.fetchAttendees(account, appointment, force) }
+            async { syncAttendees(appointment, force) }
         }
     }
 
+
     suspend fun syncEnrolled(course: Course, force: Boolean = this.force) {
         val account = storage.accounts.getTutorAccount(course) ?: return
-        storage.fetchEnrolled(account, course, force)
+        if (!force && !course.isEnrolledStale()) return
+
+        execute {
+            val site = storage.sites[account.site]!!
+            val api = account.api(site)
+
+
+            val enrolled = api.getEnrolled(course.uuid)
+
+            storage.storeEnrolled(site, course, enrolled!!)
+        }
     }
 
     suspend fun syncAttendees(appointment: Appointment, force: Boolean = this.force) {
         val account = storage.accounts.getTutorAccount(appointment) ?: return
-        execute { storage.fetchAttendees(account, appointment, force) }
+        if (!force && !appointment.isAttendeesStale()) return
+
+        execute {
+            val site = storage.sites[account.site]!!
+            val api = account.api(site)
+
+
+            val attemptsQl = api.getCheckInAttempts(appointment.uuid) ?: return@execute
+            storage.storeAttendees(site, appointment, attemptsQl.attendees!!, attemptsQl.checkInAttempts!!)
+        }
     }
 
-    suspend fun syncCourse(course: Course) {
+    suspend fun syncCourse(course: Course, force: Boolean = this.force) {
         val account = storage.accounts.getTutorAccount(course) ?: storage.accounts[course].firstOrNull() ?: return
 
-        execute { storage.updateCourse(account, course) }
+        if (!force && !course.isDataStale()) return
+
+        execute {
+            val site = storage.sites[account.site]!!
+            val api = account.api(site)
+
+            val detailsQl = api.getCourse(course.uuid)!!
+            storage.storeCourse(site, detailsQl)
+
+            if (storage.accounts.isTutor(account, course)) {
+                val enrolled = api.getEnrolled(course.uuid)
+                storage.storeEnrolled(site, course, enrolled!!)
+            }
+        }
+    }
+
+    private suspend fun syncCourse(account: Account, id: Uuid, tutor: Boolean) {
+        val site = storage.sites[account.site]!!
+        val api = account.api(site)
+
+        val detailsQl = api.getCourse(id)!!
+
+        val course = storage.storeCourse(site, detailsQl)
+        storage.accounts.addToCourse(account, course, tutor)
+
+        if (tutor) {
+            val enrolled = api.getEnrolled(course.uuid)
+            storage.storeEnrolled(site, course, enrolled!!)
+        }
     }
 
     suspend fun syncCourses(account: Account, force: Boolean = this.force) = handlErrors {
@@ -122,7 +169,7 @@ class SyncEngineContext(
                 if (course != null && !course.isDataStale()) continue
 
                 async(Dispatchers.IO) {
-                    execute { storage.fetchCourse(account, uuid, uuid in tutor) }
+                    execute { syncCourse(account, uuid, uuid in tutor) }
                 }
             }
         }

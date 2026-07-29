@@ -30,5 +30,4 @@ data class AppointmentQl(
 
     val checkInAttempts: List<CheckInAttemptQl>? = null,
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val attendees: List<CourseUserQl>? = null,
-    val course: CourseQl? = null,
 ) : IdentifiedQl
