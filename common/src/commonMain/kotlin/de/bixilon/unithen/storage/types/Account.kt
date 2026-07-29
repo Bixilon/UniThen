@@ -39,7 +39,7 @@ data class Account(
     val fullname get() = "$firstname $lastname"
 
     fun api(site: Site): AuthenticatedUniNowApi {
-        if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!")
+        if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!", site.host)
 
         return AuthenticatedUniNowApi(site.host, CookieAuthentication(sessionKey))
     }

@@ -12,16 +12,11 @@
 
 package de.bixilon.unithen.api.authentication
 
-import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.*
 
 data class CookieAuthentication(
     val session: String,
 ) : Authentication {
-
-    init {
-        if (session.isBlank()) throw AuthenticationException("Authentication cookie can not be empty!")
-    }
 
     override fun authenticate(request: HttpRequestBuilder) {
         request.headers["Cookie"] = "ory-session=$session"

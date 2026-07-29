@@ -12,4 +12,4 @@
 
 package de.bixilon.unithen.api.graphql.http
 
-class AuthenticationException(message: String?) : Exception(message)
+class AuthenticationException(message: String?, val host: String) : Exception(message)

@@ -81,7 +81,7 @@ open class UniNowApi(
 
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {
             if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {
-                throw AuthenticationException("GraphQl: Not authenticated!")
+                throw AuthenticationException("GraphQl: Not authenticated!", host)
             }
 
             throw GraphQlException(graphql.errors)

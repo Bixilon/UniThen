@@ -12,7 +12,30 @@
 
 package de.bixilon.unithen.ui.sync
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import de.bixilon.unithen.api.errors.NetworkException
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
+import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.sync.SyncEngine
+import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.main.ReauthenticateRoute
+import de.bixilon.unithen.ui.navigation.Navigator
 
 val LocalSyncEngine = staticCompositionLocalOf<SyncEngine> { throw IllegalStateException("No sync engine set!") }
+
+
+@Composable
+fun rememberSyncEngine(storage: SqlStorage, navigator: Navigator): SyncEngine {
+
+    return remember {
+        SyncEngine(storage) {
+            when (it) {
+                is NetworkException -> Unit
+                is AuthenticationException -> navigator.navigate(ReauthenticateRoute(storage.sites[it.host]!!))
+                else -> navigator.navigate(CrashRoute(it))
+            }
+        }
+    }
+}

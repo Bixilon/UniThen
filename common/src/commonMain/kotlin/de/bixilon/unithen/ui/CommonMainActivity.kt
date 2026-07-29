@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
-import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
@@ -47,6 +46,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
+import de.bixilon.unithen.ui.sync.rememberSyncEngine
 import de.bixilon.unithen.ui.util.DelayedContent
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
@@ -197,7 +197,7 @@ fun CommonMainActivity() {
     Loader {
         val storage = LocalStorage.current
         val navigator = remember { Navigator(MainRoute) }
-        val engine = remember { SyncEngine(storage) { navigator.navigate(CrashRoute(it)) } }
+        val engine = rememberSyncEngine(storage, navigator)
 
         CompositionLocalProvider(
             LocalSyncEngine provides engine
