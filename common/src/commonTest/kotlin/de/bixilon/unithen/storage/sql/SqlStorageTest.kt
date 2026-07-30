@@ -18,11 +18,14 @@ import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.event
 import de.bixilon.unithen.storage.StorageTestUtil.site
+import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
+import unithen.common.generated.resources.Res
+import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -30,9 +33,12 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
-fun create() = SqlStorage(createMemoryHelper())
+fun create() = SqlStorage(createSqliteHelper())
 suspend fun empty() = create().apply { helper.load() }
 suspend fun dummy() = empty().apply { this.initializeDummy() }
+
+expect fun ByteArray.copyTo(path: String)
+expect fun delete(path: String)
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SqlStorageTest {
@@ -58,6 +64,23 @@ class SqlStorageTest {
         val host = storage.query("SELECT host FROM sites WHERE id=901") { it.moveToNext(); it.getString(0) }
 
         assertEquals("test.local", host)
+    }
+
+    @Test
+    fun `migrate v1 database`() {
+        val original = runBlocking { Res.readBytes("files/sqlite/v1.sqlite") }
+        val name = "migrate-${Random.nextInt()}.sqlite"
+        original.copyTo(name)
+        try {
+            val storage = SqlStorage(createSqliteHelper(name))
+            runBlocking { storage.helper.load() }
+
+            assertEquals("Room 332", storage.appointments["801cd6fd-220b-40cb-8ebb-f4748d205c8c".toUuid()][0].location)
+            assertEquals("User15", storage.accounts.get(uuid = "490e4d29-c62b-4a60-994f-bedf61f8ecb2".toUuid())[0].firstname)
+        } catch (error: Throwable) {
+            delete(name)
+            throw error
+        }
     }
 
     @Test

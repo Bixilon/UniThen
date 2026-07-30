@@ -14,4 +14,4 @@ package de.bixilon.unithen.storage.sql
 
 import androidx.test.platform.app.InstrumentationRegistry
 
-actual fun createMemoryHelper(): SQLiteHelper = AndroidSqlHelper(InstrumentationRegistry.getInstrumentation().context, null)
+actual fun createSqliteHelper(name: String?): SQLiteHelper = AndroidSqlHelper(InstrumentationRegistry.getInstrumentation().context, name)

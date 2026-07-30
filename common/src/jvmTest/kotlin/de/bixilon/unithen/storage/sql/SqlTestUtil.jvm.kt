@@ -12,4 +12,6 @@
 
 package de.bixilon.unithen.storage.sql
 
-actual fun createMemoryHelper(): SQLiteHelper = JvmSqlHelper(null)
+import java.io.File
+
+actual fun createSqliteHelper(name: String?): SQLiteHelper = JvmSqlHelper(name?.let { File(it) })

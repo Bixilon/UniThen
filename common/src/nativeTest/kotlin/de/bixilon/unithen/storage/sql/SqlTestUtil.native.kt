@@ -12,4 +12,4 @@
 
 package de.bixilon.unithen.storage.sql
 
-actual fun createMemoryHelper(): SQLiteHelper = NativeSQLiteHelper(null)
+actual fun createSqliteHelper(name: String?): SQLiteHelper = NativeSQLiteHelper(name)

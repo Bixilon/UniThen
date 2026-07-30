@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import androidx.core.database.getBlobOrNull
+import androidx.core.database.getStringOrNull
 import androidx.core.database.sqlite.transaction
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
@@ -152,7 +153,7 @@ class AndroidSqlHelper(context: Context, name: String?) : SQLiteOpenHelper(conte
         override fun getBlobOrNull(index: Int) = cursor.getBlobOrNull(index)
 
         override fun getString(index: Int) = cursor.getString(index)
-        override fun getStringOrNull(index: Int) = cursor.getString(index)
+        override fun getStringOrNull(index: Int) = cursor.getStringOrNull(index)
 
         override fun getInt(index: Int) = cursor.getInt(index)
         override fun getLong(index: Int) = cursor.getLong(index)

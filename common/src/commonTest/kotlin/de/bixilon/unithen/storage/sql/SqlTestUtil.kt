@@ -12,4 +12,4 @@
 
 package de.bixilon.unithen.storage.sql
 
-expect fun createMemoryHelper(): SQLiteHelper
+expect fun createSqliteHelper(name: String? = null): SQLiteHelper
