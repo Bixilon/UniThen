@@ -12,12 +12,34 @@
 
 package de.bixilon.unithen.storage
 
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.storage.types.*
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlin.uuid.Uuid
 
 object StorageTestUtil {
 
+
     fun SqlStorage.site(name: String = "Test site", host: String = "site.test"): Site {
         return sites.add(name, host, null)
+    }
+
+    fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", sessionKey: String = "a"): Account {
+        return accounts.add(site, UserDetails(uuid, firstname, lastname), CookieAuthentication(sessionKey))
+    }
+
+    fun SqlStorage.event(site: Site = site(), uuid: Uuid = Uuid.random(), name: String = "Test event", start: Instant = Clock.System.now(), end: Instant = Clock.System.now()): Event {
+        return events.add(site, uuid, name, start, end)
+    }
+
+    fun SqlStorage.course(event: Event = event(), uuid: Uuid = Uuid.random(), name: String = "Test course", fetched: Instant = Clock.System.now()): Course {
+        return courses.add(sites[event.site]!!, event, uuid, name, fetched)
+    }
+
+    fun SqlStorage.appointment(course: Course = course(), uuid: Uuid = Uuid.random(), start: Instant = Clock.System.now(), end: Instant = Clock.System.now(), canceled: Instant? = null): Appointment {
+        return appointments.add(course, uuid, start, end, canceled, "")
     }
 }

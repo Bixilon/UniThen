@@ -13,6 +13,10 @@
 package de.bixilon.unithen.storage.sql
 
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
+import de.bixilon.unithen.storage.StorageTestUtil.account
+import de.bixilon.unithen.storage.StorageTestUtil.course
+import de.bixilon.unithen.storage.StorageTestUtil.event
+import de.bixilon.unithen.storage.StorageTestUtil.site
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -200,5 +204,28 @@ class SqlStorageTest {
         item = storage.checkInQueue[storage.appointments[item.appointment]!!, storage.users[item.user]!!]
 
         assertTrue(item!!.sync!! > now)
+    }
+
+    @Test
+    fun `helper return auto correct id`() = runBlocking {
+        val storage = empty()
+
+        val site = storage.site()
+
+        assertEquals(1, site.id)
+    }
+
+    @Test
+    fun `create account and add to course`() = runBlocking {
+        val storage = empty()
+
+        val site = storage.site()
+        val account = storage.account(site)
+        val course = storage.course(storage.event(site))
+
+        storage.accounts.addToCourse(account, course, false)
+
+        assertTrue { storage.courses.isEnrolled() }
+        assertFalse { storage.courses.isTutor() }
     }
 }
