@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.storage.sql
 
+import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.StorageTestUtil.account
 import de.bixilon.unithen.storage.StorageTestUtil.appointment
@@ -81,6 +82,23 @@ class SqlStorageTest {
             delete(name)
             throw error
         }
+    }
+
+    @Test
+    fun `ensure all sql files end with a column`() {
+
+        fun assert(file: String) = runBlocking {
+            val migration = Res.readBytes("files/sql/$file").decodeToString().removeWhitespaces().replace("\n", "")
+
+            assertEquals(';', migration.last())
+        }
+        for (migration in 2..SqlStorage.VERSION) {
+            assert("migrations/$migration.sql")
+        }
+
+        assert("schema.sql")
+        assert("cleanup.sql")
+        assert("clear_cache.sql")
     }
 
     @Test
