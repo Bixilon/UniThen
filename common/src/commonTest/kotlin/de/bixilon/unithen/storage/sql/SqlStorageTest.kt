@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.sql
 
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.StorageTestUtil.account
+import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.event
 import de.bixilon.unithen.storage.StorageTestUtil.site
@@ -24,7 +25,10 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import kotlin.test.*
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.uuid.Uuid
 
 fun create() = SqlStorage(createMemoryHelper())
 suspend fun empty() = create().apply { helper.load() }
@@ -227,5 +231,59 @@ class SqlStorageTest {
 
         assertTrue { storage.courses.isEnrolled() }
         assertFalse { storage.courses.isTutor() }
+    }
+
+    @Test
+    fun `get enrolled appointments between time`() = runBlocking {
+        val storage = empty()
+
+        val site = storage.site()
+        val account = storage.account(site)
+        val course = storage.course(storage.event(site))
+
+        storage.accounts.addToCourse(account, course, false)
+
+        val start = Clock.System.now()
+        val end = Clock.System.now() + 1.hours
+
+        val uuid = Uuid.random()
+
+        storage.appointment(course, uuid = uuid, start = start, end = end)
+
+        var appointments = storage.appointments.getInRange(start - 1.minutes, start + 1.minutes, tutor = false)
+        assertEquals(uuid, appointments[0].uuid)
+
+        appointments = storage.appointments.getInRange(start - 1.minutes, start + 1.minutes, tutor = true)
+        assertEquals(0, appointments.size)
+
+        appointments = storage.appointments.getInRange(start - 3.minutes, start - 1.minutes)
+        assertEquals(0, appointments.size)
+    }
+
+    @Test
+    fun `get tutor appointments between time`() = runBlocking {
+        val storage = empty()
+
+        val site = storage.site()
+        val account = storage.account(site)
+        val course = storage.course(storage.event(site))
+
+        storage.accounts.addToCourse(account, course, true)
+
+        val start = Clock.System.now()
+        val end = Clock.System.now() + 1.hours
+
+        val uuid = Uuid.random()
+
+        storage.appointment(course, uuid = uuid, start = start, end = end)
+
+        var appointments = storage.appointments.getInRange(start - 1.minutes, start + 1.minutes, tutor = true)
+        assertEquals(uuid, appointments[0].uuid)
+
+        appointments = storage.appointments.getInRange(start - 1.minutes, start + 1.minutes, tutor = false)
+        assertEquals(0, appointments.size)
+
+        appointments = storage.appointments.getInRange(start - 3.minutes, start - 1.minutes)
+        assertEquals(0, appointments.size)
     }
 }
