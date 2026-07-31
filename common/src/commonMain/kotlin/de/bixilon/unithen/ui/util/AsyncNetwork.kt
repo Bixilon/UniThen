@@ -42,7 +42,7 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
     var active by rememberStateOf { false }
     if (active) return ACTIVE
 
-    val storage = LocalStorage.current
+    val storage = catchAll { LocalStorage.current }
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
 
@@ -56,7 +56,7 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
                 block.invoke()
             } catch (error: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
-                navigation?.navigate(ReauthenticateRoute(storage.sites[error.host]!!))
+                navigation?.navigate(ReauthenticateRoute(storage!!.sites[error.host]!!))
             } catch (error: NetworkException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))
