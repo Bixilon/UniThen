@@ -32,7 +32,7 @@ class SiteTable(
     operator fun get(host: String) = single(SiteTable.host eq host)
 
     fun insert(host: String, name: String, icon: ByteArray?): Site {
-        val id = insert("INSERT INTO $table(host, name, icon, fetched) VALUES (?,?,?,?)", host, name, icon, Clock.System.now())
+        val id = insert(SiteTable, SiteTable.host to host, SiteTable.name to name, SiteTable.icon to icon, fetched to Clock.System.now())
 
         return this[id]!!
     }

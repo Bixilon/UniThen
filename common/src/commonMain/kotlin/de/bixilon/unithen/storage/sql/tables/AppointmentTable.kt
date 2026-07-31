@@ -59,7 +59,7 @@ class AppointmentTable(
 
 
     fun insert(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
-        val id = insert("INSERT INTO $table(course, uuid, start, end, canceled, location) VALUES (?,?,?,?,?,?)", course.id, uuid, start, end, canceled, location)
+        val id = insert(AppointmentTable, AppointmentTable.course to course.id, AppointmentTable.uuid to uuid, AppointmentTable.start to start, AppointmentTable.end to end, AppointmentTable.canceled to canceled, AppointmentTable.location to location)
 
         return this[id]!!
     }

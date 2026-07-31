@@ -18,7 +18,7 @@ object SqlBuilder {
         object Count
     }
 
-    data class SqlStatement(val sql: String, val parameters: List<Any>) : Executable {
+    data class SqlStatement(val sql: String, val parameters: List<Any?>) : Executable {
         override fun toSql() = this
     }
 
@@ -124,10 +124,28 @@ object SqlBuilder {
         }
     }
 
+    class Insert internal constructor(
+        val table: String,
+        val fields: List<String>,
+        val values: List<List<Any?>>,
+    ) : Executable {
+        override fun toSql() = SqlStatement("INSERT INTO $table(${fields.joinToString(",")}) VALUES${values.joinToString(prefix = "(", postfix = ")", separator = ",") { it.joinToString(",") { "?" } }}", values.flatten())
+
+        init {
+            require(fields.isNotEmpty()) // not required actually
+            require(values.isNotEmpty())
+            values.forEach { require(it.size == fields.size) }
+        }
+    }
+
 
     fun select(vararg fields: String) = Select(fields = fields.toList())
     fun select(vararg fields: SqlTableSchema.SqlColumn<*>) = Select(fields = fields.map { it.quantifier })
     fun select(count: Aggregations.Count) = select("COUNT(*)")
+
+    typealias DataPair<T> = Pair<SqlTableSchema.SqlColumn<T>, T>
+
+    fun insert(table: SqlTableSchema<*>, vararg data: DataPair<*>) = Insert(table.table, data.map { it.first.name }, listOf(data.map { it.second }.toList()))
 
     fun select(schema: SelectableSqlTableSchema<*>) = Select(schema.columns.map { it.quantifier }) from schema.table
 }

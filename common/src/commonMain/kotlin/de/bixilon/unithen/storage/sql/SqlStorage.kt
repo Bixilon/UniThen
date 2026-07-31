@@ -52,6 +52,10 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
         return helper.query().use { it.query(sql, *parameters).use { runnable.invoke(it) } }
     }
 
+
+    fun insert(statement: SqlBuilder.Insert) = insert(statement.toSql())
+    fun insert(statement: SqlBuilder.SqlStatement) = insert(statement.sql, parameters = statement.parameters.toTypedArray())
+
     fun insert(sql: String, vararg parameters: Any?): Int {
         val transaction = transaction
         if (transaction != null) {

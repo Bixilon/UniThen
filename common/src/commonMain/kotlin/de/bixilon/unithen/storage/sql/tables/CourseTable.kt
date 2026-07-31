@@ -37,7 +37,7 @@ class CourseTable(
 
 
     fun insert(site: Site, event: Event, uuid: Uuid, name: String, fetched: Instant): Course {
-        val id = insert("INSERT INTO $table(site, event, uuid, name, fetched) VALUES (?,?,?,?,?)", site.id, event.id, uuid, name, fetched)
+        val id = insert(CourseTable, CourseTable.site to site.id, CourseTable.event to event.id, CourseTable.uuid to uuid, CourseTable.name to name, CourseTable.fetched to fetched)
 
         return this[id]!! // TODO: cleanup
     }

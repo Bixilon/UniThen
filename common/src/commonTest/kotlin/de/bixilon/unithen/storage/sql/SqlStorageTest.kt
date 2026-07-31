@@ -74,10 +74,15 @@ class SqlStorageTest {
         original.copyTo(name)
         try {
             val storage = SqlStorage(createSqliteHelper(name))
-            runBlocking { storage.helper.load() }
+            try {
+                runBlocking { storage.helper.load() }
 
-            assertEquals("Room 332", storage.appointments["801cd6fd-220b-40cb-8ebb-f4748d205c8c".toUuid()][0].location)
-            assertEquals("User15", storage.accounts.get(uuid = "490e4d29-c62b-4a60-994f-bedf61f8ecb2".toUuid())[0].firstname)
+                assertEquals("Room 332", storage.appointments["801cd6fd-220b-40cb-8ebb-f4748d205c8c".toUuid()][0].location)
+                assertEquals("User15", storage.accounts.get(uuid = "490e4d29-c62b-4a60-994f-bedf61f8ecb2".toUuid())[0].firstname)
+            } catch (error: Throwable) {
+                storage.close()
+                throw error
+            }
         } catch (error: Throwable) {
             delete(name)
             throw error

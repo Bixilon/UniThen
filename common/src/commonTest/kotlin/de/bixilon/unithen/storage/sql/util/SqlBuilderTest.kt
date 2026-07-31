@@ -12,6 +12,8 @@
 
 package de.bixilon.unithen.storage.sql.util
 
+import de.bixilon.unithen.storage.sql.tables.AccountCourses
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable
 import de.bixilon.unithen.storage.sql.tables.CheckInQueueTable
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import kotlin.test.Test
@@ -24,5 +26,29 @@ class SqlBuilderTest {
         val query = SqlBuilder.select(SqlBuilder.Aggregations.Count) from "test" where (CheckInQueueTable.user eq 4) and (CheckInQueueTable.appointment eq 1)
 
         assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT COUNT(*) FROM test WHERE ((checkin_queue.user=?) AND (checkin_queue.appointment=?))", listOf(4, 1)))
+    }
+
+    @Test
+    fun `insert with one value row`() {
+        val query = SqlBuilder.insert(AppointmentTable, AppointmentTable.location to "hello", AppointmentTable.course to 3)
+
+        assertEquals(query.toSql(), SqlBuilder.SqlStatement("INSERT INTO appointments(location,course) VALUES(?,?)", listOf("hello", 3)))
+    }
+
+    @Test
+    fun `select 1 query`() {
+        val query = SqlBuilder.select("1").from(AccountCourses)
+            .where(AccountCourses.tutor eq true)
+
+        assertEquals(query.toSql(), SqlBuilder.SqlStatement("SELECT 1 FROM account_courses WHERE (account_courses.tutor=?)", listOf(true)))
+    }
+
+    @Test
+    fun `query exists query`() {
+        val query = SqlFilter.exists(SqlBuilder.select("1").from(AccountCourses)
+            .where(AccountCourses.tutor eq true))
+
+        assertEquals("EXISTS (SELECT 1 FROM account_courses WHERE (account_courses.tutor=?))", query.sql)
+        assertEquals(listOf(true), query.parameters)
     }
 }

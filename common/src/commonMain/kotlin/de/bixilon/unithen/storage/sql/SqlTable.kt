@@ -17,7 +17,9 @@ import de.bixilon.unithen.storage.DbObject
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
+import de.bixilon.unithen.storage.sql.util.SqlBuilder.DataPair
 import de.bixilon.unithen.storage.sql.util.SqlFilter
+import de.bixilon.unithen.storage.sql.util.SqlTableSchema
 
 abstract class SqlTable<T : DbObject>(
     protected val storage: SqlStorage,
@@ -44,6 +46,10 @@ abstract class SqlTable<T : DbObject>(
         storage.update(sql, parameters = parameters)
     }
 
+    protected fun insert(insert: SqlBuilder.Insert) = storage.insert(insert)
+    protected fun insert(table: SqlTableSchema<*>, vararg data: DataPair<*>) = insert(SqlBuilder.insert(table, *data))
+
+    @Deprecated("Insert")
     protected fun insert(sql: String, vararg parameters: Any?): Int {
         return storage.insert(sql, *parameters)
     }

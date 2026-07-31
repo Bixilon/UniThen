@@ -37,7 +37,7 @@ class EventTable(
 
 
     fun insert(site: Site, uuid: Uuid, name: String, start: Instant, end: Instant): Event {
-        val id = insert("INSERT INTO $table(site, uuid, name, start, end) VALUES (?,?,?,?,?)", site.id, uuid, name, start, end)
+        val id = insert(EventTable, EventTable.site to site.id, EventTable.uuid to uuid, EventTable.name to name, EventTable.start to start, EventTable.end to end)
 
         return this[id]!!
     }

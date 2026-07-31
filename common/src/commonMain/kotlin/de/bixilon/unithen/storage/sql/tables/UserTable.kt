@@ -40,7 +40,7 @@ class UserTable(
     fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
 
     fun insert(site: Site, uuid: Uuid, firstname: String, lastname: String): User {
-        val id = insert("INSERT INTO $table(site, uuid, firstname, lastname) VALUES (?,?,?,?)", site.id, uuid, firstname, lastname)
+        val id = insert(UserTable, UserTable.site to site.id, UserTable.uuid to uuid, UserTable.firstname to firstname, UserTable.lastname to lastname)
 
         return this[id]!!
     }

@@ -15,10 +15,10 @@ package de.bixilon.unithen.storage.sql.util
 
 data class SqlFilter(
     val sql: String,
-    val parameters: List<Any> = emptyList(),
+    val parameters: List<Any?> = emptyList(),
 ) {
 
-    constructor(sql: String, vararg parameters: Any) : this(sql, parameters.toList())
+    constructor(sql: String, vararg parameters: Any?) : this(sql, parameters.toList())
 
     private fun connect(conjunction: String, other: SqlFilter?): SqlFilter {
         if (other == null || other.sql.isBlank()) return this
@@ -63,8 +63,8 @@ data class SqlFilter(
 
         fun and(vararg filters: Pair<String, Any?>) = join(" AND ", *filters)
         fun or(vararg filters: Pair<String, Any?>) = join(" OR ", *filters)
-        fun exists(query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("EXISTS (${it.sql})", it.parameters) }
-        fun contains(field: SqlTableSchema.SqlColumn<*>, query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("${field.quantifier} IN (${it.sql})", it.parameters) }
+        fun exists(query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("EXISTS (${it.sql})", parameters = it.parameters) }
+        fun contains(field: SqlTableSchema.SqlColumn<*>, query: SqlBuilder.Executable) = query.toSql().let { SqlFilter("${field.quantifier} IN (${it.sql})", parameters = it.parameters) }
 
         fun comma(vararg filters: Pair<String, Any?>) = join(",", *filters)
 
