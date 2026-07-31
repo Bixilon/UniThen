@@ -19,7 +19,7 @@
     <string name="setup_4">The servers are operated by UniNow GmbH, please check their website for their privacy policy.</string>
     <string name="set_accept">I understand and accept those terms</string>
     <string name="setup_login">Continue to login</string>
-    <string name="add_account_title">Please choose your booking site</string>
+    <string name="add_account_title">Choose your booking site</string>
     <string name="add_account_help">Can't find your site?</string>
     <string name="authentication_fetching_user_details">Loading user details...</string>
     <string name="authentication_fetching">Synchronizing courses...</string>

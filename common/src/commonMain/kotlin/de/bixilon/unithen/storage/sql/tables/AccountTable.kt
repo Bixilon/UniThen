@@ -29,7 +29,6 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
-import kotlin.time.Clock
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -49,7 +48,7 @@ class AccountTable(
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, sessionKey to authentication.cast<CookieAuthentication>().session, fetched to Clock.System.now())
+        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, sessionKey to authentication.cast<CookieAuthentication>().session, fetched to Instant.DISTANT_PAST)
 
         return this[id]!! // TODO: cleanup
     }

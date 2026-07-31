@@ -90,7 +90,7 @@ fun AuthenticationScreen(site: Site, callback: (Account) -> Unit) {
     }
 
     val synchronize = useSyncEngine { syncCourses(account!!) }
-    LaunchedEffect(Unit) { synchronize.invoke() }
+    LaunchedEffect(Unit) { synchronize.invoke(force = true) }
 
     SyncEngineCompleteEffect(synchronize) {
         when {

@@ -39,6 +39,7 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
 import de.bixilon.unithen.ui.sync.SyncEngineStartedEffect
+import de.bixilon.unithen.ui.sync.status.SyncStatusIndicator
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.toBitmap
@@ -65,53 +66,60 @@ fun CoursesScreen() {
     SyncEngineStartedEffect(sync) {
         toast.invoke(Res.string.courses_synchronize_started, true)
     }
-    SyncEngineCompleteEffect(sync) { // TODO: Only on success
-        toast.invoke(Res.string.courses_synchronize_done)
+    SyncEngineCompleteEffect(sync) {
+        if (it.synchonized == it.total) {
+            toast.invoke(Res.string.courses_synchronize_done)
+        }
     }
 
-    Screen {
-        ScreenTitle(Res.string.courses_title.i18n(courseCount))
+    Box {
+        Screen {
+            ScreenTitle(Res.string.courses_title.i18n(courseCount))
 
-        PullToRefreshBox(sync.active, modifier = Modifier.weight(1.0f), onRefresh = { sync.invoke() }) {
-            val state = rememberLazyListState()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state),
-                state = state,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                for (event in events) {
-                    val courses = storage.courses.get(event = event).sortedBy { it.name } // TODO: Cache
-                    if (courses.isEmpty()) continue
+            PullToRefreshBox(sync.active, modifier = Modifier.weight(1.0f), onRefresh = { sync.invoke() }) {
+                val state = rememberLazyListState()
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(state),
+                    state = state,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    storage.notify.intValue // listens for changes
+                    for (event in events) {
+                        val courses = storage.courses.get(event = event).sortedBy { it.name }
+                        if (courses.isEmpty()) continue
 
-                    item {
-                        val site = rememberStorage { sites[event.site]!! } // TODO: Section?
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            val bitmap = remember(site.icon) { site.icon?.toBitmap() }
+                        item(key = "e" + event.id) {
+                            val site = rememberStorage { sites[event.site]!! } // TODO: Section?
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
 
-                            if (bitmap != null) {
-                                Image(
-                                    bitmap = bitmap,
-                                    contentDescription = "Site icon",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                )
+                                if (bitmap != null) {
+                                    Image(
+                                        bitmap = bitmap,
+                                        contentDescription = "Site icon",
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                    )
 
-                                Spacer(modifier = Modifier.width(8.dp))
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                }
+
+                                Text(event.name + " (${courses.size}):")
                             }
-
-                            Text(event.name + " (${courses.size}):")
                         }
-                    }
-                    items(items = courses, key = Course::id) { course ->
-                        val tutor = rememberStorage { accounts.isTutor(course) }
-                        val color = if (tutor) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
-                        TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
+                        items(items = courses, key = Course::id) { course ->
+                            val tutor = rememberStorage { accounts.isTutor(course) }
+                            val color = if (tutor) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
+                            TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
+                        }
                     }
                 }
             }
         }
+
+        SyncStatusIndicator(sync, Modifier.align(Alignment.TopEnd))
     }
 }
