@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.unithen.settings.store.LocalSettingsStore
+import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.storage.types.Appointment
@@ -28,6 +30,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
             LocalNavigation provides Navigator(MainRoute),
             LocalStorage provides storage,
             LocalSyncEngine provides SyncEngine(storage) {},
+            LocalSettingsStore provides MemorySettingsStore(),
         ) {
             ScanQrConfirmScreen(appointment, userId.toUuid())
         }
