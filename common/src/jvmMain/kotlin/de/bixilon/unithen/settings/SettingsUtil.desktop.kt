@@ -16,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.enums.ValuesEnum
+
+val SETTINGS = mutableMapOf<Setting<*>, MutableState<*>>()
 
 @Composable
 @JvmName(name = "rememberBooleanSetting")
@@ -32,23 +35,24 @@ actual fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
             override fun component2(): (Boolean) -> Unit = { }
         }
     }
-    return remember { mutableStateOf(setting.default) }
+
+    return remember { SETTINGS.getOrPut(setting) { mutableStateOf(setting.default) }.cast() }
 }
 
 @Composable
 @JvmName(name = "rememberIntSetting")
 actual fun rememberSetting(setting: Setting<Int>): MutableState<Int> {
-    return remember { mutableStateOf(setting.default) }
+    return remember { SETTINGS.getOrPut(setting) { mutableStateOf(setting.default) }.cast() }
 }
 
 @Composable
 @JvmName(name = "rememberStringSetting")
 actual fun rememberSetting(setting: Setting<String>): MutableState<String> {
-    return remember { mutableStateOf(setting.default) }
+    return remember { SETTINGS.getOrPut(setting) { mutableStateOf(setting.default) }.cast() }
 }
 
 @Composable
 @JvmName(name = "rememberEnumSetting")
 actual fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
-    return remember { mutableStateOf(setting.default) }
+    return remember { SETTINGS.getOrPut(setting) { mutableStateOf(setting.default) }.cast() }
 }
