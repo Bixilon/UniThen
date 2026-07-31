@@ -19,8 +19,6 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.v2.runComposeUiTest
-import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.TestSqlHelper
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -29,13 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalTestApi::class)
-class LoaderTest {
-    init {
-        RuntimeInfo0.actual = object : RuntimeInfo {
-            override val debug get() = true
-        }
-    }
-
+class LoaderTest : AbstractComposeUiTest() {
     @Composable
     private fun TestLoader(helper: TestSqlHelper = TestSqlHelper()) {
         CompositionLocalProvider(

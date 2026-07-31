@@ -69,6 +69,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
 fun ScanQrConfirmScreen(appointment: Appointment, user: User?) {
     val course = rememberStorage { courses[appointment.course]!! }
 
+
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
         Spacer(Modifier.height(8.dp))

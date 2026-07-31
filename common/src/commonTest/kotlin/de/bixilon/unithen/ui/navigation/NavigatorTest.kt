@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.unithen.ui.AbstractComposeUiTest
 import de.bixilon.unithen.ui.waitUntilText
 import kotlin.test.Test
 
@@ -59,7 +60,7 @@ fun TestNavigator(effect: (Navigator) -> Unit) {
 }
 
 @OptIn(ExperimentalTestApi::class)
-class NavigatorTest {
+class NavigatorTest : AbstractComposeUiTest() {
 
     @Test
     fun `test basic setup`() = runComposeUiTest {

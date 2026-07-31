@@ -20,6 +20,7 @@ import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.sync.SyncEngineContext
+import de.bixilon.unithen.ui.AbstractComposeUiTest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
@@ -28,7 +29,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalTestApi::class)
-class SyncEngineEffectTest {
+class SyncEngineEffectTest : AbstractComposeUiTest() {
 
     @OptIn(InternalComposeApi::class)
     @Composable

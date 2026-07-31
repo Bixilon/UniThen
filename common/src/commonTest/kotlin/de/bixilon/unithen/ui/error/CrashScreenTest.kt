@@ -15,19 +15,12 @@ package de.bixilon.unithen.ui.error
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.v2.runComposeUiTest
-import de.bixilon.unithen.RuntimeInfo
-import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
+import de.bixilon.unithen.ui.AbstractComposeUiTest
 import de.bixilon.unithen.ui.waitUntilText
 import kotlin.test.Test
 
 @OptIn(ExperimentalTestApi::class)
-class CrashScreenTest {
-
-    init {
-        RuntimeInfo0.actual = object : RuntimeInfo {
-            override val debug get() = true
-        }
-    }
+class CrashScreenTest : AbstractComposeUiTest() {
 
     @Test
     fun `crash screen openes without dependencies`() = runComposeUiTest {

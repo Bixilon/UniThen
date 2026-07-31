@@ -13,8 +13,9 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -22,38 +23,36 @@ import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
+import de.bixilon.unithen.ui.util.state.rememberStateOf
+import kotlinx.coroutines.*
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
 
-@Deprecated("sync engine")
+private val ACTIVE = AsyncNetworkState(true) { null }
+
 data class AsyncNetworkState(
     val active: Boolean,
-    val invoke: () -> Unit,
+    val invoke: () -> Job?,
 )
 
 @Composable
-@Deprecated("sync engine")
 fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
+    var active by rememberStateOf { false }
+    if (active) return ACTIVE
+
     val storage = LocalStorage.current
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
-    val active = remember { mutableStateOf(false) }
-
-    if (active.value) return AsyncNetworkState(true) {}
 
     val scope = remember { CoroutineScope(Dispatchers.IO) }
 
-    val invoke = {
+    val invoke = a@{
+        if (active) return@a null
         scope.launch {
-            if (active.value) return@launch
             try {
-                active.value = true
+                active = true
                 block.invoke()
             } catch (error: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
@@ -65,12 +64,10 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
                 error.printStackTrace()
                 navigation?.navigate(CrashRoute(error))
             } finally {
-                active.value = false
+                active = false
             }
         }
-
-        Unit
     }
 
-    return AsyncNetworkState(active.value, invoke)
+    return AsyncNetworkState(active, invoke)
 }
