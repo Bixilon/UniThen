@@ -32,7 +32,6 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
-import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
@@ -42,7 +41,6 @@ import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.scan_unknown_error_server
-import unithen.common.generated.resources.scan_unknown_user_server
 import kotlin.time.TimeSource
 
 
@@ -65,15 +63,12 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     var okay by remember { mutableStateOf(false) }
 
 
-    val checkin = useAsyncNetwork(account) {
+    val checkin = useAsyncNetwork {
         try {
             CheckInUtil.checkIn(storage, state.appointment, state.user)
 
             okay = true
             haptic.invoke(HapticFeedbackType.Confirm)
-        } catch (_: CheckInUnknownUserException) {
-            errorMessage = getString(Res.string.scan_unknown_user_server)
-            haptic.invoke(HapticFeedbackType.Reject)
         } catch (error: CheckInError) {
             haptic.invoke(HapticFeedbackType.Reject)
             errorMessage = getString(Res.string.scan_unknown_error_server, error.message ?: "")

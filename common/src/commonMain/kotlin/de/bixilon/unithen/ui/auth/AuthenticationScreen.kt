@@ -44,7 +44,7 @@ import unithen.common.generated.resources.*
 fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Account) -> Unit) {
     val storage = LocalStorage.current
 
-    val fetch = useAsyncNetwork(null) {
+    val fetch = useAsyncNetwork {
         val api = AuthenticatedUniNowApi(site.host, authentication)
         val details = api.getUserDetails()
 

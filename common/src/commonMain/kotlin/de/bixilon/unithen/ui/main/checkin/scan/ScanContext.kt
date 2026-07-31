@@ -17,6 +17,6 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 
-data class ScanContextValue(val account: Account, val course: Course, val appointment: Appointment)
+data class ScanContextValue(@Deprecated("sync engine") val account: Account, val course: Course, val appointment: Appointment)
 
 val LocalScanContext = staticCompositionLocalOf<ScanContextValue> { throw IllegalStateException() }

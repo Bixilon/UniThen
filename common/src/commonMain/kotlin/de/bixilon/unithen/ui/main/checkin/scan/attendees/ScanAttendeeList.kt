@@ -57,7 +57,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
 
     val toast = useToast()
 
-    val checkout = useAsyncNetwork(account) {
+    val checkout = useAsyncNetwork {
         try {
             CheckInUtil.checkOut(storage, appointment, user)
         } catch (error: CheckInError) {
@@ -147,7 +147,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 
     val (account, _, appointment) = LocalScanContext.current
     val toast = useToast()
-    val checkin = useAsyncNetwork(account) {
+    val checkin = useAsyncNetwork {
         try {
             CheckInUtil.checkIn(storage, appointment, user)
         } catch (error: CheckInError) {

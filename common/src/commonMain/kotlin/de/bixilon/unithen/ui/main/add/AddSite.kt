@@ -36,7 +36,7 @@ import unithen.common.generated.resources.*
 fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
     val storage = LocalStorage.current
 
-    val add = useAsyncNetwork(null) {
+    val add = useAsyncNetwork {
         try {
             val site = storage.sites.add(url)
             callback.invoke(site)

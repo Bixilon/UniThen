@@ -37,7 +37,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAnyScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.ScanQrAppointmentScreen
-import de.bixilon.unithen.ui.main.checkin.scan.qr.ScanQrConfirmScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.confirm.ScanQrConfirmScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen

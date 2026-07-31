@@ -62,8 +62,6 @@
     <string name="site">Seite</string>
     <string name="user_name">Name</string>
     <string name="cancel">Abbrechen</string>
-    <string name="scan_try_synchronize">Synchronisieren</string>
-    <string name="scan_try_anyways">Trotzdem fortfahren</string>
     <string name="scan_confirm">Bestätigen</string>
     <string name="scan_confirm_contributor">Sag Danke🎉 (Bestätigen)</string>
     <string name="network_error">Netzwerkfehler</string>
@@ -78,7 +76,6 @@
     <string name="scan_queue_pending">Synchronisierung ausstehend (Check In)...</string>
     <string name="scan_starting_camera">Kamera wird gestartet...</string>
     <string name="scan_camera_permission">Kameraberechtigung wird benötigt um QR-Codes zu scannen</string>
-    <string name="scan_unknown_user_server">Unbekannter Teilnehmer: %1$s</string>
     <string name="authentication_fetching_user_details">Lade Benutzerdetails...</string>
     <string name="authentication_fetching">Synchronisiere Kurse...</string>
     <string name="error_reauthenticate">Bitte melde dich erneut an!</string>

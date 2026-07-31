@@ -60,7 +60,7 @@ fun UpdateChecker() {
         }
     }
 
-    val check = useAsyncNetwork(null) {
+    val check = useAsyncNetwork {
         val request = HttpUtil.create("gitlab.bixilon.de", "/bixilon/unithen/-/raw/master/fdroid.txt").apply { method = HttpMethod.Get }
 
         val response = CLIENT.request(request)

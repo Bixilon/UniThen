@@ -14,16 +14,16 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.storage.types.*
+import de.bixilon.unithen.storage.types.Appointment
+import de.bixilon.unithen.storage.types.CheckInQueue
+import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
-import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInUnknownUserException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.uuid.Uuid
 
 object CheckInUtil {
     val SYNC_BACKOFF_FORCE = 30.seconds
@@ -73,36 +73,8 @@ object CheckInUtil {
         syncQueue(storage, item)
     }
 
-    private suspend fun syncUnknownUser(storage: SqlStorage, site: Site, account: Account, appointment: Appointment, userId: Uuid) {
-        val attemptQl = withContext(Dispatchers.IO) {
-            val api = account.api(site)
-
-            return@withContext api.checkInUser(appointment.uuid, userId)
-        }
-        if (attemptQl == null) return
-        if (attemptQl.user == null) {
-            throw CheckInUnknownUserException(attemptQl.message)
-        }
-
-        val user = attemptQl.user.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
-
-        if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
-            storage.checkInQueue.update(appointment, user, message = attemptQl.message ?: "Unknown")
-
-            throw CheckInError(attemptQl.message)
-        }
-
-        storage.appointments.addAttendee(user, appointment, attemptQl.id)  // TODO: Add to enrolled?
-    }
-
     suspend fun checkIn(storage: SqlStorage, appointment: Appointment, user: User) {
         sync(storage, appointment, user)
-    }
-
-    suspend fun checkIn(storage: SqlStorage, account: Account, appointment: Appointment, userId: Uuid) {
-        val site = storage.sites[account.site]!!
-
-        syncUnknownUser(storage, site, account, appointment, userId)
     }
 
     suspend fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {

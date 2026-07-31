@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
-import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -40,7 +39,7 @@ data class AsyncNetworkState(
 
 @Composable
 @Deprecated("sync engine")
-fun useAsyncNetwork(account: Account?, block: suspend () -> Unit): AsyncNetworkState {
+fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
     val storage = LocalStorage.current
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
@@ -56,12 +55,9 @@ fun useAsyncNetwork(account: Account?, block: suspend () -> Unit): AsyncNetworkS
             try {
                 active.value = true
                 block.invoke()
-            } catch (_: AuthenticationException) {
+            } catch (error: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
-                if (account != null) {
-                    storage.accounts.logout(account)
-                    navigation?.navigate(ReauthenticateRoute(storage.sites[account.site]!!))
-                }
+                navigation?.navigate(ReauthenticateRoute(storage.sites[error.host]!!))
             } catch (error: NetworkException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))
