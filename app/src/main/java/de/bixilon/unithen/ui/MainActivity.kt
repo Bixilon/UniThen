@@ -34,6 +34,7 @@ import de.bixilon.unithen.util.AndroidUtil.activity
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()

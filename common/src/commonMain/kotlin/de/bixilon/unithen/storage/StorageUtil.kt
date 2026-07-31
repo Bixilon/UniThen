@@ -21,18 +21,19 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
 import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 object StorageUtil {
 
     fun SqlStorage.storeCourse(site: Site, courseQl: CourseQl) = transaction {
         if (courseQl.name == null) throw NullPointerException("Course details not fetched, wrong query?")
-        val evenQl = courseQl.event!!
+        val eventQl = courseQl.event!!
 
-        val event = events.add(site, evenQl.id, evenQl.name, evenQl.start, evenQl.end)
+        val event = events.add(site, eventQl.id, eventQl.name, eventQl.start, eventQl.end)
 
 
-        val course = this.courses.add(site, event, courseQl.id, courseQl.name, Clock.System.now())
+        val course = this.courses.add(site, event, courseQl.id, courseQl.name, Instant.DISTANT_PAST)
 
         courses.clearTutors(course)
         for (tutorQl in courseQl.tutors!!) {
@@ -73,7 +74,7 @@ object StorageUtil {
 
         for (userQl in attendees) {
             val user = users.add(site, userQl.id, userQl.firstname!!, userQl.lastname!!)
-            checkInQueue.delete(appointment, user)
+            checkInQueue.delete(appointment, user) // TODO: only if check in pending or errored
 
             val attempt = attempts.find { it.status == CheckInAttemptQl.Status.SUCCESS && it.user?.id == userQl.id } ?: continue
 

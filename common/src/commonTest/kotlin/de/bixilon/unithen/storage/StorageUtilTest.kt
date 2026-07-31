@@ -17,8 +17,10 @@ import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.EventQl
 import de.bixilon.unithen.api.graphql.types.location.RoomQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.site
 import de.bixilon.unithen.storage.StorageUtil.storeCourse
+import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
 import de.bixilon.unithen.storage.sql.empty
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.Dispatchers
@@ -73,5 +75,44 @@ class StorageUtilTest {
         assertEquals("b", storage.users[site, D]!!.firstname)
 
         assertEquals("room", storage.appointments[E].first().location)
+    }
+
+    @Test
+    fun `store enrolled`() = runBlocking {
+        val storage = empty()
+
+        val course = storage.course()
+        val site = storage.sites[course.site]!!
+
+        storage.storeEnrolled(site, course, listOf(
+            CourseUserQl(A, "a", "b"),
+            CourseUserQl(B, "b", "c"),
+        ))
+
+        val enrolled = storage.users.getEnrolled(course)
+
+        assertEquals(2, enrolled.size)
+        assertEquals(A, enrolled.find { it.firstname == "a" }!!.uuid)
+    }
+
+    @Test
+    fun `remove unenrolled users`() = runBlocking {
+        val storage = empty()
+
+        val course = storage.course()
+        val site = storage.sites[course.site]!!
+
+        storage.storeEnrolled(site, course, listOf(
+            CourseUserQl(A, "a", "b"),
+            CourseUserQl(B, "b", "c"),
+        ))
+        storage.storeEnrolled(site, course, listOf(
+            CourseUserQl(C, "c", "d"),
+        ))
+
+        val enrolled = storage.users.getEnrolled(course)
+
+        assertEquals(1, enrolled.size)
+        assertEquals(C, enrolled.find { it.firstname == "c" }!!.uuid)
     }
 }
