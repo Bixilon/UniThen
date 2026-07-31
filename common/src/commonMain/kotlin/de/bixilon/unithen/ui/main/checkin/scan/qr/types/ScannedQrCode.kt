@@ -12,14 +12,14 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr.types
 
-import de.bixilon.kutil.exception.ExceptionUtil
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 
 sealed interface ScannedQrCode {
 
     companion object {
 
-        fun decode(data: ByteArray): ScannedQrCode? {
-            ExceptionUtil.catchAll { ScannedQrCodeV1.decode(data) }?.let { return it }
+        fun decode(data: String): ScannedQrCode? {
+            catchAll { ScannedQrCodeV1.decode(data) }?.let { return it }
 
             return null
         }

@@ -130,7 +130,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
             }
             for (code in it) {
                 try {
-                    val scanned = ScannedQrCodeV1.decode(code.data)
+                    val scanned = ScannedQrCodeV1.decode(code.text)
                     if (scanned == null) {
                         errors += ErrorResult(QrErrorReasons.INVALID_FORMAT)
                         continue

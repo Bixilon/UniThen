@@ -22,7 +22,7 @@ class ScannedQrCodeTest {
 
     @Test
     fun `read scanned data no username`() {
-        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}""".encodeToByteArray()
+        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}"""
 
         val read = ScannedQrCodeV1.decode(text)
 
@@ -31,7 +31,7 @@ class ScannedQrCodeTest {
 
     @Test
     fun `read scanned data with username`() {
-        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}""".encodeToByteArray()
+        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}"""
 
         val read = ScannedQrCodeV1.decode(text)
 

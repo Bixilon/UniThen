@@ -135,7 +135,7 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> 
                         return@setAnalyzer
                     }
 
-                    scope.launch { onResult(results.map { QrCodeResult(it.bytes!!) }.toSet()) }
+                    scope.launch { onResult(results.map { QrCodeResult(it.text!!) }.toSet()) }
                 }
             }
 

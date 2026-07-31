@@ -25,8 +25,8 @@ data class ScannedQrCodeV1(
 
     companion object {
 
-        fun decode(data: ByteArray): ScannedQrCodeV1? {
-            val text = data.decodeToString().trim()
+        fun decode(data: String): ScannedQrCodeV1? {
+            val text = data.trim()
             if (!text.startsWith("{")) {
                 return null
             }

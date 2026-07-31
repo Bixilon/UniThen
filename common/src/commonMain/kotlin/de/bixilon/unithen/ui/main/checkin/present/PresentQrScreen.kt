@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -70,8 +71,10 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Box(Modifier.padding(4.dp)) {
             val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
 
+            val encoded = remember { createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
+
             QrCode(
-                data = createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)),
+                data = encoded,
                 modifier = Modifier
                     .fillMaxWidth()
             )

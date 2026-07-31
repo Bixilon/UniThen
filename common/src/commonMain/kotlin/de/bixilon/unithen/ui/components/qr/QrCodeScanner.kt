@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 
-data class QrCodeResult(val data: ByteArray)
+data class QrCodeResult(val text: String)
 
 @Composable
 expect fun QrCameraPreview(modifier: Modifier = Modifier, onResult: (Set<QrCodeResult>) -> Unit)

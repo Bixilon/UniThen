@@ -15,7 +15,6 @@ package de.bixilon.unithen.ui.components.qr
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
-import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
@@ -26,8 +25,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.AVFoundation.*
 import platform.CoreGraphics.CGRectZero
-import platform.Foundation.NSData
-import platform.Foundation.valueForKeyPath
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.dispatch_get_main_queue
@@ -110,11 +107,8 @@ private class QrDelegate(val onResult: (Set<QrCodeResult>) -> Unit) : NSObject()
     override fun captureOutput(output: AVCaptureOutput, didOutputMetadataObjects: List<*>, fromConnection: AVCaptureConnection) {
         val code = didOutputMetadataObjects.mapNotNull {
             if (it !is AVMetadataMachineReadableCodeObject) return@mapNotNull null
-            // https://stackoverflow.com/questions/32429480/how-to-read-binary-qr-code-with-avfoundation
 
-            val raw = it.valueForKeyPath("_internal.basicDescriptor").cast<Map<*, *>>()["BarcodeRawData"] as NSData
-
-            return@mapNotNull QrCodeResult(raw.toByteArray())
+            return@mapNotNull QrCodeResult(it.stringValue!!)
         }.toSet()
 
         onResult.invoke(code)

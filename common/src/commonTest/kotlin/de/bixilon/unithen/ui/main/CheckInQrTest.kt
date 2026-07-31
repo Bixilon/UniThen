@@ -30,6 +30,6 @@ class CheckInQrTest {
             "Last"
         )
 
-        assertEquals(data, expected)
+        assertEquals(expected, data)
     }
 }

@@ -34,7 +34,7 @@ fun QrCode(data: String, modifier: Modifier = Modifier) {
     val matrix = remember(data) { encodeQr(data) }
 
     Image(
-        matrix, data,
+        matrix, "qr",
         modifier = modifier
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(RoundedCornerShape(5.dp))
