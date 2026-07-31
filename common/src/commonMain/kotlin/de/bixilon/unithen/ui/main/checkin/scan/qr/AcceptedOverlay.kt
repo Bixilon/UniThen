@@ -65,7 +65,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     var okay by remember { mutableStateOf(false) }
 
 
-    val checkin = useAsyncNetwork<Unit>(account) {
+    val checkin = useAsyncNetwork(account) {
         try {
             CheckInUtil.checkIn(storage, state.appointment, state.user)
 
@@ -85,7 +85,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
         }
     }
 
-    LaunchedEffect(Unit) { checkin.invoke(Unit) }
+    LaunchedEffect(Unit) { checkin.invoke() }
 
 
     Surface(

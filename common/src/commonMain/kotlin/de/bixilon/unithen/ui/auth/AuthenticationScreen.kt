@@ -44,7 +44,7 @@ import unithen.common.generated.resources.*
 fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Account) -> Unit) {
     val storage = LocalStorage.current
 
-    val fetch = useAsyncNetwork<Unit>(null) {
+    val fetch = useAsyncNetwork(null) {
         val api = AuthenticatedUniNowApi(site.host, authentication)
         val details = api.getUserDetails()
 
@@ -52,7 +52,7 @@ fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Acco
         callback.invoke(account)
     }
 
-    LaunchedEffect(Unit) { fetch.invoke(Unit) }
+    LaunchedEffect(Unit) { fetch.invoke() }
 
     AlertDialog(
         confirmButton = {},

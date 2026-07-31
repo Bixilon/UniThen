@@ -26,6 +26,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.setMain
 import unithen.common.generated.resources.Res
+import kotlin.math.absoluteValue
 import kotlin.random.Random
 import kotlin.test.*
 import kotlin.time.Clock
@@ -70,7 +71,7 @@ class SqlStorageTest {
     @Test
     fun `migrate v1 database`() {
         val original = runBlocking { Res.readBytes("files/sqlite/v1.sqlite") }
-        val name = "migrate-${Random.nextInt()}.sqlite"
+        val name = "migrate-${Random.nextInt().absoluteValue}.sqlite"
         original.copyTo(name)
         try {
             val storage = SqlStorage(createSqliteHelper(name))
@@ -79,13 +80,11 @@ class SqlStorageTest {
 
                 assertEquals("Room 332", storage.appointments["801cd6fd-220b-40cb-8ebb-f4748d205c8c".toUuid()][0].location)
                 assertEquals("User15", storage.accounts.get(uuid = "490e4d29-c62b-4a60-994f-bedf61f8ecb2".toUuid())[0].firstname)
-            } catch (error: Throwable) {
+            } finally {
                 storage.close()
-                throw error
             }
-        } catch (error: Throwable) {
+        } finally {
             delete(name)
-            throw error
         }
     }
 

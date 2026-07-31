@@ -60,7 +60,7 @@ fun UpdateChecker() {
         }
     }
 
-    val check = useAsyncNetwork<Unit>(null) {
+    val check = useAsyncNetwork(null) {
         val request = HttpUtil.create("gitlab.bixilon.de", "/bixilon/unithen/-/raw/master/fdroid.txt").apply { method = HttpMethod.Get }
 
         val response = CLIENT.request(request)
@@ -72,7 +72,7 @@ fun UpdateChecker() {
     }
 
 
-    Button({ check.invoke(Unit) }, enabled = !check.active && next < 0) {
+    Button({ check.invoke() }, enabled = !check.active && next < 0) {
         Icon(Icons.Default.Update, "")
         Spacer(Modifier.width(8.dp))
         Text(when {

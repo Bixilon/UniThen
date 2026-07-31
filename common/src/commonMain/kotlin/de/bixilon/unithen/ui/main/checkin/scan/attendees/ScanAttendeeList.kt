@@ -57,7 +57,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
 
     val toast = useToast()
 
-    val checkout = useAsyncNetwork<Unit>(account) {
+    val checkout = useAsyncNetwork(account) {
         try {
             CheckInUtil.checkOut(storage, appointment, user)
         } catch (error: CheckInError) {
@@ -80,7 +80,7 @@ private fun AttendeeCard(user: User, readonly: Boolean) {
                 // TODO: Show time (missing data)
             }
 
-            Checkbox(true, enabled = !readonly && !checkout.active, onCheckedChange = { checkout.invoke(Unit) })
+            Checkbox(true, enabled = !readonly && !checkout.active, onCheckedChange = { checkout.invoke() })
         }
     }
 }
@@ -147,7 +147,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 
     val (account, _, appointment) = LocalScanContext.current
     val toast = useToast()
-    val checkin = useAsyncNetwork<Unit>(account) {
+    val checkin = useAsyncNetwork(account) {
         try {
             CheckInUtil.checkIn(storage, appointment, user)
         } catch (error: CheckInError) {
@@ -169,7 +169,7 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
                 )
             }
 
-            Checkbox(false, enabled = !readonly && !checkin.active, onCheckedChange = { checkin.invoke(Unit) })
+            Checkbox(false, enabled = !readonly && !checkin.active, onCheckedChange = { checkin.invoke() })
         }
     }
 }

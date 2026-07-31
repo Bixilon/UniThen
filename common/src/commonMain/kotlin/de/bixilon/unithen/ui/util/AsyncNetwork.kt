@@ -33,14 +33,14 @@ import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.error_reauthenticate
 
 @Deprecated("sync engine")
-data class AsyncNetworkState<T>(
+data class AsyncNetworkState(
     val active: Boolean,
-    val invoke: (T) -> Unit,
+    val invoke: () -> Unit,
 )
 
 @Composable
 @Deprecated("sync engine")
-fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNetworkState<T> {
+fun useAsyncNetwork(account: Account?, block: suspend () -> Unit): AsyncNetworkState {
     val storage = LocalStorage.current
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
@@ -50,12 +50,12 @@ fun <T> useAsyncNetwork(account: Account?, block: suspend (T) -> Unit): AsyncNet
 
     val scope = remember { CoroutineScope(Dispatchers.IO) }
 
-    val invoke = { args: T ->
+    val invoke = {
         scope.launch {
             if (active.value) return@launch
             try {
                 active.value = true
-                block.invoke(args)
+                block.invoke()
             } catch (_: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
                 if (account != null) {

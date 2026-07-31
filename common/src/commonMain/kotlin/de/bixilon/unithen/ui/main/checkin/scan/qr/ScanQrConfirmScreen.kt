@@ -135,7 +135,7 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
         navigation.pop()
     }
 
-    val checkin = useAsyncNetwork<Unit>(account) {
+    val checkin = useAsyncNetwork(account) {
         val fast = !await && user != null
         if (fast) pop()
         try {
@@ -197,13 +197,13 @@ fun ScanQrConfirmScreen(user: User?, userId: Uuid) {
             }
 
             if (queue != null && queue.message == null) {
-                Button({ checkin.invoke(Unit) }, enabled = !checkin.active, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
+                Button({ checkin.invoke() }, enabled = !checkin.active, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onErrorContainer)) {
                     Icon(Icons.Filled.Sync, "synchronize")
                     Text(Res.string.scan_try_synchronize.i18n())
                 }
             }
 
-            Button({ checkin.invoke(Unit) }, enabled = message == null && !checkin.active && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
+            Button({ checkin.invoke() }, enabled = message == null && !checkin.active && !attendee && queue == null, modifier = Modifier.fillMaxWidth()) {
                 if (user == null || !enrolled) { // TODO: danger button color?
                     Icon(Icons.Filled.Warning, "check")
                     Text(Res.string.scan_try_anyways.i18n())
