@@ -15,20 +15,23 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.util.i18n
-import unithen.common.generated.resources.Res
-import unithen.common.generated.resources.scan_error_already_checked_in
-import unithen.common.generated.resources.scan_error_check_in_pending
-import unithen.common.generated.resources.scan_error_check_out_pending
+import unithen.common.generated.resources.*
 
 @Composable
 fun ColumnScope.ScanQrError(user: User, attendee: Boolean, queue: CheckInQueue?, appointment: Appointment) {
     val message = when {
-        attendee -> Res.string.scan_error_already_checked_in.i18n()
         queue?.attempt != null -> Res.string.scan_error_check_out_pending.i18n()
-        else -> Res.string.scan_error_check_in_pending.i18n()
+        queue?.message != null -> Res.string.scan_unknown_error_server.i18n(queue.message)
+        queue != null -> Res.string.scan_error_check_in_pending.i18n()
+        attendee -> Res.string.scan_error_already_checked_in.i18n()
+        else -> "Unknown error"
     }
 
-    ConfirmScreenWarning(Icons.Filled.Warning, Color.Red, message)
+    if (queue?.message != null) {
+        ConfirmScreenWarning(Icons.Filled.Close, Color.Red, message)
+    } else {
+        ConfirmScreenWarning(Icons.Filled.Warning, Color.Yellow, message)
+    }
 
     Spacer(Modifier.height(16.dp))
 

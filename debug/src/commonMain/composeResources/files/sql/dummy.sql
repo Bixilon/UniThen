@@ -14,6 +14,8 @@ INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(904, 901, "0000000
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(905, 901, "00000000-0000-0000-0000-000000000005", "Hannah", "Lang");
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(906, 901, "00000000-0000-0000-0000-000000000006", "Leonie", "Kurz");
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(907, 901, "00000000-0000-0000-0000-000000000007", "Eva", "Klug");
+INSERT INTO users(id, site, uuid, firstname, lastname)
+VALUES (911, 901, "00000000-0000-0000-0000-000000000011", "Simon", "Heinz");
 
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(908, 902, "00000000-0000-0000-0000-000000000001", "Mia", "Lang");
 INSERT INTO users(id, site, uuid, firstname, lastname) VALUES(909, 902, "00000000-0000-0000-0000-000000000006", "Marie", "Zimmer");
@@ -57,10 +59,14 @@ INSERT INTO course_enrolled(user, course) VALUES(903, 901);
 INSERT INTO course_enrolled(user, course) VALUES(904, 901);
 INSERT INTO course_enrolled(user, course) VALUES(906, 901);
 INSERT INTO course_enrolled(user, course) VALUES(907, 901);
+INSERT INTO course_enrolled(user, course)
+VALUES (911, 901);
 
 INSERT INTO course_enrolled(user, course) VALUES(901, 902);
 
 
 INSERT INTO checkin_queue(user, appointment, time, message, sync) VALUES(904, 901, 0, "Some error", 0);
+INSERT INTO checkin_queue(user, appointment, time, sync)
+VALUES (911, 901, 0, 0);
 INSERT INTO appointment_attendees(user, appointment, attempt) VALUES(906, 901,  "b6b766b2-de38-4305-8f09-b23efc6aebd9");
 INSERT INTO checkin_queue(user, appointment, time, attempt, sync) VALUES(907, 901, 0, "b6b766b2-de38-4305-8f09-b23efc6aebda", 0);

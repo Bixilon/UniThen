@@ -85,7 +85,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
     fun `already checked in and pending`() = runComposeUiTest {
         val storage = dummy()
 
-        setContent { MockedScreen(storage, userId = "00000000-0000-0000-0000-000000000004") }
+        setContent { MockedScreen(storage, userId = "00000000-0000-0000-0000-000000000011") }
 
         waitUntilText("synchronization pending").assertIsDisplayed()
         waitUntilText("Confirm").assertIsNotEnabled()
@@ -98,6 +98,16 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
         setContent { MockedScreen(storage, userId = "00000000-0000-0000-0000-000000000007") }
 
         waitUntilText("checkout pending").assertIsDisplayed()
+        waitUntilText("Confirm").assertIsNotEnabled()
+    }
+
+    @Test
+    fun `unknown server error`() = runComposeUiTest {
+        val storage = dummy()
+
+        setContent { MockedScreen(storage, userId = "00000000-0000-0000-0000-000000000004") }
+
+        waitUntilText("Some error").assertIsDisplayed()
         waitUntilText("Confirm").assertIsNotEnabled()
     }
 

@@ -47,6 +47,7 @@ fun ColumnScope.ScanQrNotEnrolled(user: User?, course: Course, appointment: Appo
 
     ConfirmScreenWarning(Icons.Filled.Close, Color.Red, message)
 
+    Spacer(Modifier.height(16.dp))
     EnrolledListWarning(course)
     Spacer(Modifier.height(16.dp))
 
