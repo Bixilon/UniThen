@@ -23,7 +23,7 @@ fun EmailAuthenticationScreen(config: OryConfig) {
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
 
-    val auth = useAsyncNetwork<Unit>(null) { config.loginEmail(email, password) } // TODO: handle error, callback screen
+    val auth = useAsyncNetwork { config.loginEmail(email, password) } // TODO: handle error, callback screen
 
     Screen {
         ScreenTitle("Login")
@@ -56,7 +56,7 @@ fun EmailAuthenticationScreen(config: OryConfig) {
 
         val disabled = password.isBlank() || '@' !in email || auth.active
 
-        Button({ auth.invoke(Unit) }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
+        Button({ auth.invoke() }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
             if (auth.active) CircularProgressIndicator() else Text("Login")
         }
     }

@@ -36,7 +36,7 @@ import platform.darwin.NSObject
 
 
 @Composable
-actual fun WebAuthenticationView(host: String, callback: (Authentication) -> Unit) {
+actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit) {
     var _host by remember { mutableStateOf("") }
 
     Column {

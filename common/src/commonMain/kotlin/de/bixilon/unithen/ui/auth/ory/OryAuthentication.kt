@@ -32,9 +32,9 @@ fun OryAuthentication(host: String) {
     val storage = LocalStorage.current
     var flow by remember { mutableStateOf<OryLoginFlow?>(null) }
 
-    val flowFetch = useAsyncNetwork<Unit>(null) { flow = UniNowApi(host).getLoginFlow() }
+    val flowFetch = useAsyncNetwork { flow = UniNowApi(host).getLoginFlow() }
 
-    LaunchedEffect(Unit) { flowFetch.invoke(Unit) }
+    LaunchedEffect(Unit) { flowFetch.invoke() }
 
     if (flowFetch.active) {
         LoadingContainer("Fetching authentication methods...")

@@ -12,9 +12,11 @@
 
 package de.bixilon.unithen.ui.auth
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
 const val WEB_SESSION_COOKIE_NAME = "ory-session"
@@ -24,15 +26,7 @@ expect fun LegacyWebviewAuthentication(host: String, callback: (Authentication) 
 
 
 @Composable
-fun LegacyWebviewAuthenticationScreen(host: String) {
-    var authentication by remember { mutableStateOf<Authentication?>(null) }
-
-    if (authentication == null) {
-        LegacyWebviewAuthentication(host) { authentication = it }
-        return
-    }
-
-    val site = LocalStorage.current.sites[host]!!
-
-    AuthenticationCallback(site, authentication!!)
+fun LegacyWebviewAuthenticationScreen(site: Site) {
+    val navigation = LocalNavigation.current
+    LegacyWebviewAuthentication(site.host) { navigation.navigate(AuthenticationCallbackRoute(site, it)) }
 }

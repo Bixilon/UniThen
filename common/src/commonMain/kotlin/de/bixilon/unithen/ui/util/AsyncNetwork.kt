@@ -19,8 +19,8 @@ import androidx.compose.runtime.setValue
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
+import de.bixilon.unithen.ui.main.AuthenticateRoute
 import de.bixilon.unithen.ui.main.CrashRoute
-import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.state.rememberStateOf

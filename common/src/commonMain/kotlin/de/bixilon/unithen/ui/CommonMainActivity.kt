@@ -107,16 +107,16 @@ fun Navigator.MainNavigator() {
         composable<ScanAnyRoute> { QrScanAnyScreen() }
 
 
-        composable<AddAccountRoute> { AddAccountScreen { pop() } }
-        composable<AuthenticationCallbackRoute> { AccountSyncScreen(it.site, it.authentication) { pop() } }
-        composable<ReauthenticateRoute> { AuthenticationScreen(it.site) { pop() } }
-
         composable<FeatureFlagRoute> { FeatureFlagScreen() }
 
         composable<CrashRoute> { CrashScreen(null, it.exception) }
 
+        composable<AddAccountRoute> { AddAccountScreen { pop() } }
+        composable<AuthenticationCallbackRoute> { AccountSyncScreen(it.site, it.authentication) { pop() } }
+
+
         composable<AuthenticateRoute> { AuthenticationScreen(it.site) }
-        composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it.host) }
+        composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it) }
         composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.ory) }
         composable<OidcAuthenticationRoute> { OryOidcPrepareScreen(it.ory, it.provider) }
     }

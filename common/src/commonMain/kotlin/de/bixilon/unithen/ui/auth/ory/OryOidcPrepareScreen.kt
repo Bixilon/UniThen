@@ -11,7 +11,7 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     val navigator = LocalNavigation.current
     var url by remember { mutableStateOf<String?>(null) }
 
-    val flowFetch = useAsyncNetwork<Unit>(null) { url = "" } // TODO
+    val flowFetch = useAsyncNetwork { url = "" } // TODO
 
 
     if (flowFetch.active) {

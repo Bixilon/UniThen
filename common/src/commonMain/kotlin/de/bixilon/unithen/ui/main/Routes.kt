@@ -23,8 +23,6 @@ import kotlin.uuid.Uuid
 
 object MainRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
-data class AuthenticationCallbackRoute(val site: Site, val authentication: Authentication) : NavigationRoute
-data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute
@@ -62,3 +60,6 @@ data class EmailAuthenticationRoute(val ory: OryConfig) : NavigationRoute
 data class OidcAuthenticationRoute(val ory: OryConfig, val provider: OryConfig.OryOidc) : NavigationRoute
 
 data class OidcAuthenticationCallbackRoute(val code: String) : NavigationRoute
+
+data class AuthenticationCallbackRoute(val site: Site, val authentication: Authentication) : NavigationRoute
+
