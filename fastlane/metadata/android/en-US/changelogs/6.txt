@@ -1,4 +1,5 @@
 This release contains various improvements:
  - Translation fixes
  - More robust login process
- - Various (internal) changes for KMP
+ - iOS support (with KMP)
+ - Many (internal) changes, improvements and several fixes
