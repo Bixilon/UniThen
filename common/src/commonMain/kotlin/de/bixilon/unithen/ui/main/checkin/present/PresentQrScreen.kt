@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.settings.FeatureFlags
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
@@ -71,7 +72,8 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Box(Modifier.padding(4.dp)) {
             val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
 
-            val encoded = remember { createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
+            val remove by rememberSetting(FeatureFlags.QR_CODE_REMOVE_NAME)
+            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
 
             QrCode(
                 data = encoded,
@@ -111,6 +113,15 @@ fun createQrCode(user: Uuid, appointment: Uuid, firstname: String, lastname: Str
             "last" to JsonPrimitive(lastname),
             "first" to JsonPrimitive(firstname),
         )),
+    ))
+
+    return node.toString()
+}
+
+fun createQrCode(user: Uuid, appointment: Uuid): String {
+    val node = JsonObject(mapOf(
+        "appointment_id" to JsonPrimitive(appointment.toString()),
+        "user_id" to JsonPrimitive(user.toString()),
     ))
 
     return node.toString()

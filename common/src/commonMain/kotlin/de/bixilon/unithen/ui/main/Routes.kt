@@ -48,5 +48,6 @@ data class AppointmentDetailsRoute(val appointment: Appointment) : NavigationRou
 
 
 object SettingsRoute : NavigationRoute
+object FeatureFlagRoute : NavigationRoute
 
 data class CrashRoute(val exception: Throwable) : NavigationRoute

@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.main
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,7 +30,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
@@ -37,6 +37,7 @@ import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberIsFdroid
 import de.bixilon.unithen.ui.util.useAsyncNetwork
@@ -85,8 +86,8 @@ fun UpdateChecker() {
 }
 
 @Composable
-@Preview(showBackground = true)
 fun AboutScreen() {
+    val navigator = LocalNavigation.current
     Screen(modifier = Modifier.verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -95,6 +96,7 @@ fun AboutScreen() {
             Logo,
             contentDescription = "logo",
             modifier = Modifier
+                .combinedClickable(onClick = {}, onLongClick = { navigator.navigate(FeatureFlagRoute) })
                 .size(300.dp)
         )
 
