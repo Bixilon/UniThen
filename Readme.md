@@ -67,17 +67,5 @@ Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (yo
 
 Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
 
-## Releasing (Note for myself)
-
-IntelliJ breaks reproducible builds, build with:
-
-1. Update version code in `app/build.gradle.kts`
-2. Create fastlane changelog
-3. Update fdroid.txt with version information (then fdroid will build and deploy it automatically)
-4. `git tag v1.2.3 -a` (provide changelog)
-5. `./gradlew app:assembleRelease`
-6. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk` (`app/build/outputs/apk/release/app-release-unsigned.apk`)
-7. Create package in lipstick (name: `apk`, version: `1.2.3`, file name: `app-release.apk`)
-8. `git push v1.2.3` & create release with package
 
 There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
