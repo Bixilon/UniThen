@@ -10,10 +10,26 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.util.progress
+package de.bixilon.unithen.ui.util.effects
 
-@Deprecated("sync engine")
-class CourseFetchProgress(
-    val course: Int,
-    val courses: Int,
-)
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import de.bixilon.kutil.time.Delay
+import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import kotlinx.coroutines.delay
+
+@Composable
+fun DelayedEffect(delay: Delay, executor: suspend () -> Unit) {
+    val navigation = LocalNavigation.current
+
+    LaunchedEffect(Unit) {
+        delay(delay)
+        try {
+            executor.invoke()
+        } catch (error: Throwable) {
+            error.printStackTrace()
+            navigation.navigate(CrashRoute(error))
+        }
+    }
+}

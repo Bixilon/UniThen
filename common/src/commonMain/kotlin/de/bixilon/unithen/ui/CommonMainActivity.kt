@@ -32,9 +32,7 @@ import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.checkin.present.PresentQrAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.present.PresentQrScreen
-import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
-import de.bixilon.unithen.ui.main.checkin.scan.ScanContextValue
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanAnyScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.ScanQrAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.confirm.ScanQrConfirmScreen
@@ -97,21 +95,13 @@ fun Navigator.MainNavigator() {
             }
         }
         composable<ScanQrAppointmentRoute> {
-            CompositionLocalProvider(
-                LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
-            ) {
-                ScanQrAppointmentScreen()
-            }
+            ScanQrAppointmentScreen(it.appointment)
             if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
                 pop()
             }
         }
         composable<ScanQrConfirmRoute> {
-            CompositionLocalProvider(
-                LocalScanContext provides ScanContextValue(it.account, it.course, it.appointment),
-            ) {
-                ScanQrConfirmScreen(it.userId)
-            }
+            ScanQrConfirmScreen(it.appointment, it.userId)
             if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
                 pop()
             }

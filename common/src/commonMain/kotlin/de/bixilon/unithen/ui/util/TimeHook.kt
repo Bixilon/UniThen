@@ -15,7 +15,7 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.*
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import kotlinx.coroutines.delay
+import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -27,11 +27,8 @@ fun useTime(): Instant {
     val fakeTime by rememberSetting(Settings.FAKE_TIME)
     var time by remember { mutableStateOf(getTime(fakeTime)) }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            time = getTime(fakeTime)
-            delay(30.seconds)
-        }
+    RepeatedEffect(30.seconds) {
+        time = getTime(fakeTime)
     }
 
     LaunchedEffect(fakeTime) { time = getTime(fakeTime) }

@@ -30,12 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
-import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -51,9 +51,8 @@ import kotlin.uuid.Uuid
 
 
 @Composable
-private fun AttendeeCard(user: User, readonly: Boolean) {
+private fun AttendeeCard(appointment: Appointment, user: User, readonly: Boolean) {
     val storage = LocalStorage.current
-    val (account, _, appointment) = LocalScanContext.current
 
     val toast = useToast()
 
@@ -142,10 +141,9 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
 }
 
 @Composable
-private fun EnrolledCard(user: User, readonly: Boolean) {
+private fun EnrolledCard(appointment: Appointment, user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
-    val (account, _, appointment) = LocalScanContext.current
     val toast = useToast()
     val checkin = useAsyncNetwork {
         try {
@@ -175,9 +173,9 @@ private fun EnrolledCard(user: User, readonly: Boolean) {
 }
 
 @Composable
-fun ScanAttendeeList() {
+fun ScanAttendeeList(appointment: Appointment) {
     val visible = LocalVisibility.current
-    val (_, course, appointment) = LocalScanContext.current
+    val course = rememberStorage { courses[appointment.course]!! }
     val scope = rememberCoroutineScope()
 
     val filter = rememberUserFilter()
@@ -236,9 +234,9 @@ fun ScanAttendeeList() {
                 contentPadding = PaddingValues(bottom = 150.dp),
             ) {
                 // Unique keys, otherwise the app might crash because of duplicated keys (async storage)
-                items(items = attendees, key = { "a" + it.id }) { AttendeeCard(it, readonly) }
+                items(items = attendees, key = { "a" + it.id }) { AttendeeCard(appointment, it, readonly) }
                 items(items = queue, key = { "q" + it.user }) { QueueCard(it, readonly) }
-                items(items = not, key = { "e" + it.id }) { EnrolledCard(it, readonly) }
+                items(items = not, key = { "e" + it.id }) { EnrolledCard(appointment, it, readonly) }
             }
         }
     }

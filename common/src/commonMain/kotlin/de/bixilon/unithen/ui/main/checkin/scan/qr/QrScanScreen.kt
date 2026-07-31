@@ -31,12 +31,12 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.components.qr.QrCameraPreview
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
-import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
 import kotlinx.coroutines.delay
@@ -109,14 +109,11 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     }
 
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            val now = TimeSource.Monotonic.markNow()
-            errors.removeAll { (now - it.time) > 1.seconds }
-            accepted.removeAll { (it.done != null && (now - it.done!!) > 5.seconds) }
-            accepted.removeAll { (now - it.time) > if (await) 30.seconds else 5.seconds }
-            delay(100.milliseconds)
-        }
+    RepeatedEffect(100.milliseconds) {
+        val now = TimeSource.Monotonic.markNow()
+        errors.removeAll { (now - it.time) > 1.seconds }
+        accepted.removeAll { (it.done != null && (now - it.done!!) > 5.seconds) }
+        accepted.removeAll { (now - it.time) > if (await) 30.seconds else 5.seconds }
     }
 
     // TODO: overlay invalid qr codes
@@ -206,9 +203,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 }
 
 @Composable
-fun ScanQrAppointmentScreen() {
-    val (_, _, appointment) = LocalScanContext.current
-
+fun ScanQrAppointmentScreen(appointment: Appointment) {
     QrScanScreen(listOf(appointment))
 }
 

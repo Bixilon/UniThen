@@ -33,7 +33,6 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.storage.LocalStorage
-import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
@@ -57,7 +56,6 @@ data class AcceptedState(
 private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     val storage = LocalStorage.current
     val haptic = useHapticFeedback()
-    val account = rememberStorage { storage.accounts.getTutorAccount(state.appointment) }
 
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var okay by remember { mutableStateOf(false) }

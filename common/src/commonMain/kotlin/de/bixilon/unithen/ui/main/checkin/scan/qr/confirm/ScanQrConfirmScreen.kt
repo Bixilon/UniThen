@@ -24,20 +24,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
-import de.bixilon.unithen.ui.main.checkin.scan.LocalScanContext
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlin.uuid.Uuid
 
 @Composable
-private fun ColumnScope.ScanQrConfirmScreenContent(user: User?) {
+private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, user: User?) {
     val navigation = LocalNavigation.current
-    val (_, course, appointment) = LocalScanContext.current
+    val course = rememberStorage { courses[appointment.course]!! }
 
     if (user == null) return ScanQrNotEnrolled(null, course, appointment)
 
@@ -50,7 +49,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(user: User?) {
     var error by rememberStateOf<String?>(null)
 
     if (!await && (success || error != null)) {
-        LaunchedEffect(await) { navigation.pop() }
+        LaunchedEffect(Unit) { navigation.pop() }
         return
     }
 
@@ -67,24 +66,21 @@ private fun ColumnScope.ScanQrConfirmScreenContent(user: User?) {
 }
 
 @Composable
-fun ScanQrConfirmScreen(user: User?) {
-    val (_, course, _) = LocalScanContext.current
+fun ScanQrConfirmScreen(appointment: Appointment, user: User?) {
+    val course = rememberStorage { courses[appointment.course]!! }
 
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
         ScreenTitle(course.name)
         Spacer(Modifier.height(8.dp))
 
-        ScanQrConfirmScreenContent(user)
+        ScanQrConfirmScreenContent(appointment, user)
     }
 }
 
 @Composable
-fun ScanQrConfirmScreen(userId: Uuid) {
-    val (_, _, appointment) = LocalScanContext.current
+fun ScanQrConfirmScreen(appointment: Appointment, userId: Uuid) {
+    val course = rememberStorage { courses[appointment.course]!! }
+    val user = rememberStorage { users[sites[course.site]!!, userId] }
 
-    val storage = LocalStorage.current
-    val site = storage.sites[storage.courses[appointment.course]!!.site]!!
-    val user = rememberStorage { storage.users[site, userId] }
-
-    ScanQrConfirmScreen(user)
+    ScanQrConfirmScreen(appointment, user)
 }
