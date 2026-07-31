@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QuestionMark
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -29,7 +28,7 @@ import unithen.common.generated.resources.error_network
 import unithen.common.generated.resources.scan_unknown_error_server
 
 @Composable
-fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, onSuccess: () -> Unit, onError: (String) -> Unit) {
+fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, setLoading: (Boolean) -> Unit, onSuccess: () -> Unit, onError: (String) -> Unit) {
     val storage = LocalStorage.current
     val haptic = useHapticFeedback()
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
@@ -39,26 +38,25 @@ fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, onSuccess: () 
     val checkin = useAsyncNetwork {
         val await = await
         if (!await) onSuccess.invoke()
+        setLoading.invoke(true)
         try {
             CheckInUtil.checkIn(storage, appointment, user)
 
             haptic.invoke(HapticFeedbackType.Confirm)
             if (await) onSuccess.invoke()
         } catch (error: NetworkException) {
-            if (await && !offline) {
+            if (!offline) {
                 onError.invoke(getString(Res.string.error_network, error.message ?: ""))
-            } else if (await) {
+            } else {
                 onSuccess.invoke()
             }
             throw error
         } catch (error: CheckInError) {
             haptic.invoke(HapticFeedbackType.Reject)
             onError.invoke(getString(Res.string.scan_unknown_error_server, error.message ?: ""))
+        } finally {
+            setLoading.invoke(false)
         }
-    }
-
-    if (checkin.active) {
-        CircularProgressIndicator(modifier = ICON_SIZE)
     }
 
     ConfirmScreenWarning(Icons.Filled.QuestionMark, checkInSuccess, null)
@@ -71,9 +69,7 @@ fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, onSuccess: () 
         .weight(1.0f)
         .defaultMinSize(minHeight = 16.dp))
 
-    if (checkin.active) {
-        ConfirmScreenActions(user, cancel = false, confirm = null)
-    } else {
+    if (!checkin.active) {
         ConfirmScreenActions(user, confirm = { checkin.invoke() })
     }
 }

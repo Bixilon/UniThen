@@ -59,9 +59,13 @@
     <string name="scan_updating_enrolled">Synchronisiere Teilnehmerliste...</string>
     <string name="scan_enrolled_outdated">Teilnehmerliste wurde zuletzt aktualisiert: %1$s</string>
     <string name="scan_unknown_error_server">Serverfehler: %1$s</string>
+
+    <string name="scan_confirm_ok">Teilnehmer wurde eingecheckt!</string>
+    <string name="scan_confirm_ok_network">Naja, ohne Internet ist es schwer. Sollte aber okay sein!</string>
     <string name="site">Seite</string>
     <string name="user_name">Name</string>
     <string name="cancel">Abbrechen</string>
+    <string name="back">Zurück</string>
     <string name="scan_confirm">Bestätigen</string>
     <string name="scan_confirm_contributor">Sag Danke🎉 (Bestätigen)</string>
     <string name="network_error">Netzwerkfehler</string>

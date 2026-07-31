@@ -65,6 +65,7 @@
     <string name="scan_error_check_in_pending">Already checked in (synchronization pending...)</string>
     <string name="scan_error_check_out_pending">Already checked in (checkout pending...)</string>
     <string name="scan_confirm_ok">User was checked in!</string>
+    <string name="scan_confirm_ok_network">Well, internet is broken, but should be good to go!</string>
     <string name="scan_error_other">Unknown error!</string>
     <string name="scan_updating_enrolled">Updating enrollment list...</string>
     <string name="scan_enrolled_outdated">Enrollment list was last updated: %1$s</string>
@@ -74,6 +75,7 @@
     <string name="site">Site</string>
     <string name="user_name">Name</string>
     <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
     <string name="scan_confirm">Confirm</string>
     <string name="scan_confirm_contributor">Say thanks🎉 (Confirm)</string>
     <string name="network_error">Network error</string>

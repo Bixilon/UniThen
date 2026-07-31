@@ -46,6 +46,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
 
     var success by rememberStateOf(false)
+    var loading by rememberStateOf(false)
     var error by rememberStateOf<String?>(null)
 
     if (!await && (success || error != null)) {
@@ -55,6 +56,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
 
     if (success) return ScanQrConfirmed(user, appointment)
     if (error != null) return ScanQrError(user, error!!, appointment)
+    if (loading) return ScanQrLoading(user, appointment)
 
     val attendee = rememberStorage { users.isAttendee(appointment, user) }
     if (attendee) return ScanQrError(user, attendee, null, appointment)
@@ -62,7 +64,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
     val queue = rememberStorage { checkInQueue[appointment, user] }
     if (queue != null) return ScanQrError(user, attendee, queue, appointment)
 
-    ScanQrAwait(user, appointment, { success = true }, onError = { error = it })
+    ScanQrAwait(user, appointment, { loading = it }, { success = true }, onError = { error = it })
 }
 
 @Composable
