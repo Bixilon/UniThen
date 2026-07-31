@@ -24,6 +24,8 @@ import androidx.compose.ui.window.ComposeUIViewController
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.UniThen.STORAGE
 import de.bixilon.unithen.debug.DebugMainActivity
+import de.bixilon.unithen.settings.store.LocalSettingsStore
+import de.bixilon.unithen.settings.store.NSUserDefaultsSettingsStore
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import platform.UIKit.UIViewController
@@ -43,6 +45,7 @@ fun IosMainActivity(): UIViewController = ComposeUIViewController {
             ) {
                 CompositionLocalProvider(
                     LocalStorage provides STORAGE,
+                    LocalSettingsStore provides NSUserDefaultsSettingsStore,
                 ) {
                     if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                 }

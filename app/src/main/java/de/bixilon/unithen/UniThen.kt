@@ -18,8 +18,7 @@ import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
-import de.bixilon.unithen.settings.SETTINGS
-import de.bixilon.unithen.settings.SettingsStore
+import de.bixilon.unithen.settings.store.SharedPreferencesSettingsStore
 import de.bixilon.unithen.storage.sql.AndroidSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import kotlinx.coroutines.CoroutineScope
@@ -44,8 +43,9 @@ class UniThen : Application(), CameraXConfig.Provider {
 
     override fun onCreate() {
         super.onCreate()
-        SETTINGS = SettingsStore(this)
+        SETTINGS = SharedPreferencesSettingsStore(this)
         CoroutineScope(Dispatchers.IO).launch { SETTINGS.preload() }
+
         STORAGE = SqlStorage(AndroidSqlHelper(applicationContext, "uninow"))
     }
 
@@ -56,5 +56,6 @@ class UniThen : Application(), CameraXConfig.Provider {
 
     companion object {
         lateinit var STORAGE: SqlStorage
+        lateinit var SETTINGS: SharedPreferencesSettingsStore
     }
 }

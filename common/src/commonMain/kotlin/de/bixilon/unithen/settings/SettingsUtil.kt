@@ -14,23 +14,37 @@ package de.bixilon.unithen.settings
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.unithen.settings.store.LocalSettingsStore
 import kotlin.jvm.JvmName
 
 
 @Composable
 @JvmName("rememberBooleanSetting")
-expect fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean>
+fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
+    val supported = remember { isSettingSupported(setting) }
+    if (!supported) return remember {
+        object : MutableState<Boolean> {
+            override var value
+                get() = false
+                set(next) = Unit
+
+            override fun component1() = value
+            override fun component2(): (Boolean) -> Unit = { }
+        }
+    }
+    return LocalSettingsStore.current.createBoolean(setting)
+}
 
 @Composable
 @JvmName("rememberIntSetting")
-expect fun rememberSetting(setting: Setting<Int>): MutableState<Int>
+fun rememberSetting(setting: Setting<Int>) = LocalSettingsStore.current.createInt(setting)
 
 @Composable
 @JvmName("rememberStringSetting")
-expect fun rememberSetting(setting: Setting<String>): MutableState<String>
-
+fun rememberSetting(setting: Setting<String>) = LocalSettingsStore.current.createString(setting)
 
 @Composable
 @JvmName("rememberEnumSetting")
-expect fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T>
+fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>) = LocalSettingsStore.current.createEnum(setting, values)
