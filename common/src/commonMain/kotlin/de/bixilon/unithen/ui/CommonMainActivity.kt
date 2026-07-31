@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
+import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
@@ -110,6 +111,7 @@ fun Navigator.MainNavigator() {
 
 
         composable<AddAccountRoute> { AddAccountScreen { pop() } }
+        composable<AuthenticationCallbackRoute> { AccountSyncScreen(it.site, it.authentication) { pop() } }
         composable<ReauthenticateRoute> { AuthenticationScreen(it.site) { pop() } }
 
         composable<FeatureFlagRoute> { FeatureFlagScreen() }

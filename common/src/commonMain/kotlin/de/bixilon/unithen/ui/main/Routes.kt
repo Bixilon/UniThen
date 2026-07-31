@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.main
 
+import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
@@ -21,6 +22,7 @@ import kotlin.uuid.Uuid
 
 object MainRoute : NavigationRoute
 object AddAccountRoute : NavigationRoute
+data class AuthenticationCallbackRoute(val site: Site, val authentication: Authentication) : NavigationRoute
 data class ReauthenticateRoute(val site: Site) : NavigationRoute
 object AboutRoute : NavigationRoute
 
