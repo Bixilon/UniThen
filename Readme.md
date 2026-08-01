@@ -67,5 +67,6 @@ Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (yo
 
 Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
 
+## Code
 
-There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
+All code is open source and licensed under the terms of the General Public Licence v3 or later. The source code can be retrieved on [gitlab.bixilon.de](https://gitlab.bixilon.de/bixilon/unithen). There is a [GitHub mirror](https://github.com/Bixilon/UniThen). Its only for code preservation, please don't report issues nor publish pull requests there.
