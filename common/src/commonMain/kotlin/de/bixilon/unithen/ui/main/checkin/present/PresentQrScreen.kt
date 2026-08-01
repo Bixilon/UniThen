@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.main.checkin.present
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,8 +55,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -69,28 +66,6 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
             modifier = Modifier.padding(16.dp)
         )
 
-        Box(Modifier.padding(4.dp)) {
-            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
-
-            val remove by rememberSetting(FeatureFlags.QR_CODE_REMOVE_NAME)
-            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
-
-            QrCode(
-                data = encoded,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
-
-        Text(
-            text = Res.string.present_show_entrance.i18n(),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-
         InfoContainer(modifier = Modifier
             .padding(horizontal = 16.dp)) {
             InfoPair(Res.string.course_name.i18n(), account.fullname)
@@ -99,6 +74,25 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
             InfoPair(Res.string.appointment_location.i18n(), appointment.location)
             if (RuntimeInfo.debug) {
                 InfoPair("ID", appointment.uuid.toString())
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Box(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
+            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
+
+            val remove by rememberSetting(FeatureFlags.QR_CODE_REMOVE_NAME)
+            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
+
+            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                QrCode(data = encoded, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = Res.string.present_show_entrance.i18n(),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
             }
         }
     }

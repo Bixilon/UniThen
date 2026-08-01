@@ -28,7 +28,7 @@ sealed interface QrScanResult {
 
     data class UnknownUser(override val appointment: Appointment, val user: Uuid) : SoftError(Res.string.scan_error_unknown_user, user)
 
-    data class NotEnrolled(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_invalid_course, user.uuid)
+    data class NotEnrolled(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_not_enrolled, user.uuid)
     data class AlreadyCheckedIn(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_already_checked_in, user.uuid)
     data class CheckInPending(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_check_in_pending, user.uuid)
     data class Rejected(override val appointment: Appointment, val user: User, val message: String) : SoftError(Res.string.scan_unknown_error_server_generic, user.uuid)

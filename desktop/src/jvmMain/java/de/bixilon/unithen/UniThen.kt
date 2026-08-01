@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
@@ -28,6 +29,8 @@ import de.bixilon.kutil.os.OSTypes
 import de.bixilon.kutil.os.PlatformInfo
 import de.bixilon.kutil.shutdown.ShutdownManager
 import de.bixilon.unithen.debug.DebugMainActivity
+import de.bixilon.unithen.settings.store.LocalSettingsStore
+import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.JvmSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
@@ -75,6 +78,7 @@ fun ApplicationScope.UniThenApplication() {
                     ) {
                         CompositionLocalProvider(
                             LocalStorage provides STORAGE,
+                            LocalSettingsStore provides remember { MemorySettingsStore() },
                         ) {
                             if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                         }

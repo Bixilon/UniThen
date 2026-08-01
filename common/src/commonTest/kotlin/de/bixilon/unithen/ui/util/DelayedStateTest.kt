@@ -81,6 +81,8 @@ class DelayedStateTest : AbstractComposeUiTest() {
         monotonicDelay(100.milliseconds)
         state.value = "A"
         monotonicDelay(100.milliseconds)
+        state.value = "A"
+        monotonicDelay(100.milliseconds)
 
         assertEquals(null, state.value)
         assertEquals("A", triggered)
