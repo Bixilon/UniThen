@@ -18,9 +18,9 @@ import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
-import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.EmailAuthenticationScreen
+import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.OryOidcCallbackScreen
 import de.bixilon.unithen.ui.auth.ory.OryOidcPrepareScreen
 import de.bixilon.unithen.ui.containers.LoadingContainer
@@ -115,10 +115,10 @@ fun Navigator.MainNavigator() {
         composable<CrashRoute> { CrashScreen(null, it.exception) }
 
         composable<AddAccountRoute> { AddAccountScreen() }
-        composable<AuthenticationSyncRoute> { AccountSyncScreen(it.site, it.authentication) }
+        composable<AuthenticationCallbackRoute> { AccountSyncScreen(it.site, it.authentication) }
 
 
-        composable<AuthenticateRoute> { AuthenticationScreen(it.host) }
+        composable<AuthenticateRoute> { OryAuthenticationScreen(it.host) }
         composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it.host) }
         composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.site, it.ory) }
         composable<OidcAuthenticationRoute> { OryOidcPrepareScreen(it.ory, it.provider) }

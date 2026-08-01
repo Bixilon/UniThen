@@ -110,6 +110,8 @@ kotlin {
 
             implementation(libs.ui.test)
 
+            implementation(libs.coil.svg)
+            implementation(libs.coil.compose)
         }
 
         androidMain.dependencies {

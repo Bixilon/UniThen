@@ -12,10 +12,7 @@
 
 package de.bixilon.unithen.ui.util
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -37,9 +34,9 @@ data class AsyncNetworkState(
 )
 
 @Composable
-fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
+fun useAsyncNetwork(auto: Boolean = false, block: suspend () -> Unit): AsyncNetworkState {
+    var invocations by rememberStateOf { 0 }
     var active by rememberStateOf { false }
-    if (active) return ACTIVE
 
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
@@ -47,6 +44,7 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
     val scope = remember { CoroutineScope(Dispatchers.IO) }
 
     val invoke = a@{
+        invocations++
         if (active) return@a null
         scope.launch {
             try {
@@ -66,6 +64,14 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
             }
         }
     }
+
+    LaunchedEffect(Unit) {
+        if (auto && invocations == 0) {
+            invoke.invoke()
+        }
+    }
+
+    if (active || (auto && invocations == 0)) return ACTIVE
 
     return AsyncNetworkState(active, invoke)
 }

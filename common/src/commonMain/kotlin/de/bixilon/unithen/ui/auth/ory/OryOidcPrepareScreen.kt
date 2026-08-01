@@ -13,15 +13,13 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     val handler = LocalUriHandler.current
     var url by remember { mutableStateOf<String?>(null) }
 
-    val flowFetch = useAsyncNetwork {
+    useAsyncNetwork(true) {
         val response = ory.loginOidc(provider)
 
         handler.openUri(response.redirectBrowserTo)
         url = response.redirectBrowserTo
         navigator.pop()
     }
-
-    LaunchedEffect(Unit) { flowFetch.invoke() }
 
     LoadingContainer("Getting oidc redirect url")
 }

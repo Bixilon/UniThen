@@ -1,14 +1,13 @@
 package de.bixilon.unithen.ui.auth.ory
 
-import androidx.compose.ui.graphics.vector.ImageVector
 
 object OidcProviders {
     const val TUM = "oidc-tum"
     const val LMU = "saml-lmu"
 
-    val LOGOS = mapOf<String, ImageVector>(
-        // TUM to LogoTUM,
-        // LMU to LogoLMU,
+    val LOGOS = mapOf(
+        TUM to "tum.svg",
+        LMU to "lmu.svg",
     )
 
     val NAMES = mapOf(

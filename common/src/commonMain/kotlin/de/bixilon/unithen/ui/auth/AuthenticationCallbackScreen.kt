@@ -30,6 +30,7 @@ import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -45,15 +46,13 @@ import unithen.common.generated.resources.*
 fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Account) -> Unit) {
     val storage = LocalStorage.current
 
-    val fetch = useAsyncNetwork {
+    useAsyncNetwork(true) {
         val api = AuthenticatedUniNowApi(site.host, authentication)
         val details = api.getUserDetails()
 
         val account = storage.transaction { it.accounts.add(site, details, authentication) }
         callback.invoke(account)
     }
-
-    LaunchedEffect(Unit) { fetch.invoke() }
 
     AlertDialog(
         confirmButton = {},
@@ -96,7 +95,7 @@ fun AccountSyncScreen(site: Site, authentication: Authentication) {
         }
     }
 
-    SyncEngineCompleteEffect(synchronize) { navigation.pop() }
+    SyncEngineCompleteEffect(synchronize) { navigation.popIf { it is AuthenticationRoute }; navigation.pop() }
 
 
     SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n())

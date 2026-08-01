@@ -14,7 +14,8 @@ package de.bixilon.unithen.ui.auth
 
 import androidx.compose.runtime.Composable
 import de.bixilon.unithen.api.authentication.CookieAuthentication
-import de.bixilon.unithen.ui.main.AuthenticationSyncRoute
+import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
+import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 
@@ -30,5 +31,5 @@ fun LegacyWebviewAuthenticationScreen(host: String) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
 
-    LegacyWebviewAuthentication(host) { navigation.navigate(AuthenticationSyncRoute(storage.sites[host]!!, it)) }
+    LegacyWebviewAuthentication(host) { navigation.navigate(AuthenticationCallbackRoute(storage.sites[host]!!, it)); navigation.popIf { it is AuthenticationRoute } }
 }

@@ -1,5 +1,6 @@
 [versions]
 agp = "9.1.1"
+coil = "3.5.0"
 coroutines = "1.11.0"
 ktor = "3.5.2"
 androidTestRunner = "1.7.0"
@@ -53,6 +54,8 @@ androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", 
 androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraCore" }
 
 
+coil-svg = { group = "io.coil-kt.coil3", name = "coil-svg", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 sqliter-driver = { group = "co.touchlab", name = "sqliter-driver", version.ref = "sqliterNative" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }

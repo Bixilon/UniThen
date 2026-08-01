@@ -4,10 +4,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -20,8 +17,8 @@ import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
-import de.bixilon.unithen.ui.error.ErrorBox
-import de.bixilon.unithen.ui.main.AuthenticationSyncRoute
+import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
+import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
@@ -38,8 +35,8 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
     val auth = useAsyncNetwork {
         try {
             val token = config.loginEmail(email, password)
-            navigation.pop()
-            navigation.navigate(AuthenticationSyncRoute(site, OryTokenAuthentication(token.sessionToken)))
+            navigation.popIf { it is AuthenticationRoute }
+            navigation.navigate(AuthenticationCallbackRoute(site, OryTokenAuthentication(token.sessionToken)))
             // TODO: delete login flow
         } catch (exception: InvalidCredentialException) {
             error = exception.message
@@ -49,6 +46,8 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
     Screen {
         ScreenTitle("Login")
         Text("Please login with your email and password:")
+
+        Spacer(Modifier.height(16.dp))
 
         TextField(
             value = email,
@@ -73,9 +72,11 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Text("Forgot password?") // TODO: open /auth/recovery
+        Spacer(Modifier.height(8.dp))
 
-        error?.let { ErrorBox(it) }
+        error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+
+        Spacer(Modifier.weight(1.0f))
 
         val disabled = password.isBlank() || '@' !in email || auth.active
 

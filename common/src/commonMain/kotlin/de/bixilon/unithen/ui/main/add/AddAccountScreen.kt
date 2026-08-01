@@ -29,7 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.ui.auth.AuthenticationScreen
+import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
@@ -119,7 +119,7 @@ fun AddAccountScreen() {
 
     BackHandler(site != null) { site = null }
 
-    site?.let { return AuthenticationScreen(it.host) }
+    site?.let { return OryAuthenticationScreen(it.host) }
 
     SelectSiteSetupScreen { site = it }
 }

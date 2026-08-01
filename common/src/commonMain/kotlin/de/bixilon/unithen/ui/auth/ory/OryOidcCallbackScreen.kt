@@ -1,14 +1,14 @@
 package de.bixilon.unithen.ui.auth.ory
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.UniNowApi
 import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
-import de.bixilon.unithen.ui.main.AuthenticationSyncRoute
+import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
+import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -27,18 +27,16 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
     }
     val site = rememberStorage { sites[flow.site]!! }
 
-    val exchange = useAsyncNetwork {
+    val exchange = useAsyncNetwork(true) {
         val api = UniNowApi(site.host)
 
         val token = api.exchangeToken(flow.exchangeToken!!, code)
-        navigator.pop()
-        navigator.navigate(AuthenticationSyncRoute(site, OryTokenAuthentication(token.sessionToken)))
+        navigator.popIf { it is AuthenticationRoute }
+        navigator.navigate(AuthenticationCallbackRoute(site, OryTokenAuthentication(token.sessionToken)))
         if (!RuntimeInfo.debug) {
             storage.flows.delete(flow.id)
         }
     }
-
-    LaunchedEffect(Unit) { exchange.invoke() }
 
     if (exchange.active) {
         LoadingContainer("Exchanging token...")

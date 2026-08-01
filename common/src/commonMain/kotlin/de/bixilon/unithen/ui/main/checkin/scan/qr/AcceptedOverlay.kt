@@ -61,7 +61,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     var okay by remember { mutableStateOf(false) }
 
 
-    val checkin = useAsyncNetwork {
+    val checkin = useAsyncNetwork(true) {
         try {
             CheckInUtil.checkIn(storage, state.appointment, state.user)
 
@@ -77,8 +77,6 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
             state.done = TimeSource.Monotonic.markNow()
         }
     }
-
-    LaunchedEffect(Unit) { checkin.invoke() }
 
 
     Surface(
