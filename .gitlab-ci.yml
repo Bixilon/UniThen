@@ -56,6 +56,8 @@ test:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_DRAFT == "false"'
+  before_script:
+    - apt update && apt install -y libgl-dev
   artifacts:
     when: always
     reports:
