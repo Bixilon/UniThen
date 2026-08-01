@@ -15,180 +15,89 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.unit.dp
-import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
-import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.components.qr.QrCameraPreview
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
+import de.bixilon.unithen.ui.main.checkin.scan.qr.overlays.*
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.navigation.NavigationStackPolicy
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
-import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.delay
-import kotlinx.serialization.SerializationException
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.TimeSource
-import kotlin.uuid.Uuid
 
 
-private data class AcceptedResult(
-    val course: Course,
-    val appointment: Appointment,
-    val userId: Uuid,
-)
-
-data class ErrorResult(
-    val reason: QrErrorReasons,
-    val details: String? = null,
-) {
-    val time = TimeSource.Monotonic.markNow()
-}
-
-private fun getErrorReason(storage: SqlStorage, course: Course, appointment: Appointment, user: User): QrErrorReasons? {
-    val enrolled = storage.users.isEnrolled(course, user)
-    if (!enrolled) return QrErrorReasons.NOT_ENROLLED // TODO: fetch enrolled again if stale
-
-    val attendee = storage.users.isAttendee(appointment, user)
-    if (attendee) return QrErrorReasons.ALREADY_CHECKED_IN
-
-    val attempt = storage.checkInQueue[appointment, user]
-    if (attempt != null) {
-        if (attempt.attempt != null) return QrErrorReasons.CHECK_OUT_PENDING
-        // TODO: show message from server
-        if (attempt.message != null) return QrErrorReasons.CHECK_IN_SERVER_ERROR
-
-        return QrErrorReasons.CHECK_IN_PENDING
-    }
-
-    return null
+private fun List<AcceptedState>.canIgnore(scanned: ScannedQrCode) = when (scanned) {
+    is ScannedQrCodeV1 -> any { it.result.appointment.uuid == scanned.appointmentId && it.result.user.uuid == scanned.userId }
 }
 
 @Composable
 private fun QrScanScreen(appointments: List<Appointment>) {
     val navigation = LocalNavigation.current
-    if (appointments.isEmpty()) {
-        return navigation.pop()
-    }
 
     val haptic = useHapticFeedback()
     val storage = LocalStorage.current
 
-    val autoScan by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
-    val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
-    val confirmation by rememberSetting(Settings.SCAN_CONFIRMATION_SCREEN)
-    val errors = remember { mutableStateListOf<ErrorResult>() }
-    val delayedState = remember { mutableStateOf<AcceptedResult?>(null) }
-    val accepted = remember { mutableStateListOf<AcceptedState>() }
-    var delayed by delayedState
+    val accepted = rememberAcceptedStates()
+    val errors = rememberErrorStates()
+    var delayed by rememberDelayedOverlay()
 
-    LaunchedEffect(delayed) { // TODO: Allow clicking on it?
-        val _delayed = delayed ?: return@LaunchedEffect
-        delay(1.seconds)
-        if (delayedState.value == _delayed) {
-            haptic.invoke(HapticFeedbackType.Reject)
-            if (!autoScan) navigation.pop()
-            navigation.navigate(ScanQrConfirmRoute(storage.accounts.getTutorAccount(_delayed.appointment)!!, _delayed.course, _delayed.appointment, _delayed.userId))
-        }
-        delayed = null
-    }
-
-
-    RepeatedEffect(100.milliseconds) {
-        val now = TimeSource.Monotonic.markNow()
-        errors.removeAll { (now - it.time) > 1.seconds }
-        accepted.removeAll { (it.done != null && (now - it.done!!) > 5.seconds) }
-        accepted.removeAll { (now - it.time) > if (await) 30.seconds else 5.seconds }
-    }
-
-    // TODO: overlay invalid qr codes
+    val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
+    val confirm by rememberSetting(Settings.SCAN_CONFIRMATION_SCREEN)
 
     Box(modifier = Modifier.fillMaxSize()) {
-        QrCameraPreview(modifier = Modifier.fillMaxSize()) {
-            if (it.isEmpty()) {
-                delayed = null
-            } else {
+        QrCameraPreview(modifier = Modifier.fillMaxSize()) { codes ->
+            if (codes.isNotEmpty()) {
                 errors.clear()
             }
-            for (code in it) {
-                try {
-                    val scanned = ScannedQrCodeV1.decode(code.text)
-                    if (scanned == null) {
-                        errors += ErrorResult(QrErrorReasons.INVALID_FORMAT)
-                        continue
-                    }
+            for (code in codes) {
+                val scanned = ScannedQrCode.decode(code.text)
+                if (scanned == null) {
+                    errors += ErrorState(QrScanResult.InvalidFormat)
+                    continue
+                }
 
-                    if (accepted.find { it.appointment.uuid == scanned.appointmentId && it.user.uuid == scanned.userId } != null) continue
+                if (accepted.canIgnore(scanned)) continue
 
-                    val appointment = appointments.find { it.uuid == scanned.appointmentId }
-                    if (appointment == null) {
-                        val actual = storage.appointments[scanned.appointmentId]
-                        if (actual.size != 1) {
-                            errors += ErrorResult(QrErrorReasons.INVALID_APPOINTMENT, if (RuntimeInfo.debug) scanned.appointmentId.toString() else null)
-                            continue
-                        }
-                        val course = storage.courses[actual.first().course]!!
-                        val expected = appointments.find { it.course == course.id }
-                        if (expected == null) {
-                            errors += ErrorResult(QrErrorReasons.INVALID_COURSE, course.name)
-                            continue
-                        }
+                val result = QrScanUtil.scan(storage, appointments, scanned)
 
-                        errors += ErrorResult(QrErrorReasons.WRONG_APPOINTMENT, actual.first().start.toString()) // TODO: format date
-                        continue
-                    }
 
-                    val course = storage.courses[appointment.course]!!
-
-                    val site = storage.sites[course.site]!!
-                    val user = storage.users[site, scanned.userId]
-
-                    delayed = AcceptedResult(course, appointment, scanned.userId)
-
-                    if (user == null) {
-                        errors += ErrorResult(QrErrorReasons.UNKNOWN_USER, if (RuntimeInfo.debug) "User: ${scanned.userId}; Course: ${course.uuid}" else null)
-                        continue
-                    }
-
-                    val invalid = getErrorReason(storage, course, appointment, user)
-
-                    if (invalid != null) {
-                        val details = if (appointments.size == 1) user.fullname else "${user.fullname} (${course.name})"
-                        errors += ErrorResult(invalid, details)
-                        continue
-                    }
-
+                if (result is QrScanResult.Accepted) {
                     delayed = null
                     haptic.invoke(HapticFeedbackType.Confirm)
-
-                    if (confirmation) {
-                        if (!autoScan) navigation.pop()
-                        val account = storage.accounts.getTutorAccount(appointment)!!
-                        navigation.navigate(ScanQrConfirmRoute(account, course, appointment, scanned.userId), NavigationStackPolicy.IGNORE_SAME_TYPE)
+                    if (confirm) {
+                        if (!auto) {
+                            navigation.pop()
+                        }
+                        navigation.navigate(ScanQrConfirmRoute(result.appointment, result.user.uuid))
                         break
                     } else {
-                        accepted += AcceptedState(course, appointment, user)
+                        accepted += AcceptedState(result)
+                        continue
                     }
-                } catch (_: SerializationException) {
-                    errors += ErrorResult(QrErrorReasons.INVALID_DATA)
-                } catch (error: Throwable) {
-                    errors += ErrorResult(QrErrorReasons.OTHER, error.message)
                 }
+                if (result !is QrScanResult.Error) continue // crash?
+
+                errors += ErrorState(result)
+
+                if (result !is QrScanResult.SoftError) {
+                    delayed = null
+                    continue
+                }
+
+                delayed = result
             }
         }
 
@@ -209,8 +118,13 @@ fun ScanQrAppointmentScreen(appointment: Appointment) {
 
 @Composable
 fun QrScanAnyScreen() {
+    val navigation = LocalNavigation.current
     val time = useTime()
     val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
+
+    if (appointments.isEmpty()) {
+        return navigation.pop()
+    }
 
     QrScanScreen(appointments)
 }

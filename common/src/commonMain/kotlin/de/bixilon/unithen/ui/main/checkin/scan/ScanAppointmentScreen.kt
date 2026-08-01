@@ -88,7 +88,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
                     }
                 }
                 if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {
-                    FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(account, course, appointment)) }) {
+                    FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(course, appointment)) }) {
                         Icon(Icons.Filled.QrCodeScanner, "scan")
                     }
                 }

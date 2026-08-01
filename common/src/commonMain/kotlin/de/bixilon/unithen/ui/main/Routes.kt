@@ -36,9 +36,9 @@ object ScanAnyRoute : NavigationRoute
 
 
 data class ScanAppointmentRoute(val appointment: Appointment) : NavigationRoute
-data class ScanQrAppointmentRoute(val account: Account, val course: Course, val appointment: Appointment) : NavigationRoute
+data class ScanQrAppointmentRoute(val course: Course, val appointment: Appointment) : NavigationRoute
 
-data class ScanQrConfirmRoute(val account: Account, val course: Course, val appointment: Appointment, val userId: Uuid) : NavigationRoute
+data class ScanQrConfirmRoute(val appointment: Appointment, val userId: Uuid) : NavigationRoute
 
 data class AccountDetailsRoute(val account: Account) : NavigationRoute
 

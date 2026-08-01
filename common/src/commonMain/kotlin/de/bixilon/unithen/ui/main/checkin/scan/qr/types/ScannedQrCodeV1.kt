@@ -27,9 +27,7 @@ data class ScannedQrCodeV1(
 
         fun decode(data: String): ScannedQrCodeV1? {
             val text = data.trim()
-            if (!text.startsWith("{")) {
-                return null
-            }
+            if (!text.startsWith("{")) return null
 
             return Jackson.MAPPER.decodeFromString<ScannedQrCodeV1>(text)
         }

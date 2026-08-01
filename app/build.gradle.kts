@@ -118,7 +118,3 @@ dependencies {
         exclude("androidx.appcompat", "appcompat")
     }
 }
-
-tasks.withType<Test> {
-    maxParallelForks = Runtime.getRuntime().availableProcessors()
-}

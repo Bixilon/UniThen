@@ -24,7 +24,7 @@ import kotlin.time.Duration
 fun RepeatedEffect(interval: Interval, executor: suspend () -> Unit) {
     val navigation = LocalNavigation.current
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(interval) {
         while (true) {
             try {
                 executor.invoke()

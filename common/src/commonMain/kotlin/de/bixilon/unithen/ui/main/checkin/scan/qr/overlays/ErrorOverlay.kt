@@ -10,21 +10,65 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.checkin.scan.qr
+package de.bixilon.unithen.ui.main.checkin.scan.qr.overlays
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateSetOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateSet
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.error.ErrorBox
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
+import de.bixilon.unithen.ui.util.TimeFormatUtil
+import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.i18n
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
+
+data class ErrorState(
+    val result: QrScanResult.Error,
+) {
+    val expires = TimeSource.Monotonic.markNow() + 1.seconds
+}
 
 @Composable
-fun ErrorOverlay(errors: List<ErrorResult>) {
+fun rememberErrorStates(): SnapshotStateSet<ErrorState> {
+    val errors = remember { mutableStateSetOf<ErrorState>() }
+
+    RepeatedEffect(100.milliseconds) {
+        val now = TimeSource.Monotonic.markNow()
+        errors.removeAll { it.expires < now }
+    }
+
+    return errors
+}
+
+@Composable
+private fun Error(state: ErrorState) {
+    val details = when (state.result) {
+        is QrScanResult.AlreadyCheckedIn -> state.result.user.fullname
+        is QrScanResult.CheckInPending -> state.result.user.fullname
+        is QrScanResult.CheckOutPending -> state.result.user.fullname
+        is QrScanResult.NotEnrolled -> state.result.user.fullname
+        is QrScanResult.Rejected -> state.result.error
+        is QrScanResult.WrongAppointment -> TimeFormatUtil.formatTimespam(state.result.appointment.start, state.result.appointment.end)
+        is QrScanResult.WrongCourse -> state.result.course.name
+        else -> null
+    }
+    ErrorBox(state.result.label.i18n(), details)
+    // TODO: Show expiring timer
+}
+
+
+@Composable
+fun ErrorOverlay(errors: Set<ErrorState>) {
     if (errors.isEmpty()) return
 
     Box(
@@ -43,7 +87,7 @@ fun ErrorOverlay(errors: List<ErrorResult>) {
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             for (error in errors) {
-                ErrorBox(error.reason.label.i18n(), error.details)
+                Error(error)
             }
         }
     }

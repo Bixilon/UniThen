@@ -47,7 +47,6 @@
     <string name="sort_firstname">Vorname</string>
     <string name="sort_lastname">Nachname</string>
     <string name="scan_error_invalid_format">Ungültiges Format!</string>
-    <string name="scan_error_invalid_data">Ungültige Daten!</string>
     <string name="scan_error_invalid_appointment">Ungültiger Termin (Falscher Kurs?)</string>
     <string name="scan_error_invalid_course">Ungültiger Kurs!</string>
     <string name="scan_error_unknown_user">Unbekannter Teilnehmer!</string>

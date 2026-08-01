@@ -54,6 +54,8 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
         return
     }
 
+    // TODO: Use QrScanUtil.scan
+
     if (success) return ScanQrConfirmed(user, appointment)
     if (error != null) return ScanQrError(user, error!!, appointment)
     if (loading) return ScanQrLoading(user, appointment)

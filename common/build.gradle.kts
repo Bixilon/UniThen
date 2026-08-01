@@ -181,3 +181,7 @@ project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
         .flatMap { it.binaries }
         .forEach { compilationUnit -> compilationUnit.linkerOpts("-lsqlite3") }
 }
+
+tasks.withType<Test> {
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
+}
