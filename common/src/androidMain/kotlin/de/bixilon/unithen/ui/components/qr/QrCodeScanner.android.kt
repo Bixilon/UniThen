@@ -43,9 +43,6 @@ import unithen.common.generated.resources.scan_camera_permission
 import unithen.common.generated.resources.scan_starting_camera
 import zxingcpp.BarcodeReader
 import java.util.concurrent.Executors
-import kotlin.time.Clock
-import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.Instant
 
 private val CAMERA_EXECUTOR by lazy { Executors.newFixedThreadPool(2) }
 private val READER by lazy { BarcodeReader(BarcodeReader.Options(formats = setOf(BarcodeReader.Format.QR_CODE), tryRotate = true, tryDenoise = true)) }
@@ -78,7 +75,6 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> 
     val highResolution by rememberSetting(Settings.SCAN_QR_HIGH_RESOLUTION)
     val request by requests.collectAsState(initial = null)
 
-    var last by remember { mutableStateOf(Instant.DISTANT_PAST) }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
@@ -109,13 +105,6 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> 
             .apply {
                 setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
                     val results = imageProxy.use { ignoreAll { READER.read(it) } ?: ignoreAll { READER.read(it.toBitmap()) } } ?: return@setAnalyzer
-                    val now = Clock.System.now()
-                    if (results.isNotEmpty()) {
-                        last = now
-                    }
-                    if (results.isEmpty() && now - last < 600.milliseconds) {
-                        return@setAnalyzer
-                    }
 
                     scope.launch { onResult(results.map { QrCodeResult(it.text!!) }.toSet()) }
                 }
