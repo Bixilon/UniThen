@@ -2,6 +2,7 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr.confirm
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
 import de.bixilon.unithen.settings.store.LocalSettingsStore
@@ -26,13 +27,17 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
     @Composable
     private fun MockedScreen(storage: SqlStorage, appointment: Appointment = storage.appointments[901]!!, userId: String) {
+        val sync = remember { SyncEngine(storage) {} }
+        val navigator = remember { Navigator(MainRoute) }
+        val store = remember { MemorySettingsStore() }
+
         CompositionLocalProvider(
-            LocalNavigation provides Navigator(MainRoute),
+            LocalNavigation provides navigator,
             LocalStorage provides storage,
-            LocalSyncEngine provides SyncEngine(storage) {},
-            LocalSettingsStore provides MemorySettingsStore(),
+            LocalSyncEngine provides sync,
+            LocalSettingsStore provides store,
         ) {
-            ScanQrConfirmScreen(appointment, userId.toUuid())
+            ScanQrConfirmScreen(appointment, remember { userId.toUuid() })
         }
     }
 

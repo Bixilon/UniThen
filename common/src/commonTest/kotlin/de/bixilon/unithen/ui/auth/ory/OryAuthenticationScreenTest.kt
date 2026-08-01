@@ -13,7 +13,9 @@ class OryAuthenticationScreenTest : AbstractComposeUiTest() {
 
     @Test
     fun `display card correctly with name`() = runComposeUiTest {
-        setContent { FlowRow { OidcCard(OryConfig.OryOidc("oidc-tum", "oidc-tum", null)) {} } }
+        val config = OryConfig.OryOidc("oidc-tum", "oidc-tum", null)
+
+        setContent { FlowRow { OidcCard(config) {} } }
 
         waitUntilText("Technische").assertIsDisplayed()
     }

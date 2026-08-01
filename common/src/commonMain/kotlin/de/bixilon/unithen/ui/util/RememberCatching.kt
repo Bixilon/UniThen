@@ -15,10 +15,9 @@ package de.bixilon.unithen.ui.util
 import androidx.compose.runtime.*
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
@@ -27,7 +26,7 @@ fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
 
 
     LaunchedEffect(key) {
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             try {
                 value = invokable.invoke()
             } catch (error: Throwable) {
@@ -48,7 +47,7 @@ fun <T> rememberAsync(vararg keys: Any?, invokable: suspend () -> T): T? {
 
 
     LaunchedEffect(*keys) {
-        CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.IO) {
             try {
                 value = invokable.invoke()
             } catch (error: Throwable) {

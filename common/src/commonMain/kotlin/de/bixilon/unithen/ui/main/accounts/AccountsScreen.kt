@@ -45,9 +45,9 @@ import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import unithen.common.generated.resources.*
 
 @Composable
@@ -79,7 +79,7 @@ private fun Remove(account: Account): (() -> Unit)? {
     val toast = useToast()
 
     LaunchedEffect(Unit) {
-        CoroutineScope(Dispatchers.Main).launch {
+        withContext(Dispatchers.IO) {
             try {
                 // TODO: Revoke token
                 storage.accounts.remove(account)

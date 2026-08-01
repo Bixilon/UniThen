@@ -19,9 +19,11 @@ class EmailAuthenticationScreenTest : AbstractComposeUiTest() {
     private fun ComposeUiTest.withMockScreen() {
         val site = Site(1, "test.de", "na", null, Instant.DISTANT_PAST)
         val config = OryConfig(Uuid.random(), "test", listOf())
+
+        val navigator = Navigator(MainRoute)
         setContent {
             CompositionLocalProvider(
-                LocalNavigation provides Navigator(MainRoute)
+                LocalNavigation provides navigator,
             ) {
                 EmailAuthenticationScreen(site, config)
             }

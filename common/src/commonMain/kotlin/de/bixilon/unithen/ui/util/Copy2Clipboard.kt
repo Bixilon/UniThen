@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.*
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
@@ -28,7 +27,6 @@ import kotlinx.coroutines.launch
 
 expect suspend fun Clipboard.setText(text: String)
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Copy2Clipboard(text: String, modifier: Modifier = Modifier) {
     val clipboard = LocalClipboard.current

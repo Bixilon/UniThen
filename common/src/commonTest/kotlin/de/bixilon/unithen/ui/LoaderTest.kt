@@ -15,6 +15,7 @@ package de.bixilon.unithen.ui
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -29,10 +30,13 @@ import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalTestApi::class)
 class LoaderTest : AbstractComposeUiTest() {
+
     @Composable
-    private fun TestLoader(helper: TestSqlHelper = TestSqlHelper()) {
+    private fun TestLoader(helper: TestSqlHelper) {
+        val storage = remember { SqlStorage(helper) }
+
         CompositionLocalProvider(
-            LocalStorage.provides(SqlStorage(helper)),
+            LocalStorage provides storage,
         ) {
             Loader { Text("Content") }
         }
@@ -40,12 +44,13 @@ class LoaderTest : AbstractComposeUiTest() {
 
     @Test
     fun `initial view while loading`() = runComposeUiTest {
+        val helper = object : TestSqlHelper() {
+            override suspend fun load() {
+                delay(100.seconds)
+            }
+        }
         setContent {
-            TestLoader(object : TestSqlHelper() {
-                override suspend fun load() {
-                    delay(100.seconds)
-                }
-            })
+            TestLoader(helper)
         }
 
         waitUntilText("Loading database")
@@ -53,12 +58,13 @@ class LoaderTest : AbstractComposeUiTest() {
 
     @Test
     fun `crash while loading`() = runComposeUiTest {
+        val helper = object : TestSqlHelper() {
+            override suspend fun load() {
+                throw IllegalStateException("Expected crash")
+            }
+        }
         setContent {
-            TestLoader(object : TestSqlHelper() {
-                override suspend fun load() {
-                    throw IllegalStateException("Expected crash")
-                }
-            })
+            TestLoader(helper)
         }
 
         waitUntilText("Expected crash").assertIsDisplayed()
@@ -66,12 +72,13 @@ class LoaderTest : AbstractComposeUiTest() {
 
     @Test
     fun `load content after 10ms`() = runComposeUiTest {
+        val helper = object : TestSqlHelper() {
+            override suspend fun load() {
+                delay(10.milliseconds)
+            }
+        }
         setContent {
-            TestLoader(object : TestSqlHelper() {
-                override suspend fun load() {
-                    delay(10.milliseconds)
-                }
-            })
+            TestLoader(helper)
         }
 
         waitUntilText("Content").assertIsDisplayed()

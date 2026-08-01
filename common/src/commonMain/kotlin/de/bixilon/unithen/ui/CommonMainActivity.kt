@@ -13,9 +13,6 @@
 package de.bixilon.unithen.ui
 
 import androidx.compose.runtime.*
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
-import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
-import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
@@ -48,10 +45,9 @@ import de.bixilon.unithen.ui.util.DelayedContent
 import de.bixilon.unithen.ui.util.LocalUrlHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.loading_database
 import kotlin.time.Duration.Companion.milliseconds
@@ -141,15 +137,15 @@ fun Loader(content: @Composable () -> Unit) {
     var loaded by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
+        try {
+            withContext(Dispatchers.IO) {
                 storage.helper.load()
-            } catch (thrown: Throwable) {
-                thrown.printStackTrace()
-                error = thrown
-            } finally {
-                loaded = true
             }
+        } catch (thrown: Throwable) {
+            thrown.printStackTrace()
+            error = thrown
+        } finally {
+            loaded = true
         }
     }
 
@@ -163,14 +159,6 @@ fun Loader(content: @Composable () -> Unit) {
     error?.let { CrashScreen("Error during database loading", it); return }
 
     if (!loaded) return
-
-    LaunchedEffect(Unit) {
-        val count = catchAll { storage.sites.count } ?: return@LaunchedEffect
-        if (count == 0) {
-            // TODO: sync ui with this?
-            CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { ignoreAll { storage.sites.add(it) } } }
-        }
-    }
 
     content.invoke()
 }

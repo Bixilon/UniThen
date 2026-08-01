@@ -28,14 +28,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
+import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.toBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.add_account_title
 
@@ -92,7 +99,16 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
 
 @Composable
 fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
+    val storage = LocalStorage.current
     val sites = rememberStorageAsync { sites.all() } ?: return
+
+    LaunchedEffect(Unit) {
+        val count = catchAll { storage.sites.count } ?: return@LaunchedEffect
+        if (count == 0) {
+            // TODO: sync ui with this?
+            withContext(Dispatchers.IO) { DefaultStorage.SITES.forEach { ignoreAll { storage.sites.add(it) } } }
+        }
+    }
 
     if (sites.isEmpty()) {
         AddSiteDialog(null, callback)
@@ -110,6 +126,7 @@ fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
 
         AddSiteButton(callback) // TODO: FloatingActionButton?
     }
+
 }
 
 
