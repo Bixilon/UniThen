@@ -9,3 +9,8 @@ CREATE TABLE login_flows
 
     FOREIGN KEY (site) REFERENCES sites (id)
 );
+
+
+ALTER TABLE accounts
+    RENAME COLUMN session_key TO authentication
+;

@@ -27,6 +27,7 @@ import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.util.Jackson
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -37,16 +38,16 @@ class AccountTable(
     operator fun get(id: Key) = single(AccountTable.id eq id)
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, sessionKey: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey))
-    fun update(id: Int, firstname: String? = null, lastname: String? = null, sessionKey: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "session_key" to sessionKey, "fetched" to fetched))
+    fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, authentication: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "authentication" to authentication))
+    fun update(id: Int, firstname: String? = null, lastname: String? = null, authentication: String? = null, fetched: Instant? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname, "authentication" to authentication, "fetched" to fetched))
 
 
     fun update(account: Account, details: UserDetails, authentication: Authentication) {
-        update(account.id, details.firstname, details.lastname, authentication.token)
+        update(account.id, details.firstname, details.lastname, Jackson.MAPPER.encodeToString(authentication))
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, sessionKey to authentication.token, fetched to Instant.DISTANT_PAST)
+        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, Companion.authentication to Jackson.MAPPER.encodeToString(authentication), fetched to Instant.DISTANT_PAST)
 
         return this[id]!! // TODO: cleanup
     }
@@ -78,7 +79,7 @@ class AccountTable(
     }
 
     fun logout(account: Account) {
-        update(account.id, sessionKey = "")
+        update(account.id, authentication = "")
     }
 
 
@@ -119,10 +120,10 @@ class AccountTable(
         val uuid = column(Account::uuid)
         val firstname = column(Account::firstname)
         val lastname = column(Account::lastname)
-        val sessionKey = column(Account::sessionKey)
+        val authentication = column(Account::authentication)
         val fetched = column(Account::fetched)
 
-        override val columns = listOf(id, site, uuid, firstname, lastname, sessionKey, fetched)
+        override val columns = listOf(id, site, uuid, firstname, lastname, authentication, fetched)
 
         override fun map(cursor: SQLiteHelper.Cursor) = Account(cursor.getInt(0), cursor.getInt(1), cursor.getUUID(2), cursor.getString(3), cursor.getString(4), cursor.getStringOrNull(5), cursor.getInstant(6))
     }

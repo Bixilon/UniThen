@@ -13,8 +13,7 @@
 package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
-import de.bixilon.unithen.api.authentication.CookieAuthentication
-import de.bixilon.unithen.api.authentication.OryTokenAuthentication
+import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
@@ -31,7 +30,7 @@ data class Account(
     val firstname: String,
     val lastname: String,
 
-    val sessionKey: String?,
+    val authentication: String?,
 
     val fetched: Instant,
 ) : DbKeyed {
@@ -39,13 +38,9 @@ data class Account(
     val fullname get() = "$firstname $lastname"
 
     fun api(site: Site): AuthenticatedUniNowApi {
-        val authentication = when {
-            sessionKey.isNullOrBlank() -> throw AuthenticationException("Session token is blank!", site.host)
-            sessionKey.startsWith("ory_") -> OryTokenAuthentication(sessionKey)
-            else -> CookieAuthentication(sessionKey)
-        }
+        if (authentication.isNullOrBlank()) throw AuthenticationException("Session token is blank!", site.host)
 
-        return AuthenticatedUniNowApi(site.host, authentication)
+        return AuthenticatedUniNowApi(site.host, Authentication.of(authentication))
     }
 
 

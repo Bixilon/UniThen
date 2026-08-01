@@ -12,6 +12,9 @@
 
 package de.bixilon.unithen.util
 
+import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.api.graphql.types.location.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -29,6 +32,14 @@ object Jackson {
         ignoreUnknownKeys = true
         decodeEnumsCaseInsensitive = true
         explicitNulls = false
+
+        serializersModule = SerializersModule {
+            polymorphic(Authentication::class) {
+                classDiscriminator = "type"
+                subclass(CookieAuthentication::class, CookieAuthentication.serializer())
+                subclass(OryTokenAuthentication::class, OryTokenAuthentication.serializer())
+            }
+        }
     }
 
     val GRAPHQL = Json {

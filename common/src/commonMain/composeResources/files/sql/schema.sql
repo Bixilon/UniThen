@@ -43,7 +43,7 @@ CREATE TABLE accounts (
   firstname VARCHAR(255) NOT NULL,
   lastname VARCHAR(255) NOT NULL,
 
-  session_key VARCHAR(1024),
+  authentication VARCHAR(1024),
 
   fetched INTEGER,
 

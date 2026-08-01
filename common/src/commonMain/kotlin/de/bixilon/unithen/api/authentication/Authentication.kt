@@ -12,11 +12,21 @@
 
 package de.bixilon.unithen.api.authentication
 
+import de.bixilon.unithen.util.Jackson
 import io.ktor.client.request.*
 
 
 interface Authentication {
-    val token: String
+    val type: String
 
     fun authenticate(request: HttpRequestBuilder)
+
+    companion object {
+
+        fun of(data: String) = when {
+            data.isBlank() -> throw IllegalArgumentException("Data is blank!")
+            data.startsWith("{") -> Jackson.MAPPER.decodeFromString<Authentication>(data)
+            else -> CookieAuthentication(data)
+        }
+    }
 }

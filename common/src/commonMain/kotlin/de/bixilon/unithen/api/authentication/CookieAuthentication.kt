@@ -14,10 +14,21 @@ package de.bixilon.unithen.api.authentication
 
 import de.bixilon.unithen.ui.auth.WEB_SESSION_COOKIE_NAME
 import io.ktor.client.request.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+const val COOKIE_TYPE = "cookie"
+
+@Serializable
+@SerialName(COOKIE_TYPE)
 data class CookieAuthentication(
-    override val token: String,
+    val token: String,
 ) : Authentication {
+    override val type get() = COOKIE_TYPE
+
+    init {
+        require(token.isNotBlank())
+    }
 
     override fun authenticate(request: HttpRequestBuilder) {
         request.headers["Cookie"] = "${WEB_SESSION_COOKIE_NAME}=$token"

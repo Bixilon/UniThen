@@ -27,8 +27,8 @@ object StorageTestUtil {
         return sites.add(name, host, null)
     }
 
-    fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", sessionKey: String = "a"): Account {
-        return accounts.add(site, UserDetails(uuid, firstname, lastname), CookieAuthentication(sessionKey))
+    fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: String = "a"): Account {
+        return accounts.add(site, UserDetails(uuid, firstname, lastname), CookieAuthentication(authentication))
     }
 
     fun SqlStorage.event(site: Site = site(), uuid: Uuid = Uuid.random(), name: String = "Test event", start: Instant = Clock.System.now(), end: Instant = Clock.System.now()): Event {

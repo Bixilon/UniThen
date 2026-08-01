@@ -13,10 +13,22 @@
 package de.bixilon.unithen.api.authentication
 
 import io.ktor.client.request.*
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+
+const val ORY_TYPE = "ory"
+
+@Serializable
+@SerialName(ORY_TYPE)
 data class OryTokenAuthentication(
-    override val token: String,
+    val token: String,
 ) : Authentication {
+    override val type get() = ORY_TYPE
+
+    init {
+        require(token.isNotBlank())
+    }
 
     override fun authenticate(request: HttpRequestBuilder) {
         request.headers["Authorization"] = "Bearer $token"
