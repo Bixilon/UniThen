@@ -1,25 +1,60 @@
 package de.bixilon.unithen.ui.auth.ory
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import de.bixilon.unithen.ui.containers.LoadingContainer
-import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.*
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
+private fun Fallback() {
+    Text("If you are on desktop or custom urls don't work on your device, please paste the url below (starting with uninow://)")
+
+    val state = rememberTextFieldState()
+    TextField(state, modifier = Modifier.fillMaxWidth(), lineLimits = TextFieldLineLimits.SingleLine)
+
+    if (state.text.startsWith("uninow://")) {
+        CompositionLocalProvider(
+            LocalUrlIntent provides state.text.toString()
+        ) {
+            LocalUrlHandler()
+        }
+    }
+}
+
+@Composable
 fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
-    val navigator = LocalNavigation.current
     val handler = LocalUriHandler.current
     var url by remember { mutableStateOf<String?>(null) }
 
-    useAsyncNetwork(true) {
+    val fetch = useAsyncNetwork(true) {
         val response = ory.loginOidc(provider)
 
         handler.openUri(response.redirectBrowserTo)
         url = response.redirectBrowserTo
-        navigator.pop()
     }
 
-    LoadingContainer("Getting oidc redirect url")
+    if (fetch.active) {
+        LoadingContainer("Getting oidc redirect url...")
+        return
+    }
+
+    Column {
+        Text("Please complete authentication in your browser...")
+        val foreground = rememberForeground()
+
+        if (foreground) {
+            DelayedContent(5.seconds) {
+                Fallback()
+            }
+        }
+    }
 }

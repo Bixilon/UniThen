@@ -22,7 +22,6 @@ import de.bixilon.unithen.ui.navigation.NavigationRoute
 import kotlin.uuid.Uuid
 
 object MainRoute : NavigationRoute
-object AddAccountRoute : NavigationRoute
 object AboutRoute : NavigationRoute
 
 object AccountsRoute : NavigationRoute
@@ -56,6 +55,7 @@ data class CrashRoute(val exception: Throwable) : NavigationRoute
 
 interface AuthenticationRoute : NavigationRoute
 
+object AddAccountRoute : AuthenticationRoute
 data class AuthenticateRoute(val host: String) : AuthenticationRoute
 
 data class LegacyAuthenticationRoute(val host: String) : AuthenticationRoute

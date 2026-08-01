@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
-import de.bixilon.unithen.ui.main.AuthenticateRoute
+import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.main.OidcAuthenticationCallbackRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import io.ktor.http.*
@@ -25,7 +25,7 @@ fun LocalUrlHandler() {
 
             if (code == null || flowId == null) return@LaunchedEffect
 
-            navigator.popIf { it is AuthenticateRoute }
+            navigator.popIf { it is AuthenticationRoute }
             navigator.navigate(OidcAuthenticationCallbackRoute(flowId, code))
         }
     }
