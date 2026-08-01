@@ -23,18 +23,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 
 @Composable
-fun SessionCookieAuthentication(host: String, callback: (Authentication) -> Unit) {
+fun SessionCookieAuthentication(host: String, callback: (CookieAuthentication) -> Unit) {
     val state = rememberTextFieldState()
 
     Screen {
         ScreenTitle("Cookie authentication")
-        Text("Please paste your session cookie from $host (ory-session) below:")
+        Text("Please paste your session cookie from $host (${WEB_SESSION_COOKIE_NAME}) below:")
         Text("If you don't know how this works, you must visit the website, login and then press [F12], check in the network tab and find the \"Cookie\" header and extract it.")
         TextField(state, modifier = Modifier.fillMaxWidth(), lineLimits = TextFieldLineLimits.SingleLine)
 

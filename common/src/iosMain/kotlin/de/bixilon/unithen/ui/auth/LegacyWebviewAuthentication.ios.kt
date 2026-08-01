@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.UIKitView
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.HttpUtil
-import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import platform.Foundation.NSHTTPCookie
 import platform.Foundation.NSURL
@@ -36,7 +35,7 @@ import platform.darwin.NSObject
 
 
 @Composable
-actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit) {
+actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit) {
     var _host by remember { mutableStateOf("") }
 
     Column {

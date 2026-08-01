@@ -25,16 +25,30 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingContainer(text: String, icon: ImageVector? = null, modifier: Modifier = Modifier) {
+fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
     Box(modifier = modifier
         .fillMaxSize()
         .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            CircularProgressIndicator(modifier = Modifier.size(300.dp))
+            Spacer(Modifier.height(30.dp))
+            Text(text, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+    }
+}
+
+@Composable
+fun LoadingContainer(text: String, icon: ImageVector, modifier: Modifier = Modifier) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(icon, contentDescription = "", modifier = Modifier.size(300.dp))
+
             Row(verticalAlignment = Alignment.CenterVertically) {
-                icon?.let { Image(it, contentDescription = "", modifier = Modifier.size(300.dp)) }
                 CircularProgressIndicator()
 
-                Spacer(Modifier.width(30.dp))
+                Spacer(Modifier.width(15.dp))
 
                 Text(text, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

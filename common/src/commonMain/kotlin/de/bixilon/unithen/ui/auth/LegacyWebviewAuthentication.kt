@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui.auth
 
 import androidx.compose.runtime.Composable
-import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.ui.main.AuthenticationSyncRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -22,7 +22,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 const val WEB_SESSION_COOKIE_NAME = "ory-session"
 
 @Composable
-expect fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit)
+expect fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit)
 
 
 @Composable

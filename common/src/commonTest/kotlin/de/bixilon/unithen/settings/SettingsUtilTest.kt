@@ -37,8 +37,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(BOOLEAN)
 
             assertEquals(a, b)
-            a = !a
-            assertEquals(a, b)
+            LaunchedEffect(Unit) {
+                a = !a
+                assertEquals(a, b)
+            }
         }
     }
 
@@ -49,8 +51,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(INT)
 
             assertEquals(a, b)
-            a++
-            assertEquals(a, b)
+            LaunchedEffect(Unit) {
+                a++
+                assertEquals(a, b)
+            }
         }
     }
 }

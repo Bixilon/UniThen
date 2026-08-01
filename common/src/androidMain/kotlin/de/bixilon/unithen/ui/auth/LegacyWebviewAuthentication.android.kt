@@ -32,12 +32,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
-import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 
 
 @Composable
-actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit) {
+actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit) {
     var view: WebView? by remember { mutableStateOf(null) }
     var canGoBack by remember { mutableStateOf(false) }
     var _host by remember { mutableStateOf("") }
@@ -61,8 +61,6 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) 
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
         )
-
-        // TODO: Use Android Custom tabs, but that kind of sucks, cookie sniffing is not possible. This can probably only be done better with cooperation with UniNow (proper oauth flow)
 
         AndroidView(modifier = Modifier.fillMaxHeight(), factory = { context ->
             WebView(context).apply {

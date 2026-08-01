@@ -13,9 +13,9 @@
 package de.bixilon.unithen.ui.auth
 
 import androidx.compose.runtime.Composable
-import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.CookieAuthentication
 
 @Composable
-actual fun LegacyWebviewAuthentication(host: String, callback: (Authentication) -> Unit) {
+actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit) {
     SessionCookieAuthentication(host, callback)
 }

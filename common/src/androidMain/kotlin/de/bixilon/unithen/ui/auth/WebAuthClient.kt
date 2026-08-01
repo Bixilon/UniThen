@@ -17,13 +17,12 @@ import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import de.bixilon.kutil.uri.URIUtil.toURI
-import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.util.CookieParser
 
 open class WebAuthClient(
     val host: String,
-    val callback: (Authentication) -> Unit,
+    val callback: (CookieAuthentication) -> Unit,
 ) : WebViewClient() {
 
     init {
@@ -36,7 +35,7 @@ open class WebAuthClient(
         try {
             val current = url.toURI()
             if (current.host != host) return
-        } catch (error: Throwable) {
+        } catch (_: Throwable) {
             return
         }
         val cookies = CookieManager.getInstance().getCookie(url)?.let(CookieParser::parse) ?: return
