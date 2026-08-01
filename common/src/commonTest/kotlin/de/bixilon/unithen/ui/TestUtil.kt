@@ -18,7 +18,12 @@ import kotlin.time.Duration.Companion.seconds
 
 
 @OptIn(ExperimentalTestApi::class)
-fun ComposeUiTest.waitUntilText(text: String, timeout: Duration = 1.seconds): SemanticsNodeInteraction {
-    waitUntilAtLeastOneExists(hasText(text, substring = true), timeout.inWholeMilliseconds)
-    return onNode(hasText(text, substring = true))
+fun ComposeUiTest.waitUntil(matcher: SemanticsMatcher, timeout: Duration = 1.seconds): SemanticsNodeInteraction {
+    waitUntilAtLeastOneExists(matcher, timeout.inWholeMilliseconds)
+    return onNode(matcher)
+}
+
+@OptIn(ExperimentalTestApi::class)
+fun ComposeUiTest.waitUntilText(text: String, timeout: Duration = 1.seconds, substring: Boolean = true, matcher: SemanticsMatcher? = null): SemanticsNodeInteraction {
+    return waitUntil(hasText(text, substring = substring).let { matcher?.and(it) ?: it }, timeout)
 }
