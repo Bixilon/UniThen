@@ -4,7 +4,7 @@
 
 ![](https://shields-io.bixilon.de/f-droid/v/de.bixilon.unithen?style=for-the-badge&logo=fdroid)
 ![](https://shields-io.bixilon.de/gitlab/v/release/bixilon/unithen?branch=master&gitlab_url=https%3A%2F%2Fgitlab.bixilon.de&style=for-the-badge)
-<br>
+
 This app is for performing the QR code check in (and a bit more) for [UniNow](https://uninow.com/) courses.
 It can be used for any digital booking system (DBS) hosted by them, e.g. for the [ZHS München](https://kurse.zhs-muenchen.de).
 
