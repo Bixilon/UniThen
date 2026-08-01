@@ -31,6 +31,7 @@ import de.bixilon.unithen.debug.DebugMainActivity
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.unithen.ui.util.LocalUrlIntent
 import de.bixilon.unithen.util.AndroidUtil.activity
 
 
@@ -39,6 +40,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val uri = intent.data?.toString()
 
         setContent {
             BackHandler { activity?.finish() }
@@ -55,6 +58,7 @@ class MainActivity : ComponentActivity() {
                         CompositionLocalProvider(
                             LocalStorage provides UniThen.STORAGE,
                             LocalSettingsStore provides UniThen.SETTINGS,
+                            LocalUrlIntent provides uri,
                         ) {
                             if (BuildConfig.DEBUG) DebugMainActivity() else CommonMainActivity()
                         }

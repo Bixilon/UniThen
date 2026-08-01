@@ -18,6 +18,7 @@ import de.bixilon.unithen.api.graphql.http.GraphQlRequest
 import de.bixilon.unithen.api.graphql.http.GraphQlResponse
 import de.bixilon.unithen.api.graphql.query.QlQuery
 import de.bixilon.unithen.api.graphql.query.QueryLoader
+import de.bixilon.unithen.api.ory.OryAuthenticationToken
 import de.bixilon.unithen.api.ory.OryLoginFlow
 import de.bixilon.unithen.http.CLIENT
 import de.bixilon.unithen.ui.error.SerializationExceptionData
@@ -107,6 +108,14 @@ open class UniNowApi(
             "return_to" to "uninow://COURSE/login?unithen=$id",
             "return_session_token_exchange_code" to true.toString(),
         )
-        return getJson<OryLoginFlow>("/services/identity/self-service/login/api", parameters)
+        return getJson("/services/identity/self-service/login/api", parameters)
+    }
+
+    suspend fun exchangeToken(exchangeToken: String, code: String): OryAuthenticationToken {
+        val parameters = mapOf(
+            "init_code" to exchangeToken,
+            "code" to code,
+        )
+        return getJson("/services/identity/sessions/token-exchange", parameters)
     }
 }

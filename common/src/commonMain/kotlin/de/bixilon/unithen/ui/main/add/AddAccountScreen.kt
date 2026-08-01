@@ -119,10 +119,7 @@ fun AddAccountScreen() {
 
     BackHandler(site != null) { site = null }
 
-    site?.let {
-        AuthenticationScreen(it)
-        return
-    }
+    site?.let { return AuthenticationScreen(it.host) }
 
     SelectSiteSetupScreen { site = it }
 }

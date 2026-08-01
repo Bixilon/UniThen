@@ -22,7 +22,6 @@ import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.ui.main.AuthenticateRoute
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.*
 import org.jetbrains.compose.resources.getString
@@ -42,7 +41,6 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
     var active by rememberStateOf { false }
     if (active) return ACTIVE
 
-    val storage = catchAll { LocalStorage.current }
     val navigation = catchAll { LocalNavigation.current }
     val toast = useToast()
 
@@ -56,7 +54,7 @@ fun useAsyncNetwork(block: suspend () -> Unit): AsyncNetworkState {
                 block.invoke()
             } catch (error: AuthenticationException) {
                 toast.invoke(Res.string.error_reauthenticate)
-                navigation?.navigate(AuthenticateRoute(storage!!.sites[error.host]!!))
+                navigation?.navigate(AuthenticateRoute(error.host))
             } catch (error: NetworkException) {
                 error.printStackTrace()
                 toast.invoke(getString(Res.string.error_network, error.message ?: ""))

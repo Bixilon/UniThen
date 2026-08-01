@@ -10,12 +10,16 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.auth
+package de.bixilon.unithen.api.authentication
 
-import androidx.compose.runtime.Composable
-import de.bixilon.unithen.ui.auth.ory.OryAuthentication
+import io.ktor.client.request.*
 
-@Composable
-fun AuthenticationScreen(host: String) {
-    OryAuthentication(host)
+data class OryTokenAuthentication(
+    val token: String,
+) : Authentication {
+
+    override fun authenticate(request: HttpRequestBuilder) {
+        // TODO
+        request.headers["Cookie"] = "ory-session=$token"
+    }
 }

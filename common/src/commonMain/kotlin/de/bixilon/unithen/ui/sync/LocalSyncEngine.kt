@@ -19,8 +19,8 @@ import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.sync.SyncEngine
+import de.bixilon.unithen.ui.main.AuthenticateRoute
 import de.bixilon.unithen.ui.main.CrashRoute
-import de.bixilon.unithen.ui.main.ReauthenticateRoute
 import de.bixilon.unithen.ui.navigation.Navigator
 
 val LocalSyncEngine = staticCompositionLocalOf<SyncEngine> { throw IllegalStateException("No sync engine set!") }
@@ -33,7 +33,7 @@ fun rememberSyncEngine(storage: SqlStorage, navigator: Navigator): SyncEngine {
         SyncEngine(storage) {
             when (it) {
                 is NetworkException -> Unit
-                is AuthenticationException -> navigator.navigate(ReauthenticateRoute(storage.sites[it.host]!!))
+                is AuthenticationException -> navigator.navigate(AuthenticateRoute(it.host))
                 else -> navigator.navigate(CrashRoute(it))
             }
         }

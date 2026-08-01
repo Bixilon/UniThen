@@ -53,13 +53,13 @@ object FeatureFlagRoute : NavigationRoute
 
 data class CrashRoute(val exception: Throwable) : NavigationRoute
 
-data class AuthenticateRoute(val site: Site) : NavigationRoute
+data class AuthenticateRoute(val host: String) : NavigationRoute
 
 data class LegacyAuthenticationRoute(val host: String) : NavigationRoute
 data class EmailAuthenticationRoute(val ory: OryConfig) : NavigationRoute
 data class OidcAuthenticationRoute(val ory: OryConfig, val provider: OryConfig.OryOidc) : NavigationRoute
 
-data class OidcAuthenticationCallbackRoute(val code: String) : NavigationRoute
+data class OidcAuthenticationCallbackRoute(val flow: Int, val code: String) : NavigationRoute
 
-data class AuthenticationCallbackRoute(val site: Site, val authentication: Authentication) : NavigationRoute
+data class AuthenticationSyncRoute(val site: Site, val authentication: Authentication) : NavigationRoute
 

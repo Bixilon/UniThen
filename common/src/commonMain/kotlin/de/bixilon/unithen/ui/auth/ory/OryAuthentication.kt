@@ -25,6 +25,8 @@ import de.bixilon.unithen.ui.main.OidcAuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.hours
 
 
 @Composable
@@ -32,7 +34,13 @@ fun OryAuthentication(host: String) {
     val storage = LocalStorage.current
     var flow by remember { mutableStateOf<OryLoginFlow?>(null) }
 
-    val flowFetch = useAsyncNetwork { flow = UniNowApi(host).getLoginFlow() }
+    val stored = remember { storage.flows.create(storage.sites[host]!!, Clock.System.now() + 1.hours) }
+
+    val flowFetch = useAsyncNetwork {
+        val fetched = UniNowApi(host).getLoginFlow(stored.id)
+        storage.flows.update(stored.id, fetched.sessionTokenExchangeToken)
+        flow = fetched
+    }
 
     LaunchedEffect(Unit) { flowFetch.invoke() }
 

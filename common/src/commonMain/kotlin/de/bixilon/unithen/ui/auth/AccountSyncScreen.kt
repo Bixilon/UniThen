@@ -31,6 +31,7 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.main.MainScreens
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
 import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
@@ -71,7 +72,8 @@ fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Acco
 
 
 @Composable
-fun AccountSyncScreen(site: Site, authentication: Authentication, callback: () -> Unit) {
+fun AccountSyncScreen(site: Site, authentication: Authentication) {
+    val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     var account: Account? by rememberStateOf { null }
     var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
@@ -94,7 +96,7 @@ fun AccountSyncScreen(site: Site, authentication: Authentication, callback: () -
         }
     }
 
-    SyncEngineCompleteEffect(synchronize) { callback.invoke() }
+    SyncEngineCompleteEffect(synchronize) { navigation.pop() }
 
 
     SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n())

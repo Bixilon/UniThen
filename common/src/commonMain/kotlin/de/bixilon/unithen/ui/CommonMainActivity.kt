@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui
 
 import androidx.compose.runtime.*
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.storage.DefaultStorage
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
@@ -20,6 +21,7 @@ import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.AuthenticationScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.EmailAuthenticationScreen
+import de.bixilon.unithen.ui.auth.ory.OryOidcCallbackScreen
 import de.bixilon.unithen.ui.auth.ory.OryOidcPrepareScreen
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.error.CrashScreen
@@ -43,8 +45,10 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.rememberSyncEngine
 import de.bixilon.unithen.ui.util.DelayedContent
+import de.bixilon.unithen.ui.util.LocalUrlIntent
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
+import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -111,14 +115,31 @@ fun Navigator.MainNavigator() {
 
         composable<CrashRoute> { CrashScreen(null, it.exception) }
 
-        composable<AddAccountRoute> { AddAccountScreen { pop() } }
-        composable<AuthenticationCallbackRoute> { AccountSyncScreen(it.site, it.authentication) { pop() } }
+        composable<AddAccountRoute> { AddAccountScreen() }
+        composable<AuthenticationSyncRoute> { AccountSyncScreen(it.site, it.authentication) }
 
 
-        composable<AuthenticateRoute> { AuthenticationScreen(it.site) }
-        composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it) }
+        composable<AuthenticateRoute> { AuthenticationScreen(it.host) }
+        composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it.host) }
         composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.ory) }
         composable<OidcAuthenticationRoute> { OryOidcPrepareScreen(it.ory, it.provider) }
+        composable<OidcAuthenticationCallbackRoute> { OryOidcCallbackScreen(it.flow, it.code) }
+    }
+
+    val uri = LocalUrlIntent.current
+    LaunchedEffect(uri) {
+        val url = uri?.let { catchAll { Url(it) } } ?: return@LaunchedEffect
+        if (url.protocol.name == "unithen" && url.host == "COURSE" && url.fullPath == "login") {
+            val code = url.parameters["code"]?.toIntOrNull()
+            val flowId = url.parameters["unithen"]
+
+            if (code == null || flowId == null) {
+                println("Invalid uninow url: $url")
+
+                return@LaunchedEffect
+            }
+            navigate(OidcAuthenticationCallbackRoute(code, flowId))
+        }
     }
 
     CompositionLocalProvider(
