@@ -11,6 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.util.*
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.auth_oidc_complete
+import unithen.common.generated.resources.auth_oidc_loading
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -43,12 +46,12 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     }
 
     if (fetch.active) {
-        LoadingContainer("Getting oidc redirect url...")
+        LoadingContainer(Res.string.auth_oidc_loading.i18n())
         return
     }
 
     Column {
-        Text("Please complete authentication in your browser...")
+        Text(Res.string.auth_oidc_complete.i18n())
         val foreground = rememberForeground()
 
         if (foreground) {

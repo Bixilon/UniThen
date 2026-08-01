@@ -12,7 +12,10 @@ import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.auth_exchanging
 
 
 @Composable
@@ -39,7 +42,7 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
     }
 
     if (exchange.active) {
-        LoadingContainer("Exchanging token...")
+        LoadingContainer(Res.string.auth_exchanging.i18n())
         return
     }
 

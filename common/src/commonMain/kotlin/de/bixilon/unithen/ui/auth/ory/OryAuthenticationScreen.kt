@@ -28,8 +28,9 @@ import de.bixilon.unithen.ui.main.OidcAuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 
@@ -47,7 +48,7 @@ fun OryAuthenticationScreen(host: String) {
     }
 
     if (flowFetch.active) {
-        LoadingContainer("Fetching authentication methods...")
+        LoadingContainer(Res.string.auth_loading_methods.i18n())
         return
     }
 
@@ -59,9 +60,8 @@ private fun FlowError(host: String) {
     val navigation = LocalNavigation.current
 
     Screen {
-        ScreenTitle("Error")
-        ErrorBox("Error fetching login flow!")
-        Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth()) { Text("Try legacy login") }
+        ErrorBox(Res.string.auth_error_flow_title.i18n(), Res.string.auth_error_flow_description.i18n())
+        Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth()) { Text(Res.string.auth_try_legacy.i18n()) }
     }
 }
 
@@ -98,7 +98,7 @@ private fun WithFlow(host: String, config: OryConfig) {
     }
 
     Screen(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        ScreenTitle("Authentication")
+        ScreenTitle(Res.string.auth_title.i18n())
 
         FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), maxItemsInEachRow = 2) {
             for (oidc in config.oidc) {
@@ -111,12 +111,12 @@ private fun WithFlow(host: String, config: OryConfig) {
         Button({ navigation.navigate(EmailAuthenticationRoute(site, config)) }, modifier = Modifier.fillMaxWidth()) {
             Icon(Icons.Filled.Email, "")
             Spacer(Modifier.width(4.dp))
-            Text("Login with email")
+            Text(Res.string.auth_use_email.i18n())
         }
         Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
             Icon(Icons.Filled.Warning, "")
             Spacer(Modifier.width(4.dp))
-            Text("Legacy login")
+            Text(Res.string.auth_try_legacy.i18n())
         }
     }
 }

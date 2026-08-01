@@ -20,8 +20,10 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
 import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import unithen.common.generated.resources.*
 
 
 @Composable
@@ -44,17 +46,17 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
     }
 
     Screen {
-        ScreenTitle("Login")
-        Text("Please login with your email and password:")
+        ScreenTitle(Res.string.auth_email_title.i18n())
+        Text(Res.string.auth_email_description.i18n())
 
         Spacer(Modifier.height(16.dp))
 
         TextField(
             value = email,
             onValueChange = { email = it.removeWhitespaces().lowercase() },
-            label = { Text("E-Mail") },
+            label = { Text(Res.string.auth_email_email.i18n()) },
             singleLine = true,
-            placeholder = { Text("E-Mail") },
+            placeholder = { Text(Res.string.auth_email_email.i18n()) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             modifier = Modifier.fillMaxWidth(),
         )
@@ -64,9 +66,9 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text(Res.string.auth_email_password.i18n()) },
             singleLine = true,
-            placeholder = { Text("Password") },
+            placeholder = { Text(Res.string.auth_email_password.i18n()) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             modifier = Modifier.fillMaxWidth(),
@@ -81,7 +83,7 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
         val disabled = password.isBlank() || '@' !in email || auth.active
 
         Button({ auth.invoke() }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
-            if (auth.active) CircularProgressIndicator() else Text("Login")
+            if (auth.active) CircularProgressIndicator() else Text(Res.string.auth_email_login.i18n())
         }
     }
 }

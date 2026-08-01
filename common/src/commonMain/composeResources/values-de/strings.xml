@@ -130,4 +130,22 @@
     <string name="settings_scan_confirmation_screen">Scan Bestätigung</string>
     <string name="settings_scan_offline">Ignoriere Netzwerkfehler</string>
     <string name="sync_dialog_dismiss">Verstecken</string>
+
+    <string name="auth_email_title">Mit E-Mail anmelden</string>
+    <string name="auth_email_description">Bitte melde dich mit deiner E-Mail und deinem Passwort an:</string>
+    <string name="auth_email_email">E-Mail</string>
+    <string name="auth_email_password">Passwort</string>
+    <string name="auth_email_login">Anmelden</string>
+
+    <string name="auth_title">Anmelden</string>
+    <string name="auth_loading_methods">Lade Anmeldemethoden...</string>
+    <string name="auth_try_legacy">Altes Login</string>
+    <string name="auth_use_email">Mit E-Mail anmelden</string>
+
+    <string name="auth_error_flow_title">Fehler beim Abrufen</string>
+    <string name="auth_error_flow_description">Hast du Internet?</string>
+
+    <string name="auth_exchanging">Token wird ausgetauscht...</string>
+    <string name="auth_oidc_loading">Browser wird für oidc geöffnet...</string>
+    <string name="auth_oidc_complete">Bitte fahre in deinem Browser mit oidc fort!</string>
 </resources>
