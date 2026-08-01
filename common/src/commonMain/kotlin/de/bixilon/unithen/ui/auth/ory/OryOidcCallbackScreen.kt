@@ -2,6 +2,7 @@ package de.bixilon.unithen.ui.auth.ory
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.UniNowApi
 import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.ui.containers.LoadingContainer
@@ -32,7 +33,9 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
         val token = api.exchangeToken(flow.exchangeToken!!, code)
         navigator.pop()
         navigator.navigate(AuthenticationSyncRoute(site, OryTokenAuthentication(token.sessionToken)))
-        storage.flows.delete(flow.id)
+        if (!RuntimeInfo.debug) {
+            storage.flows.delete(flow.id)
+        }
     }
 
     LaunchedEffect(Unit) { exchange.invoke() }
