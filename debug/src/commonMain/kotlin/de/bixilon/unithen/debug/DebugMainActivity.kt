@@ -27,7 +27,7 @@ import de.bixilon.unithen.ui.navigation.Navigator
 fun DebugMainActivity() {
     val navigator = remember { Navigator(DebugRoute) }
 
-    navigator.routes {
+    navigator.Routes {
         composable<MainRoute> { CommonMainActivity() }
         composable<DebugRoute> { DebugScreen() }
         composable<SetupRoute> { SetupScreen() }

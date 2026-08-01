@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui.util.effects
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.time.Delay
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -21,7 +22,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun DelayedEffect(delay: Delay, executor: suspend () -> Unit) {
-    val navigation = LocalNavigation.current
+    val navigation = catchAll { LocalNavigation.current }
 
     LaunchedEffect(Unit) {
         delay(delay)
@@ -29,7 +30,8 @@ fun DelayedEffect(delay: Delay, executor: suspend () -> Unit) {
             executor.invoke()
         } catch (error: Throwable) {
             error.printStackTrace()
-            navigation.navigate(CrashRoute(error))
+            navigation?.navigate(CrashRoute(error))
+            if (navigation == null) throw error
         }
     }
 }

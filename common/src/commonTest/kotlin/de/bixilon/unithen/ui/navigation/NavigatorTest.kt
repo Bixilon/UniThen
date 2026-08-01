@@ -48,7 +48,7 @@ fun TestNavigator(effect: (Navigator) -> Unit) {
     val navigator = remember { Navigator(NoDateRoute) }
 
 
-    navigator.routes {
+    navigator.Routes {
         composable<NoDateRoute> { NoDataScreen() }
         composable<RouteData> { DataScreen(it.text) }
         composable<StateRoute> { StateScreen() }

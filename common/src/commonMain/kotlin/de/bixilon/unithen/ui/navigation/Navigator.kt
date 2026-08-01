@@ -13,10 +13,7 @@
 package de.bixilon.unithen.ui.navigation
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import de.bixilon.kutil.cast.CastUtil.cast
@@ -40,11 +37,13 @@ class Navigator(
         }
     }
 
-    fun routes(builder: Builder.() -> Unit) {
-        if (stack.isNotEmpty()) return
-
-        Builder().apply(builder)
-        navigate(start)
+    @Composable
+    fun Routes(builder: Builder.() -> Unit) {
+        remember(Unit) { Builder().apply(builder) }
+        remember(Unit) {
+            if (stack.isNotEmpty()) return@remember
+            navigate(start)
+        }
     }
 
     @Composable
@@ -91,6 +90,17 @@ class Navigator(
     fun pop() {
         require(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)
+    }
+
+    fun popIf(predicate: (NavigationRoute) -> Boolean) {
+        val iterator = stack.iterator()
+        iterator.next()
+        while (iterator.hasNext()) {
+            val route = iterator.next().route
+            if (predicate(route)) {
+                iterator.remove()
+            }
+        }
     }
 
     fun current() = stack.last()

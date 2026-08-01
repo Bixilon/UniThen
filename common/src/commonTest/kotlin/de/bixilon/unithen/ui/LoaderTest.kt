@@ -17,12 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.v2.runComposeUiTest
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.TestSqlHelper
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.delay
+import kotlin.test.Test
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -37,7 +38,7 @@ class LoaderTest : AbstractComposeUiTest() {
         }
     }
 
-    // @Test
+    @Test
     fun `initial view while loading`() = runComposeUiTest {
         setContent {
             TestLoader(object : TestSqlHelper() {
@@ -47,12 +48,10 @@ class LoaderTest : AbstractComposeUiTest() {
             })
         }
 
-        waitUntilText("Content")
-
-        onNodeWithContentDescription("logo").assertIsDisplayed()
+        waitUntilText("Loading database")
     }
 
-    // @Test
+    @Test
     fun `crash while loading`() = runComposeUiTest {
         setContent {
             TestLoader(object : TestSqlHelper() {
@@ -65,12 +64,12 @@ class LoaderTest : AbstractComposeUiTest() {
         waitUntilText("Expected crash").assertIsDisplayed()
     }
 
-    // @Test
+    @Test
     fun `load content after 10ms`() = runComposeUiTest {
         setContent {
             TestLoader(object : TestSqlHelper() {
                 override suspend fun load() {
-                    delay(10.seconds)
+                    delay(10.milliseconds)
                 }
             })
         }

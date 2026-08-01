@@ -14,6 +14,7 @@ package de.bixilon.unithen.storage.types
 
 import de.bixilon.unithen.api.AuthenticatedUniNowApi
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.storage.DbKeyed
 import de.bixilon.unithen.storage.Key
@@ -30,7 +31,6 @@ data class Account(
     val firstname: String,
     val lastname: String,
 
-    @Deprecated("multiple authentication methods")
     val sessionKey: String?,
 
     val fetched: Instant,
@@ -39,9 +39,13 @@ data class Account(
     val fullname get() = "$firstname $lastname"
 
     fun api(site: Site): AuthenticatedUniNowApi {
-        if (sessionKey.isNullOrBlank()) throw AuthenticationException("Authentication cookie is blank!", site.host)
+        val authentication = when {
+            sessionKey.isNullOrBlank() -> throw AuthenticationException("Session token is blank!", site.host)
+            sessionKey.startsWith("ory_") -> OryTokenAuthentication(sessionKey)
+            else -> CookieAuthentication(sessionKey)
+        }
 
-        return AuthenticatedUniNowApi(site.host, CookieAuthentication(sessionKey))
+        return AuthenticatedUniNowApi(site.host, authentication)
     }
 
 

@@ -9,6 +9,7 @@ import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.AuthenticationSyncRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 
@@ -16,10 +17,11 @@ import de.bixilon.unithen.ui.util.useAsyncNetwork
 @Composable
 fun OryOidcCallbackScreen(flowId: Int, code: String) {
     val navigator = LocalNavigation.current
+    val storage = LocalStorage.current
 
     val flow = rememberStorage { flows[flowId] }
     if (flow == null) {
-        SimpleErrorScreen("Invalid flow", "Is the return url correct or expired?")
+        SimpleErrorScreen("Invalid authentication flow", "Maybe the url is not correct or it expired? Please try again!")
         return
     }
     val site = rememberStorage { sites[flow.site]!! }
@@ -30,6 +32,7 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
         val token = api.exchangeToken(flow.exchangeToken!!, code)
         navigator.pop()
         navigator.navigate(AuthenticationSyncRoute(site, OryTokenAuthentication(token.sessionToken)))
+        storage.flows.delete(flow.id)
     }
 
     LaunchedEffect(Unit) { exchange.invoke() }

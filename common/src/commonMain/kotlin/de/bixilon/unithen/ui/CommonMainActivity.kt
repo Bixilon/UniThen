@@ -45,10 +45,9 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.rememberSyncEngine
 import de.bixilon.unithen.ui.util.DelayedContent
-import de.bixilon.unithen.ui.util.LocalUrlIntent
+import de.bixilon.unithen.ui.util.LocalUrlHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
-import io.ktor.http.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -61,7 +60,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun Navigator.MainNavigator() {
 
-    routes {
+    Routes {
         composable<MainRoute> { MainScreen() }
         composable<AboutRoute> { AboutScreen() }
 
@@ -126,26 +125,11 @@ fun Navigator.MainNavigator() {
         composable<OidcAuthenticationCallbackRoute> { OryOidcCallbackScreen(it.flow, it.code) }
     }
 
-    val uri = LocalUrlIntent.current
-    LaunchedEffect(uri) {
-        val url = uri?.let { catchAll { Url(it) } } ?: return@LaunchedEffect
-        if (url.protocol.name == "unithen" && url.host == "COURSE" && url.fullPath == "login") {
-            val code = url.parameters["code"]?.toIntOrNull()
-            val flowId = url.parameters["unithen"]
-
-            if (code == null || flowId == null) {
-                println("Invalid uninow url: $url")
-
-                return@LaunchedEffect
-            }
-            navigate(OidcAuthenticationCallbackRoute(code, flowId))
-        }
-    }
-
     CompositionLocalProvider(
         LocalNavigation provides this,
     ) {
         Host()
+        LocalUrlHandler()
     }
 }
 
@@ -181,7 +165,8 @@ fun Loader(content: @Composable () -> Unit) {
     if (!loaded) return
 
     LaunchedEffect(Unit) {
-        if (storage.sites.count == 0) {
+        val count = catchAll { storage.sites.count } ?: return@LaunchedEffect
+        if (count == 0) {
             // TODO: sync ui with this?
             CoroutineScope(Dispatchers.IO).launch { DefaultStorage.SITES.forEach { ignoreAll { storage.sites.add(it) } } }
         }

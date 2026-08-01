@@ -1,7 +1,13 @@
 package de.bixilon.unithen.ui.auth.ory
 
+import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.ory.OryAuthenticationToken
 import de.bixilon.unithen.api.ory.OryOidcResponse
+import de.bixilon.unithen.http.CLIENT
+import de.bixilon.unithen.util.Jackson
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlin.uuid.Uuid
 
 data class OryConfig(
@@ -18,7 +24,16 @@ data class OryConfig(
 
 
     suspend fun loginOidc(oidc: OryOidc): OryOidcResponse {
-        TODO()
+        val request = HttpUtil.create(url).apply {
+            method = HttpMethod.Post
+            parameter("provider", oidc.value)
+            accept(ContentType.Application.Json)
+        }
+        val response = CLIENT.get(request)
+
+        if (response.status != HttpStatusCode.UnprocessableEntity) throw IllegalStateException("422 expected: ${response.status}: ${response.bodyAsText()}")
+
+        return Jackson.MAPPER.decodeFromString(response.bodyAsText())
     }
 
     suspend fun loginEmail(email: String, password: String): OryAuthenticationToken {

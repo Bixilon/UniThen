@@ -45,7 +45,8 @@ open class UniNowApi(
         val request = buildRequest(endpoint).apply {
             method = HttpMethod.Get
 
-            data?.forEach { (key, value) -> url.parameters.append(key, value) }
+            data?.forEach { (key, value) -> parameter(key, value) }
+            accept(ContentType.Application.Json)
         }
         val response = ApiLock.withPermit(this.host) { CLIENT.get(request) }
 
@@ -114,7 +115,7 @@ open class UniNowApi(
     suspend fun exchangeToken(exchangeToken: String, code: String): OryAuthenticationToken {
         val parameters = mapOf(
             "init_code" to exchangeToken,
-            "code" to code,
+            "return_to_code" to code,
         )
         return getJson("/services/identity/sessions/token-exchange", parameters)
     }

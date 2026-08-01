@@ -12,9 +12,7 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
-import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.api.authentication.Authentication
-import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SQLiteHelper
@@ -44,11 +42,11 @@ class AccountTable(
 
 
     fun update(account: Account, details: UserDetails, authentication: Authentication) {
-        update(account.id, details.firstname, details.lastname, authentication.cast<CookieAuthentication>().session)
+        update(account.id, details.firstname, details.lastname, authentication.token)
     }
 
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
-        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, sessionKey to authentication.cast<CookieAuthentication>().session, fetched to Instant.DISTANT_PAST)
+        val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, sessionKey to authentication.token, fetched to Instant.DISTANT_PAST)
 
         return this[id]!! // TODO: cleanup
     }

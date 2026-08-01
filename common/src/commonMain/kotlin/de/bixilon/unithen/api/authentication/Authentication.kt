@@ -12,10 +12,11 @@
 
 package de.bixilon.unithen.api.authentication
 
-import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.*
 
 
 interface Authentication {
+    val token: String
 
     fun authenticate(request: HttpRequestBuilder)
 }

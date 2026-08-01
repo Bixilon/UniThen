@@ -183,5 +183,5 @@ CREATE TABLE login_flows (
 
   expires INTEGER,
 
-  FOREIGN KEY (site) REFERENCES sites(id),
+  FOREIGN KEY (site) REFERENCES sites (id)
 );

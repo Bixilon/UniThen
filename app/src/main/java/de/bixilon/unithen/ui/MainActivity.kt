@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
@@ -36,12 +38,13 @@ import de.bixilon.unithen.util.AndroidUtil.activity
 
 
 class MainActivity : ComponentActivity() {
+    private val url = mutableStateOf<String?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val uri = intent.data?.toString()
+        url.value = intent.data?.toString()
 
         setContent {
             BackHandler { activity?.finish() }
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
                         CompositionLocalProvider(
                             LocalStorage provides UniThen.STORAGE,
                             LocalSettingsStore provides UniThen.SETTINGS,
-                            LocalUrlIntent provides uri,
+                            LocalUrlIntent provides url.value,
                         ) {
                             if (BuildConfig.DEBUG) DebugMainActivity() else CommonMainActivity()
                         }
@@ -66,5 +69,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        url.value = intent.data?.toString()
     }
 }

@@ -12,13 +12,14 @@
 
 package de.bixilon.unithen.api.authentication
 
+import de.bixilon.unithen.ui.auth.WEB_SESSION_COOKIE_NAME
 import io.ktor.client.request.*
 
 data class CookieAuthentication(
-    val session: String,
+    override val token: String,
 ) : Authentication {
 
     override fun authenticate(request: HttpRequestBuilder) {
-        request.headers["Cookie"] = "ory-session=$session"
+        request.headers["Cookie"] = "${WEB_SESSION_COOKIE_NAME}=$token"
     }
 }

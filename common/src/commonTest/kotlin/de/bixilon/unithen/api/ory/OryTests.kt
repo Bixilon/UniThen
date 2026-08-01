@@ -35,7 +35,7 @@ class OryTests {
 
     @Test
     fun `parse login flow`() {
-        val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
+        val data = runBlocking { Res.readBytes("files/ory/login_flow.json") }.decodeToString()
 
         val parsed = Jackson.MAPPER.decodeFromString<OryLoginFlow>(data)
 
@@ -45,7 +45,7 @@ class OryTests {
 
     @Test
     fun `convert to ory config`() {
-        val data = OryTests::class.java.getResourceAsStream("/ory/login_flow.json")!!.readAsString()
+        val data = runBlocking { Res.readBytes("files/ory/login_flow.json") }.decodeToString()
 
         val config = Jackson.MAPPER.decodeFromString<OryLoginFlow>(data).toConfig()
 

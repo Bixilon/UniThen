@@ -38,4 +38,17 @@ object HttpUtil {
 
         return request
     }
+
+    suspend fun create(url: String): HttpRequestBuilder {
+        if (RuntimeInfo.debug) {
+            delay(3.seconds)
+        }
+        val request = HttpRequestBuilder()
+        request.apply {
+            url(url); url { protocol = URLProtocol.HTTPS }
+            headers.apply { set("User-Agent", USER_AGENT) }
+        }
+
+        return request
+    }
 }

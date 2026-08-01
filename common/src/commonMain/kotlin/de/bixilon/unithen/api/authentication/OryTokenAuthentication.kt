@@ -15,11 +15,10 @@ package de.bixilon.unithen.api.authentication
 import io.ktor.client.request.*
 
 data class OryTokenAuthentication(
-    val token: String,
+    override val token: String,
 ) : Authentication {
 
     override fun authenticate(request: HttpRequestBuilder) {
-        // TODO
-        request.headers["Cookie"] = "ory-session=$token"
+        request.headers["Authorization"] = "Bearer $token"
     }
 }

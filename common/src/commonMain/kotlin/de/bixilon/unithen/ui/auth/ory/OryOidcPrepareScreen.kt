@@ -18,15 +18,10 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
 
         handler.openUri(response.redirectBrowserTo)
         url = response.redirectBrowserTo
+        navigator.pop()
     }
 
     LaunchedEffect(Unit) { flowFetch.invoke() }
 
-
-    if (flowFetch.active) {
-        LoadingContainer("Getting oidc redirect url")
-        return
-    }
-
-    LaunchedEffect(Unit) { navigator.pop() } // TODO: Show loading screen until callback is called
+    LoadingContainer("Getting oidc redirect url")
 }

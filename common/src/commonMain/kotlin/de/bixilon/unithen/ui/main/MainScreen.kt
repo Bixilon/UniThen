@@ -73,7 +73,7 @@ fun ActualMainScreen() {
     val navigator = remember { Navigator(entrypoint.route, NavigationStackPolicy.IGNORE_SAME) }
 
 
-    navigator.routes {
+    navigator.Routes {
         composable<CoursesRoute> { CoursesScreen() }
         composable<SettingsRoute> { SettingsScreen() }
         composable<CheckInPresentRoute> { CheckInPresentScreen() }
