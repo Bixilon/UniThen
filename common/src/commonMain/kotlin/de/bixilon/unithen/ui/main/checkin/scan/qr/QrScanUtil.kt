@@ -31,7 +31,7 @@ sealed interface QrScanResult {
     data class NotEnrolled(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_invalid_course, user.uuid)
     data class AlreadyCheckedIn(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_already_checked_in, user.uuid)
     data class CheckInPending(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_check_in_pending, user.uuid)
-    data class Rejected(override val appointment: Appointment, val user: User, val error: String) : SoftError(Res.string.scan_unknown_error_server_generic, user.uuid)
+    data class Rejected(override val appointment: Appointment, val user: User, val message: String) : SoftError(Res.string.scan_unknown_error_server_generic, user.uuid)
     data class CheckOutPending(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_check_out_pending, user.uuid)
 
     object InvalidFormat : Error(Res.string.scan_error_invalid_format)
@@ -45,12 +45,8 @@ sealed interface QrScanResult {
 
 object QrScanUtil {
 
-    fun scan(storage: SqlStorage, appointment: Appointment, userId: Uuid): QrScanResult {
+    fun scan(storage: SqlStorage, appointment: Appointment, user: User): QrScanResult {
         val course = storage.courses[appointment.course]!!
-
-        val site = storage.sites[course.site]!!
-        val user = storage.users[site, userId] ?: return QrScanResult.UnknownUser(appointment, userId)
-
 
         val enrolled = storage.users.isEnrolled(course, user)
         if (!enrolled) return QrScanResult.NotEnrolled(appointment, user)
@@ -67,6 +63,16 @@ object QrScanUtil {
         }
 
         return QrScanResult.Accepted(appointment, user)
+    }
+
+    fun scan(storage: SqlStorage, appointment: Appointment, userId: Uuid): QrScanResult {
+        val course = storage.courses[appointment.course]!!
+
+        val site = storage.sites[course.site]!!
+        val user = storage.users[site, userId] ?: return QrScanResult.UnknownUser(appointment, userId)
+
+
+        return scan(storage, appointment, user)
     }
 
     fun scan(storage: SqlStorage, appointments: List<Appointment>, userId: Uuid, appointmentId: Uuid): QrScanResult {

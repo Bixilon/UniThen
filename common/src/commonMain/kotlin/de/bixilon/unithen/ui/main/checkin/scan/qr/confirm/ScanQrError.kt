@@ -12,30 +12,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Appointment
-import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
 import de.bixilon.unithen.ui.util.i18n
-import unithen.common.generated.resources.*
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.scan_unknown_error_server
 
 @Composable
-fun ColumnScope.ScanQrError(user: User, attendee: Boolean, queue: CheckInQueue?, appointment: Appointment) {
-    val message = when {
-        queue?.attempt != null -> Res.string.scan_error_check_out_pending.i18n()
-        queue?.message != null -> Res.string.scan_unknown_error_server.i18n(queue.message)
-        queue != null -> Res.string.scan_error_check_in_pending.i18n()
-        attendee -> Res.string.scan_error_already_checked_in.i18n()
-        else -> "Unknown error"
-    }
-
-    if (queue?.message != null) {
-        ConfirmScreenWarning(Icons.Filled.Close, Color.Red, message)
+fun ColumnScope.ScanQrError(user: User, result: QrScanResult.SoftError) {
+    if (result is QrScanResult.Rejected) {
+        ConfirmScreenWarning(Icons.Filled.Close, Color.Red, Res.string.scan_unknown_error_server.i18n(result.message))
     } else {
-        ConfirmScreenWarning(Icons.Filled.Warning, Color.Yellow, message)
+        ConfirmScreenWarning(Icons.Filled.Warning, Color.Yellow, result.label.i18n())
     }
 
     Spacer(Modifier.height(16.dp))
 
-    DetailsContainer(user, appointment)
+    DetailsContainer(user, result.appointment)
 
     Spacer(Modifier
         .weight(1.0f)

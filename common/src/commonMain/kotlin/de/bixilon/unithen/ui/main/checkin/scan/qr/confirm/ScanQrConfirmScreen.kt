@@ -28,6 +28,9 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.error.SimpleErrorScreen
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.state.rememberStateOf
@@ -40,8 +43,11 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
 
     if (user == null) return ScanQrNotEnrolled(null, course, appointment)
 
-    val enrolled = rememberStorage { users.isEnrolled(course, user) }
-    if (!enrolled) return ScanQrNotEnrolled(user, course, appointment)
+    val result = rememberStorage { QrScanUtil.scan(this, appointment, user) }
+
+    if (result is QrScanResult.NotEnrolled) {
+        return ScanQrNotEnrolled(user, course, appointment)
+    }
 
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
 
@@ -54,19 +60,17 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
         return
     }
 
-    // TODO: Use QrScanUtil.scan
-
     if (success) return ScanQrConfirmed(user, appointment)
     if (error != null) return ScanQrError(user, error!!, appointment)
     if (loading) return ScanQrLoading(user, appointment)
 
-    val attendee = rememberStorage { users.isAttendee(appointment, user) }
-    if (attendee) return ScanQrError(user, attendee, null, appointment)
-
-    val queue = rememberStorage { checkInQueue[appointment, user] }
-    if (queue != null) return ScanQrError(user, attendee, queue, appointment)
-
-    ScanQrAwait(user, appointment, { loading = it }, { success = true }, onError = { error = it })
+    if (result is QrScanResult.Accepted) {
+        return ScanQrAwait(user, appointment, { loading = it }, { success = true }, onError = { error = it })
+    }
+    if (result !is QrScanResult.SoftError) {
+        return SimpleErrorScreen("Unknown QR result", result::class.simpleName)
+    }
+    return ScanQrError(user, result)
 }
 
 @Composable

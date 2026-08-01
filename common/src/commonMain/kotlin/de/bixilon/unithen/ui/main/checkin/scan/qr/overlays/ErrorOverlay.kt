@@ -57,7 +57,7 @@ private fun Error(state: ErrorState) {
         is QrScanResult.CheckInPending -> state.result.user.fullname
         is QrScanResult.CheckOutPending -> state.result.user.fullname
         is QrScanResult.NotEnrolled -> state.result.user.fullname
-        is QrScanResult.Rejected -> state.result.error
+        is QrScanResult.Rejected -> state.result.message
         is QrScanResult.WrongAppointment -> TimeFormatUtil.formatTimespam(state.result.appointment.start, state.result.appointment.end)
         is QrScanResult.WrongCourse -> state.result.course.name
         else -> null
