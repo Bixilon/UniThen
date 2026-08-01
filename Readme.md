@@ -14,8 +14,8 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 ## Features
 
 - Multiple sites and accounts
-- QR Code Check in (presenting and scanning)
-- List courses/appointments
+- QR Code check in (presenting and scanning)
+- List of your courses
 - Really fast, no ads, no trackers
 - Simple and small (~4MB; most of it is due to qr code scanning from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp))
 - Completely offline (authenticate once)
@@ -43,12 +43,12 @@ This app is ported to the jvm with compose multiplatform and runs on desktop, ho
 
 ## Why
 
-So, the original [UniNow app](https://play.google.com/store/apps/details?id=de.mocama.UniNow) is not that bad (tries to be privacy friendly, works offline), but there are a few points that really bother me:
+So, the original [UniNow app](https://play.google.com/store/apps/details?id=de.mocama.UniNow) is not that bad (tries to be privacy friendly), but there are a few points that really bother me:
 
 Doing simple things needs a lot of user interaction (e.g. when I want to show my ticket for the check in):
 Open app -> (wait) -> No I am not interested in improving the app -> (Must look at ads) -> My Studies -> ZHS -> (wait) -> Find the course -> (wait) -> Scroll down -> QR Code -> (wait)
 
-And I don't want anything on my phone that I don't essentially need and that is not open source*.
+And I don't want it on my phone :)
 
 If somebody from UniNow sees this, please reach out **before** blocking the app off. I do not want to harm you (with this app).
 
@@ -56,8 +56,8 @@ If somebody from UniNow sees this, please reach out **before** blocking the app 
 
 (Everything as simple as possible)
 
-- Webview for loading UniNow website + sniff (and store) cookie
-- Fetch user and page details and extract them from html (this could be improved with a dedicated graphql query; but apparently there is none)
+- Ory authentication and webview as fallback for acquiring an access token
+- Get page details (extract from html), and get user user details
 - Get courses and appointments with GraphQL ([Schema](./doc/UniNow.graphql))
 - Store everything on your device in a SQL database
 - QR code scanning: Local copy of all enrolled users, queue for offline synchronization and [fts4](https://www.sqlite.org/fts3.html) for searching (actually kinda complex)
