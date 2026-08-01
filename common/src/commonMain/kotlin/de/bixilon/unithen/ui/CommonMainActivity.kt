@@ -120,7 +120,7 @@ fun Navigator.MainNavigator() {
 
         composable<AuthenticateRoute> { AuthenticationScreen(it.host) }
         composable<LegacyAuthenticationRoute> { LegacyWebviewAuthenticationScreen(it.host) }
-        composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.ory) }
+        composable<EmailAuthenticationRoute> { EmailAuthenticationScreen(it.site, it.ory) }
         composable<OidcAuthenticationRoute> { OryOidcPrepareScreen(it.ory, it.provider) }
         composable<OidcAuthenticationCallbackRoute> { OryOidcCallbackScreen(it.flow, it.code) }
     }

@@ -24,6 +24,7 @@ import de.bixilon.unithen.ui.main.LegacyAuthenticationRoute
 import de.bixilon.unithen.ui.main.OidcAuthenticationRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -67,10 +68,11 @@ private fun FlowError(host: String) {
 @Composable
 private fun WithFlow(host: String, flow: OryLoginFlow) {
     val navigation = LocalNavigation.current
+    val site = rememberStorage { sites[host]!! }
     val config = remember { flow.toConfig() }
 
     if (config.oidc.isEmpty()) {
-        return EmailAuthenticationScreen(config)
+        return EmailAuthenticationScreen(site, config)
     }
 
     Screen(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -94,7 +96,7 @@ private fun WithFlow(host: String, flow: OryLoginFlow) {
             }
         }
 
-        Button({ navigation.navigate(EmailAuthenticationRoute(config)) }, modifier = Modifier.fillMaxWidth()) { Text("Login with email") }
+        Button({ navigation.navigate(EmailAuthenticationRoute(site, config)) }, modifier = Modifier.fillMaxWidth()) { Text("Login with email") }
         Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth()) { Text("Try legacy login") }
     }
 }

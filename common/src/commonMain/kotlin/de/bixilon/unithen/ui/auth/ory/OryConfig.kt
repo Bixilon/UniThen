@@ -8,6 +8,7 @@ import de.bixilon.unithen.util.Jackson
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.serialization.json.*
 import kotlin.uuid.Uuid
 
 data class OryConfig(
@@ -37,11 +38,29 @@ data class OryConfig(
     }
 
     suspend fun loginEmail(email: String, password: String): OryAuthenticationToken {
-        val data = mapOf(
-            "identifier" to email,
-            "password" to password,
-            "method" to "password"
-        )
-        TODO()
+        val request = HttpUtil.create(url).apply {
+            method = HttpMethod.Post
+
+            contentType(ContentType.Application.Json)
+            setBody(JsonObject(mapOf(
+                "identifier" to JsonPrimitive(email),
+                "password" to JsonPrimitive(password),
+                "method" to JsonPrimitive("password"),
+            )).toString())
+
+            accept(ContentType.Application.Json)
+        }
+        val response = CLIENT.post(request)
+
+        if (response.status == HttpStatusCode.BadRequest) {
+            val json = Jackson.MAPPER.decodeFromString<JsonObject>(response.bodyAsText())
+
+            val message = json.jsonObject["ui"]?.jsonObject?.get("messages")?.jsonArray?.getOrNull(0)?.jsonObject?.get("text")?.jsonPrimitive?.content
+            throw InvalidCredentialException(message ?: "Bad request?")
+        }
+
+        if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not ok: ${response.status}: ${response.bodyAsText()}")
+
+        return Jackson.MAPPER.decodeFromString(response.bodyAsText())
     }
 }

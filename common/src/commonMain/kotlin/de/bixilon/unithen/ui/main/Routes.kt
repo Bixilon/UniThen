@@ -56,7 +56,7 @@ data class CrashRoute(val exception: Throwable) : NavigationRoute
 data class AuthenticateRoute(val host: String) : NavigationRoute
 
 data class LegacyAuthenticationRoute(val host: String) : NavigationRoute
-data class EmailAuthenticationRoute(val ory: OryConfig) : NavigationRoute
+data class EmailAuthenticationRoute(val site: Site, val ory: OryConfig) : NavigationRoute
 data class OidcAuthenticationRoute(val ory: OryConfig, val provider: OryConfig.OryOidc) : NavigationRoute
 
 data class OidcAuthenticationCallbackRoute(val flow: Int, val code: String) : NavigationRoute
