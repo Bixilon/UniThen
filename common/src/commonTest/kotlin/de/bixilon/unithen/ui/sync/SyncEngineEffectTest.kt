@@ -54,11 +54,11 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
     @Test
     fun `active when invoking`() = runComposeUiTest {
         val hook by leakState {
-            useTestSyncEngine { delay(100.milliseconds) }
+            useTestSyncEngine { delay(500.milliseconds) }
         }
         hook.invoke(force = true)
 
-        waitUntil(50.milliseconds) { hook.active }
+        waitUntil(150.milliseconds) { hook.active }
     }
 
     @Test

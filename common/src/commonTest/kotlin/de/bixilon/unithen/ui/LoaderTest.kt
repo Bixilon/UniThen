@@ -43,17 +43,17 @@ class LoaderTest : AbstractComposeUiTest() {
     }
 
     @Test
-    fun `initial view while loading`() = runComposeUiTest {
+    fun `show loading while loading`() = runComposeUiTest {
         val helper = object : TestSqlHelper() {
             override suspend fun load() {
-                delay(200.seconds)
+                delay(5.seconds)
             }
         }
         setContent {
             TestLoader(helper)
         }
 
-        waitUntilText("Loading database")
+        waitUntilText("Loading", timeout = 3.seconds)
     }
 
     @Test

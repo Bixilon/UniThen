@@ -24,6 +24,16 @@ fun ComposeUiTest.waitUntil(matcher: SemanticsMatcher, timeout: Duration = 1.sec
 }
 
 @OptIn(ExperimentalTestApi::class)
+fun ComposeUiTest.waitUntilGone(matcher: SemanticsMatcher, timeout: Duration = 1.seconds) {
+    waitUntilDoesNotExist(matcher, timeout.inWholeMilliseconds)
+}
+
+@OptIn(ExperimentalTestApi::class)
 fun ComposeUiTest.waitUntilText(text: String, timeout: Duration = 1.seconds, substring: Boolean = true, matcher: SemanticsMatcher? = null): SemanticsNodeInteraction {
     return waitUntil(hasText(text, substring = substring).let { matcher?.and(it) ?: it }, timeout)
+}
+
+@OptIn(ExperimentalTestApi::class)
+fun ComposeUiTest.waitUntilTextGone(text: String, timeout: Duration = 1.seconds, substring: Boolean = true, matcher: SemanticsMatcher? = null) {
+    return waitUntilGone(hasText(text, substring = substring).let { matcher?.and(it) ?: it }, timeout)
 }
