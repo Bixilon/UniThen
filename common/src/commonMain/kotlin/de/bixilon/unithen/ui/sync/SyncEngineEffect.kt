@@ -26,7 +26,7 @@ import kotlinx.coroutines.*
 fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
     val engine = LocalSyncEngine.current
     var active by rememberStateOf { false }
-    var progress by rememberStateOf<SyncEngineProgress?> { null }
+    var progress by rememberStateOf { SyncEngineProgress.EMPTY }
 
     val sync = remember {
         val invokeable: SyncEngineInvoker = { force ->
@@ -40,7 +40,6 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
                     }
                 } finally {
                     active = false
-                    progress = null
                 }
             }
         }

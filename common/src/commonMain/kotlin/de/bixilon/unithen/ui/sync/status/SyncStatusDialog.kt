@@ -61,7 +61,7 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, m
         title = { Text(title) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                if (progress != null && progress.isDeterminate) {
+                if (progress.isDeterminate) {
                     CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total })
                 } else {
                     CircularProgressIndicator()
@@ -69,7 +69,7 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, m
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (progress != null && progress.total > 0) {
+                if (progress.total > 0) {
                     Text(description + "(${progress.synchonized}/${progress.total})")
                 } else {
                     Text(description)

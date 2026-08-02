@@ -19,7 +19,7 @@ typealias SyncEngineInvoker = (force: Boolean) -> Unit
 
 data class SyncEngineHook(
     val active: Boolean,
-    val progress: SyncEngineProgress?,
+    val progress: SyncEngineProgress,
     private val invoke: SyncEngineInvoker,
 ) {
 

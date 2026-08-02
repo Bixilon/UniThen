@@ -93,9 +93,10 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
     var status by rememberStateOf(SyncStatus.SUCCESS)
 
     LaunchedEffect(hook) {
-        if (!hook.active) return@LaunchedEffect
-        hidden = false
-        val progress = hook.progress ?: return@LaunchedEffect
+        if (hook.active) {
+            hidden = false
+        }
+        val progress = hook.progress
 
         when {
             progress.errored > 0 -> status = SyncStatus.ERROR
@@ -109,7 +110,7 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
     if (hook.active) {
         val progress = hook.progress
         Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (progress != null && text) {
+            if (progress.total > 0 && text) {
                 Text("${progress.completed}/${progress.total}")
             }
 
