@@ -13,29 +13,53 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 class ScannedQrCodeTest {
+    val expectedV1 = ScannedQrCodeV1("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "5f14e88d-affd-4f42-9e22-f4c5279b17b7".toUuid())
+    val expectedV2 = ScannedQrCodeV2("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "5f14e88d-affd-4f42-9e22-f4c5279b17b7".toUuid())
 
     @Test
-    fun `read scanned data no username`() {
-        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2"}"""
+    fun `write v1 without name`() {
+        val expected = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"5f14e88d-affd-4f42-9e22-f4c5279b17b7"}"""
 
-        val read = ScannedQrCodeV1.decode(text)
-
-        assertEquals(read, ScannedQrCodeV1("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid()))
+        assertEquals(expected, expectedV1.encode())
     }
 
     @Test
-    fun `read scanned data with username`() {
-        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","userName":{"last":"Last","first":"First"}}"""
+    fun `read v1 without name`() {
+        val text = """{"appointment_id": "2efdc1bd-5963-43cf-b3b5-df5aa092cff2", "user_id": "5f14e88d-affd-4f42-9e22-f4c5279b17b7"}"""
 
         val read = ScannedQrCodeV1.decode(text)
 
+        assertEquals(read, expectedV1)
+    }
 
-        assertEquals(read, ScannedQrCodeV1("2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid(), "2efdc1bd-5963-43cf-b3b5-df5aa092cff2".toUuid()))
+    @Test
+    fun `read v1 with name`() {
+        val text = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"5f14e88d-affd-4f42-9e22-f4c5279b17b7","userName":{"last":"Last","first":"First"}}"""
+
+        val read = ScannedQrCodeV1.decode(text)
+
+        assertEquals(read, expectedV1)
+    }
+
+    @Test
+    fun `write v2`() {
+        val actual = expectedV2.encode()
+        val expected = """UTV2E.57MONDBYP8FWMSASLDK:CQ+0C/HT8BM+0AR:JL.UE05-:2"""
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `read v2`() {
+        val expected = ScannedQrCodeV2.decode("""UTV2E.57MONDBYP8FWMSASLDK:CQ+0C/HT8BM+0AR:JL.UE05-:2""")
+
+        assertEquals(expected, expectedV2)
     }
 }

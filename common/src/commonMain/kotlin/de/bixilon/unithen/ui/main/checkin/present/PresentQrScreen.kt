@@ -12,20 +12,25 @@
 
 package de.bixilon.unithen.ui.main.checkin.present
 
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.FeatureFlags
+import de.bixilon.unithen.settings.QrVersion
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
@@ -33,14 +38,13 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.components.qr.QrCode
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
+import de.bixilon.unithen.ui.main.checkin.present.QrEncoder.encodeQr
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.ScreenBrightnessOverride
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import unithen.common.generated.resources.*
-import kotlin.uuid.Uuid
 
 
 @Composable
@@ -50,10 +54,20 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
     if (visible) {
         ScreenBrightnessOverride(1.0f)
     }
+    var active by rememberStateOf { false }
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    awaitFirstDown()
+                    active = true
+
+                    waitForUpOrCancellation()
+                    active = false
+                }
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -78,12 +92,20 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Spacer(modifier = Modifier.height(8.dp))
 
         Box(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
-
-            val remove by rememberSetting(FeatureFlags.QR_CODE_REMOVE_NAME)
-            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, account.firstname.truncate(12), account.lastname.truncate(12)) }
-
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+                val version by rememberSetting(FeatureFlags.QR_VERSION, QrVersion)
+                val encoded = remember(account, appointment, active) { encodeQr(if (active) QrVersion.V1 else version, account.uuid, appointment.uuid, account.firstname, account.lastname) }
+
                 QrCode(data = encoded, modifier = Modifier.fillMaxWidth())
+                if (!active && version != QrVersion.V1) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "This QR code is experimental: $version",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = Res.string.present_show_entrance.i18n(),
@@ -93,27 +115,4 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
             }
         }
     }
-}
-
-
-fun createQrCode(user: Uuid, appointment: Uuid, firstname: String, lastname: String): String {
-    val node = JsonObject(mapOf(
-        "appointment_id" to JsonPrimitive(appointment.toString()),
-        "user_id" to JsonPrimitive(user.toString()),
-        "userName" to JsonObject(mapOf(
-            "last" to JsonPrimitive(lastname),
-            "first" to JsonPrimitive(firstname),
-        )),
-    ))
-
-    return node.toString()
-}
-
-fun createQrCode(user: Uuid, appointment: Uuid): String {
-    val node = JsonObject(mapOf(
-        "appointment_id" to JsonPrimitive(appointment.toString()),
-        "user_id" to JsonPrimitive(user.toString()),
-    ))
-
-    return node.toString()
 }

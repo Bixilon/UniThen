@@ -12,7 +12,8 @@
 
 package de.bixilon.unithen.ui.main
 
-import de.bixilon.unithen.ui.main.checkin.present.createQrCode
+import de.bixilon.unithen.settings.QrVersion
+import de.bixilon.unithen.ui.main.checkin.present.QrEncoder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.uuid.Uuid
@@ -21,9 +22,9 @@ import kotlin.uuid.Uuid
 class CheckInQrTest {
 
     @Test
-    fun `generate text`() {
+    fun `generate text v1`() {
         val expected = """{"appointment_id":"20000000-0005-0000-0000-000000000006","user_id":"10000000-0003-0000-0000-000000000001","userName":{"last":"Last","first":"First"}}"""
-        val data = createQrCode(
+        val data = QrEncoder.encodeQr(QrVersion.V1,
             Uuid.parse("10000000-0003-0000-0000-000000000001"),
             Uuid.parse("20000000-0005-0000-0000-000000000006"),
             "First",

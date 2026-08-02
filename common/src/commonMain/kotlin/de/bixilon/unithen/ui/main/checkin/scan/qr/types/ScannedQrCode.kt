@@ -16,10 +16,13 @@ import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 
 sealed interface ScannedQrCode {
 
+    fun encode(): String
+
     companion object {
 
         fun decode(data: String): ScannedQrCode? {
             catchAll { ScannedQrCodeV1.decode(data) }?.let { return it }
+            catchAll { ScannedQrCodeV2.decode(data) }?.let { return it }
 
             return null
         }

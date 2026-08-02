@@ -32,6 +32,7 @@ import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.qr.overlays.*
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -41,6 +42,7 @@ import de.bixilon.unithen.ui.util.useTime
 
 private fun List<AcceptedState>.canIgnore(scanned: ScannedQrCode) = when (scanned) {
     is ScannedQrCodeV1 -> any { it.result.appointment.uuid == scanned.appointmentId && it.result.user.uuid == scanned.userId }
+    is ScannedQrCodeV2 -> any { it.result.appointment.uuid == scanned.appointmentId && it.result.user.uuid == scanned.userId }
 }
 
 @Composable

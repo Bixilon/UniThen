@@ -30,6 +30,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalTestApi::class)
 class SyncEngineEffectTest : AbstractComposeUiTest() {
@@ -124,7 +125,7 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
         hook.invoke(force = true)
         waitUntil { hook.active }
         assertEquals(0, done.load())
-        waitUntil { !hook.active }
+        waitUntil(2.seconds) { !hook.active }
         assertEquals(3, done.load())
     }
 

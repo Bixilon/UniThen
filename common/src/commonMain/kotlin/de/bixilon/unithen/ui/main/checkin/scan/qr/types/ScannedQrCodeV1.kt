@@ -23,6 +23,8 @@ data class ScannedQrCodeV1(
     @SerialName("user_id") val userId: Uuid,
 ) : ScannedQrCode {
 
+    override fun encode() = Jackson.MAPPER.encodeToString(this)
+
     companion object {
 
         fun decode(data: String): ScannedQrCodeV1? {

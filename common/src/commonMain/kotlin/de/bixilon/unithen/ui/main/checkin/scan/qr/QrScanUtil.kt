@@ -7,6 +7,7 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInErrors
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
+import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
 import de.bixilon.unithen.ui.main.settings.types.Labeled
 import org.jetbrains.compose.resources.StringResource
 import unithen.common.generated.resources.*
@@ -96,6 +97,7 @@ object QrScanUtil {
     fun scan(storage: SqlStorage, appointments: List<Appointment>, code: ScannedQrCode): QrScanResult {
         return when (code) {
             is ScannedQrCodeV1 -> scan(storage, appointments, code.userId, code.appointmentId)
+            is ScannedQrCodeV2 -> scan(storage, appointments, code.userId, code.appointmentId)
         }
     }
 }

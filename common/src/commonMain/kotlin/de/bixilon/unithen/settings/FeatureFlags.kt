@@ -12,6 +12,21 @@
 
 package de.bixilon.unithen.settings
 
+import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+
+enum class QrVersion {
+    V1,
+    V1_NAMELESS,
+    V2,
+    ;
+
+    companion object : ValuesEnum<QrVersion> {
+        override val VALUES = values()
+        override val NAME_MAP = names()
+    }
+}
+
 object FeatureFlags {
-    val QR_CODE_REMOVE_NAME = Setting("feature_remove_qr_name", false)
+    val QR_VERSION = Setting("feature_qr_version", QrVersion.V1)
 }
