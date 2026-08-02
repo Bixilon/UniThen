@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.*
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.ui.main.CrashRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,7 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
-    val navigation = LocalNavigation.current
+    val navigation = catchAll { LocalNavigation.current }
     var value by remember { mutableStateOf<T?>(null) }
 
 
@@ -31,6 +32,7 @@ fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
                 value = invokable.invoke()
             } catch (error: Throwable) {
                 error.printStackTrace()
+                if (navigation == null) throw error
                 navigation.navigate(CrashRoute(error))
             }
         }
