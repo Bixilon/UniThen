@@ -20,7 +20,29 @@ plugins {
     alias(libs.plugins.baselineprofile)
 }
 
+operator fun <T : Any> SetProperty<T>.plusAssign(value: T): Unit = add(value)
 
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) {
+        // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
+        it.packaging.jniLibs.apply {
+            excludes += "**/x86_64/libzxingcpp_android.so"
+            excludes += "**/x86/libzxingcpp_android.so"
+            excludes += "**/armeabi-v7a/libzxingcpp_android.so"
+        }
+
+        // jniLibs.useLegacyPackaging = false
+        // dex.useLegacyPackaging = false
+
+        it.packaging.resources.apply {
+            excludes += "DebugProbesKt.bin"
+            excludes += "junit/**"
+            excludes += "assets/composeResources/unithen.debug.generated.resources/**"
+            excludes += "LICENSE-junit.txt"
+        }
+    }
+}
 
 android {
     namespace = "de.bixilon.unithen"
@@ -34,19 +56,6 @@ android {
 
         versionName = project.extra.get("version").toString()
 
-        packaging {
-            jniLibs {
-                // Pretty much only the emulator is x86, it can't scan codes with the camera anyways (and apk size is 1.7MB larger)
-                excludes += "**/x86_64/libzxingcpp_android.so"
-                excludes += "**/x86/libzxingcpp_android.so"
-                excludes += "**/armeabi-v7a/libzxingcpp_android.so"
-            }
-            // jniLibs.useLegacyPackaging = false
-            // dex.useLegacyPackaging = false
-            resources {
-                excludes += "DebugProbesKt.bin"
-            }
-        }
         androidResources {
             localeFilters += "de"
         }
