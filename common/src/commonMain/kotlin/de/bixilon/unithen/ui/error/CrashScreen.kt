@@ -33,7 +33,7 @@ import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.main.UpdateChecker
+import de.bixilon.unithen.ui.main.about.UpdateCheckButton
 import de.bixilon.unithen.ui.util.Copy2Clipboard
 import de.bixilon.unithen.ui.util.i18n
 import unithen.common.generated.resources.Res
@@ -112,7 +112,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             Text("You can try checking for updates below, the crash is most likely fixed in the latest realease.", textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                UpdateChecker()
+                UpdateCheckButton()
                 Spacer(Modifier.width(8.dp))
                 ReportErrorButton(trace)
             }

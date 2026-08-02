@@ -24,6 +24,7 @@ import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.error.CrashScreen
 import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.main.*
+import de.bixilon.unithen.ui.main.about.AboutScreen
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
 import de.bixilon.unithen.ui.main.add.AddAccountScreen
