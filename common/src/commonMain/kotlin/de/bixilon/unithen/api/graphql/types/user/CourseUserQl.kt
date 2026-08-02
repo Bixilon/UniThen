@@ -13,10 +13,7 @@
 package de.bixilon.unithen.api.graphql.types.user
 
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
-import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerializationException
+import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -36,6 +33,7 @@ data class CourseUserQl(
         private val defaultSerializer = serializer()
         override val descriptor get() = defaultSerializer.descriptor
 
+        @OptIn(ExperimentalSerializationApi::class)
         override fun serialize(encoder: Encoder, value: CourseUserQl?) {
             if (value == null) {
                 encoder.encodeNull()

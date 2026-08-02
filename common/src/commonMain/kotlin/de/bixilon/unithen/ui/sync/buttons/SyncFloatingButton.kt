@@ -34,7 +34,7 @@ fun SyncFloatingButton(hook: SyncEngineHook, icon: ImageVector, onClick: () -> U
         if (hook.active) {
             val progress = hook.progress
 
-            if (progress != null && progress.isDeterminate) {
+            if (progress.isDeterminate) {
                 CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total })
             } else {
                 CircularProgressIndicator()

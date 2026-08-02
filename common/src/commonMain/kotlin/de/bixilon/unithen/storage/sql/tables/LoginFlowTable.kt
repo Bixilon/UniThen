@@ -50,7 +50,6 @@ class LoginFlowTable(
 
     companion object : SelectableSqlTableSchema<LoginFlow> {
         override val table get() = "login_flows"
-        const val MAX = 100
 
         val id = column(LoginFlow::id)
         val site = column(LoginFlow::site)
