@@ -12,9 +12,10 @@
 
 IntelliJ breaks reproducible builds, build with:
 
-1. `./gradlew app:assembleRelease`
-2. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk` (`app/build/outputs/apk/release/app-release-unsigned.apk`)
-3. Create package in lipstick (name: `apk`, version: `1.2.3`, file name: `app-release.apk`)
+1. Regenerate baseline profile (baselineprofile branch and `./gradlew app:generateBaselineProfile`)
+2. `./gradlew app:assembleRelease`
+3. `apksigner sign --ks ~/Dokumente/androidkey.jks --alignment-preserved app-release-unsigned.apk` (`app/build/outputs/apk/release/app-release-unsigned.apk`)
+4. Create package in lipstick (name: `apk`, version: `1.2.3`, file name: `app-release.apk`)
 
 ## Building (iOS)
 
