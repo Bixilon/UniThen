@@ -98,6 +98,6 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
     }
 
     companion object {
-        const val VERSION = 11
+        const val VERSION = 12
     }
 }

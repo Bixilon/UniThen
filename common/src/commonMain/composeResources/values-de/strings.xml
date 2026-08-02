@@ -51,13 +51,15 @@
     <string name="scan_error_invalid_course">Ungültiger Kurs!</string>
     <string name="scan_error_unknown_user">Unbekannter Teilnehmer!</string>
     <string name="scan_error_not_enrolled">Nicht für diesen Kurs angemeldet!</string>
+    <string name="scan_error_not_approved">Buchung wurde nicht genehmigt!</string>
     <string name="scan_error_already_checked_in">Bereits eingecheckt!</string>
     <string name="scan_error_check_in_pending">Bereits eingecheckt (Synchronisierung ausstehend)!</string>
     <string name="scan_error_check_out_pending">Bereits eingecheckt (Check Out ausstehend)!</string>
+    <string name="scan_error_rejected">Abgelehnt vom Server!</string>
+    <string name="scan_error_rejected_message">Abgelehnt vom Server: %1$s</string>
     <string name="scan_error_other">Unbekannter Fehler!</string>
     <string name="scan_updating_enrolled">Synchronisiere Teilnehmerliste...</string>
     <string name="scan_enrolled_outdated">Teilnehmerliste wurde zuletzt aktualisiert: %1$s</string>
-    <string name="scan_unknown_error_server">Serverfehler: %1$s</string>
 
     <string name="scan_confirm_ok">Teilnehmer wurde eingecheckt!</string>
     <string name="scan_confirm_ok_network">Naja, ohne Internet ist es schwer. Sollte aber okay sein!</string>
@@ -124,7 +126,6 @@
     <string name="database_cleanup_description">Der Cache wird gelöscht.</string>
     <string name="database_cleanup_success">Datenbank aufgeräumt!</string>
     <string name="loading_database">Datenbank wird geladen...</string>
-    <string name="scan_unknown_error_server_generic">Serverfehler!</string>
     <string name="course">Kurs</string>
     <string name="settings_scan_confirmation_screen">Scan Bestätigung</string>
     <string name="settings_scan_offline">Ignoriere Netzwerkfehler</string>

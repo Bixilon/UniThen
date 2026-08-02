@@ -110,12 +110,12 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
     }
 
     @Test
-    fun `unknown server error`() = runComposeUiTest {
+    fun `translated server error`() = runComposeUiTest {
         val storage = dummy()
 
         setContent { MockedScreen(storage, userId = "00000000-0000-0000-0000-000000000004") }
 
-        waitUntilText("Some error").assertIsDisplayed()
+        waitUntilText("Booking not approved").assertIsDisplayed()
         waitUntilText("Confirm").assertIsNotEnabled()
     }
 

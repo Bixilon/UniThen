@@ -16,12 +16,12 @@ import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
 import de.bixilon.unithen.ui.util.i18n
 import unithen.common.generated.resources.Res
-import unithen.common.generated.resources.scan_unknown_error_server
+import unithen.common.generated.resources.scan_error_rejected_message
 
 @Composable
 fun ColumnScope.ScanQrError(user: User, result: QrScanResult.SoftError) {
     if (result is QrScanResult.Rejected) {
-        ConfirmScreenWarning(Icons.Filled.Close, Color.Red, Res.string.scan_unknown_error_server.i18n(result.message))
+        ConfirmScreenWarning(Icons.Filled.Close, Color.Red, Res.string.scan_error_rejected_message.i18n(result.error.i18n()))
     } else {
         ConfirmScreenWarning(Icons.Filled.Warning, Color.Yellow, result.label.i18n())
     }

@@ -4,6 +4,7 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInErrors
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.main.settings.types.Labeled
@@ -31,7 +32,7 @@ sealed interface QrScanResult {
     data class NotEnrolled(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_not_enrolled, user.uuid)
     data class AlreadyCheckedIn(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_already_checked_in, user.uuid)
     data class CheckInPending(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_check_in_pending, user.uuid)
-    data class Rejected(override val appointment: Appointment, val user: User, val message: String) : SoftError(Res.string.scan_unknown_error_server_generic, user.uuid)
+    data class Rejected(override val appointment: Appointment, val user: User, val error: CheckInErrors) : SoftError(Res.string.scan_error_rejected, user.uuid)
     data class CheckOutPending(override val appointment: Appointment, val user: User) : SoftError(Res.string.scan_error_check_out_pending, user.uuid)
 
     object InvalidFormat : Error(Res.string.scan_error_invalid_format)
@@ -57,7 +58,7 @@ object QrScanUtil {
         val attempt = storage.checkInQueue[appointment, user]
         if (attempt != null) {
             if (attempt.attempt != null) return QrScanResult.CheckOutPending(appointment, user)
-            if (attempt.message != null) return QrScanResult.Rejected(appointment, user, attempt.message)
+            if (attempt.message != null) return QrScanResult.Rejected(appointment, user, CheckInErrors.of(attempt.message) ?: CheckInErrors.Unknown)
 
             return QrScanResult.CheckInPending(appointment, user)
         }

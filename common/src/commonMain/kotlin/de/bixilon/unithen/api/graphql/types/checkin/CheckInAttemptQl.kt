@@ -14,6 +14,7 @@ package de.bixilon.unithen.api.graphql.types.checkin
 
 import de.bixilon.unithen.api.graphql.types.IdentifiedQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInErrors
 import kotlinx.serialization.Serializable
 import kotlin.uuid.Uuid
 
@@ -24,28 +25,11 @@ data class CheckInAttemptQl(
     val message: String? = null,
     @Serializable(with = CourseUserQl.CourseUserQlSerializer::class) val user: CourseUserQl? = null,
 ) : IdentifiedQl {
-    val error get() = Error.of(message)
+    val error get() = CheckInErrors.of(message)
 
 
     enum class Status {
         SUCCESS,
         FAILURE,
-    }
-
-    enum class Error {
-        CHECKIN_CLOSED,
-        NOT_APPROVED,
-        ALREADY_CHECKED_IN,
-        // TODO: unknown user, not enrolled, more?
-        ;
-
-        companion object {
-            fun of(message: String?) = when (message?.trim()?.lowercase()) {
-                "checkin closed" -> CHECKIN_CLOSED
-                "booking not approved yet" -> NOT_APPROVED
-                "already checked in" -> ALREADY_CHECKED_IN
-                else -> null
-            }
-        }
     }
 }

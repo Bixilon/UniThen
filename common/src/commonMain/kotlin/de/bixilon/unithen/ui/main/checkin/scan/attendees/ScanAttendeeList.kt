@@ -60,7 +60,7 @@ private fun AttendeeCard(appointment: Appointment, user: User, readonly: Boolean
         try {
             CheckInUtil.checkOut(storage, appointment, user)
         } catch (error: CheckInError) {
-            toast.invoke(getString(Res.string.scan_unknown_error_server, error.message ?: "Unknown error") + " (${user.fullname})")
+            toast.invoke(getString(Res.string.scan_error_rejected_message, error.error._i18n()) + " (${user.fullname})")
         }
     }
 
@@ -110,7 +110,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
                 )
                 val text = when {
                     item.attempt != null -> Res.string.scan_queue_pending_checkout.i18n()
-                    item.message != null -> Res.string.scan_queue_failed.i18n(item.message)
+                    item.error != null -> Res.string.scan_error_rejected_message.i18n(item.error!!.i18n())
                     else -> Res.string.scan_queue_pending.i18n()
                 }
                 Text(
@@ -149,7 +149,7 @@ private fun EnrolledCard(appointment: Appointment, user: User, readonly: Boolean
         try {
             CheckInUtil.checkIn(storage, appointment, user)
         } catch (error: CheckInError) {
-            toast.invoke(getString(Res.string.scan_unknown_error_server, error.message ?: "Unknown error") + " (${user.fullname})")
+            toast.invoke(getString(Res.string.scan_error_rejected_message, error.error._i18n()) + " (${user.fullname})")
         }
     }
 

@@ -68,7 +68,7 @@ VALUES (911, 901);
 INSERT INTO course_enrolled(user, course) VALUES(901, 902);
 
 
-INSERT INTO checkin_queue(user, appointment, time, message, sync) VALUES(904, 901, 0, "Some error", 0);
+INSERT INTO checkin_queue(user, appointment, time, message, sync) VALUES(904, 901, 0, "not_approved", 0);
 INSERT INTO checkin_queue(user, appointment, time, sync)
 VALUES (911, 901, 0, 0);
 INSERT INTO appointment_attendees(user, appointment, attempt) VALUES(906, 901,  "b6b766b2-de38-4305-8f09-b23efc6aebd9");

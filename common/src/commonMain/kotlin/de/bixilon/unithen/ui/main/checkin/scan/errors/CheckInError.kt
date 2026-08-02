@@ -14,4 +14,4 @@ package de.bixilon.unithen.ui.main.checkin.scan.errors
 
 import de.bixilon.kutil.exception.FastException
 
-open class CheckInError(message: String?) : FastException(message)
+open class CheckInError(val error: CheckInErrors) : FastException(error.message)

@@ -34,6 +34,7 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
+import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
@@ -43,7 +44,7 @@ import de.bixilon.unithen.ui.util.useHapticFeedback
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
-import unithen.common.generated.resources.scan_unknown_error_server
+import unithen.common.generated.resources.scan_error_rejected_message
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
@@ -92,7 +93,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
             haptic.invoke(HapticFeedbackType.Confirm)
         } catch (error: CheckInError) {
             haptic.invoke(HapticFeedbackType.Reject)
-            message = getString(Res.string.scan_unknown_error_server, error.message ?: "")
+            message = getString(Res.string.scan_error_rejected_message, error.error._i18n())
         } catch (error: NetworkException) {
             if (offline) {
                 success = true

@@ -18,6 +18,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
+import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInErrors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -48,12 +49,14 @@ object CheckInUtil {
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
-        if (attemptQl.error == CheckInAttemptQl.Error.CHECKIN_CLOSED && appointment.end > Clock.System.now()) return
+        val error = attemptQl.error
+
+        if (error == CheckInErrors.CheckInClosed && appointment.end > Clock.System.now()) return
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
-            storage.checkInQueue.update(appointment, user, message = attemptQl.message ?: "Unknown")
+            storage.checkInQueue.update(appointment, user, message = error?.message ?: "Unknown")
 
-            throw CheckInError(attemptQl.message)
+            throw CheckInError(error ?: CheckInErrors.Unknown)
         }
         storage.appointments.addAttendee(user, appointment, attemptQl.id) // TODO: Add to enrolled?
         storage.checkInQueue.delete(appointment, user)
@@ -103,7 +106,7 @@ object CheckInUtil {
         storage.checkInQueue.delete(appointment, user) // TODO: Delte after checking status?
 
         if (attemptQl.status != CheckInAttemptQl.Status.SUCCESS) {
-            throw CheckInError(attemptQl.message)
+            throw CheckInError(attemptQl.error ?: CheckInErrors.Unknown)
         }
     }
 }

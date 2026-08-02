@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
+import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.i18n
@@ -57,7 +58,7 @@ private fun Error(state: ErrorState) {
         is QrScanResult.CheckInPending -> state.result.user.fullname
         is QrScanResult.CheckOutPending -> state.result.user.fullname
         is QrScanResult.NotEnrolled -> state.result.user.fullname
-        is QrScanResult.Rejected -> state.result.message
+        is QrScanResult.Rejected -> state.result.error.i18n()
         is QrScanResult.WrongAppointment -> TimeFormatUtil.formatTimespam(state.result.appointment.start, state.result.appointment.end)
         is QrScanResult.WrongCourse -> state.result.course.name
         else -> null

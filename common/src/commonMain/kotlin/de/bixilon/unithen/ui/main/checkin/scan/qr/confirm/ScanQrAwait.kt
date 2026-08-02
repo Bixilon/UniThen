@@ -25,7 +25,7 @@ import de.bixilon.unithen.ui.util.useHapticFeedback
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
-import unithen.common.generated.resources.scan_unknown_error_server
+import unithen.common.generated.resources.scan_error_rejected_message
 
 @Composable
 fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, setLoading: (Boolean) -> Unit, onSuccess: () -> Unit, onError: (String) -> Unit) {
@@ -53,7 +53,7 @@ fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, setLoading: (B
             throw error
         } catch (error: CheckInError) {
             haptic.invoke(HapticFeedbackType.Reject)
-            onError.invoke(getString(Res.string.scan_unknown_error_server, error.message ?: ""))
+            onError.invoke(getString(Res.string.scan_error_rejected_message, error.error._i18n()))
         } finally {
             setLoading.invoke(false)
         }
