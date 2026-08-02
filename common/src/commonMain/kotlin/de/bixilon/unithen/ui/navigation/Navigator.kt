@@ -54,7 +54,7 @@ class Navigator(
         for (frame in stack) {
             key(frame.route) {
                 val visible = frame === last && visible
-                BackHandler(visible && stack.size > 1) { pop() }
+                BackHandler(visible && stack.size > 1) { if (stack.size > 1) pop() }
 
 
                 CompositionLocalProvider(
