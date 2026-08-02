@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.UniNowApi
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.containers.Screen
@@ -29,7 +30,9 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.rememberAsync
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.verticalScrollbar
 import unithen.common.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -75,11 +78,11 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
         .background(MaterialTheme.colorScheme.primaryContainer)
         .clickable { onClick.invoke() }
     ) {
-        val icon = remember { OidcProviders.LOGOS[oidc.id] }
-        val name = remember { OidcProviders.NAMES[oidc.id] }
+        val icon = rememberAsync { catchAll { Res.getUri("files/logo/${oidc.id.lowercase().replace("/", "")}.svg") } }
+        val name = remember { Res.allStringResources["auth_oidc_provider_${oidc.id.lowercase()}"] }
 
 
-        icon?.let { AsyncImage(Res.getUri("files/logo/${it}"), "", modifier = Modifier.height(150.dp).padding(8.dp)) }
+        icon?.let { AsyncImage(it, "", modifier = Modifier.height(140.dp).padding(8.dp)) }
 
         Spacer(Modifier.height(4.dp))
 
@@ -97,26 +100,29 @@ private fun WithFlow(host: String, config: OryConfig) {
         return EmailAuthenticationScreen(site, config)
     }
 
-    Screen(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Screen {
         ScreenTitle(Res.string.auth_title.i18n())
 
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), maxItemsInEachRow = 2) {
-            for (oidc in config.oidc) {
-                OidcCard(oidc) { navigation.navigate(OidcAuthenticationRoute(config, oidc)) }
+        val scroll = rememberScrollState()
+        Column(Modifier.verticalScroll(scroll).verticalScrollbar(scroll)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), maxItemsInEachRow = 2) {
+                for (oidc in config.oidc) {
+                    OidcCard(oidc) { navigation.navigate(OidcAuthenticationRoute(config, oidc)) }
+                }
             }
-        }
 
-        Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(8.dp))
 
-        Button({ navigation.navigate(EmailAuthenticationRoute(site, config)) }, modifier = Modifier.fillMaxWidth()) {
-            Icon(Icons.Filled.Email, "")
-            Spacer(Modifier.width(4.dp))
-            Text(Res.string.auth_use_email.i18n())
-        }
-        Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
-            Icon(Icons.Filled.Warning, "")
-            Spacer(Modifier.width(4.dp))
-            Text(Res.string.auth_try_legacy.i18n())
+            Button({ navigation.navigate(EmailAuthenticationRoute(site, config)) }, modifier = Modifier.fillMaxWidth()) {
+                Icon(Icons.Filled.Email, "")
+                Spacer(Modifier.width(4.dp))
+                Text(Res.string.auth_use_email.i18n())
+            }
+            Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
+                Icon(Icons.Filled.Warning, "")
+                Spacer(Modifier.width(4.dp))
+                Text(Res.string.auth_try_legacy.i18n())
+            }
         }
     }
 }

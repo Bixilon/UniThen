@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.util
 
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -25,6 +26,13 @@ import androidx.compose.ui.unit.dp
 fun Modifier.verticalScroll(
     state: LazyListState,
     width: Dp = 4.dp,
+) = verticalScrollbar(state, width, true)
+
+
+fun Modifier.verticalScrollbar(
+    state: ScrollableState,
+    width: Dp = 4.dp,
+    absolute: Boolean = false,
 ) = drawWithContent {
     drawContent()
     val indicator = state.scrollIndicatorState ?: return@drawWithContent
@@ -36,8 +44,9 @@ fun Modifier.verticalScroll(
 
 
     val height = ((size.toFloat() / content) * size)
-    val offset = (indicator.scrollOffset.toFloat() / content) * size
+    var offset = (indicator.scrollOffset.toFloat() / content) * size
 
+    if (!absolute) offset += indicator.scrollOffset
 
     drawRoundRect(
         color = Color.Gray,
