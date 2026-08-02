@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.string.StringUtil.truncate
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.settings.FeatureFlags
-import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Appointment
@@ -47,7 +46,6 @@ import kotlin.uuid.Uuid
 @Composable
 fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) {
     val visible = LocalVisibility.current
-    val name by rememberSetting(Settings.QR_CODE_REMOVE_NAME)
 
     if (visible) {
         ScreenBrightnessOverride(1.0f)
@@ -80,10 +78,9 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         Spacer(modifier = Modifier.height(8.dp))
 
         Box(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
-            val (firstname, lastname) = if (name) Pair("A", "B") else Pair(account.firstname, account.lastname)
 
             val remove by rememberSetting(FeatureFlags.QR_CODE_REMOVE_NAME)
-            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, firstname.truncate(12), lastname.truncate(12)) }
+            val encoded = remember { if (remove) createQrCode(account.uuid, appointment.uuid) else createQrCode(account.uuid, appointment.uuid, account.firstname.truncate(12), account.lastname.truncate(12)) }
 
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
                 QrCode(data = encoded, modifier = Modifier.fillMaxWidth())

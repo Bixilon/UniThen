@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui.util
 
 import androidx.compose.runtime.*
-import de.bixilon.unithen.settings.Settings
+import de.bixilon.unithen.settings.DebugSettings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import kotlin.time.Clock
@@ -24,14 +24,10 @@ fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else
 
 @Composable
 fun useTime(): Instant {
-    val fakeTime by rememberSetting(Settings.FAKE_TIME)
-    var time by remember { mutableStateOf(getTime(fakeTime)) }
+    val fake by rememberSetting(DebugSettings.FAKE_TIME)
+    var time by remember { mutableStateOf(getTime(fake)) }
 
-    RepeatedEffect(30.seconds) {
-        time = getTime(fakeTime)
-    }
-
-    LaunchedEffect(fakeTime) { time = getTime(fakeTime) }
+    RepeatedEffect(30.seconds) { time = getTime(fake) }
 
     return time
 }

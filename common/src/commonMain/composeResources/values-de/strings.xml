@@ -109,8 +109,6 @@
     <string name="settings_entrypoint">Einstiegspunkt</string>
     <string name="settings_entrypoint_description">Wähle welche Seite geöffnet werden soll, wenn die App geöffnet wird.</string>
     <string name="settings_advanced">Fortgeschritten</string>
-    <string name="settings_advanced_remove_name">Entferne Name (QR-Code)</string>
-    <string name="settings_advanced_remove_name_description">Entfernt deinen Namen aus dem QR-Code, dadurch wird das Scannen leichter. Der Name wird nicht überprüft, es kann aber sein, dass der Code nicht mehr kompatiblem mit der offiziellen App ist.</string>
     <string name="settings_scan_high_resolution">Hohe Auflösung</string>
     <string name="settings_scan_high_resolution_description">Bevorzugt höhere Auflösung über schnellerers QR-Code Scanning. Aktiviere diese Option, wenn du Probleme hast QR-Codes zu scannen. Braucht mehr Strom.</string>
     <string name="settings_scan_auto_scan">Automatisch Scannen</string>

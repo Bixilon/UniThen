@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.settings.DebugSettings
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
@@ -53,7 +54,7 @@ fun SettingsScreen() {
             Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 SectionTitle("Debug")
 
-                BooleanSetting(Settings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
+                BooleanSetting(DebugSettings.FAKE_TIME, "Debug: Fake time", "Only for appointment detection")
             }
             HorizontalDivider()
         }
@@ -76,12 +77,6 @@ fun SettingsScreen() {
             }
             HorizontalDivider()
         }
-
-        Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            SectionTitle(Res.string.settings_advanced.i18n())
-            BooleanSetting(Settings.QR_CODE_REMOVE_NAME, Res.string.settings_advanced_remove_name.i18n(), Res.string.settings_advanced_remove_name_description.i18n())
-        }
-        HorizontalDivider()
 
         SettingsLink(Res.string.settings_accounts.i18n(), Icons.Default.AccountCircle, AccountsRoute)
         SettingsDialog(Res.string.settings_cleanup_database.i18n(), Icons.Default.CleaningServices) { DatabaseCleanupDialog(it) }

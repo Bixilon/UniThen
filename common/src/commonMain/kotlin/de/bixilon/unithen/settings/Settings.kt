@@ -17,9 +17,6 @@ import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 
 object Settings {
-    val QR_CODE_REMOVE_NAME = Setting("qr_code_fake_name", false)
-    val FAKE_TIME = Setting("fake_time", false)
-
     val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
     val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", true)
     val SCAN_AWAIT_SERVER_CONFIRMATION = Setting("scan_await_server_confirmation", true)
