@@ -106,7 +106,7 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> 
                 setAnalyzer(CAMERA_EXECUTOR) { imageProxy ->
                     val results = imageProxy.use { ignoreAll { READER.read(it) } ?: ignoreAll { READER.read(it.toBitmap()) } } ?: return@setAnalyzer
 
-                    scope.launch { onResult(results.map { QrCodeResult(it.text!!) }.toSet()) }
+                    scope.launch { onResult(results.mapNotNull { it.text?.let { QrCodeResult(it) } }.toSet()) }
                 }
             }
 
