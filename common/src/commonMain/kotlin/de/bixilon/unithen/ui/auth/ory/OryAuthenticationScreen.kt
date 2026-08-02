@@ -76,14 +76,14 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
         .clickable { onClick.invoke() }
     ) {
         val icon = remember { OidcProviders.LOGOS[oidc.id] }
-        val name = remember { OidcProviders.NAMES[oidc.id] ?: oidc.id }
+        val name = remember { OidcProviders.NAMES[oidc.id] }
 
 
         icon?.let { AsyncImage(Res.getUri("files/logo/${it}"), "", modifier = Modifier.height(150.dp).padding(8.dp)) }
 
         Spacer(Modifier.height(4.dp))
 
-        Text(name, textAlign = TextAlign.Center)
+        Text(name?.i18n() ?: oidc.id, textAlign = TextAlign.Center)
     }
 }
 

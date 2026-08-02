@@ -165,4 +165,10 @@
     <string name="auth_exchanging">Exchaning token...</string>
     <string name="auth_oidc_loading">Opening browser for oidc...</string>
     <string name="auth_oidc_complete">Please complete oidc in your browser!</string>
+
+    <string name="auth_oidc_provider_tum">Technische Universität München</string>
+    <string name="auth_oidc_provider_lmu">Ludwig-Maximilians-Universität München</string>
+    <string name="auth_oidc_provider_haw_landshut">Hochschule Landshut</string>
+    <string name="auth_oidc_provider_hs_muenchen">Hochschule München</string>
+    <string name="auth_oidc_provider_hs_wt">Hochschule Weihenstephan-Triesdorf</string>
 </resources>
