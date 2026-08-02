@@ -11,9 +11,9 @@
   -->
 
 <resources>
-    <string name="auth_oidc_provider_oidc-tum">Technische Universität München</string>
-    <string name="auth_oidc_provider_saml-lmu">Ludwig-Maximilians-Universität München</string>
-    <string name="auth_oidc_provider_saml-haw-landshut">Hochschule Landshut</string>
-    <string name="auth_oidc_provider_saml-hs-muenchen">Hochschule München</string>
-    <string name="auth_oidc_provider_saml-hs-wt">Hochschule Weihenstephan-Triesdorf</string>
+    <string name="auth_oidc_provider_oidc_tum">Technische Universität München</string>
+    <string name="auth_oidc_provider_saml_lmu">Ludwig-Maximilians-Universität München</string>
+    <string name="auth_oidc_provider_saml_haw_landshut">Hochschule Landshut</string>
+    <string name="auth_oidc_provider_saml_hs_muenchen">Hochschule München</string>
+    <string name="auth_oidc_provider_saml_hs_wt">Hochschule Weihenstephan-Triesdorf</string>
 </resources>

@@ -79,7 +79,7 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
         .clickable { onClick.invoke() }
     ) {
         val icon = rememberAsync { catchAll { Res.getUri("files/logo/${oidc.id.lowercase().replace("/", "")}.svg") } }
-        val name = remember { Res.allStringResources["auth_oidc_provider_${oidc.id.lowercase()}"] }
+        val name = remember { Res.allStringResources["auth_oidc_provider_${oidc.id.lowercase().replace('-', '_')}"] }
 
 
         icon?.let { AsyncImage(it, "", modifier = Modifier.height(140.dp).padding(8.dp)) }
