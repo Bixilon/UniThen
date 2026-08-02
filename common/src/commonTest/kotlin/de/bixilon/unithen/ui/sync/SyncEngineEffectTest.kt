@@ -22,7 +22,11 @@ import de.bixilon.unithen.sync.SyncEngineContext
 import de.bixilon.unithen.ui.AbstractComposeUiTest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlin.concurrent.atomics.AtomicInt
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
+import kotlin.concurrent.atomics.incrementAndFetch
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -104,6 +108,24 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
         hook.invoke(force = true)
 
         waitUntil(200.milliseconds) { fired }
+    }
+
+    @OptIn(ExperimentalAtomicApi::class)
+    @Test
+    fun `multiple async jobs still active`() = runComposeUiTest {
+        val done = AtomicInt(0)
+        val hook by leakState {
+            useTestSyncEngine {
+                async { delay(1000.milliseconds); done.incrementAndFetch() }
+                async { delay(1000.milliseconds); done.incrementAndFetch() }
+                async { delay(1000.milliseconds); done.incrementAndFetch() }
+            }
+        }
+        hook.invoke(force = true)
+        waitUntil { hook.active }
+        assertEquals(0, done.load())
+        waitUntil { !hook.active }
+        assertEquals(3, done.load())
     }
 
     private fun ComposeUiTest.waitUntil(timeout: Duration, block: () -> Boolean) {

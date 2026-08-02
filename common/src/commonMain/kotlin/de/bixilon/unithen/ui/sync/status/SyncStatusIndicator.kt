@@ -89,22 +89,22 @@ private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress?)
 
 @Composable
 fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, text: Boolean = false, hide: Boolean = true) {
-    var status by rememberStateOf<SyncStatus?>(null)
-
+    var hidden by rememberStateOf { true }
+    var status by rememberStateOf(SyncStatus.SUCCESS)
 
     LaunchedEffect(hook) {
         if (!hook.active) return@LaunchedEffect
-        val progress = hook.progress
+        hidden = false
+        val progress = hook.progress ?: return@LaunchedEffect
 
         when {
-            progress == null -> SyncStatus.SUCCESS
             progress.errored > 0 -> status = SyncStatus.ERROR
             progress.warnings > 0 -> status = SyncStatus.WARNING
-            progress.completed == progress.total -> status = SyncStatus.SUCCESS
+            progress.completed == 0 -> status = SyncStatus.SUCCESS
+            progress.synchonized == progress.total -> status = SyncStatus.SUCCESS
         }
     }
-
-    val _status = status ?: return
+    if (hidden) return
 
     if (hook.active) {
         val progress = hook.progress
@@ -113,9 +113,9 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
                 Text("${progress.completed}/${progress.total}")
             }
 
-            RunningIndicator(_status, progress)
+            RunningIndicator(status, progress)
         }
     } else {
-        CicleIndicator(_status, modifier, hide)
+        CicleIndicator(status, modifier, hide)
     }
 }

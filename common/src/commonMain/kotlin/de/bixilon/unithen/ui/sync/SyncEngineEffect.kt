@@ -32,15 +32,15 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
         val invokeable: SyncEngineInvoker = { force ->
             active = true
             CoroutineScope(Dispatchers.IO).launch {
-                coroutineScope {
-                    val context = SyncEngineContext(engine, force, this) { progress = it }
+                try {
+                    coroutineScope {
+                        val context = SyncEngineContext(engine, force, this) { progress = it }
 
-                    try {
                         block.invoke(context)
-                    } finally {
-                        active = false
-                        progress = null
                     }
+                } finally {
+                    active = false
+                    progress = null
                 }
             }
         }
