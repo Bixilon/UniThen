@@ -39,7 +39,7 @@ fun QrCode(data: String, modifier: Modifier = Modifier) {
             .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(RoundedCornerShape(5.dp))
             .background(Color.White)
-            .padding(6.dp),
+            .padding(12.dp),
         filterQuality = FilterQuality.None,
     )
 }

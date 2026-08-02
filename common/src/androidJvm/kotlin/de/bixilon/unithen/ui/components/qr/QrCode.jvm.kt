@@ -14,7 +14,6 @@ package de.bixilon.unithen.ui.components.qr
 
 
 import androidx.compose.ui.graphics.*
-import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.google.zxing.qrcode.encoder.Encoder
 
@@ -22,11 +21,7 @@ import com.google.zxing.qrcode.encoder.Encoder
 val PAINT = Paint().apply { color = Color.White }
 
 actual fun encodeQr(data: String): ImageBitmap {
-    val matrix = Encoder.encode(data, ErrorCorrectionLevel.H, mapOf(
-        EncodeHintType.CHARACTER_SET to "UTF-8",
-        EncodeHintType.MARGIN to 16,
-        EncodeHintType.ERROR_CORRECTION to ErrorCorrectionLevel.M,
-    )).matrix
+    val matrix = Encoder.encode(data, ErrorCorrectionLevel.M).matrix
 
     val bitmap = ImageBitmap(matrix.width, matrix.height, ImageBitmapConfig.Alpha8)
 
