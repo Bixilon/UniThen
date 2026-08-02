@@ -101,6 +101,7 @@ type Posting {
     payment_pending: DateTime
     selected_duration: Unknown
     auto_renew_end_date: DateTime
+    pause_info: Unknown # status, window, ...
 }
 
 union Resource = Fee | Course | Room | Location | BookingSlotResource | Appointment | Equipment # TODO: Coupon, Pass
