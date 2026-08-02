@@ -183,5 +183,5 @@ project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.apply {
 }
 
 tasks.withType<Test> {
-    maxParallelForks = Runtime.getRuntime().availableProcessors()
+    maxParallelForks = maxOf(Runtime.getRuntime().availableProcessors() - 2, 1)
 }
