@@ -9,6 +9,10 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -51,9 +55,15 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
         LoadingContainer(Res.string.auth_oidc_loading.i18n())
         return
     }
+    if (url == null) return
 
     Column {
-        Text(Res.string.auth_oidc_complete.i18n())
+        Text(Res.string.auth_oidc_complete.i18n(), textAlign = TextAlign.Center)
+
+        Text(buildAnnotatedString {
+            withLink(LinkAnnotation.Url(url!!)) { append(url!!) }
+        }, textAlign = TextAlign.Center)
+        
         val foreground = rememberForeground()
 
         if (foreground) {
