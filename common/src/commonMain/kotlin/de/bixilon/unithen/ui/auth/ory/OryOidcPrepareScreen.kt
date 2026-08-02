@@ -9,7 +9,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.*
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.auth_oidc_complete
@@ -19,16 +21,16 @@ import kotlin.time.Duration.Companion.seconds
 
 @Composable
 private fun Fallback() {
+    val navigator = LocalNavigation.current
     Text("If you are on desktop or custom urls don't work on your device, please paste the url below (starting with uninow://)")
 
     val state = rememberTextFieldState()
     TextField(state, modifier = Modifier.fillMaxWidth(), lineLimits = TextFieldLineLimits.SingleLine)
 
-    if (state.text.startsWith("uninow://")) {
-        CompositionLocalProvider(
-            LocalUrlIntent provides state.text.toString()
-        ) {
-            LocalUrlHandler()
+    LaunchedEffect(state.text) {
+        val raw = state.text.toString().removeWhitespaces()
+        if (raw.startsWith("uninow://")) {
+            navigator.handleUrl(raw)
         }
     }
 }
