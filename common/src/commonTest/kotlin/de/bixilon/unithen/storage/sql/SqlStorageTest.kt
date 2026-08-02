@@ -19,6 +19,8 @@ import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.event
 import de.bixilon.unithen.storage.StorageTestUtil.site
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -330,5 +332,77 @@ class SqlStorageTest {
 
         appointments = storage.appointments.getInRange(start - 3.minutes, start - 1.minutes)
         assertEquals(0, appointments.size)
+    }
+
+    @Test
+    fun `get attendees without search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+        val attendees = storage.users.getAttendees(appointment, "", AttendeeSort.LASTNAME, Order.ASC)
+
+        assertEquals(listOf(906), attendees.map { it.id })
+    }
+
+    @Test
+    fun `get attendees with search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+
+        var attendees = storage.users.getAttendees(appointment, "leon", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(906), attendees.map { it.id })
+
+        attendees = storage.users.getAttendees(appointment, "kur", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(906), attendees.map { it.id })
+
+        attendees = storage.users.getAttendees(appointment, "leonie kurz", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(906), attendees.map { it.id })
+
+        attendees = storage.users.getAttendees(appointment, "hein", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(), attendees.map { it.id })
+    }
+
+    @Test
+    fun `get check in queue without search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+        val queue = storage.checkInQueue[appointment, "", AttendeeSort.LASTNAME, Order.ASC]
+
+        assertEquals(listOf(904, 911, 907), queue.map { it.user })
+    }
+
+    @Test
+    fun `get check in queue with search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+
+        var queue = storage.checkInQueue[appointment, "gust", AttendeeSort.LASTNAME, Order.ASC]
+        assertEquals(listOf(904), queue.map { it.user })
+
+        queue = storage.checkInQueue[appointment, "sim", AttendeeSort.LASTNAME, Order.ASC]
+        assertEquals(listOf(911), queue.map { it.user })
+
+        queue = storage.checkInQueue[appointment, "simon heinz", AttendeeSort.LASTNAME, Order.ASC]
+        assertEquals(listOf(911), queue.map { it.user })
+    }
+
+    @Test
+    fun `get enrolled not checked in without search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+        val users = storage.users.getEnrolledNotCheckedIn(appointment, "", AttendeeSort.LASTNAME, Order.ASC)
+
+        assertEquals(listOf(903, 902), users.map { it.id })
+    }
+
+    @Test
+    fun `get enrolled not checked in with search`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+
+        var users = storage.users.getEnrolledNotCheckedIn(appointment, "emil", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(903), users.map { it.id })
+
+        users = storage.users.getEnrolledNotCheckedIn(appointment, "peter wurst", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(902), users.map { it.id })
     }
 }

@@ -79,6 +79,8 @@ class CheckInQueueTable(
             .where(CheckInQueueTable.appointment eq appointment.id)
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
+                "checkin_queue.message IS NULL" to SqlBuilder.Order.Order.ASC,
+                "checkin_queue.attempt IS NULL" to SqlBuilder.Order.Order.DESC,
                 sort.field to order.sql,
                 AttendeeSort.next(sort).field to order.sql,
             )
