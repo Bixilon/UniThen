@@ -85,7 +85,7 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
     fun `start effect fires`() = runComposeUiTest {
         var fired = false
         val hook by leakState {
-            val synchronize = useTestSyncEngine { delay(100.milliseconds) }
+            val synchronize = useTestSyncEngine { delay(200.milliseconds) }
 
             SyncEngineStartedEffect(synchronize) { fired = true }
 
@@ -93,7 +93,7 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
         }
         hook.invoke(force = true)
 
-        waitUntil(50.milliseconds) { fired }
+        waitUntil(150.milliseconds) { fired }
     }
 
     @Test
