@@ -13,6 +13,7 @@
 package de.bixilon.unithen.ui
 
 import androidx.compose.runtime.*
+import de.bixilon.unithen.storage.sql.DummyStorage.initializeDummy
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
@@ -145,6 +146,9 @@ fun Loader(content: @Composable () -> Unit) {
         try {
             withContext(Dispatchers.IO) {
                 storage.helper.load()
+                if (storage.accounts.count == 0) {
+                    storage.initializeDummy()
+                }
             }
         } catch (thrown: Throwable) {
             thrown.printStackTrace()
