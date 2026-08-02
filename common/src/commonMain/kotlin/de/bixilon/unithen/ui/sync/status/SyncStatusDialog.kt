@@ -39,7 +39,7 @@ data class SyncStatusDialogHook(
 )
 
 @Composable
-fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, manual: Boolean = false): SyncStatusDialogHook {
+fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, manual: Boolean = false, dismissable: Boolean = true): SyncStatusDialogHook {
     var visible by rememberStateOf { false }
 
     SyncEngineCompleteEffect(hook) { visible = false }
@@ -47,10 +47,10 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, m
         SyncEngineStartedEffect(hook) { visible = true }
     }
 
-    val dialog = SyncStatusDialogHook({ visible = false }, { visible = true }, visible)
+    val dialog = SyncStatusDialogHook({ visible = false }, { visible = true }, dismissable && visible)
 
     if (!hook.active) return dialog
-    if (!visible) return dialog
+    if (dismissable && !visible) return dialog
     val progress = hook.progress
 
 

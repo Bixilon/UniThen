@@ -98,5 +98,5 @@ fun AccountSyncScreen(site: Site, authentication: Authentication) {
     SyncEngineCompleteEffect(synchronize) { navigation.popIf { it is AuthenticationRoute }; navigation.pop() }
 
 
-    SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n())
+    SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n(), dismissable = false)
 }
