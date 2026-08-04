@@ -86,7 +86,7 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
 
         Spacer(Modifier.height(4.dp))
 
-        Text(name?.i18n() ?: oidc.id, textAlign = TextAlign.Center)
+        Text(name?.i18n() ?: oidc.id, modifier = Modifier.padding(5.dp), textAlign = TextAlign.Center)
     }
 }
 
