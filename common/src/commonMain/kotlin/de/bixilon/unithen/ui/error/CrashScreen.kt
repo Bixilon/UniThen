@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -83,7 +84,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             }
         }
 
-        val trace = remember { exception.stackTraceToString() }
+        val trace = remember { exception.stackTraceToString().removeMultipleWhitespaces() }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
