@@ -23,14 +23,12 @@ import de.bixilon.unithen.ui.util.state.rememberStateOf
 @Composable
 fun SyncEngineCompleteEffect(hook: SyncEngineHook, runnable: suspend (progress: SyncEngineProgress) -> Unit) {
     var active by rememberStateOf(hook.active)
-    var progress by rememberStateOf<SyncEngineProgress?>(null)
 
     LaunchedEffect(hook) {
-        hook.progress?.let { progress = it }
-        val progress = progress
-        if (active && !hook.active) {
-            runnable.invoke(progress ?: SyncEngineProgress.EMPTY)
-        }
+        if (active == hook.active) return@LaunchedEffect
         active = hook.active
+        if (!hook.active) {
+            runnable.invoke(hook.progress)
+        }
     }
 }
