@@ -73,7 +73,7 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
     Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
         .padding(4.dp)
         .clip(RoundedCornerShape(8.dp))
-        .height(200.dp)
+        .height(180.dp)
         .weight(1f)
         .background(MaterialTheme.colorScheme.primaryContainer)
         .clickable { onClick.invoke() }
@@ -82,7 +82,7 @@ fun FlowRowScope.OidcCard(oidc: OryConfig.OryOidc, onClick: () -> Unit) {
         val name = remember { Res.allStringResources["auth_oidc_provider_${oidc.id.lowercase().replace('-', '_')}"] }
 
 
-        icon?.let { AsyncImage(it, "", modifier = Modifier.height(140.dp).padding(8.dp)) }
+        icon?.let { AsyncImage(it, "", modifier = Modifier.height(100.dp).padding(8.dp)) }
 
         Spacer(Modifier.height(4.dp))
 
