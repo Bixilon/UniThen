@@ -48,6 +48,10 @@ fun formatDetails(error: Throwable): String? = when (error) {
     else -> null
 }
 
+fun String.formatDisplay() = this
+    .removeMultipleWhitespaces()
+    .replace("de.bixilon.unithen", "d.b.u")
+    .replace("kotlinx.coroutines", "k.c")
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
@@ -84,7 +88,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
             }
         }
 
-        val trace = remember { exception.stackTraceToString().removeMultipleWhitespaces() }
+        val trace = remember { exception.stackTraceToString() }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,7 +102,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
                 .horizontalScroll(rememberScrollState())) {
                 SelectionContainer {
                     Text(
-                        text = trace,
+                        text = remember { exception.message + "\n" + trace.formatDisplay() },
                         fontFamily = FontFamily.Monospace,
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
