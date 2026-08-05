@@ -27,7 +27,7 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 
 The latest release is published on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). and on [F-Droid](https://f-droid.org/packages/de.bixilon.unithen). F-Droid builds are reproducible,
 and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`) too. F-Droid is the preferred way, then you don't need to worry about updates.
-(This app requires Android 9+).
+Android 8+ is offically supported.
 
 ### iOS
 iOS is fully supported. There is no distribution yet, so you must build the app yourself (requires iOS 15.6+).
