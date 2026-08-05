@@ -66,7 +66,7 @@ object CheckInUtil {
         val now = Clock.System.now()
 
         if (storage.checkInQueue[appointment, user] == null) {
-            storage.checkInQueue.addPending(appointment, user, now)
+            storage.transaction { it.checkInQueue.addPending(appointment, user, now) }
         } else {
             storage.checkInQueue.update(appointment, user, sync = now)
         }

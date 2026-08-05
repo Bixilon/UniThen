@@ -22,6 +22,7 @@ import de.bixilon.unithen.storage.StorageTestUtil.site
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import de.bixilon.unithen.util.Kutil.toUuid
+import de.bixilon.unithen.util.TestUtil.assertMatch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
@@ -405,4 +406,67 @@ class SqlStorageTest {
         users = storage.users.getEnrolledNotCheckedIn(appointment, "peter wurst", AttendeeSort.LASTNAME, Order.ASC)
         assertEquals(listOf(902), users.map { it.id })
     }
+
+    @Test
+    fun `add pending checkin`(): Unit = runBlocking {
+        val storage = dummy()
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[903]!!
+
+        val time = Clock.System.now()
+
+        storage.checkInQueue.addPending(appointment, user, time)
+
+        assertMatch(time, storage.checkInQueue[appointment, user]?.sync)
+    }
+
+    @Test
+    fun `update pending checkin`(): Unit = runBlocking {
+        val storage = dummy()
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[911]!!
+
+        val time = Clock.System.now()
+
+        assertNotNull(storage.checkInQueue[appointment, user])
+
+        storage.checkInQueue.addPending(appointment, user, time)
+
+        assertMatch(time, storage.checkInQueue[appointment, user]?.sync)
+    }
+
+    @Test
+    fun `add pending checkout`(): Unit = runBlocking {
+        val storage = dummy()
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[906]!!
+
+        val time = Clock.System.now()
+
+        storage.checkInQueue.addCheckout(appointment, user, Uuid.random(), time)
+
+        val queue = storage.checkInQueue[appointment, user]
+        assertMatch(time, queue?.sync)
+        assertNotNull(queue?.attempt)
+    }
+
+    @Test
+    fun `update pending checkout`(): Unit = runBlocking {
+        val storage = dummy()
+
+        val appointment = storage.appointments[901]!!
+        val user = storage.users[907]!!
+
+        val time = Clock.System.now()
+
+        assertNotNull(storage.checkInQueue[appointment, user])
+
+        storage.checkInQueue.addCheckout(appointment, user, Uuid.random(), time)
+
+        assertMatch(time, storage.checkInQueue[appointment, user]?.sync)
+    }
+
 }

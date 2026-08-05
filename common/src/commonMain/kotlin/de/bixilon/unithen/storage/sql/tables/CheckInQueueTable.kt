@@ -63,13 +63,21 @@ class CheckInQueueTable(
 
 
     fun addPending(appointment: Appointment, user: User, sync: Instant) {
-        // TODO: This only works in android 9+
-        execute("INSERT INTO $table(appointment, user, sync) VALUES (?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET sync=?", appointment.id, user.id, sync, sync)
+        val current = get(appointment, user)
+        if (current != null) {
+            update(appointment, user, sync = sync)
+        } else {
+            insert(SqlBuilder.insert(CheckInQueueTable, CheckInQueueTable.appointment to appointment.id, CheckInQueueTable.user to user.id, CheckInQueueTable.sync to sync))
+        }
     }
 
     fun addCheckout(appointment: Appointment, user: User, attempt: Uuid, sync: Instant) {
-        // TODO: This only works in android 9+
-        execute("INSERT INTO $table(appointment, user, attempt, sync) VALUES (?,?,?,?) ON CONFLICT(appointment, user) DO UPDATE SET attempt=?, sync=?", appointment.id, user.id, attempt, sync, attempt, sync)
+        val current = get(appointment, user)
+        if (current != null) {
+            update(appointment, user, attempt = attempt, sync = sync)
+        } else {
+            insert(SqlBuilder.insert(CheckInQueueTable, CheckInQueueTable.appointment to appointment.id, CheckInQueueTable.user to user.id, CheckInQueueTable.attempt to attempt, CheckInQueueTable.sync to sync))
+        }
     }
 
     operator fun get(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<CheckInQueue> {
