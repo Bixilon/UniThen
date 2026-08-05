@@ -26,26 +26,67 @@ object SqlUtil {
         val builder = StringBuilder()
         var begin = false
 
-        raw.lines().forEach { line ->
+        fun append(data: String) {
+            if (builder.isNotEmpty()) {
+                builder.appendLine()
+            }
+            builder.append(data)
+        }
+
+        fun push(data: String) {
+            append(data)
+            statements += builder.toString()
+            builder.clear()
+        }
+
+        for (line in raw.lines()) {
             val trimmed = line.trim()
+            if (trimmed.isBlank()) continue
+            if (trimmed.startsWith("--")) continue
+
 
             if (trimmed.startsWith("BEGIN")) {
+                require(!begin) { "Nested BEGIN!" }
                 begin = true
+                append(trimmed)
+                continue
             }
 
-            builder.append(line).append("\n")
+            if (trimmed.startsWith("END")) {
+                require(begin) { "END without BEGIN!" }
+                begin = false
+            }
 
             if (begin) {
-                if (trimmed.startsWith("END")) {
-                    begin = false
-                    statements.add(builder.toString().trim())
-                    builder.clear()
+                append(trimmed)
+                continue
+            }
+
+            if (";" in trimmed) {
+                val split = trimmed.split(";").filter { it.isNotBlank() }
+
+                push(split.getOrNull(0)?.trim() ?: "")
+
+                for (middle in 1 until split.size - 1) {
+                    push(split[middle].trim())
                 }
-            } else if (trimmed.endsWith(";")) {
-                statements.add(builder.toString().removeSuffix(";"))
-                builder.clear()
+
+                if (split.size > 1) {
+                    val end = split.last().trim()
+
+                    if (trimmed.endsWith(";")) {
+                        push(end)
+                    } else {
+                        append(end)
+                    }
+                }
+            } else {
+                append(trimmed)
             }
         }
+
+        require(!begin) { "BEGIN without END" }
+        require(builder.isBlank()) { "Trailing data: $builder" }
 
         return statements
     }
