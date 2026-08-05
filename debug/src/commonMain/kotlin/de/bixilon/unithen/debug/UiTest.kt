@@ -15,8 +15,6 @@ package de.bixilon.unithen.debug
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +30,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.main.settings.types.EnumSetting
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import kotlin.time.Duration.Companion.seconds
 
 val A = Setting("test_a", true)
@@ -90,7 +89,7 @@ private fun QrTest() {
 
 @Composable
 fun UiTestScreen() {
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.verticalScrollWithBar()) {
         SettingsTest()
         QrTest()
     }

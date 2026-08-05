@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr.overlays
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
@@ -25,10 +23,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
-import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
@@ -83,7 +81,7 @@ fun ErrorOverlay(errors: Set<ErrorState>) {
         Column(
             modifier = Modifier
                 .heightIn(max = 300.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScrollWithBar(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.scan_qr_instruction
 
@@ -50,7 +49,7 @@ fun ScanInstructions(courses: Collection<Course>) {
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                     modifier = Modifier
                         .heightIn(max = 300.dp)
-                        .verticalScroll(rememberScrollState()),
+                        .verticalScrollWithBar(),
                 ) {
                     for (course in courses) {
                         Text(

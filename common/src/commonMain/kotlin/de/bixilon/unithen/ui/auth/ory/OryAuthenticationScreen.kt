@@ -3,9 +3,7 @@ package de.bixilon.unithen.ui.auth.ory
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
@@ -32,7 +30,7 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberAsync
 import de.bixilon.unithen.ui.util.useAsyncNetwork
-import de.bixilon.unithen.ui.util.verticalScrollbar
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import unithen.common.generated.resources.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
@@ -103,8 +101,7 @@ private fun WithFlow(host: String, config: OryConfig) {
     Screen {
         ScreenTitle(Res.string.auth_title.i18n())
 
-        val scroll = rememberScrollState()
-        Column(Modifier.verticalScroll(scroll).verticalScrollbar(scroll)) {
+        Column(Modifier.verticalScrollWithBar()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp), maxItemsInEachRow = 2) {
                 for (oidc in config.oidc) {
                     OidcCard(oidc) { navigation.navigate(OidcAuthenticationRoute(config, oidc)) }

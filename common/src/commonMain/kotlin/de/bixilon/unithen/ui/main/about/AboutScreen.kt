@@ -15,8 +15,6 @@ package de.bixilon.unithen.ui.main.about
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +36,7 @@ import de.bixilon.unithen.ui.main.FeatureFlagRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberIsFdroid
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.about_license
 import unithen.common.generated.resources.about_unofficial
@@ -46,7 +45,7 @@ import unithen.common.generated.resources.app_name
 @Composable
 fun AboutScreen() {
     val navigator = LocalNavigation.current
-    Screen(modifier = Modifier.verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+    Screen(modifier = Modifier.verticalScrollWithBar(), horizontalAlignment = Alignment.CenterHorizontally) {
 
         Spacer(modifier = Modifier.height(16.dp))
 

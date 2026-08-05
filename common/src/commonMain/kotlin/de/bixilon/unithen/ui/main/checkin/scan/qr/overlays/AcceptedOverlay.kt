@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr.overlays
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
@@ -34,13 +32,13 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
-import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.error_network
@@ -158,7 +156,7 @@ fun AcceptedOverlay(accepted: List<AcceptedState>, showCourseName: Boolean = tru
         Column(
             modifier = Modifier
                 .heightIn(max = 300.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScrollWithBar(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

@@ -13,8 +13,6 @@
 package de.bixilon.unithen.ui.main.settings
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CleaningServices
@@ -40,14 +38,14 @@ import de.bixilon.unithen.ui.main.settings.types.SettingsDialog
 import de.bixilon.unithen.ui.main.settings.types.SettingsLink
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import unithen.common.generated.resources.*
 
 
 @Composable
 fun SettingsScreen() {
-    val scrollState = rememberScrollState()
 
-    Screen(Modifier.verticalScroll(scrollState), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Screen(Modifier.verticalScrollWithBar(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ScreenTitle(Res.string.settings_title.i18n())
 
         if (RuntimeInfo.debug) {

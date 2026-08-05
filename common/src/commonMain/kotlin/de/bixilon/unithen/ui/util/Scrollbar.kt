@@ -12,8 +12,12 @@
 
 package de.bixilon.unithen.ui.util
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
@@ -56,4 +60,7 @@ fun Modifier.verticalScrollbar(
         cornerRadius = CornerRadius(4f)
     )
 }
+
+@Composable
+fun Modifier.verticalScrollWithBar(state: ScrollState = rememberScrollState()) = verticalScroll(state).verticalScrollbar(state)
 
