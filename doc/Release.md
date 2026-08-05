@@ -23,7 +23,7 @@ TBA
 
 ## QA
 
-1. Ensure all tests pass on all platforms (android device, ios simulator and jvm)
+1. Ensure all tests pass on all platforms (android device, ios simulator and jvm); on the latest version and on the minimum supported version
 2. Upgrade from previous release
 3. Clear data and check if setup works correctly
 4. Check on older devices (Android 9, iOS 15.6)
