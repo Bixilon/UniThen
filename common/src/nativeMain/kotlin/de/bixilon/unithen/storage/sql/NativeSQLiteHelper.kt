@@ -13,7 +13,9 @@
 package de.bixilon.unithen.storage.sql
 
 import co.touchlab.sqliter.*
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.primitive.IntUtil.toInt
+import de.bixilon.unithen.storage.sql.errors.SqlMigrationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -66,7 +68,9 @@ class NativeSQLiteHelper(val name: String?) : SQLiteHelper {
             try {
                 database.executeBatch("migrations/${version}")
             } catch (error: Throwable) {
-                throw Exception("Error during database migration $version: ${error.message}", error)
+                val sqlite = catchAll { database.createStatement("SELECT sqlite_version()").query().apply { next() }.getString(0) } ?: "unknown"
+
+                throw SqlMigrationException(version, sqlite, error)
             }
         }
     }

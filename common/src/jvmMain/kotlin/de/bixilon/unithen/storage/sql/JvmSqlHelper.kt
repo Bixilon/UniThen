@@ -12,6 +12,8 @@
 
 package de.bixilon.unithen.storage.sql
 
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.unithen.storage.sql.errors.SqlMigrationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import java.io.File
@@ -63,7 +65,9 @@ class JvmSqlHelper(file: File?) : SQLiteHelper {
             try {
                 connection.executeBatch("migrations/${version}")
             } catch (error: Throwable) {
-                throw SQLException("Error during database migration $version: ${error.message}", error)
+                val sqlite = catchAll { connection.query("SELECT sqlite_version()").use { it.moveToNext(); it.getString(1) } } ?: "unknown"
+
+                throw SqlMigrationException(version, sqlite, error)
             }
         }
     }

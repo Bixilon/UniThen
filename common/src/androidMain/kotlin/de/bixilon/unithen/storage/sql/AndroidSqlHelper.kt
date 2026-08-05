@@ -20,9 +20,10 @@ import android.database.sqlite.SQLiteStatement
 import androidx.core.database.getBlobOrNull
 import androidx.core.database.getStringOrNull
 import androidx.core.database.sqlite.transaction
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.unithen.storage.sql.errors.SqlMigrationException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
-import java.io.IOException
 import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
@@ -74,7 +75,9 @@ class AndroidSqlHelper(context: Context, name: String?) : SQLiteOpenHelper(conte
             try {
                 database.executeBatch("migrations/${version}")
             } catch (error: Throwable) {
-                throw IOException("Error during database migration $version: ${error.message}", error)
+                val sqlite = catchAll { database.rawQuery("SELECT sqlite_version()", arrayOf()).apply { moveToNext() }.use { it.getString(0) } } ?: "unknown"
+
+                throw SqlMigrationException(version, sqlite, error)
             }
         }
     }
