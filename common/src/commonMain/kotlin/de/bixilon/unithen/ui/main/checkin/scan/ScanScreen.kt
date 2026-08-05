@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material3.FloatingActionButton
@@ -42,6 +43,7 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
+import de.bixilon.unithen.ui.util.verticalScroll
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.scan_choose_appointment_title
 
@@ -55,10 +57,12 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
         ScreenTitle(Res.string.scan_choose_appointment_title.i18n())
 
 
+        val state = rememberLazyListState()
         Box {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().verticalScroll(state),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
+                state = state,
             ) {
                 items(appointments) {
                     val course = storage.courses[it.course]!!

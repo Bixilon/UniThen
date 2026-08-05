@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import de.bixilon.unithen.ui.main.PresentQrRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.verticalScroll
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.course
 import unithen.common.generated.resources.present_choose_account_title
@@ -53,8 +55,11 @@ fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts:
         Spacer(Modifier.height(8.dp))
 
 
+        val state = rememberLazyListState()
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier.verticalScroll(state),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            state = state,
         ) {
             items(accounts, key = Account::id) {
                 TextCard(it.fullname, Modifier.clickable { navigation.navigate(PresentQrRoute(it, course, appointment)) })

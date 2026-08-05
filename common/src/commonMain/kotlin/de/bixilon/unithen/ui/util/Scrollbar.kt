@@ -17,50 +17,57 @@ import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+@Composable
 fun Modifier.verticalScroll(
     state: LazyListState,
     width: Dp = 4.dp,
 ) = verticalScrollbar(state, width, true)
 
 
+@Composable
 fun Modifier.verticalScrollbar(
     state: ScrollableState,
     width: Dp = 4.dp,
     absolute: Boolean = false,
-) = drawWithContent {
-    drawContent()
-    val indicator = state.scrollIndicatorState ?: return@drawWithContent
+    offset: Offset = Offset.Zero,
+): Modifier {
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
+
+    return drawWithContent {
+        drawContent()
+        val indicator = state.scrollIndicatorState ?: return@drawWithContent
 
 
-    val size = indicator.viewportSize
-    val content = indicator.contentSize
-    if (size >= indicator.contentSize) return@drawWithContent
+        val size = indicator.viewportSize
+        val content = indicator.contentSize
+        if (size >= indicator.contentSize) return@drawWithContent
 
 
-    val height = ((size.toFloat() / content) * size)
-    var offset = (indicator.scrollOffset.toFloat() / content) * size
+        val height = ((size.toFloat() / content) * size)
+        var y = (indicator.scrollOffset.toFloat() / content) * size
 
-    if (!absolute) offset += indicator.scrollOffset
+        if (!absolute) y += indicator.scrollOffset
 
-    drawRoundRect(
-        color = Color.Gray,
-        topLeft = Offset(x = this.size.width + 2.dp.toPx(), y = offset),
-        alpha = 0.6f,
-        size = Size(width = width.toPx(), height = maxOf(height, 16.dp.toPx())),
-        cornerRadius = CornerRadius(4f)
-    )
+        drawRoundRect(
+            color = color,
+            topLeft = Offset(x = this.size.width + 2.dp.toPx() + offset.x.dp.toPx(), y = y + offset.y.dp.toPx()),
+            alpha = 0.6f,
+            size = Size(width = width.toPx(), height = maxOf(height, 16.dp.toPx())),
+            cornerRadius = CornerRadius(4f)
+        )
+    }
 }
 
 @Composable
-fun Modifier.verticalScrollWithBar(state: ScrollState = rememberScrollState()) = verticalScroll(state).verticalScrollbar(state)
+fun Modifier.verticalScrollWithBar(state: ScrollState = rememberScrollState()) = verticalScroll(state).verticalScrollbar(state, offset = Offset(-8f, 0f))
 

@@ -16,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +35,7 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.TimeFormatUtil
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.verticalScroll
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.present_choose_appointment_title
 
@@ -72,8 +74,11 @@ fun PresentQrAppointmentSelector(appointments: List<Appointment>) {
         ScreenTitle(Res.string.present_choose_appointment_title.i18n())
 
 
+        val state = rememberLazyListState()
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier.verticalScroll(state),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            state = state,
         ) {
             items(appointments, key = Appointment::id) { item ->
                 val course = rememberStorage { courses[item.course]!! }
