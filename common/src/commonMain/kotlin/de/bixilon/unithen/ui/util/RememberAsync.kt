@@ -44,7 +44,7 @@ fun <T> rememberAsync(key: Any? = Unit, invokable: suspend () -> T): T? {
 
 @Composable
 fun <T> rememberAsync(vararg keys: Any?, invokable: suspend () -> T): T? {
-    val navigation = LocalNavigation.current
+    val navigation = catchAll { LocalNavigation.current }
     var value by remember { mutableStateOf<T?>(null) }
 
 
@@ -54,7 +54,7 @@ fun <T> rememberAsync(vararg keys: Any?, invokable: suspend () -> T): T? {
                 value = invokable.invoke()
             } catch (error: Throwable) {
                 error.printStackTrace()
-                navigation.navigate(CrashRoute(error))
+                navigation?.navigate(CrashRoute(error))
             }
         }
     }
