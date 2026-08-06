@@ -20,11 +20,9 @@ import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.Icons.Filled
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -52,6 +50,7 @@ fun rememberUserFilter(): UserFilter {
     return remember { UserFilter(mutableStateOf(""), sort, order) }
 }
 
+
 @Composable
 fun UserFilterX(filter: UserFilter) {
     val search = rememberTextFieldState()
@@ -66,6 +65,7 @@ fun UserFilterX(filter: UserFilter) {
             lineLimits = TextFieldLineLimits.SingleLine,
             modifier = Modifier.weight(1.0f, true),
             placeholder = { Text(Res.string.search_placeholder.i18n()) },
+            leadingIcon = { Icon(Filled.Search, "") },
             trailingIcon = {
                 if (search.text.isNotBlank()) {
                     IconButton({ search.clearText() }) { Icon(Icons.Default.Clear, "clear") }
@@ -86,14 +86,14 @@ fun UserFilterX(filter: UserFilter) {
                     DropdownMenuItem(
                         text = { Text(item.label.i18n()) },
                         onClick = { filter.sort = item; expanded = false },
-                        trailingIcon = { if (filter.sort == item) Icon(Icons.Filled.Star, "selected") }
+                        trailingIcon = { if (filter.sort == item) Icon(Filled.Star, "selected") }
                     )
                 }
             }
         }
 
         IconButton({ filter.order = if (filter.order == Order.ASC) Order.DESC else Order.ASC }) {
-            Icon(if (filter.order == Order.DESC) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown, "order")
+            Icon(if (filter.order == Order.DESC) Filled.KeyboardArrowUp else Filled.KeyboardArrowDown, "order")
         }
     }
 }
