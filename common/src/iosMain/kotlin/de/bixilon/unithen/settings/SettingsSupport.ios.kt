@@ -18,7 +18,7 @@ import platform.AVFoundation.AVMediaTypeVideo
 val SCANNING by lazy { AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo).isNotEmpty() }
 val HIGH_QUALITY by lazy { SCANNING /* && AVCaptureSession().canSetSessionPreset(AVAssetExportPresetHighestQuality)*/ }
 
-actual fun isNativeSettingSupported(setting: Setting<*>) = when (setting) {
+actual fun isNativeSettingSupported(setting: AbstractSetting<*>) = when (setting) {
     Settings.SCAN_CONFIRMATION_SCREEN -> SCANNING
     Settings.SCAN_QR_AUTO_SCAN -> SCANNING
     Settings.SCAN_QR_HIGH_RESOLUTION -> HIGH_QUALITY

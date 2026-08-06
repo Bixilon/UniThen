@@ -13,8 +13,8 @@
 package de.bixilon.unithen.settings
 
 
-expect fun isNativeSettingSupported(setting: Setting<*>): Boolean
+expect fun isNativeSettingSupported(setting: AbstractSetting<*>): Boolean
 
-fun isSettingSupported(setting: Setting<*>) = when {
+fun isSettingSupported(setting: AbstractSetting<*>) = when {
     else -> isNativeSettingSupported(setting)
 }

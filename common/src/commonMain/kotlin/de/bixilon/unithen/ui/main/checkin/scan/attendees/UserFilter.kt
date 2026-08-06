@@ -46,8 +46,8 @@ class UserFilter(_search: MutableState<String>, _sort: MutableState<AttendeeSort
 
 @Composable
 fun rememberUserFilter(): UserFilter {
-    val sort = rememberSetting(Settings.ATTENDEE_SORT, AttendeeSort)
-    val order = rememberSetting(Settings.ATTENDEE_ORDER, Order)
+    val sort = rememberSetting(Settings.ATTENDEE_SORT)
+    val order = rememberSetting(Settings.ATTENDEE_ORDER)
 
     return remember { UserFilter(mutableStateOf(""), sort, order) }
 }

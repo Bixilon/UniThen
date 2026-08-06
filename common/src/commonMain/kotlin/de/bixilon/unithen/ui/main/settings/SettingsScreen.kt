@@ -30,7 +30,6 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.AboutRoute
 import de.bixilon.unithen.ui.main.AccountsRoute
-import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.main.settings.dialog.DatabaseCleanupDialog
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.main.settings.types.EnumSetting
@@ -59,7 +58,7 @@ fun SettingsScreen() {
 
         Section(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionTitle(Res.string.settings_general.i18n())
-            EnumSetting(Settings.ENTRYPOINT, MainScreens, Res.string.settings_entrypoint.i18n(), Res.string.settings_entrypoint_description.i18n())
+            EnumSetting(Settings.ENTRYPOINT, Res.string.settings_entrypoint.i18n(), Res.string.settings_entrypoint_description.i18n())
         }
         HorizontalDivider()
 

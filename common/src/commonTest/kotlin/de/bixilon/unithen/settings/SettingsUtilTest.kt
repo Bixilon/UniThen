@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 val BOOLEAN = Setting("boolean", true)
 val INT = Setting("int", 0)
 val STRING = Setting("string", "abc")
-val ENUM = Setting("enum", TestEnum.A)
+val ENUM = EnumSetting("enum", TestEnum.A, TestEnum)
 
 enum class TestEnum {
     A,
@@ -94,8 +94,8 @@ class SettingsUtilTest : AbstractComposeUiTest() {
     @Test
     fun `enum settings are in sync`() = runComposeUiTest {
         withStore {
-            var a by rememberSetting(ENUM, TestEnum)
-            var b by rememberSetting(ENUM, TestEnum)
+            var a by rememberSetting(ENUM)
+            var b by rememberSetting(ENUM)
 
             assertEquals(a, b)
             LaunchedEffect(Unit) {

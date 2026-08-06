@@ -75,7 +75,7 @@ fun AccountSyncScreen(site: Site, authentication: Authentication) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current
     var account: Account? by rememberStateOf { null }
-    var entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
+    var entrypoint by rememberSetting(Settings.ENTRYPOINT)
 
     val first = remember(Unit) { storage.accounts.count == 0 }
 

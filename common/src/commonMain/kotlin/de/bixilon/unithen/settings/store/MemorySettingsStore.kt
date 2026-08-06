@@ -16,11 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import de.bixilon.kutil.cast.CastUtil.cast
-import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.unithen.settings.AbstractSetting
+import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 
 class MemorySettingsStore : SettingsStore {
-    val settings = mutableMapOf<Setting<*>, MutableState<*>>()
+    val settings = mutableMapOf<AbstractSetting<*>, MutableState<*>>()
 
     @Composable
     override fun createBoolean(setting: Setting<Boolean>): MutableState<Boolean> {
@@ -38,7 +39,7 @@ class MemorySettingsStore : SettingsStore {
     }
 
     @Composable
-    override fun <T : Enum<T>> createEnum(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
+    override fun <T : Enum<T>> createEnum(setting: EnumSetting<T>): MutableState<T> {
         return settings.getOrPut(setting) { mutableStateOf(setting.default) }.cast()
     }
 }

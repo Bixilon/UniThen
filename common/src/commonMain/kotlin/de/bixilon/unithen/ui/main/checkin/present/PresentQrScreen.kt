@@ -93,7 +93,7 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
 
         Box(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
             Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-                val version by rememberSetting(FeatureFlags.QR_VERSION, QrVersion)
+                val version by rememberSetting(FeatureFlags.QR_VERSION)
                 val encoded = remember(account, appointment, active) { encodeQr(if (active) QrVersion.V1 else version, account.uuid, appointment.uuid, account.firstname, account.lastname) }
 
                 QrCode(data = encoded, modifier = Modifier.fillMaxWidth())

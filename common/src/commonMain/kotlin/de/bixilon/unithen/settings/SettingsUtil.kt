@@ -15,7 +15,6 @@ package de.bixilon.unithen.settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
-import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import kotlin.jvm.JvmName
 
@@ -47,4 +46,4 @@ fun rememberSetting(setting: Setting<String>) = LocalSettingsStore.current.creat
 
 @Composable
 @JvmName("rememberEnumSetting")
-fun <T : Enum<T>> rememberSetting(setting: Setting<T>, values: ValuesEnum<T>) = LocalSettingsStore.current.createEnum(setting, values)
+fun <T : Enum<T>> rememberSetting(setting: EnumSetting<T>) = LocalSettingsStore.current.createEnum(setting)

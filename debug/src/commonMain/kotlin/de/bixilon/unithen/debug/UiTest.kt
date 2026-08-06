@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.components.qr.QrCode
@@ -35,7 +36,7 @@ import kotlin.time.Duration.Companion.seconds
 
 val A = Setting("test_a", true)
 val B = Setting("test_b", false)
-val C = Setting("test_c", EnumTest.A)
+val C = EnumSetting("test_c", EnumTest.A, EnumTest)
 
 enum class EnumTest {
     A,
@@ -58,7 +59,7 @@ private fun SettingsTest() {
         Text("Both setting groups should be synchronized, A should toggle every second.")
 
         var a by rememberSetting(A)
-        var c by rememberSetting(C, EnumTest)
+        var c by rememberSetting(C)
 
         RepeatedEffect(1.seconds) { a = !a }
         RepeatedEffect(5.seconds) { c = EnumTest.next(c) }
@@ -68,9 +69,9 @@ private fun SettingsTest() {
         BooleanSetting(B, "B", "")
         BooleanSetting(B, "B", "")
 
-        EnumSetting(C, EnumTest, "C", "")
-        EnumSetting(C, EnumTest, "C", "")
-        EnumSetting(C, EnumTest, "C", "")
+        EnumSetting(C, "C", "")
+        EnumSetting(C, "C", "")
+        EnumSetting(C, "C", "")
     }
 }
 

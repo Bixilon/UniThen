@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.*
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -67,14 +67,14 @@ class SharedPreferencesSettingsStore(context: Context) : SettingsStore {
     }
 
     @Composable
-    override fun <T : Enum<T>> createEnum(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
+    override fun <T : Enum<T>> createEnum(setting: EnumSetting<T>): MutableState<T> {
         val raw = create(stringPreferencesKey(setting.key), setting.default.name)
 
 
         return remember {
             object : MutableState<T> {
                 override var value: T
-                    get() = values.getOrNull(raw.value) ?: setting.default
+                    get() = setting.values.getOrNull(raw.value) ?: setting.default
                     set(newValue) {
                         raw.value = newValue.name
                     }

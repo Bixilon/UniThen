@@ -1,7 +1,8 @@
 package de.bixilon.unithen.settings.store
 
 import androidx.compose.runtime.*
-import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.unithen.settings.AbstractSetting
+import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 import platform.Foundation.NSNotificationCenter
 import platform.Foundation.NSUserDefaults
@@ -9,7 +10,7 @@ import platform.Foundation.NSUserDefaultsDidChangeNotification
 
 object NSUserDefaultsSettingsStore : SettingsStore {
 
-    private operator fun NSUserDefaults.contains(setting: Setting<*>): Boolean {
+    private operator fun NSUserDefaults.contains(setting: AbstractSetting<*>): Boolean {
         return objectForKey(setting.key) != null
     }
 
@@ -31,10 +32,10 @@ object NSUserDefaultsSettingsStore : SettingsStore {
         return stringForKey(setting.key) ?: setting.default
     }
 
-    private operator fun <T : Enum<T>> NSUserDefaults.get(setting: Setting<T>, values: ValuesEnum<T>): T {
+    private operator fun <T : Enum<T>> NSUserDefaults.get(setting: EnumSetting<T>): T {
         if (setting !in this) return setting.default
 
-        return stringForKey(setting.key)?.let { values[it] } ?: setting.default
+        return stringForKey(setting.key)?.let { setting.values[it] } ?: setting.default
     }
 
     @Composable
@@ -81,11 +82,11 @@ object NSUserDefaultsSettingsStore : SettingsStore {
     }
 
     @Composable
-    override fun <T : Enum<T>> createEnum(setting: Setting<T>, values: ValuesEnum<T>): MutableState<T> {
+    override fun <T : Enum<T>> createEnum(setting: EnumSetting<T>): MutableState<T> {
         val defaults = NSUserDefaults.standardUserDefaults
-        val value = remember { mutableStateOf(defaults[setting, values]) }
+        val value = remember { mutableStateOf(defaults[setting]) }
 
-        defaults.Observer { value.value = defaults[setting, values] }
+        defaults.Observer { value.value = defaults[setting] }
 
         return remember { value.createState { defaults.setObject(it.name, setting.key) } }
     }

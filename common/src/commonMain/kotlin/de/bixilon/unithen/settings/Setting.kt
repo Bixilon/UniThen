@@ -12,7 +12,20 @@
 
 package de.bixilon.unithen.settings
 
+import de.bixilon.kutil.enums.ValuesEnum
+
+interface AbstractSetting<T> {
+    val key: String
+    val default: T
+}
+
 class Setting<T>(
-    val key: String,
-    val default: T,
-)
+    override val key: String,
+    override val default: T,
+) : AbstractSetting<T>
+
+class EnumSetting<T : Enum<T>>(
+    override val key: String,
+    override val default: T,
+    val values: ValuesEnum<T>,
+) : AbstractSetting<T>

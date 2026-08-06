@@ -18,13 +18,13 @@ import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 
 object Settings {
     val SCAN_QR_HIGH_RESOLUTION = Setting("scan_qr_high_resolution", false)
-    val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", false)
+    val SCAN_QR_AUTO_SCAN = Setting("scan_qr_auto_scan", true)
     val SCAN_AWAIT_SERVER_CONFIRMATION = Setting("scan_await_server_confirmation", true)
     val SCAN_CONFIRMATION_SCREEN = Setting("scan_confirmation_screen", false)
     val SCAN_ALLOW_OFFLINE = Setting("scan_allow_offline", true)
 
-    val ENTRYPOINT = Setting("entrypoint", MainScreens.COURSES)
+    val ENTRYPOINT = EnumSetting("entrypoint", MainScreens.COURSES, MainScreens)
 
-    val ATTENDEE_ORDER = Setting("attendee_order", Order.ASC)
-    val ATTENDEE_SORT = Setting("attendee_sort", AttendeeSort.LASTNAME)
+    val ATTENDEE_ORDER = EnumSetting("attendee_order", Order.ASC, Order)
+    val ATTENDEE_SORT = EnumSetting("attendee_sort", AttendeeSort.LASTNAME, AttendeeSort)
 }

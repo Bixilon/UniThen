@@ -69,7 +69,7 @@ enum class MainScreens(
 
 @Composable
 fun ActualMainScreen() {
-    val entrypoint by rememberSetting(Settings.ENTRYPOINT, MainScreens)
+    val entrypoint by rememberSetting(Settings.ENTRYPOINT)
     val navigator = remember { Navigator(entrypoint.route, NavigationStackPolicy.IGNORE_SAME) }
 
 

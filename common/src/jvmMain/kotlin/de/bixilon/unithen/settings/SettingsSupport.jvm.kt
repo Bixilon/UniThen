@@ -12,7 +12,7 @@
 
 package de.bixilon.unithen.settings
 
-actual fun isNativeSettingSupported(setting: Setting<*>) = when (setting) {
+actual fun isNativeSettingSupported(setting: AbstractSetting<*>) = when (setting) {
     Settings.SCAN_CONFIRMATION_SCREEN -> false
     Settings.SCAN_QR_AUTO_SCAN -> false
     Settings.SCAN_QR_HIGH_RESOLUTION -> false

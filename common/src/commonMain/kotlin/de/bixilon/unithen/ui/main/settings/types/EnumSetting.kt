@@ -23,9 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.cast.CastUtil.nullCast
-import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.functions.FunctionUtil.letIf
-import de.bixilon.unithen.settings.Setting
+import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.util.i18n
@@ -38,10 +37,10 @@ interface Labeled {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title: String, description: String) {
+fun <T : Enum<T>> EnumSetting(setting: EnumSetting<T>, title: String, description: String) {
     val supported = isSettingSupported(setting)
     var expanded by remember { mutableStateOf(false) }
-    var value by rememberSetting(setting, values)
+    var value by rememberSetting(setting)
 
     Row(
         modifier = Modifier
@@ -68,7 +67,7 @@ fun <T : Enum<T>> EnumSetting(setting: Setting<T>, values: ValuesEnum<T>, title:
                 modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.SecondaryEditable, true).fillMaxWidth()
             )
             ExposedDropdownMenu(expanded = supported && expanded, onDismissRequest = { expanded = false }) {
-                for (option in values) {
+                for (option in setting.values) {
                     DropdownMenuItem(
                         text = { Text(option.nullCast<Labeled>()?.label?.i18n() ?: option.name.lowercase()) },
                         onClick = {

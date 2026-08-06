@@ -28,5 +28,5 @@ enum class QrVersion {
 }
 
 object FeatureFlags {
-    val QR_VERSION = Setting("feature_qr_version", QrVersion.V1)
+    val QR_VERSION = EnumSetting("feature_qr_version", QrVersion.V1, QrVersion)
 }

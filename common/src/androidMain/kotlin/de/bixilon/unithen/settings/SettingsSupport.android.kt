@@ -12,4 +12,4 @@
 
 package de.bixilon.unithen.settings
 
-actual fun isNativeSettingSupported(setting: Setting<*>) = true
+actual fun isNativeSettingSupported(setting: AbstractSetting<*>) = true
