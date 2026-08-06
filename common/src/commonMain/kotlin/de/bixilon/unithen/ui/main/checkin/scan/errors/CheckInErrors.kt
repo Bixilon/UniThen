@@ -45,7 +45,7 @@ sealed interface CheckInErrors {
             "checkin closed", CheckInClosed.message -> CheckInClosed
             "booking not approved yet", NotApproved.message -> NotApproved
             "already checked in", AlreadyCheckedIn.message -> AlreadyCheckedIn
-            else -> null
+            else -> Other(message)
         }
     }
 }

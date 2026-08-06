@@ -25,7 +25,7 @@ data class CheckInAttemptQl(
     val message: String? = null,
     @Serializable(with = CourseUserQl.CourseUserQlSerializer::class) val user: CourseUserQl? = null,
 ) : IdentifiedQl {
-    val error get() = CheckInErrors.of(message)
+    val error get() = if (status == Status.FAILURE) CheckInErrors.of(message) else null
 
 
     enum class Status {
