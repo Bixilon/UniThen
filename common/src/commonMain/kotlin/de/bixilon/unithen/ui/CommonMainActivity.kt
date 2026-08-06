@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui
 
 import androidx.compose.runtime.*
-import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
+import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.EmailAuthenticationScreen
@@ -55,6 +55,18 @@ import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
+fun AppointmentPopper(appointment: Appointment) {
+    val navigator = LocalNavigation.current
+    val time = useTime()
+
+    LaunchedEffect(time) {
+        if (appointment.canPerformCheckIn(time)) return@LaunchedEffect
+
+        navigator.pop()
+    }
+}
+
+@Composable
 fun Navigator.MainNavigator() {
 
     Routes {
@@ -72,36 +84,28 @@ fun Navigator.MainNavigator() {
         composable<PresentQrAppointmentRoute> {
             PresentQrAppointmentScreen(it.course, it.appointment)
 
-            if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
-                pop()
-            }
+            AppointmentPopper(it.appointment)
         }
         composable<PresentQrRoute> {
             PresentQrScreen(it.account, it.course, it.appointment)
 
-            if (useTime() > it.appointment.end + CHECKIN_LATE_DURATION) {
-                pop()
-            }
+            AppointmentPopper(it.appointment)
         }
 
         composable<ScanAppointmentRoute> {
             ScanAppointmentScreen(it.appointment)
 
-            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                pop()
-            }
+            AppointmentPopper(it.appointment)
         }
         composable<ScanQrAppointmentRoute> {
             ScanQrAppointmentScreen(it.appointment)
-            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                pop()
-            }
+
+            AppointmentPopper(it.appointment)
         }
         composable<ScanQrConfirmRoute> {
             ScanQrConfirmScreen(it.appointment, it.userId)
-            if (useTime() > (it.appointment.end + CHECKIN_LATE_DURATION)) {
-                pop()
-            }
+
+            AppointmentPopper(it.appointment)
         }
 
         composable<ScanAnyRoute> { QrScanAnyScreen() }
