@@ -15,7 +15,7 @@ import de.bixilon.unithen.ui.util.verticalScrollWithBar
 fun FeatureFlagScreen() {
     Screen(modifier = Modifier.verticalScrollWithBar()) {
         ScreenTitle("Feature flags")
-        Text("All those options might be removed any time or completely break the app! Only use if you know what you are doing!!!", color = Color.Red)
+        Text("All those options might be removed any time or completely break the app! Only use if you know what you are doing!", color = Color.Red)
 
         EnumSetting(FeatureFlags.QR_VERSION, QrVersion, "QR code version", "Scanning might break with the offical app")
     }

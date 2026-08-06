@@ -139,7 +139,7 @@ fun Loader(content: @Composable () -> Unit) {
     val storage = LocalStorage.current
 
     var error by remember { mutableStateOf<Throwable?>(null) }
-    var loaded by remember { mutableStateOf(false) }
+    var active by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         try {
@@ -150,11 +150,11 @@ fun Loader(content: @Composable () -> Unit) {
             thrown.printStackTrace()
             error = thrown
         } finally {
-            loaded = true
+            active = false
         }
     }
 
-    if (!loaded) {
+    if (active) {
         DelayedContent(100.milliseconds) {
             LoadingContainer(Res.string.loading_database.i18n(), Logo)
         }
@@ -162,8 +162,6 @@ fun Loader(content: @Composable () -> Unit) {
     }
 
     error?.let { CrashScreen("Error during database loading", it); return }
-
-    if (!loaded) return
 
     content.invoke()
 }
