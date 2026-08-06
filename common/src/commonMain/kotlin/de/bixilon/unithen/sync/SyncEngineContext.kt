@@ -56,6 +56,13 @@ class SyncEngineContext(
         handlErrors(block)
     }
 
+    private suspend inline fun execute(request: SyncEngineRequest? = null, noinline block: suspend () -> Unit) {
+        if (request != null) {
+            return engine.with(request) { execute(block) }
+        }
+        execute(block)
+    }
+
 
     suspend fun syncAttendees(appointments: List<Appointment>, force: Boolean = this.force) = coroutineScope {
         if (appointments.isEmpty()) return@coroutineScope
@@ -191,7 +198,7 @@ class SyncEngineContext(
                 delay(10.milliseconds)
             }
 
-            async { execute { CheckInUtil.syncQueue(storage, item) } }
+            async { execute(CheckInQueueRequest(item.user, item.appointment)) { CheckInUtil.syncQueue(storage, item) } }
         }
     }
 

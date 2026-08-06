@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
+import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
@@ -85,6 +87,7 @@ private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: Use
 
 @Composable
 private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean) {
+    val sync = LocalSyncEngine.current
     val color = when {
         item.attempt != null -> MaterialTheme.colorScheme.surfaceContainer
         item.message != null -> MaterialTheme.colorScheme.errorContainer
@@ -94,6 +97,8 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
     val storage = LocalStorage.current
     val user = rememberStorage { users[item.user]!! }
     val appointment = rememberStorage { appointments[item.appointment]!! }
+
+    val active = sync.isQueueActive(user, appointment)
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
@@ -117,7 +122,12 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            Row {
+            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                if (active) {
+                    CircularProgressIndicator()
+                } else {
+                    Icon(Icons.Filled.Warning, "pending")
+                }
                 if (RuntimeInfo.debug) {
                     IconButton({
                         storage.transaction {
