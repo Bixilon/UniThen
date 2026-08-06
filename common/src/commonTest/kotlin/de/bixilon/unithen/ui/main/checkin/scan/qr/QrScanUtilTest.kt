@@ -1,8 +1,8 @@
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals

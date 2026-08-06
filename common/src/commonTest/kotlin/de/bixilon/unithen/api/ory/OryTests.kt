@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.api.ory
 
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.ui.auth.ory.OryConfig
 import de.bixilon.unithen.util.Jackson
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.runBlocking
 import unithen.common.generated.resources.Res
 import kotlin.test.Test

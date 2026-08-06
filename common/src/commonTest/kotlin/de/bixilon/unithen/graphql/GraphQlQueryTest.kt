@@ -12,12 +12,12 @@
 
 package de.bixilon.unithen.graphql
 
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.util.Jackson
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month

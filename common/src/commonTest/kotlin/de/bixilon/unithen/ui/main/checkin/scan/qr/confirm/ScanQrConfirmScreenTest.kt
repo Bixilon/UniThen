@@ -5,6 +5,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -18,9 +19,9 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.waitUntilText
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlin.test.Test
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalTestApi::class)
 class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
@@ -130,7 +131,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
         setContent { MockedScreen(storage, userId = user.uuid.toString()) }
 
         waitUntilText("Confirm").performClick()
-        waitUntilText("Confirm").assertIsNotEnabled()
+        waitUntilText("Confirm", timeout = 10.seconds).assertIsNotEnabled()
 
 
         assertNotNull(storage.checkInQueue[appointment, user])

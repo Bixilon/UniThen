@@ -110,7 +110,6 @@ class AndroidSqlHelper(context: Context, name: String?) : SQLiteOpenHelper(conte
         override fun close() {
             lock.unlock()
         }
-
     }
 
     private inner class AndroidUpdateConnection(database: SQLiteDatabase) : AndroidQueryConnection(database), SQLiteHelper.UpdateConnection {

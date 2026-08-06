@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.storage
 
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.EventQl
@@ -22,7 +23,6 @@ import de.bixilon.unithen.storage.StorageTestUtil.site
 import de.bixilon.unithen.storage.StorageUtil.storeCourse
 import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
 import de.bixilon.unithen.storage.sql.empty
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking

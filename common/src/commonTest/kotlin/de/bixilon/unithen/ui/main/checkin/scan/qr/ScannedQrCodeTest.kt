@@ -12,9 +12,9 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
+import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
-import de.bixilon.unithen.util.Kutil.toUuid
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
