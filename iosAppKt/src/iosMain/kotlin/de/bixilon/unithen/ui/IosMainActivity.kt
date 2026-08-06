@@ -19,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import de.bixilon.unithen.RuntimeInfo
@@ -28,8 +30,12 @@ import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.NSUserDefaultsSettingsStore
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
+import de.bixilon.unithen.ui.util.LocalUrlIntent
+import platform.Foundation.NSURL
 import platform.UIKit.UIViewController
 
+
+var URL: MutableState<String?> = mutableStateOf(null)
 
 @Suppress("UNUSED")
 fun IosMainActivity(): UIViewController = ComposeUIViewController {
@@ -46,10 +52,16 @@ fun IosMainActivity(): UIViewController = ComposeUIViewController {
                 CompositionLocalProvider(
                     LocalStorage provides STORAGE,
                     LocalSettingsStore provides NSUserDefaultsSettingsStore,
+                    LocalUrlIntent provides URL.value,
                 ) {
                     if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                 }
             }
         }
     }
+}
+
+@Suppress("UNUSED")
+fun handleLink(url: NSURL?) {
+    URL.value = url?.absoluteString
 }

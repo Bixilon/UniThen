@@ -22,7 +22,11 @@ struct UniThenApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ComposeViewController().ignoresSafeArea(.all)
+            ComposeViewController()
+                .ignoresSafeArea(.all)
+                .onOpenURL { it in
+                    IosMainActivityKt.handleLink(it)
+                }
         }
     }
 }
