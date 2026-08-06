@@ -19,8 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +31,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import unithen.common.generated.resources.*
 
 
@@ -44,7 +43,7 @@ private fun Note(text: String) = Text(text,
 
 @Composable
 fun SetupScreen() {
-    var accepted by rememberSaveable { mutableStateOf(false) }
+    var accepted by rememberStateOf { false }
 
     Screen {
         ScreenTitle(Res.string.setup_title.i18n())
