@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -37,7 +38,6 @@ import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
-import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
@@ -51,7 +51,7 @@ import kotlin.uuid.Uuid
 
 
 @Composable
-private fun AttendeeCard(appointment: Appointment, user: User, readonly: Boolean) {
+private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
     val toast = useToast()
@@ -66,8 +66,7 @@ private fun AttendeeCard(appointment: Appointment, user: User, readonly: Boolean
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -85,7 +84,7 @@ private fun AttendeeCard(appointment: Appointment, user: User, readonly: Boolean
 }
 
 @Composable
-private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
+private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean) {
     val color = when {
         item.attempt != null -> MaterialTheme.colorScheme.surfaceContainer
         item.message != null -> MaterialTheme.colorScheme.errorContainer
@@ -98,8 +97,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
 
     Card(
         colors = CardDefaults.cardColors(containerColor = color),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -141,7 +139,7 @@ private fun QueueCard(item: CheckInQueue, readonly: Boolean) {
 }
 
 @Composable
-private fun EnrolledCard(appointment: Appointment, user: User, readonly: Boolean) {
+private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
     val storage = LocalStorage.current
 
     val toast = useToast()
@@ -155,8 +153,7 @@ private fun EnrolledCard(appointment: Appointment, user: User, readonly: Boolean
 
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.padding(12.dp)) {
@@ -174,7 +171,6 @@ private fun EnrolledCard(appointment: Appointment, user: User, readonly: Boolean
 
 @Composable
 fun ScanAttendeeList(appointment: Appointment) {
-    val visible = LocalVisibility.current
     val course = rememberStorage { courses[appointment.course]!! }
     val scope = rememberCoroutineScope()
 
@@ -182,10 +178,13 @@ fun ScanAttendeeList(appointment: Appointment) {
 
     val enrolled = rememberStorage { users.getEnrolledCount(course) }
 
-    val attendees = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { users.getAttendees(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
-    val queue = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { checkInQueue[appointment, filter.search, filter.sort, filter.order] } ?: emptyList()
+    val (attendees, queue, not) = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) {
+        val attendees = users.getAttendees(appointment, filter.search, filter.sort, filter.order)
+        val queue = checkInQueue[appointment, filter.search, filter.sort, filter.order]
+        val not = users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order)
 
-    val not = rememberStorageAsync(appointment, filter.search, filter.sort, filter.order) { users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order) } ?: emptyList()
+        return@rememberStorageAsync Triple(attendees, queue, not)
+    } ?: Triple(emptyList(), emptyList(), emptyList())
 
 
     val state = rememberLazyListState()
@@ -205,10 +204,6 @@ fun ScanAttendeeList(appointment: Appointment) {
         if (appointment.isAttendeesStale() || course.isEnrolledStale()) {
             synchronize.invoke()
         }
-    }
-
-    if (!visible) { // TODO: This is not good, when checking out persons its weirdly scrolling down (to the key of that person)
-        LaunchedEffect(attendees, queue, not) { state.animateScrollToItem(0, 0) }
     }
 
 
@@ -233,11 +228,14 @@ fun ScanAttendeeList(appointment: Appointment) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(bottom = 150.dp),
             ) {
-                // Unique keys, otherwise the app might crash because of duplicated keys (async storage)
-                items(items = attendees, key = { "a" + it.id }) { AttendeeCard(appointment, it, readonly) }
-                items(items = queue, key = { "q" + it.user }) { QueueCard(it, readonly) }
-                items(items = not, key = { "e" + it.id }) { EnrolledCard(appointment, it, readonly) }
+                item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
+                items(items = attendees, key = { it.id }) { AttendeeCard(modifier(), appointment, it, readonly) }
+                items(items = queue, key = { it.user }) { QueueCard(modifier(), it, readonly) }
+                items(items = not, key = { it.id }) { EnrolledCard(modifier(), appointment, it, readonly) }
             }
         }
     }
 }
+
+
+private fun LazyItemScope.modifier() = Modifier.fillMaxWidth().animateItem()
