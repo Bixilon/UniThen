@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.kutil.enums.ValuesEnum
+import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.SettingsStore
 import de.bixilon.unithen.ui.AbstractComposeUiTest
@@ -12,6 +14,20 @@ import kotlin.test.assertEquals
 
 val BOOLEAN = Setting("boolean", true)
 val INT = Setting("int", 0)
+val STRING = Setting("string", "abc")
+val ENUM = Setting("enum", TestEnum.A)
+
+enum class TestEnum {
+    A,
+    B,
+    C,
+    ;
+
+    companion object : ValuesEnum<TestEnum> {
+        override val VALUES = values()
+        override val NAME_MAP = names()
+    }
+}
 
 expect fun createSettingsStore(): SettingsStore
 
@@ -39,6 +55,7 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             assertEquals(a, b)
             LaunchedEffect(Unit) {
                 a = !a
+                assertEquals(false, a)
                 assertEquals(a, b)
             }
         }
@@ -53,6 +70,37 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             assertEquals(a, b)
             LaunchedEffect(Unit) {
                 a++
+                assertEquals(1, a)
+                assertEquals(a, b)
+            }
+        }
+    }
+
+    @Test
+    fun `string settings are in sync`() = runComposeUiTest {
+        withStore {
+            var a by rememberSetting(STRING)
+            var b by rememberSetting(STRING)
+
+            assertEquals(a, b)
+            LaunchedEffect(Unit) {
+                a = "something"
+                assertEquals("something", a)
+                assertEquals(a, b)
+            }
+        }
+    }
+
+    @Test
+    fun `enum settings are in sync`() = runComposeUiTest {
+        withStore {
+            var a by rememberSetting(ENUM, TestEnum)
+            var b by rememberSetting(ENUM, TestEnum)
+
+            assertEquals(a, b)
+            LaunchedEffect(Unit) {
+                a = TestEnum.C
+                assertEquals(TestEnum.C, a)
                 assertEquals(a, b)
             }
         }
