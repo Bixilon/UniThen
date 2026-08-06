@@ -12,10 +12,9 @@
 
 package de.bixilon.unithen.ui.main
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.QrCode
@@ -30,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
@@ -68,21 +68,17 @@ enum class MainScreens(
 }
 
 @Composable
-fun ActualMainScreen() {
-    val entrypoint by rememberSetting(Settings.ENTRYPOINT)
-    val navigator = remember { Navigator(entrypoint.route, NavigationStackPolicy.IGNORE_SAME) }
+fun isKeyboardOpen() = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
 
-    navigator.Routes {
-        composable<CoursesRoute> { CoursesScreen() }
-        composable<SettingsRoute> { SettingsScreen() }
-        composable<CheckInPresentRoute> { CheckInPresentScreen() }
-        composable<CheckInScanRoute> { CheckInScanScreen() }
-    }
+@Composable
+private fun MainNavigationBar(navigator: Navigator) {
+    val open = isKeyboardOpen()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
-
+    AnimatedVisibility(
+        visible = !open,
+        enter = expandVertically(),
+    ) {
         NavigationBar(windowInsets = WindowInsets()) {
             MainScreens.entries.forEach { destination ->
                 val enabled = when (destination) {
@@ -99,6 +95,26 @@ fun ActualMainScreen() {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun ActualMainScreen() {
+    val entrypoint by rememberSetting(Settings.ENTRYPOINT)
+    val navigator = remember { Navigator(entrypoint.route, NavigationStackPolicy.IGNORE_SAME) }
+
+
+    navigator.Routes {
+        composable<CoursesRoute> { CoursesScreen() }
+        composable<SettingsRoute> { SettingsScreen() }
+        composable<CheckInPresentRoute> { CheckInPresentScreen() }
+        composable<CheckInScanRoute> { CheckInScanScreen() }
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
+
+        MainNavigationBar(navigator)
     }
 }
 

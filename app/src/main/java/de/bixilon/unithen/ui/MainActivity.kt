@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
 import de.bixilon.unithen.debug.DebugMainActivity
@@ -43,6 +44,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         url.value = intent.data?.toString()
 
