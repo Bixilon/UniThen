@@ -52,6 +52,9 @@ fun String.formatDisplay() = this
     .removeMultipleWhitespaces()
     .replace("de.bixilon.unithen", "d.b.u")
     .replace("kotlinx.coroutines", "k.c")
+    .replace("androidx.compose", "a.x")
+    .replace("android.view", "a.v")
+    .replace("java.lang", "j.l")
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
