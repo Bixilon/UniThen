@@ -24,8 +24,8 @@ struct UniThenApp: App {
         WindowGroup {
             ComposeViewController()
                 .ignoresSafeArea(.all)
-                .onOpenURL { it in
-                    IosMainActivityKt.handleLink(it)
+                .onOpenURL { url in
+                    IosMainActivityKt.handleLink(url: url)
                 }
         }
     }
