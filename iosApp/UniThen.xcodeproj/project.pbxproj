@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		8E303D153013C64D004C6719 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		8E303D153013C64D004C6719 /* Exceptions for "UniThen" folder in "UniThen" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -24,11 +24,7 @@
 		8E303D013013C23E004C6719 /* UniThen */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				8E303D153013C64D004C6719 /* PBXFileSystemSynchronizedBuildFileExceptionSet */,
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
+				8E303D153013C64D004C6719 /* Exceptions for "UniThen" folder in "UniThen" target */,
 			);
 			path = UniThen;
 			sourceTree = "<group>";
@@ -299,6 +295,7 @@
 				INFOPLIST_FILE = UniThen/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = UniThen;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to scan QR codes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -339,6 +336,7 @@
 				INFOPLIST_FILE = UniThen/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = UniThen;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera access is required to scan QR codes.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
