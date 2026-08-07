@@ -14,8 +14,8 @@ package de.bixilon.unithen.ui.main.add
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
@@ -23,7 +23,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -70,11 +69,11 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
         return
     }
 
-    val input = remember { TextFieldState("") }
+    val input = rememberTextFieldState()
 
     LaunchedEffect(input.text) {
         val text = input.text.toString()
-        val fixed = catchAll { SiteDetails.fix(text) } ?: text
+        val fixed = SiteDetails.fix(text)
         if (fixed != text) {
             input.edit { this.replace(0, this.length, fixed) }
         }
@@ -107,7 +106,7 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
                     input.clearText()
                     url = text
                 },
-                enabled = catchAll { SiteDetails.fix(input.text.toString()) }?.isNotBlank() ?: false,
+                enabled = "." in input.text.toString() && input.text.isNotBlank(),
             ) {
                 Icon(Icons.Filled.Add, "add")
                 Spacer(Modifier.width(8.dp))

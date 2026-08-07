@@ -32,20 +32,11 @@ data class SiteDetails(
 
     companion object {
 
-        fun fix(url: String): String {
-            val transformed = url
+        fun fix(url: String) = url
                 .removeWhitespaces()
                 .split("://", limit = 2).last()
                 .split(":").first()
                 .split("/").first()
-
-
-            if (transformed.isBlank()) return ""
-
-            if ("." !in transformed) throw IllegalArgumentException("Invalid host: $url")
-
-            return transformed
-        }
 
         private fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
 
