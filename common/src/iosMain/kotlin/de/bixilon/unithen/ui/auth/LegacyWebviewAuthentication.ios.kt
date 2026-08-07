@@ -65,10 +65,10 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
 
 
                     cookies.getAllCookies {
-                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == WEB_SESSION_COOKIE_NAME && it.domain == host } ?: return@getAllCookies
+                        val token = it?.filterIsInstance<NSHTTPCookie>()?.find { it.name == WEB_SESSION_COOKIE_NAME && it.domain == host && it.value.isNotBlank() } ?: return@getAllCookies
 
                         view.loadHTMLString("<html>Logged in!</html>", null)
-                        callback.invoke(CookieAuthentication(token.value()))
+                        callback.invoke(CookieAuthentication(token.value))
                     }
                 }
 
