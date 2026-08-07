@@ -25,6 +25,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.readValue
 import platform.AVFoundation.*
 import platform.CoreGraphics.CGRectZero
+import platform.UIKit.UIInterfaceOrientationLandscapeLeft
+import platform.UIKit.UIInterfaceOrientationLandscapeRight
+import platform.UIKit.UIInterfaceOrientationPortraitUpsideDown
 import platform.UIKit.UIView
 import platform.darwin.NSObject
 import platform.darwin.dispatch_get_main_queue
@@ -34,9 +37,10 @@ import unithen.common.generated.resources.scan_camera_permission
 @OptIn(ExperimentalForeignApi::class)
 private class QrUiView(
     val highQuality: Boolean,
-    val onResult: (Set<QrCodeResult>) -> Unit,
+    onResult: (Set<QrCodeResult>) -> Unit,
     val onError: (Throwable) -> Unit,
 ) : UIView(frame = CGRectZero.readValue()) {
+    private val delegate = QrDelegate(onResult)
     private val session = AVCaptureSession()
     private val preview = AVCaptureVideoPreviewLayer(session = session).apply {
         videoGravity = AVLayerVideoGravityResizeAspectFill
@@ -58,7 +62,21 @@ private class QrUiView(
 
     override fun layoutSubviews() {
         super.layoutSubviews()
+
         preview.frame = bounds
+        updateOrientation()
+    }
+
+    private fun updateOrientation() {
+        val connection = preview.connection ?: return
+        if (!connection.supportsVideoOrientation) return
+
+        connection.videoOrientation = when (window?.windowScene?.interfaceOrientation) {
+            UIInterfaceOrientationLandscapeLeft -> AVCaptureVideoOrientationLandscapeLeft
+            UIInterfaceOrientationLandscapeRight -> AVCaptureVideoOrientationLandscapeRight
+            UIInterfaceOrientationPortraitUpsideDown -> AVCaptureVideoOrientationPortraitUpsideDown
+            else -> AVCaptureVideoOrientationPortrait
+        }
     }
 
     override fun didMoveToWindow() {
@@ -81,8 +99,8 @@ private class QrUiView(
 
         session.addInput(input)
 
-        if (highQuality && session.canSetSessionPreset(AVAssetExportPresetHighestQuality)) {
-            session.sessionPreset = AVAssetExportPresetHighestQuality
+        if (highQuality && session.canSetSessionPreset(AVCaptureSessionPresetHigh)) {
+            session.sessionPreset = AVCaptureSessionPresetHigh
         }
 
         val output = AVCaptureMetadataOutput()
@@ -92,7 +110,7 @@ private class QrUiView(
 
         output.metadataObjectTypes = listOf(AVMetadataObjectTypeQRCode)
 
-        output.setMetadataObjectsDelegate(QrDelegate(onResult), dispatch_get_main_queue())
+        output.setMetadataObjectsDelegate(delegate, dispatch_get_main_queue())
     }
 
     fun stop() {
