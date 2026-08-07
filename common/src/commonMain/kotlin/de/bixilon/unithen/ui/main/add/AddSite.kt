@@ -14,20 +14,21 @@ package de.bixilon.unithen.ui.main.add
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
 import unithen.common.generated.resources.*
 
@@ -62,6 +63,7 @@ fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> U
 
 @Composable
 fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
+    var text by rememberStateOf { "" }
     var url: String? by remember { mutableStateOf(null) }
 
     url?.let {
@@ -69,15 +71,6 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
         return
     }
 
-    val input = rememberTextFieldState()
-
-    LaunchedEffect(input.text) {
-        val text = input.text.toString()
-        val fixed = SiteDetails.fix(text)
-        if (fixed != text) {
-            input.edit { this.replace(0, this.length, fixed) }
-        }
-    }
 
     AlertDialog(
         onDismissRequest = cancel ?: {},
@@ -91,10 +84,13 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
-                    state = input,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(56.dp),
+                    value = text,
+                    onValueChange = { text = SiteDetails.fix(it) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Uri
+                    ),
                     placeholder = { Text(Res.string.sites_add_placeholder.i18n()) },
                 )
             }
@@ -102,11 +98,10 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
         confirmButton = {
             Button(
                 onClick = {
-                    val text = input.text.toString()
-                    input.clearText()
                     url = text
+                    text = ""
                 },
-                enabled = "." in input.text.toString() && input.text.isNotBlank(),
+                enabled = "." in text && text.isNotBlank(),
             ) {
                 Icon(Icons.Filled.Add, "add")
                 Spacer(Modifier.width(8.dp))
