@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -125,8 +124,6 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 if (active) {
                     CircularProgressIndicator()
-                } else {
-                    Icon(Icons.Filled.Warning, "pending")
                 }
                 if (RuntimeInfo.debug) {
                     IconButton({
