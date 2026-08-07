@@ -14,9 +14,11 @@ package de.bixilon.unithen.api.authentication
 
 import de.bixilon.unithen.util.Jackson
 import io.ktor.client.request.*
+import kotlinx.serialization.Serializable
 
 
-interface Authentication {
+@Serializable
+sealed interface Authentication {
     val type: String
 
     fun authenticate(request: HttpRequestBuilder)

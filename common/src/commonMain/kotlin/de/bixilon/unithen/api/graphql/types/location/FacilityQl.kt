@@ -12,7 +12,10 @@
 
 package de.bixilon.unithen.api.graphql.types.location
 
-interface FacilityQl {
+import kotlinx.serialization.Serializable
+
+@Serializable
+sealed interface FacilityQl {
     val name: String
     val __typename: String
 }

@@ -28,6 +28,7 @@ data class CheckInAttemptQl(
     val error get() = if (status == Status.FAILURE) CheckInErrors.of(message) else null
 
 
+    @Serializable
     enum class Status {
         SUCCESS,
         FAILURE,
