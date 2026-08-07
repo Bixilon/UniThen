@@ -27,7 +27,7 @@ data class CookieAuthentication(
     override val type get() = COOKIE_TYPE
 
     init {
-        require(token.isNotBlank())
+        if (token.isBlank()) throw IllegalArgumentException("Cookie is blank!")
     }
 
     override fun authenticate(request: HttpRequestBuilder) {

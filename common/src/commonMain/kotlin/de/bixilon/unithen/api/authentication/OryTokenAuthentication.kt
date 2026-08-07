@@ -27,7 +27,7 @@ data class OryTokenAuthentication(
     override val type get() = ORY_TYPE
 
     init {
-        require(token.isNotBlank())
+        if (token.isBlank()) throw IllegalArgumentException("Token is blank!")
     }
 
     override fun authenticate(request: HttpRequestBuilder) {

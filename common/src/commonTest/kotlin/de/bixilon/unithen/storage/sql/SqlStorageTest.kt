@@ -14,6 +14,9 @@ package de.bixilon.unithen.storage.sql
 
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.kutil.uuid.UuidUtil.toUuid
+import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.api.authentication.OryTokenAuthentication
+import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.StorageTestUtil.account
 import de.bixilon.unithen.storage.StorageTestUtil.appointment
@@ -470,4 +473,35 @@ class SqlStorageTest {
         assertMatch(time, storage.checkInQueue[appointment, user]?.sync)
     }
 
+    @Test
+    fun `insert cookie authentication account`() = runBlocking {
+        val storage = empty()
+
+        val created = storage.account(authentication = CookieAuthentication("abc"))
+
+        var retrieved = storage.accounts[created.id]
+
+        assertEquals("""{"type":"cookie","token":"abc"}""", retrieved?.authentication)
+
+        storage.accounts.update(created, UserDetails(Uuid.random(), "a", "b"), authentication = CookieAuthentication("abcd"))
+
+        retrieved = storage.accounts[created.id]
+        assertEquals("""{"type":"cookie","token":"abcd"}""", retrieved?.authentication)
+    }
+
+    @Test
+    fun `insert ory authentication account`() = runBlocking {
+        val storage = empty()
+
+        val created = storage.account(authentication = OryTokenAuthentication("abc"))
+
+        var retrieved = storage.accounts[created.id]
+
+        assertEquals("""{"type":"ory","token":"abc"}""", retrieved?.authentication)
+
+        storage.accounts.update(created, UserDetails(Uuid.random(), "a", "b"), authentication = OryTokenAuthentication("abcd"))
+
+        retrieved = storage.accounts[created.id]
+        assertEquals("""{"type":"ory","token":"abcd"}""", retrieved?.authentication)
+    }
 }

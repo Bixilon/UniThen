@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.storage
 
+import de.bixilon.unithen.api.authentication.Authentication
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -29,6 +30,9 @@ object StorageTestUtil {
 
     fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: String = "a"): Account {
         return accounts.add(site, UserDetails(uuid, firstname, lastname), CookieAuthentication(authentication))
+    }
+    fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: Authentication): Account {
+        return accounts.add(site, UserDetails(uuid, firstname, lastname), authentication)
     }
 
     fun SqlStorage.event(site: Site = site(), uuid: Uuid = Uuid.random(), name: String = "Test event", start: Instant = Clock.System.now(), end: Instant = Clock.System.now()): Event {
