@@ -73,8 +73,8 @@ data class SiteDetails(
             val iconUrl = parsed.head()
                 .getElementsByTag("link")
                 .filter { it.attribute("rel")?.value == "icon" }
-                .maxBy { it.attribute("sizes")?.value?.split("x")?.first()?.toInt() ?: 0 }
-                .attribute("href")?.value
+                .maxByOrNull { it.attribute("sizes")?.value?.split("x")?.first()?.toInt() ?: 0 }
+                ?.attribute("href")?.value
                 ?.takeIf { it.endsWith(".png") }
 
             val icon = iconUrl?.let { fetcher?.invoke(it) }
