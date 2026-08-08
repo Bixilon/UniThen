@@ -21,7 +21,7 @@ expect fun isNetworkError(error: Throwable): Boolean
 
 val CLIENT by lazy {
     HttpClient {
-        install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 60.seconds.inWholeMilliseconds }
+        install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 30.seconds.inWholeMilliseconds }
         HttpResponseValidator {
             handleResponseException {
                 if (isNetworkError(it)) {
