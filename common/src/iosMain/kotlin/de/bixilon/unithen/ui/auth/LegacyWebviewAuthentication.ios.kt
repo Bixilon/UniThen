@@ -86,7 +86,7 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
 private class WebViewUrlDelegate(val onNavigate: (NSURL) -> Unit) : NSObject(), WKNavigationDelegateProtocol {
 
     override fun webView(webView: WKWebView, decidePolicyForNavigationAction: WKNavigationAction, decisionHandler: (WKNavigationActionPolicy) -> Unit) {
-        webView.URL?.let(onNavigate)
+        decidePolicyForNavigationAction.request.URL?.let(onNavigate)
 
         decisionHandler(WKNavigationActionPolicy.WKNavigationActionPolicyAllow)
     }
