@@ -28,6 +28,7 @@ actual fun useToast(): ToastInvoker { // thanks: https://github.com/DaaniDev/Toa
     return object : ToastInvoker {
         override suspend fun invoke(message: String, long: Boolean) {
             CoroutineScope(Dispatchers.Main).launch {
+                val window = UIApplication.sharedApplication.keyWindow ?: return@launch
                 val toast = UILabel(frame = CGRectMake(0.0, 0.0, UIScreen.mainScreen.bounds.useContents { size.width } - 40, 35.0))
 
                 toast.center = CGPointMake(UIScreen.mainScreen.bounds.useContents { size.width } / 2, UIScreen.mainScreen.bounds.useContents { size.height } - 100.0)
@@ -39,14 +40,15 @@ actual fun useToast(): ToastInvoker { // thanks: https://github.com/DaaniDev/Toa
                 toast.layer.cornerRadius = 15.0
                 toast.clipsToBounds = true
 
-                UIApplication.sharedApplication.keyWindow?.rootViewController?.view?.addSubview(toast)
+                window.addSubview(toast)
 
                 UIView.animateWithDuration(
                     duration = 0.3,
                     delay = if (long) 10.0 else 5.0,
                     options = UIViewAnimationOptionCurveEaseOut,
                     animations = { toast.alpha = 0.0 },
-                    completion = { if (it) toast.removeFromSuperview() })
+                    completion = { if (it) toast.removeFromSuperview() },
+                )
             }
         }
     }
