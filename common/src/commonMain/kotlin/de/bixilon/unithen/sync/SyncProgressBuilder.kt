@@ -32,33 +32,19 @@ class SyncProgressBuilder(
         callback.invoke(progress)
     }
 
-    fun addTotal() {
-        total.incrementAndFetch()
-        call()
-    }
-    fun addTotal(count: Int) {
-        total.addAndFetch(count)
+    private inline fun called(block: () -> Unit) {
+        block.invoke()
         call()
     }
 
-    fun addComplete() {
-        completed.incrementAndFetch()
-        synchronized.incrementAndFetch()
-        call()
-    }
+    private fun increment(int: AtomicInt) = called { int.incrementAndFetch() }
 
-    fun addSkipped() {
-        completed.incrementAndFetch()
-        call()
-    }
+    fun addTotal() = increment(total)
 
-    fun addWarning() {
-        warning.incrementAndFetch()
-        call()
-    }
+    fun addTotal(count: Int) = called { total.addAndFetch(count) }
 
-    fun addError() {
-        errored.incrementAndFetch()
-        call()
-    }
+    fun addComplete() = called { completed.incrementAndFetch(); synchronized.incrementAndFetch() }
+    fun addSkipped() = increment(completed)
+    fun addWarning() = increment(warning)
+    fun addError() = increment(errored)
 }
