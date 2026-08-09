@@ -26,7 +26,7 @@
     <string name="authentication_course_list">Loading course list...</string>
     <string name="authentication_take_a_while">This might take a while...</string>
     <string name="authentication_loading">Logging in...</string>
-    <string name="courses_synchronize_started">Synchronizing courses...This might take a while!</string>
+    <string name="courses_synchronize_started">Synchronizing courses...</string>
     <string name="courses_synchronize_done">All courses synchronized!</string>
     <string name="course_synchronize_done">Course synchronized!</string>
     <string name="courses_title">Courses (%1$d)</string>
