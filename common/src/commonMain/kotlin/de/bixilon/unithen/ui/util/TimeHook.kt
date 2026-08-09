@@ -25,7 +25,7 @@ fun getTime(fake: Boolean) = if (fake) Instant.fromEpochSeconds(1769446901) else
 @Composable
 fun useTime(): Instant {
     val fake by rememberSetting(DebugSettings.FAKE_TIME)
-    var time by remember { mutableStateOf(getTime(fake)) }
+    var time by remember(fake) { mutableStateOf(getTime(fake)) }
 
     RepeatedEffect(30.seconds) { time = getTime(fake) }
 
