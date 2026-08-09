@@ -42,8 +42,8 @@ actual fun useToast(): ToastInvoker { // thanks: https://github.com/DaaniDev/Toa
                 UIApplication.sharedApplication.keyWindow?.rootViewController?.view?.addSubview(toast)
 
                 UIView.animateWithDuration(
-                    if (long) 10.0 else 5.0,
-                    delay = 0.1,
+                    duration = 0.3,
+                    delay = if (long) 10.0 else 5.0,
                     options = UIViewAnimationOptionCurveEaseOut,
                     animations = { toast.alpha = 0.0 },
                     completion = { if (it) toast.removeFromSuperview() })
