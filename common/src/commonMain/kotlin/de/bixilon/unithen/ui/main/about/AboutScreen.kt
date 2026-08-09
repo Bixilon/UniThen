@@ -15,12 +15,14 @@ package de.bixilon.unithen.ui.main.about
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.buildAnnotatedString
@@ -53,6 +55,7 @@ fun AboutScreen() {
             Logo,
             contentDescription = "logo",
             modifier = Modifier
+                .clip(RoundedCornerShape(35.dp))
                 .combinedClickable(onClick = {}, onLongClick = { navigator.navigate(FeatureFlagRoute) })
                 .size(300.dp)
         )
