@@ -412,6 +412,15 @@ class SqlStorageTest {
     }
 
     @Test
+    fun `search for accent chars and get correct result`() = runBlocking {
+        val storage = dummy()
+        val appointment = storage.appointments[901]!!
+        val users = storage.checkInQueue[appointment, "ĝ", AttendeeSort.LASTNAME, Order.ASC]
+
+        assertEquals(listOf(904), users.map { it.user })
+    }
+
+    @Test
     fun `add pending checkin`(): Unit = runBlocking {
         val storage = dummy()
 
