@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.debug.DebugUtil.execDebug
 import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
@@ -63,6 +64,9 @@ fun DebugScreen() {
 
         Button({ runBlocking { storage.helper.load(); storage.initializeDummy() } }) { Text("Initiate dummy database") }
         Button({ runBlocking { storage.helper.load(); storage.insert1000Users() } }) { Text("Insert 1000 users") }
+        Button({ runBlocking { storage.helper.load(); storage.execDebug("wipe_data") } }) { Text("Wipe data") }
+        Button({ runBlocking { storage.helper.load(); storage.execDebug("wipe_accounts"); storage.execDebug("wipe_data") } }) { Text("Wipe data + accounts") }
+
         Button({ throw IllegalStateException("It crashed!") }) { Text("Crash") }
     }
 }

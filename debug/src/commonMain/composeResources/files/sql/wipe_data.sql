@@ -1,0 +1,11 @@
+DELETE FROM login_flows;
+DELETE FROM checkin_queue;
+DELETE FROM appointment_attendees;
+DELETE FROM course_enrolled;
+DELETE FROM tutor_appointments;
+DELETE FROM tutor_courses;
+DELETE FROM account_courses;
+DELETE FROM appointments;
+DELETE FROM courses;
+DELETE FROM users;
+DELETE FROM events;

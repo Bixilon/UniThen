@@ -18,14 +18,22 @@ import kotlinx.coroutines.runBlocking
 import unithen.debug.generated.resources.Res
 
 object DebugUtil {
-    val DUMMY by lazy {
-        val dummy = runBlocking { Res.readBytes("files/sql/dummy.sql") }.decodeToString()
 
-        return@lazy SqlUtil.split(dummy)
+    private fun readSql(name: String): List<String> {
+        val raw = runBlocking { Res.readBytes("files/sql/$name.sql") }.decodeToString()
+
+        return SqlUtil.split(raw)
     }
+
+    val DUMMY by lazy { readSql("dummy") }
 
     fun SqlStorage.initializeDummy() {
         val connection = helper.update()
         connection.use { connection.transaction { DUMMY.forEach { connection.execute(it) } } }
+    }
+
+    fun SqlStorage.execDebug(name: String) {
+        val connection = helper.update()
+        connection.use { connection.transaction { readSql(name).forEach { connection.execute(it) } } }
     }
 }
