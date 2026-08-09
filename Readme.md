@@ -27,10 +27,18 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 
 The latest release is published on [gitlab releases](https://gitlab.bixilon.de/bixilon/unithen/-/releases). and on [F-Droid](https://f-droid.org/packages/de.bixilon.unithen). F-Droid builds are reproducible,
 and signed with my key (SHA512: `f44dcdebfb54333fa205ff11eaa5aa1f47cde8217dd63a9fd979cd1fcf6d4241`) too. F-Droid is the preferred way, then you don't need to worry about updates.
+The app is **NOT** published on Google Play, as it _probably_ violates their policy.
 Android 8+ is offically supported.
 
 ### iOS
-iOS is fully supported. There is no distribution yet, so you must build the app yourself (requires iOS 15.6+).
+[<img src="doc/altstore.png" alt="Get it on Altstore" height="80">](https://api.altstore.io/source/dl.bixilon.de/altstore/classic.json?app=de.bixilon.UniThen)
+
+The app is available on [AltStore (Classic)](https://api.altstore.io/source/dl.bixilon.de/altstore/classic.json?app=de.bixilon.UniThen).
+As I don't have an paid Apple developer account, I am not able to notarize any version. Then AltStore PAL would be possible, which is a lot more convenient.
+The app is **NOT** published in the AppStore, as it _probably_ violates their policy.
+Every modern iOS version is supported (15.6+).
+
+NOTE: iOS is tested, but might not be stable for every day usage. See [Issue #3](https://lipstick.bixilon.de/bixilon/unithen/-/issues/3) for known bugs. There is no stable release yet.
 
 ### Desktop
 This app is ported to the jvm with compose multiplatform and runs on desktop, however this is a show off and not an offical supported platform. Please build it yourself.
