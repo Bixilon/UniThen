@@ -1,14 +1,24 @@
+@file:OptIn(ExperimentalCoroutinesApi::class)
+
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.setMain
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class QrScanUtilTest {
+
+    init {
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
 
     private fun scan(user: String, appointment: String = "00000000-0000-0000-0000-000000000001"): QrScanResult = runBlocking {
         val storage = dummy()

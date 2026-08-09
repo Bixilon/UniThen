@@ -10,23 +10,12 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.debug
+package de.bixilon.unithen.storage.sql
 
-import de.bixilon.unithen.storage.sql.SqlStorage
-import de.bixilon.unithen.storage.sql.SqlUtil
-import kotlinx.coroutines.runBlocking
-import unithen.debug.generated.resources.Res
+object DummyStorage {
 
-object DebugUtil {
-
-    private fun readSql(name: String): List<String> {
-        val raw = runBlocking { Res.readBytes("files/sql/$name.sql") }.decodeToString()
-
-        return SqlUtil.split(raw)
-    }
-
-    fun SqlStorage.execDebug(name: String) {
-        val connection = helper.update()
-        connection.use { connection.transaction { readSql(name).forEach { connection.execute(it) } } }
+    fun SqlStorage.initializeDummy() = helper.update().use {
+        it.transaction { it.executeBatch("dummy") }
+        notifyState()
     }
 }

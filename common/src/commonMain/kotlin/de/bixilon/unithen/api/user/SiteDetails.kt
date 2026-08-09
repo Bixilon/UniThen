@@ -33,10 +33,11 @@ data class SiteDetails(
     companion object {
 
         fun fix(url: String) = url
-                .removeWhitespaces()
-                .split("://", limit = 2).last()
-                .split(":").first()
-                .split("/").first()
+            .lowercase()
+            .removeWhitespaces()
+            .split("://", limit = 2).last()
+            .split(":").first()
+            .split("/").first()
 
         private fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
 

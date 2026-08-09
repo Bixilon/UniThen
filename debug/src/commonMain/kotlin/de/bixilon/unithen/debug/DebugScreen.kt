@@ -21,7 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.debug.DebugUtil.execDebug
-import de.bixilon.unithen.debug.DebugUtil.initializeDummy
+import de.bixilon.unithen.storage.sql.DummyStorage.initializeDummy
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle

@@ -24,20 +24,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.user.SiteDetails
+import de.bixilon.unithen.storage.sql.DummyStorage.initializeDummy
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.main.MainRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import de.bixilon.unithen.ui.util.useToast
 import unithen.common.generated.resources.*
 
 @Composable
 fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> Unit) {
+    val navigation = LocalNavigation.current
+    val toast = useToast()
     val storage = LocalStorage.current
 
     useAsyncNetwork(true) {
         try {
+            if (url == "dummy.local") {
+                storage.initializeDummy()
+                toast.invoke("Dummy database was loaded!")
+                navigation.popIf { it !is MainRoute }
+                return@useAsyncNetwork
+            }
             val site = storage.sites.add(url)
             callback.invoke(site)
         } catch (error: Throwable) {

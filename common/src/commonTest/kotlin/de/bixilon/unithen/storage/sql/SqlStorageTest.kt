@@ -17,12 +17,12 @@ import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.api.authentication.CookieAuthentication
 import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.api.user.UserDetails
-import de.bixilon.unithen.debug.DebugUtil.initializeDummy
 import de.bixilon.unithen.storage.StorageTestUtil.account
 import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.event
 import de.bixilon.unithen.storage.StorageTestUtil.site
+import de.bixilon.unithen.storage.sql.DummyStorage.initializeDummy
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import de.bixilon.unithen.util.TestUtil.assertMatch
