@@ -18,14 +18,18 @@ import io.ktor.client.plugins.*
 import kotlin.time.Duration.Companion.seconds
 
 expect fun isNetworkError(error: Throwable): Boolean
+expect fun hasNetwork(): Boolean
 
 val CLIENT by lazy {
     HttpClient {
         install(HttpTimeout) { connectTimeoutMillis = 10.seconds.inWholeMilliseconds; requestTimeoutMillis = 30.seconds.inWholeMilliseconds }
+        defaultRequest {
+            if (!hasNetwork()) throw NetworkException("Not connected to any network!")
+        }
         HttpResponseValidator {
             handleResponseException {
                 if (isNetworkError(it)) {
-                    throw NetworkException(it)
+                    throw NetworkException(cause = it)
                 }
                 throw it
             }
