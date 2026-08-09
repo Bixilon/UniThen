@@ -26,3 +26,9 @@ app/release
 .home
 
 *._*
+
+
+.stignore
+*.log
+
+*.xcsettings
