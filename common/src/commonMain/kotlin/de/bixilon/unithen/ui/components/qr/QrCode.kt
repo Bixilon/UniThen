@@ -14,7 +14,6 @@ package de.bixilon.unithen.ui.components.qr
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -36,7 +35,6 @@ fun QrCode(data: String, modifier: Modifier = Modifier) {
     Image(
         matrix, "qr",
         modifier = modifier
-            .aspectRatio(1f, matchHeightConstraintsFirst = true)
             .clip(RoundedCornerShape(5.dp))
             .background(Color.White)
             .padding(12.dp),
