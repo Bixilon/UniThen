@@ -70,14 +70,12 @@ private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: Use
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = user.fullname,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                // TODO: Show time (missing data)
-            }
+            Text(
+                modifier = Modifier.padding(12.dp).weight(1.0f),
+                text = user.fullname,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
 
             Checkbox(true, enabled = !readonly && !checkout.active, onCheckedChange = { checkout.invoke() })
         }
@@ -104,7 +102,7 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.padding(12.dp)) {
+            Column(modifier = Modifier.padding(12.dp).weight(1.0f)) {
                 Text(
                     text = user.fullname,
                     style = MaterialTheme.typography.bodyMedium,
@@ -163,13 +161,12 @@ private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: Use
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text(
-                    text = user.fullname,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Text(
+                modifier = Modifier.padding(12.dp).weight(1.0f),
+                text = user.fullname,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
 
             Checkbox(false, enabled = !readonly && !checkin.active, onCheckedChange = { checkin.invoke() })
         }
