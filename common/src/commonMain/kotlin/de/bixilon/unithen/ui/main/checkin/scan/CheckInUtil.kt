@@ -19,9 +19,6 @@ import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInErrors
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -39,13 +36,7 @@ object CheckInUtil {
         val account = storage.accounts.getTutorAccount(appointment) ?: return
 
 
-        val attemptQl = withContext(Dispatchers.IO) {
-            val api = account.api(site)
-
-            return@withContext api.checkInUser(appointment.uuid, user.uuid)
-        }
-
-        if (attemptQl == null) throw IllegalStateException("Null attempt?")
+        val attemptQl = account.api(site).checkInUser(appointment.uuid, user.uuid)!!
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
@@ -93,13 +84,7 @@ object CheckInUtil {
         }
 
 
-        val attemptQl = withContext(Dispatchers.IO) {
-            val api = account.api(site)
-
-            return@withContext api.deleteCheckInAttempt(attempt)
-        }
-
-        if (attemptQl == null) throw IllegalStateException("Null attempt?")
+        val attemptQl = account.api(site).deleteCheckInAttempt(attempt)!!
 
         attemptQl.user?.let { storage.users.add(site, it.id, it.firstname!!, it.lastname!!) }
 
