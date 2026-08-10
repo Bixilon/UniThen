@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.add
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,9 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import de.bixilon.kutil.exception.ExceptionUtil.catchAll
-import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
-import de.bixilon.unithen.storage.DefaultStorage
+import coil3.compose.AsyncImage
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
 import de.bixilon.unithen.ui.containers.Screen
@@ -39,7 +36,6 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.util.BackHandler
 import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.toBitmap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -61,11 +57,9 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
                 .padding(16.dp),
         ) {
             Row {
-                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
-
-                if (bitmap != null) {
-                    Image(
-                        bitmap = bitmap,
+                if (site.icon != null) {
+                    AsyncImage(
+                        site.icon,
                         contentDescription = "Site icon",
                         modifier = Modifier
                             .size(40.dp)
@@ -96,37 +90,32 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
-fun SelectSiteSetupScreen(callback: (Site) -> Unit = {}) {
-    val storage = LocalStorage.current
+private fun SiteList(modifier: Modifier, callback: (Site) -> Unit) {
     val sites = rememberStorageAsync { sites.all() } ?: return
 
-    LaunchedEffect(Unit) {
-        val count = catchAll { storage.sites.count } ?: return@LaunchedEffect
-        if (count == 0) {
-            // TODO: sync ui with this?
-            withContext(Dispatchers.IO) { DefaultStorage.SITES.forEach { ignoreAll { storage.sites.add(it) } } }
-        }
+    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(items = sites, key = Site::id) { site -> SiteCard(site, Modifier.clickable { callback.invoke(site) }) }
     }
+}
 
-    if (sites.isEmpty()) {
-        AddSiteDialog(null, callback)
-        return
+@Composable
+fun SelectSiteSetupScreen(callback: (Site) -> Unit) {
+    val storage = LocalStorage.current
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.IO) { storage.sites.sync() }
     }
 
     Screen {
         ScreenTitle(Res.string.add_account_title.i18n())
 
-        LazyColumn(modifier = Modifier.weight(1.0f), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(items = sites, key = Site::id) { site -> SiteCard(site, Modifier.clickable { callback.invoke(site) }) }
-        }
+        SiteList(Modifier.weight(1.0f), callback)
 
         Spacer(Modifier.height(16.dp))
 
-        AddSiteButton(callback) // TODO: FloatingActionButton?
+        AddSiteButton(callback)
     }
-
 }
 
 

@@ -61,6 +61,11 @@ class SiteTable(
         return add(fixed, details.name, icon)
     }
 
+    fun sync() {
+        storage.helper.update().use { it.executeBatch("sites") }
+        storage.notifyState()
+    }
+
     companion object : SelectableSqlTableSchema<Site> {
         override val table get() = "sites"
 

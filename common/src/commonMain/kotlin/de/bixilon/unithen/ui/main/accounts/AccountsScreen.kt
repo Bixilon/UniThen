@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.accounts
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Account
@@ -44,7 +44,10 @@ import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
 import de.bixilon.unithen.ui.sync.useSyncEngine
-import de.bixilon.unithen.ui.util.*
+import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.useTime
+import de.bixilon.unithen.ui.util.useToast
+import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
@@ -196,11 +199,9 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
             ) {
-                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
-
-                if (bitmap != null) {
-                    Image(
-                        bitmap = bitmap,
+                if (site.icon != null) {
+                    AsyncImage(
+                        site.icon,
                         contentDescription = "Site icon",
                         modifier = Modifier
                             .size(12.dp)

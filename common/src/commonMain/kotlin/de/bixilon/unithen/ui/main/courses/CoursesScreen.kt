@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.courses
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,16 +22,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.containers.TextCard
-import de.bixilon.unithen.ui.main.AuthenticateRoute
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -43,7 +41,6 @@ import de.bixilon.unithen.ui.sync.SyncEngineStartedEffect
 import de.bixilon.unithen.ui.sync.status.SyncStatusIndicator
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.toBitmap
 import de.bixilon.unithen.ui.util.useToast
 import de.bixilon.unithen.ui.util.verticalScroll
 import unithen.common.generated.resources.Res
@@ -94,11 +91,9 @@ fun CoursesScreen() {
                         item(key = "e" + event.id) {
                             val site = rememberStorage { sites[event.site]!! } // TODO: Section?
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                val bitmap = remember(site.icon) { site.icon?.toBitmap() }
-
-                                if (bitmap != null) {
-                                    Image(
-                                        bitmap = bitmap,
+                                if (site.icon != null) {
+                                    AsyncImage(
+                                        site.icon,
                                         contentDescription = "Site icon",
                                         modifier = Modifier
                                             .size(24.dp)
