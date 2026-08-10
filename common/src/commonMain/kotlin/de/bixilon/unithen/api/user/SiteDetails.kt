@@ -76,7 +76,6 @@ data class SiteDetails(
                 .filter { it.attribute("rel")?.value == "icon" }
                 .maxByOrNull { it.attribute("sizes")?.value?.split("x")?.first()?.toInt() ?: 0 }
                 ?.attribute("href")?.value
-                ?.takeIf { it.endsWith(".png") }
 
             val icon = iconUrl?.let { fetcher?.invoke(it) }
 
