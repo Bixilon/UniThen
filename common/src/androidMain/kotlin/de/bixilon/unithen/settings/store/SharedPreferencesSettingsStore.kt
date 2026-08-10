@@ -71,7 +71,7 @@ class SharedPreferencesSettingsStore(context: Context) : SettingsStore {
         val raw = create(stringPreferencesKey(setting.key), setting.default.name)
 
 
-        return remember {
+        return remember(raw.value) {
             object : MutableState<T> {
                 override var value: T
                     get() = setting.values.getOrNull(raw.value) ?: setting.default
