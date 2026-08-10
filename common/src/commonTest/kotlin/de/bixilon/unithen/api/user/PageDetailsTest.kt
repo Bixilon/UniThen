@@ -12,39 +12,43 @@
 
 package de.bixilon.unithen.api.user
 
-import de.bixilon.kutil.exception.Broken
+import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
 import kotlinx.coroutines.runBlocking
 import unithen.common.generated.resources.Res
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 class PageDetailsTest {
 
+    init {
+        RuntimeInfo0.actual = object : RuntimeInfo {
+            override val debug get() = false
+        }
+    }
+
     // @Test
-    suspend fun `fetch zhs`() {
+    fun `fetch zhs`() = runBlocking {
         val details = SiteDetails.fetch("kurse.zhs-muenchen.de")
-        assertEquals(details.name, "ZHS München")
+        assertEquals("ZHS München", details.name)
     }
 
     @Test
     fun `parse zhs`() {
         val html = runBlocking { Res.readBytes("files/http/zhs_front_page.html") }.decodeToString()
-        val array = ByteArray(0)
 
-        val details = SiteDetails.parse(html) { if (it == "https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png") array else Broken() }
-        assertEquals(details.name, "ZHS München")
-        assertSame(details.icon, array)
+        val details = SiteDetails.parse(html)
+        assertEquals("ZHS München", details.name)
+        assertEquals("https://kurse.zhs-muenchen.de/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/kdamysccpykixszkuxtoorvcjgigcnba.png", details.icon)
     }
 
     @Test
     fun `parse aaa`() {
         val html = runBlocking { Res.readBytes("files/http/aaa_front_page.html") }.decodeToString()
-        val array = ByteArray(0)
 
-        val details = SiteDetails.parse(html) { if (it == "https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png") array else Broken() }
-        assertEquals(details.name, "Deutschkurse Buchungsplattform")
-        assertSame(details.icon, array)
+        val details = SiteDetails.parse(html)
+        assertEquals("Deutschkurse Buchungsplattform", details.name)
+        assertEquals("https://aaa-giessen.uninow.com/services/image-proxy/rs:fit:192:192:1/plain/https://uninow-campus365-staging.s3.sbg.io.cloud.ovh.net/settings.management/ypsuldntspdqannpuneuiyvuyhbjumsv.png", details.icon)
     }
 
     @Test

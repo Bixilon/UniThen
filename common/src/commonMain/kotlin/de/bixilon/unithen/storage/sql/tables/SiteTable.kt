@@ -12,6 +12,9 @@
 
 package de.bixilon.unithen.storage.sql.tables
 
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.kutil.unit.Bytes.Companion.bytes
+import de.bixilon.kutil.unit.Bytes.Companion.megabytes
 import de.bixilon.unithen.api.user.SiteDetails
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SQLiteHelper
@@ -21,7 +24,6 @@ import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Site
-import org.jetbrains.compose.resources.decodeToImageBitmap
 import kotlin.time.Clock
 
 class SiteTable(
@@ -48,15 +50,7 @@ class SiteTable(
         val fixed = SiteDetails.fix(host)
         val details = SiteDetails.fetch(host)
 
-        var icon = details.icon
-
-        if (icon != null) {
-            try {
-                icon.decodeToImageBitmap()
-            } catch (error: Throwable) {
-                icon = null
-            }
-        }
+        val icon = details.icon?.let { catchAll { SiteDetails.fetchIcon(it) } }?.takeIf { it.size.bytes < 1.megabytes }
 
         return add(fixed, details.name, icon)
     }

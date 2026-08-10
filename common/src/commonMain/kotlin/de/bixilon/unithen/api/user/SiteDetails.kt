@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 
 data class SiteDetails(
     val name: String,
-    val icon: ByteArray?,
+    val icon: String?,
 ) {
 
 
@@ -39,7 +39,7 @@ data class SiteDetails(
             .split(":").first()
             .split("/").first()
 
-        private fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
+        fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
 
         suspend fun fetch(host: String): SiteDetails {
             val request = HttpUtil.create(host, "/")
@@ -48,18 +48,19 @@ data class SiteDetails(
                 install(HttpTimeout) { requestTimeoutMillis = 15.seconds.inWholeMilliseconds }
                 followRedirects = true
             }
+
             try {
                 val response = client.get(request)
 
                 if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK")
 
-                return parse(response.bodyAsText(), this::fetchIcon)
+                return parse(response.bodyAsText())
             } finally {
                 client.close()
             }
         }
 
-        fun parse(html: String, fetcher: ((host: String) -> ByteArray)?): SiteDetails {
+        fun parse(html: String): SiteDetails {
             val parsed = Ksoup.parse(html)
 
             val name = parsed.head()
@@ -77,9 +78,7 @@ data class SiteDetails(
                 .maxByOrNull { it.attribute("sizes")?.value?.split("x")?.first()?.toInt() ?: 0 }
                 ?.attribute("href")?.value
 
-            val icon = iconUrl?.let { fetcher?.invoke(it) }
-
-            return SiteDetails(name, icon)
+            return SiteDetails(name, iconUrl)
         }
     }
 }
