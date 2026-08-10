@@ -31,8 +31,8 @@ class MainBenchmarks {
     fun generate() = rule.collect(packageName = "de.bixilon.unithen") {
         startActivityAndWait()
 
-        device.wait(Until.hasObject(By.text("Check In (Show)")), 1000)
-        device.findObject(By.text("Check In (Show)")).click()
+        device.wait(Until.hasObject(By.text("Ticket")), 1000)
+        device.findObject(By.text("Ticket")).click()
         device.wait(Until.hasObject(By.text("Marie Zimmer")), 1000)
         device.findObject(By.text("Marie Zimmer")).click()
         device.wait(Until.hasObject(By.text("Start")), 1000)
@@ -42,7 +42,7 @@ class MainBenchmarks {
         device.findObject(By.text("Courses")).click()
         device.wait(Until.hasObject(By.text("First course")), 1000)
 
-        device.findObject(By.text("Check In (Scan)")).click()
+        device.findObject(By.text("Scan")).click()
         device.wait(Until.hasObject(By.text("Gustaf Maier")), 5000)
     }
 }

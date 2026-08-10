@@ -32,8 +32,8 @@
     <string name="courses_title">Courses (%1$d)</string>
     <string name="appointments_title">Appointments (+%1$d/%2$d)</string>
     <string name="main_navigation_courses">Courses</string>
-    <string name="main_navigation_checkin_present">Check In (Show)</string>
-    <string name="main_navigation_checkin_scan">Check In (Scan)</string>
+    <string name="main_navigation_checkin_present">Ticket</string>
+    <string name="main_navigation_checkin_scan">Scan</string>
     <string name="main_navigation_settings">Settings</string>
     <string name="accounts_title">Accounts (%1$d)</string>
     <string name="present_no_appointments_message">No upcoming appointments!</string>
@@ -65,9 +65,9 @@
     <string name="scan_error_check_in_pending">Already checked in (synchronization pending...)</string>
     <string name="scan_error_check_out_pending">Already checked in (checkout pending...)</string>
     <string name="scan_error_rejected">Rejected by server!</string>
-    <string name="scan_error_rejected_message">Rejected by server: %1$s</string>
+    <string name="scan_error_rejected_message">Rejected: %1$s</string>
 
-    <string name="scan_confirm_ok">User was checked in!</string>
+    <string name="scan_confirm_ok">User successfully checked in!</string>
     <string name="scan_confirm_ok_network">Well, internet is broken, but should be good to go!</string>
     <string name="scan_error_other">Unknown error!</string>
     <string name="scan_updating_enrolled">Updating enrollment list...</string>
@@ -135,7 +135,7 @@
     <string name="settings_scan_confirmation_screen_description">Shows a confirmation screen after scanning a QR code. The user is only checked in after clicking "Confirm".</string>
 
     <string name="settings_scan_offline">Ignore network errors</string>
-    <string name="settings_scan_offline_description">Allows checkin in users when no network is available. Pending check ins are synchronized automatically in the background when the connection is restored.</string>
+    <string name="settings_scan_offline_description">Allows checkin in users when no network is available. All attempts are synchronized automatically in the background when the connection is restored.</string>
 
     <string name="settings_cleanup_database">Cleanup database</string>
     <string name="settings_accounts">Accounts</string>

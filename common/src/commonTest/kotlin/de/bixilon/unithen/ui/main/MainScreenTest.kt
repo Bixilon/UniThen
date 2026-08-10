@@ -47,7 +47,6 @@ class MainScreenTest : AbstractComposeUiTest() {
                 ActualMainScreen()
             }
         }
-
     }
 
     @Test
@@ -70,7 +69,7 @@ class MainScreenTest : AbstractComposeUiTest() {
     fun `display check in show`() = runComposeUiTest {
         withMockedScreen()
 
-        waitUntilText("Check In (Show)", substring = false).performClick()
+        waitUntilText("Ticket", substring = false).performClick()
         waitUntilText("Choose an account").assertIsDisplayed()
     }
 
@@ -78,7 +77,7 @@ class MainScreenTest : AbstractComposeUiTest() {
     fun `display check in scan`() = runComposeUiTest {
         withMockedScreen()
 
-        waitUntilText("Check In (Scan)", substring = false).performClick()
+        waitUntilText("Scan", substring = false).performClick()
         waitUntilText("Attendees (").assertIsDisplayed()
     }
 
@@ -86,7 +85,7 @@ class MainScreenTest : AbstractComposeUiTest() {
     fun `check in scan and show disabled without accounts`() = runComposeUiTest {
         withMockedScreen(empty())
 
-        waitUntilText("Check In (Scan)", substring = false).assertIsNotEnabled()
-        waitUntilText("Check In (Show)", substring = false).assertIsNotEnabled()
+        waitUntilText("Scan", substring = false).assertIsNotEnabled()
+        waitUntilText("Ticket", substring = false).assertIsNotEnabled()
     }
 }
