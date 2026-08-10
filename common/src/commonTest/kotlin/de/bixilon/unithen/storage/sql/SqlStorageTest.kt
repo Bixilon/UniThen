@@ -513,4 +513,23 @@ class SqlStorageTest {
         retrieved = storage.accounts[created.id]
         assertEquals("""{"type":"ory","token":"abcd"}""", retrieved?.authentication)
     }
+
+    @Test
+    fun `sync default sites`() = runBlocking {
+        val storage = empty()
+
+        storage.sites.sync()
+
+        assertEquals("ZHS München", storage.sites["kurse.zhs-muenchen.de"]?.name)
+    }
+
+    @Test
+    fun `sync default sites multiple times`() = runBlocking {
+        val storage = empty()
+
+        storage.sites.sync()
+        storage.sites.sync()
+
+        assertEquals("ZHS München", storage.sites["kurse.zhs-muenchen.de"]?.name)
+    }
 }
