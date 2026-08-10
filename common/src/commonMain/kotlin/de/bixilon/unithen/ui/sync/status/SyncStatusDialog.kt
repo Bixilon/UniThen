@@ -56,7 +56,7 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, m
 
     AlertDialog(
         confirmButton = {},
-        dismissButton = { Button({ visible = false }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
+        dismissButton = { Button({ visible = false }, enabled = dismissable, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) { Text(Res.string.sync_dialog_dismiss.i18n()) } },
         onDismissRequest = { visible = false },
         title = { Text(title) },
         text = {
