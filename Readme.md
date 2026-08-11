@@ -64,7 +64,7 @@ If somebody from UniNow sees this, please reach out **before** blocking the app 
 (Everything as simple as possible)
 
 - Ory authentication and webview as fallback for acquiring an access token
-- Get page details (extract from html), and get user user details
+- Get page details (extract from html), and get user details
 - Get courses and appointments with GraphQL ([Schema](./doc/UniNow.graphql))
 - Store everything on your device in a SQL database
 - QR code scanning: Local copy of all enrolled users, queue for offline synchronization and [fts4](https://www.sqlite.org/fts3.html) for searching (actually kinda complex)
@@ -72,7 +72,14 @@ If somebody from UniNow sees this, please reach out **before** blocking the app 
 ## Something is broken
 Please report an [issue](https://gitlab.bixilon.de/bixilon/unithen/-/issues) (you must register for an account first), or send me a quick email to `bixilon [a.t] bixilon [dot.] de`. I also appreciate feedback (positive or negative) :smile:
 
-Every use case is different, mine is just checking in for sports courses and that works pretty much offline.
+## License
+
+This project is licensed under the term of the [General Public License v3 or later](./LICENSE.md). Some parts are excluded from this license:
+
+- Logo (Usage only allowed in official builds, so if you hard fork this project please change the name and logo)
+- All other logos (oicd, ...). They are the property of the corresponding organization.
+
+Please check the license header of all files, and ask if in doubt.
 
 ## Code
 
