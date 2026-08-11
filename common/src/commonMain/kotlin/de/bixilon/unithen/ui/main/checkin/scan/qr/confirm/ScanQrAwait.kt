@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QuestionMark
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -59,7 +59,7 @@ fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, setLoading: (B
         }
     }
 
-    ConfirmScreenWarning(Icons.Filled.QuestionMark, checkInSuccess, null)
+    ConfirmScreenWarning(Icons.Filled.Check, checkInSuccess, null)
 
     Spacer(Modifier.height(16.dp))
 
