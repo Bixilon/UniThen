@@ -56,8 +56,7 @@ Doing simple things needs a lot of user interaction (e.g. when I want to show my
 Open app -> (wait) -> No I am not interested in improving the app -> (Must look at ads) -> My Studies -> ZHS -> (wait) -> Find the course -> (wait) -> Scroll down -> QR Code -> (wait)
 
 And I don't want it on my phone :)
-
-If somebody from UniNow sees this, please reach out **before** blocking the app off. I do not want to harm you (with this app).
+If somebody from UniNow sees this, please reach out **before** blocking the app off. I do not want to harm you (with this app). Maybe we can even collaborate? (There is [#4](https://gitlab.bixilon.de/bixilon/unithen/-/issues/4))
 
 ## Under the hood
 
