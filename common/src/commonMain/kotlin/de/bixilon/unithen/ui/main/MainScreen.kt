@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
@@ -80,17 +81,19 @@ private fun MainNavigationBar(navigator: Navigator) {
         enter = expandVertically(),
     ) {
         NavigationBar(windowInsets = WindowInsets()) {
-            MainScreens.entries.forEach { destination ->
+            for (destination in MainScreens.entries) {
+                val selected = navigator.current().route == destination.route
                 val enabled = when (destination) {
                     MainScreens.CHECKIN_PRESENT -> rememberStorage { courses.isEnrolled() }
                     MainScreens.CHECKIN_SCAN -> rememberStorage { courses.isTutor() }
                     else -> true
                 }
+
                 NavigationBarItem(
-                    selected = navigator.current().route == destination.route,
+                    selected = selected,
                     onClick = { navigator.navigate(destination.route) },
                     icon = { Icon(destination.icon, contentDescription = "") },
-                    label = { Text(destination.label.i18n(), textAlign = TextAlign.Center) },
+                    label = { Text(destination.label.i18n(), textAlign = TextAlign.Center, fontWeight = if (selected) FontWeight.Bold else null) },
                     enabled = enabled,
                 )
             }
