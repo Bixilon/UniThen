@@ -36,6 +36,7 @@ import platform.darwin.NSObject
 
 @Composable
 actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit) {
+    var _delegate by remember { mutableStateOf<WebViewUrlDelegate?>(null) }
     var _host by remember { mutableStateOf("") }
 
     Column {
@@ -60,7 +61,7 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
                 val cookies = view.configuration.websiteDataStore.httpCookieStore
 
                 view.customUserAgent = HttpUtil.USER_AGENT
-                view.navigationDelegate = WebViewUrlDelegate {
+                val delegate = WebViewUrlDelegate {
                     _host = it.host ?: ""
 
 
@@ -71,6 +72,9 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
                         callback.invoke(CookieAuthentication(token.value))
                     }
                 }
+                _delegate = delegate
+                view.navigationDelegate = delegate
+
 
                 val url = NSURL.URLWithString("https://$host/auth/login")!!
                 val request = NSURLRequest.requestWithURL(url)
