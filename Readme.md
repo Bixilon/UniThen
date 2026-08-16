@@ -33,7 +33,7 @@ Android 8+ is offically supported.
 ### iOS
 [<img src="doc/altstore.png" alt="Get it on Altstore" height="80">](https://api.altstore.io/source/dl.bixilon.de/altstore/classic.json?app=de.bixilon.UniThen)
 
-The app is available on [AltStore (Classic)](https://api.altstore.io/source/dl.bixilon.de/altstore/classic.json?app=de.bixilon.UniThen). As I don't have a paid Apple developer account, I am not able to notarize any version. Then AltStore PAL would be possible, which is a lot more convenient.
+The app is available on [AltStore (Classic)](https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows), (just click here: [https://dl.bixilon.de/altstore/classic.json](altstore://source?url=https://dl.bixilon.de/altstore/classic.json) as source). As I don't have a paid Apple developer account, I am not able to notarize any version. Then AltStore PAL would be possible, which is a lot more convenient.
 The app is **NOT** published in the AppStore, as it _probably_ violates their policy.
 Every modern iOS version is supported (15.6+).
 
