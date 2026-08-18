@@ -8,7 +8,6 @@ sqliteJdbc = "3.53.4.0"
 sqliterNative = "1.4.0"
 uiTest = "1.12.0"
 zxing = "3.5.4"
-zxingcpp = "3.1.1"
 serialization = "1.11.0"
 datastorePreferences = "1.2.1"
 ksoup = "0.2.6"
@@ -74,7 +73,6 @@ ksoup = { group = "com.fleeksoft.ksoup", name = "ksoup", version.ref = "ksoup" }
 sqlite-jdbc = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqliteJdbc" }
 ui-test = { group = "org.jetbrains.compose.ui", name = "ui-test", version.ref = "uiTest" }
 zxing = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
-zxingcpp = { group = "io.github.zxing-cpp", name = "android", version.ref = "zxingcpp" }
 
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }

@@ -118,7 +118,8 @@ kotlin {
             implementation(libs.androidx.activity.compose)
 
             implementation(libs.zxing)
-            implementation(libs.zxingcpp)
+            implementation(files("../app/libs/zxingcpp-release.aar"))
+//            implementation(libs.zxingcpp)
 
 
             implementation(libs.androidx.datastore.core)

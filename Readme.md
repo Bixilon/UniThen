@@ -17,7 +17,7 @@ If something with *this* app does not work, please contact [me](https://bixilon.
 - QR Code check in (presenting and scanning)
 - List of your courses
 - Really fast, no ads, no trackers
-- Simple and small (~4MB; most of it is due to qr code scanning from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp))
+- Simple and small (~4MB)
 - Completely offline (authenticate once)
 
 ## Download
