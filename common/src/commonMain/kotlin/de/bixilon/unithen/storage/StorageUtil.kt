@@ -70,11 +70,10 @@ object StorageUtil {
 
     fun SqlStorage.storeAttendees(site: Site, appointment: Appointment, attendees: List<CourseUserQl>, attempts: List<CheckInAttemptQl>) = transaction {
         appointments.clearAttendees(appointment)
-        checkInQueue.clearPendingCheckout(appointment)
 
         for (userQl in attendees) {
             val user = users.add(site, userQl.id, userQl.firstname!!, userQl.lastname!!)
-            checkInQueue.delete(appointment, user) // TODO: only if check in pending or errored
+            checkInQueue.deletePendingErrored(appointment, user)
 
             val attempt = attempts.find { it.status == CheckInAttemptQl.Status.SUCCESS && it.user?.id == userQl.id } ?: continue
 

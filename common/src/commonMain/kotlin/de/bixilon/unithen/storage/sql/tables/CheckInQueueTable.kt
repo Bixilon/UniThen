@@ -57,8 +57,8 @@ class CheckInQueueTable(
         execute("DELETE FROM $table WHERE appointment=? AND user=?", appointment.id, user.id)
     }
 
-    fun clearPendingCheckout(appointment: Appointment) {
-        execute("DELETE FROM $table WHERE appointment=? AND attempt IS NOT NULL", appointment.id)
+    fun deletePendingErrored(appointment: Appointment, user: User) {
+        execute("DELETE FROM $table WHERE appointment=? AND user=? AND (attempt IS NULL OR message IS NOT NULL)", appointment.id, user.id)
     }
 
 

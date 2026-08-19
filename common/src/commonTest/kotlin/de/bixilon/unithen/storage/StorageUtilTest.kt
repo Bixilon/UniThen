@@ -16,10 +16,13 @@ import de.bixilon.kutil.uuid.UuidUtil.toUuid
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
 import de.bixilon.unithen.api.graphql.types.CourseQl
 import de.bixilon.unithen.api.graphql.types.EventQl
+import de.bixilon.unithen.api.graphql.types.checkin.CheckInAttemptQl
 import de.bixilon.unithen.api.graphql.types.location.RoomQl
 import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
+import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.site
+import de.bixilon.unithen.storage.StorageUtil.storeAttendees
 import de.bixilon.unithen.storage.StorageUtil.storeCourse
 import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
 import de.bixilon.unithen.storage.sql.empty
@@ -114,5 +117,30 @@ class StorageUtilTest {
 
         assertEquals(1, enrolled.size)
         assertEquals(C, enrolled.find { it.firstname == "c" }!!.uuid)
+    }
+
+    @Test
+    fun `store attendees`() = runBlocking {
+        val storage = empty()
+
+        val course = storage.course()
+        val site = storage.sites[course.site]!!
+        val appointment = storage.appointment(course)
+
+        storage.storeAttendees(
+            site, appointment,
+            listOf(
+                CourseUserQl(A, "a", "b"),
+                CourseUserQl(B, "b", "c"),
+            ),
+            listOf(
+                CheckInAttemptQl(E, CheckInAttemptQl.Status.SUCCESS, null, CourseUserQl(A)),
+                CheckInAttemptQl(F, CheckInAttemptQl.Status.SUCCESS, null, CourseUserQl(B)),
+            ),
+        )
+
+        val attendees = storage.users.getAttendees(appointment)
+
+        assertEquals(attendees.map { it.uuid }, listOf(A, B))
     }
 }
