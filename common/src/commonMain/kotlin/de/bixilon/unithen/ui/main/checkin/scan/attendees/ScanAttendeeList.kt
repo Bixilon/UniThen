@@ -120,9 +120,6 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
                 )
             }
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                if (active) {
-                    CircularProgressIndicator()
-                }
                 if (RuntimeInfo.debug) {
                     IconButton({
                         storage.transaction {
@@ -133,11 +130,17 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
                         }
                     }) { Icon(Icons.Filled.Check, "approve", tint = Color.Red) }
                 }
-                //  if (item.message == null) { // TODO: Remove that, there is no use for it.
-                IconButton({
-                    storage.checkInQueue.delete(appointment, user)
-                }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
-                //     }
+                Box(contentAlignment = Alignment.Center) {
+                    if (active) {
+                        CircularProgressIndicator()
+                    }
+
+                    //  if (item.message == null) { // TODO: Remove that, there is no use for it.
+                    IconButton({
+                        storage.checkInQueue.delete(appointment, user)
+                    }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
+                    //     }
+                }
             }
         }
     }
