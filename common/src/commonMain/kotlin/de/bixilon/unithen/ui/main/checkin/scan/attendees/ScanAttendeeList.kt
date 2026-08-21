@@ -199,8 +199,8 @@ fun ScanAttendeeList(appointment: Appointment) {
     }
 
     SyncEngineCompleteEffect(synchronize) {
-        if (appointment.fetchedAttendees == null) { // only on inital fetch
-            scope.launch { state.animateScrollToItem(0, 0) }
+        if (appointment.fetchedAttendees == null) { // only on initial fetch
+            scope.launch { state.scrollToItem(0, 0) }
         }
     }
 
@@ -216,7 +216,7 @@ fun ScanAttendeeList(appointment: Appointment) {
         SectionTitle(Res.string.appointment_attendees_title.i18n(count, enrolled))
 
 
-        LaunchedEffect(filter.search, filter.sort, filter.order) { state.animateScrollToItem(0, 0) }
+        LaunchedEffect(filter.search, filter.sort, filter.order) { state.scrollToItem(0, 0) }
 
         UserFilterX(filter)
 
