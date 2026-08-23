@@ -31,6 +31,7 @@ object StorageTestUtil {
     fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: String = "a"): Account {
         return accounts.add(site, UserDetails(uuid, firstname, lastname), CookieAuthentication(authentication))
     }
+
     fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: Authentication): Account {
         return accounts.add(site, UserDetails(uuid, firstname, lastname), authentication)
     }
@@ -40,7 +41,7 @@ object StorageTestUtil {
     }
 
     fun SqlStorage.course(event: Event = event(), uuid: Uuid = Uuid.random(), name: String = "Test course", fetched: Instant = Clock.System.now()): Course {
-        return courses.add(sites[event.site]!!, event, uuid, name, fetched)
+        return courses.add(sites[event.site], event, uuid, name, fetched)
     }
 
     fun SqlStorage.appointment(course: Course = course(), uuid: Uuid = Uuid.random(), start: Instant = Clock.System.now(), end: Instant = Clock.System.now(), canceled: Instant? = null): Appointment {

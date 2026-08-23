@@ -85,7 +85,7 @@ class StorageUtilTest {
         val storage = empty()
 
         val course = storage.course()
-        val site = storage.sites[course.site]!!
+        val site = storage.sites[course.site]
 
         storage.storeEnrolled(site, course, listOf(
             CourseUserQl(A, "a", "b"),
@@ -103,7 +103,7 @@ class StorageUtilTest {
         val storage = empty()
 
         val course = storage.course()
-        val site = storage.sites[course.site]!!
+        val site = storage.sites[course.site]
 
         storage.storeEnrolled(site, course, listOf(
             CourseUserQl(A, "a", "b"),
@@ -124,7 +124,7 @@ class StorageUtilTest {
         val storage = empty()
 
         val course = storage.course()
-        val site = storage.sites[course.site]!!
+        val site = storage.sites[course.site]
         val appointment = storage.appointment(course)
 
         storage.storeAttendees(

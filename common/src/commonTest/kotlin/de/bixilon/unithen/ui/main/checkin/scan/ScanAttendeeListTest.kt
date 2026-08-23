@@ -40,7 +40,7 @@ class ScanAttendeeListTest : AbstractComposeUiTest() {
     @Test
     fun `display cards correctly`() = runComposeUiTest {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         withAttendeeList(storage, appointment)
 
         waitUntilText("Leonie Kurz").assertIsDisplayed()
@@ -51,7 +51,7 @@ class ScanAttendeeListTest : AbstractComposeUiTest() {
     @Test
     fun `filter by name`() = runComposeUiTest {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         withAttendeeList(storage, appointment)
 
 

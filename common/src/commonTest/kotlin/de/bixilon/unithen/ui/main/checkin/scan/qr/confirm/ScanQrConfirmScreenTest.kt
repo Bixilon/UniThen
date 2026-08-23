@@ -27,7 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
     @Composable
-    private fun MockedScreen(storage: SqlStorage, appointment: Appointment = storage.appointments[901]!!, userId: String) {
+    private fun MockedScreen(storage: SqlStorage, appointment: Appointment = storage.appointments[901], userId: String) {
         val sync = remember { SyncEngine(storage) {} }
         val navigator = remember { Navigator(MainRoute) }
         val store = remember { MemorySettingsStore() }
@@ -124,9 +124,9 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
     fun `check in known user`() = runComposeUiTest {
         val storage = dummy()
 
-        val site = storage.sites[901]!!
+        val site = storage.sites[901]
         val user = storage.users[site, "00000000-0000-0000-0000-000000000002".toUuid()]!!
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
 
         setContent { MockedScreen(storage, userId = user.uuid.toString()) }
 
@@ -142,7 +142,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
         val storage = dummy()
 
         val uuid = "10000000-0000-0000-0000-000000000001".toUuid()
-        val site = storage.sites[901]!!
+        val site = storage.sites[901]
 
         setContent { MockedScreen(storage, userId = uuid.toString()) }
 
@@ -159,15 +159,15 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
         val storage = dummy()
 
         val uuid = "10000000-0000-0000-0000-000000000001".toUuid()
-        val site = storage.sites[901]!!
-        val appointment = storage.appointments[901]!!
+        val site = storage.sites[901]
+        val appointment = storage.appointments[901]
 
         setContent { MockedScreen(storage, userId = uuid.toString()) }
 
         waitUntilText("Confirm")
 
         val user = storage.users.add(site, uuid, "Hello", "world")
-        storage.courses.addEnrolled(user, storage.courses[appointment.course]!!)
+        storage.courses.addEnrolled(user, storage.courses[appointment.course])
 
         waitUntilText("Confirm").assertIsEnabled()
     }

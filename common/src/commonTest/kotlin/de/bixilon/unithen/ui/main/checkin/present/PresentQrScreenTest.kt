@@ -18,9 +18,9 @@ class PresentQrScreenTest : AbstractComposeUiTest() {
     @Test
     fun `displayed correctly with valid appointment`() = runComposeUiTest {
         val storage = dummy()
-        val account = storage.accounts[901]!!
-        val course = storage.courses[901]!!
-        val appointment = storage.appointments[901]!!
+        val account = storage.accounts[901]
+        val course = storage.courses[901]
+        val appointment = storage.appointments[901]
 
         setContent { CompositionLocalProvider(LocalSettingsStore provides remember { MemorySettingsStore() }) { PresentQrScreen(account, course, appointment) } }
 
