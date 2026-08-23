@@ -42,8 +42,8 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.uuid.Uuid
 
 fun create() = SqlStorage(createSqliteHelper())
-suspend fun empty() = create().apply { helper.load() }
-suspend fun dummy() = empty().apply { this.initializeDummy() }
+fun empty() = runBlocking { create().apply { helper.load() } }
+fun dummy() = runBlocking { empty().apply { this.initializeDummy() } }
 
 expect fun ByteArray.copyTo(path: String)
 expect fun delete(path: String)
@@ -56,9 +56,9 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `create and initialize tables`() = runBlocking {
+    fun `create and initialize tables`() {
         val storage = create()
-        storage.helper.load()
+        runBlocking { storage.helper.load() }
 
         val next = storage.query("SELECT host FROM sites WHERE id=1") { it.moveToNext() }
 
@@ -66,7 +66,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `create dummy database`() = runBlocking {
+    fun `create dummy database`() {
         val storage = dummy()
 
         val host = storage.query("SELECT host FROM sites WHERE id=901") { it.moveToNext(); it.getString(0) }
@@ -113,141 +113,141 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get site by id dummy database`() = runBlocking {
+    fun `get site by id dummy database`() {
         val site = dummy().sites[901]
 
-        assertEquals("test.local", site?.host)
+        assertEquals("test.local", site.host)
     }
 
     @Test
-    fun `get event by id`() = runBlocking {
+    fun `get event by id`() {
         val event = dummy().events[901]
 
-        assertEquals("Test Event (a)", event?.name)
+        assertEquals("Test Event (a)", event.name)
     }
 
     @Test
-    fun `get user by id`() = runBlocking {
+    fun `get user by id`() {
         val user = dummy().users[901]
 
-        assertEquals("Hans", user?.firstname)
+        assertEquals("Hans", user.firstname)
     }
 
     @Test
-    fun `get account by id`() = runBlocking {
+    fun `get account by id`() {
         val account = dummy().accounts[903]
 
-        assertEquals("Marie", account?.firstname)
+        assertEquals("Marie", account.firstname)
     }
 
     @Test
-    fun `get course by id`() = runBlocking {
+    fun `get course by id`() {
         val course = dummy().courses[901]
 
-        assertEquals("First course", course?.name)
+        assertEquals("First course", course.name)
     }
 
     @Test
-    fun `is user attendee of appointment`() = runBlocking {
+    fun `is user attendee of appointment`() {
         val storage = dummy()
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[906]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[906]
         assertTrue(storage.users.isAttendee(appointment, user))
     }
 
     @Test
-    fun `unreferenced course created in dummy`() = runBlocking {
+    fun `unreferenced course created in dummy`() {
         val storage = dummy()
 
-        assertEquals("Unreferenced course", storage.courses[904]?.name)
+        assertEquals("Unreferenced course", storage.courses[904].name)
     }
 
     @Test
-    fun `cleanup database and remove unreferenced courses`() = runBlocking {
+    fun `cleanup database and remove unreferenced courses`() {
         val storage = dummy().apply { cleanup() }
 
-        assertEquals("First course", storage.courses[901]?.name)
-        assertNull(storage.courses[904])
+        assertEquals("First course", storage.courses[901].name)
+        assertFails { storage.courses[904] }
     }
 
     @Test
-    fun `clear database cache`() = runBlocking {
+    fun `clear database cache`() {
         val storage = dummy().apply { clearCache() }
 
-        assertEquals("First course", storage.courses[901]?.name)
+        assertEquals("First course", storage.courses[901].name)
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[906]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[906]
         assertFalse(storage.users.isAttendee(appointment, user))
     }
 
     @Test
-    fun `not enrolled in empty database`() = runBlocking {
+    fun `not enrolled in empty database`() {
         val storage = empty()
 
         assertFalse(storage.courses.isEnrolled())
     }
 
     @Test
-    fun `enrolled in dummy database`() = runBlocking {
+    fun `enrolled in dummy database`() {
         val storage = dummy()
 
         assertTrue(storage.courses.isEnrolled())
     }
 
     @Test
-    fun `not tutor in empty database`() = runBlocking {
+    fun `not tutor in empty database`() {
         val storage = empty()
 
         assertFalse(storage.courses.isTutor())
     }
 
     @Test
-    fun `tutor in dummy database`() = runBlocking {
+    fun `tutor in dummy database`() {
         val storage = dummy()
 
         assertTrue(storage.courses.isTutor())
     }
 
     @Test
-    fun `tutor for course in dummy database`() = runBlocking {
+    fun `tutor for course in dummy database`() {
         val storage = dummy()
 
-        assertTrue(storage.accounts.isTutor(storage.courses[901]!!))
+        assertTrue(storage.accounts.isTutor(storage.courses[901]))
     }
 
     @Test
-    fun `not tutor for course in dummy database`() = runBlocking {
+    fun `not tutor for course in dummy database`() {
         val storage = dummy()
 
-        assertFalse(storage.accounts.isTutor(storage.courses[902]!!))
+        assertFalse(storage.accounts.isTutor(storage.courses[902]))
     }
 
     @Test
-    fun `create transaction and get value`() = runBlocking {
+    fun `create transaction and get value`() {
         val storage = dummy()
 
         val course = storage.transaction { storage.courses[901] }
 
-        assertEquals("First course", course?.name)
+        assertEquals("First course", course.name)
     }
 
     @Test
-    fun `create multiple transactions and get value`() = runBlocking {
+    fun `create multiple transactions and get value`() {
         val storage = dummy()
 
         val a = storage.transaction { storage.courses[901] }
         val b = storage.transaction { storage.courses[901] }
         val c = storage.transaction { storage.courses[901] }
 
-        assertEquals("First course", a?.name)
-        assertEquals("First course", b?.name)
-        assertEquals("First course", c?.name)
+        assertEquals("First course", a.name)
+        assertEquals("First course", b.name)
+        assertEquals("First course", c.name)
     }
 
     @Test
-    fun `queue take item`() = runBlocking {
+    fun `queue take item`() {
         val storage = dummy()
 
         val now = Clock.System.now() - 5.seconds
@@ -257,13 +257,13 @@ class SqlStorageTest {
         assertTrue(item!!.sync!! < now)
         assertEquals(901, item.appointment)
 
-        item = storage.checkInQueue[storage.appointments[item.appointment]!!, storage.users[item.user]!!]
+        item = storage.checkInQueue[storage.appointments[item.appointment], storage.users[item.user]]
 
         assertTrue(item!!.sync!! > now)
     }
 
     @Test
-    fun `helper return auto correct id`() = runBlocking {
+    fun `helper return auto correct id`() {
         val storage = empty()
 
         val site = storage.site()
@@ -272,7 +272,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `create account and add to course`() = runBlocking {
+    fun `create account and add to course`() {
         val storage = empty()
 
         val site = storage.site()
@@ -286,7 +286,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get enrolled appointments between time`() = runBlocking {
+    fun `get enrolled appointments between time`() {
         val storage = empty()
 
         val site = storage.site()
@@ -313,7 +313,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get tutor appointments between time`() = runBlocking {
+    fun `get tutor appointments between time`() {
         val storage = empty()
 
         val site = storage.site()
@@ -340,18 +340,18 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get attendees without search`() = runBlocking {
+    fun `get attendees without search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         val attendees = storage.users.getAttendees(appointment, "", AttendeeSort.LASTNAME, Order.ASC)
 
         assertEquals(listOf(906), attendees.map { it.id })
     }
 
     @Test
-    fun `get attendees with search`() = runBlocking {
+    fun `get attendees with search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
 
         var attendees = storage.users.getAttendees(appointment, "leon", AttendeeSort.LASTNAME, Order.ASC)
         assertEquals(listOf(906), attendees.map { it.id })
@@ -367,18 +367,18 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get check in queue without search`() = runBlocking {
+    fun `get check in queue without search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         val queue = storage.checkInQueue[appointment, "", AttendeeSort.LASTNAME, Order.ASC]
 
         assertEquals(listOf(904, 911, 907), queue.map { it.user })
     }
 
     @Test
-    fun `get check in queue with search`() = runBlocking {
+    fun `get check in queue with search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
 
         var queue = storage.checkInQueue[appointment, "gust", AttendeeSort.LASTNAME, Order.ASC]
         assertEquals(listOf(904), queue.map { it.user })
@@ -391,18 +391,18 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `get enrolled not checked in without search`() = runBlocking {
+    fun `get enrolled not checked in without search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         val users = storage.users.getEnrolledNotCheckedIn(appointment, "", AttendeeSort.LASTNAME, Order.ASC)
 
         assertEquals(listOf(903, 902), users.map { it.id })
     }
 
     @Test
-    fun `get enrolled not checked in with search`() = runBlocking {
+    fun `get enrolled not checked in with search`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
 
         var users = storage.users.getEnrolledNotCheckedIn(appointment, "emil", AttendeeSort.LASTNAME, Order.ASC)
         assertEquals(listOf(903), users.map { it.id })
@@ -412,9 +412,9 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `search for accent chars and get correct result`() = runBlocking {
+    fun `search for accent chars and get correct result`() {
         val storage = dummy()
-        val appointment = storage.appointments[901]!!
+        val appointment = storage.appointments[901]
         val users = storage.checkInQueue[appointment, "ĝ", AttendeeSort.LASTNAME, Order.ASC]
 
         assertEquals(listOf(904), users.map { it.user })
@@ -424,8 +424,8 @@ class SqlStorageTest {
     fun `add pending checkin`(): Unit = runBlocking {
         val storage = dummy()
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[903]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[903]
 
         val time = Clock.System.now()
 
@@ -438,8 +438,8 @@ class SqlStorageTest {
     fun `update pending checkin`(): Unit = runBlocking {
         val storage = dummy()
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[911]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[911]
 
         val time = Clock.System.now()
 
@@ -454,8 +454,8 @@ class SqlStorageTest {
     fun `add pending checkout`(): Unit = runBlocking {
         val storage = dummy()
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[906]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[906]
 
         val time = Clock.System.now()
 
@@ -470,8 +470,8 @@ class SqlStorageTest {
     fun `update pending checkout`(): Unit = runBlocking {
         val storage = dummy()
 
-        val appointment = storage.appointments[901]!!
-        val user = storage.users[907]!!
+        val appointment = storage.appointments[901]
+        val user = storage.users[907]
 
         val time = Clock.System.now()
 
@@ -483,39 +483,39 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `insert cookie authentication account`() = runBlocking {
+    fun `insert cookie authentication account`() {
         val storage = empty()
 
         val created = storage.account(authentication = CookieAuthentication("abc"))
 
         var retrieved = storage.accounts[created.id]
 
-        assertEquals("""{"type":"cookie","token":"abc"}""", retrieved?.authentication)
+        assertEquals("""{"type":"cookie","token":"abc"}""", retrieved.authentication)
 
         storage.accounts.update(created, UserDetails(Uuid.random(), "a", "b"), authentication = CookieAuthentication("abcd"))
 
         retrieved = storage.accounts[created.id]
-        assertEquals("""{"type":"cookie","token":"abcd"}""", retrieved?.authentication)
+        assertEquals("""{"type":"cookie","token":"abcd"}""", retrieved.authentication)
     }
 
     @Test
-    fun `insert ory authentication account`() = runBlocking {
+    fun `insert ory authentication account`() {
         val storage = empty()
 
         val created = storage.account(authentication = OryTokenAuthentication("abc"))
 
         var retrieved = storage.accounts[created.id]
 
-        assertEquals("""{"type":"ory","token":"abc"}""", retrieved?.authentication)
+        assertEquals("""{"type":"ory","token":"abc"}""", retrieved.authentication)
 
         storage.accounts.update(created, UserDetails(Uuid.random(), "a", "b"), authentication = OryTokenAuthentication("abcd"))
 
         retrieved = storage.accounts[created.id]
-        assertEquals("""{"type":"ory","token":"abcd"}""", retrieved?.authentication)
+        assertEquals("""{"type":"ory","token":"abcd"}""", retrieved.authentication)
     }
 
     @Test
-    fun `sync default sites`() = runBlocking {
+    fun `sync default sites`() {
         val storage = empty()
 
         storage.sites.sync()
@@ -524,7 +524,7 @@ class SqlStorageTest {
     }
 
     @Test
-    fun `sync default sites multiple times`() = runBlocking {
+    fun `sync default sites multiple times`() {
         val storage = empty()
 
         storage.sites.sync()
