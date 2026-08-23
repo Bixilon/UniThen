@@ -13,9 +13,7 @@
 package de.bixilon.unithen.ui.sync.status
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -43,7 +41,7 @@ private enum class SyncStatus {
 }
 
 @Composable
-private fun CicleIndicator(status: SyncStatus, modifier: Modifier, hide: Boolean) {
+private fun CicleIndicator(status: SyncStatus, hide: Boolean) {
     var dismissed by rememberStateOf { true }
 
     LaunchedEffect(status, hide) {
@@ -64,7 +62,7 @@ private fun CicleIndicator(status: SyncStatus, modifier: Modifier, hide: Boolean
 
     if (hide && dismissed) return
 
-    Canvas(modifier = modifier.size(12.dp)) {
+    Canvas(modifier = Modifier.size(12.dp)) {
         drawCircle(color = color)
     }
 }
@@ -107,16 +105,18 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
     }
     if (hidden) return
 
-    if (hook.active) {
-        val progress = hook.progress
-        Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (progress.total > 0 && text) {
-                Text("${progress.completed}/${progress.total}")
-            }
+    Box(modifier = modifier.padding(4.dp)) {
+        if (hook.active) {
+            val progress = hook.progress
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (progress.total > 0 && text) {
+                    Text("${progress.completed}/${progress.total}")
+                }
 
-            RunningIndicator(status, progress)
+                RunningIndicator(status, progress)
+            }
+        } else {
+            CicleIndicator(status, hide)
         }
-    } else {
-        CicleIndicator(status, modifier, hide)
     }
 }
