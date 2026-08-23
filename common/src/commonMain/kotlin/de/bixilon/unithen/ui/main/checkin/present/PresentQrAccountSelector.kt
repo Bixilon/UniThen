@@ -42,7 +42,7 @@ fun PresentQrAccountSelector(course: Course, appointment: Appointment, accounts:
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 
-    val site = storage.sites[course.site]!!
+    val site = storage.sites[course.site]
 
     Screen {
         ScreenTitle(Res.string.present_choose_account_title.i18n())

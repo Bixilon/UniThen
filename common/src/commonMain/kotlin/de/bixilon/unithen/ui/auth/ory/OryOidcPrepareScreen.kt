@@ -63,7 +63,7 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
         Text(buildAnnotatedString {
             withLink(LinkAnnotation.Url(url!!)) { append(url!!) }
         }, textAlign = TextAlign.Center)
-        
+
         val foreground = rememberForeground()
 
         if (foreground) {

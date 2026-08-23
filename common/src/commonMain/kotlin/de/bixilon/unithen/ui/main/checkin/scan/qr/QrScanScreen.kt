@@ -106,7 +106,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
         QrUpdateIndicator(Modifier.align(Alignment.TopEnd).padding(4.dp), appointments)
     }
 
-    val courses = rememberStorage { appointments.map { storage.courses[it.course]!! }.toSet() }
+    val courses = rememberStorage { appointments.map { storage.courses[it.course] }.toSet() }
     ScanInstructions(courses)
 
     ErrorOverlay(errors)

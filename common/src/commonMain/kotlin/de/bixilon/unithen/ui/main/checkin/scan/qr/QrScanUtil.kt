@@ -48,7 +48,7 @@ sealed interface QrScanResult {
 object QrScanUtil {
 
     fun scan(storage: SqlStorage, appointment: Appointment, user: User): QrScanResult {
-        val course = storage.courses[appointment.course]!!
+        val course = storage.courses[appointment.course]
 
         val enrolled = storage.users.isEnrolled(course, user)
         if (!enrolled) return QrScanResult.NotEnrolled(appointment, user)
@@ -68,9 +68,9 @@ object QrScanUtil {
     }
 
     fun scan(storage: SqlStorage, appointment: Appointment, userId: Uuid): QrScanResult {
-        val course = storage.courses[appointment.course]!!
+        val course = storage.courses[appointment.course]
 
-        val site = storage.sites[course.site]!!
+        val site = storage.sites[course.site]
         val user = storage.users[site, userId] ?: return QrScanResult.UnknownUser(appointment, userId)
 
 
@@ -84,7 +84,7 @@ object QrScanUtil {
             if (actual.isEmpty()) return QrScanResult.InvalidAppointment
             if (actual.size > 1) return QrScanResult.Other
 
-            val course = storage.courses[actual.first().course]!!
+            val course = storage.courses[actual.first().course]
 
             appointments.find { it.course == course.id } ?: return QrScanResult.WrongCourse(course)
 

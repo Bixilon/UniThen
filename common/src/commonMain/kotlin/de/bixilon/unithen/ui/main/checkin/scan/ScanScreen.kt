@@ -65,7 +65,7 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
                 state = state,
             ) {
                 items(appointments) {
-                    val course = storage.courses[it.course]!!
+                    val course = storage.courses[it.course]
 
                     AppointmentCard(course, it, Modifier.clickable { navigation.navigate(ScanAppointmentRoute(it)) })
                 }

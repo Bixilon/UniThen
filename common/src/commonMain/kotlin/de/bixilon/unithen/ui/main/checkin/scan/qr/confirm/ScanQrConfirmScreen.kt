@@ -39,7 +39,7 @@ import kotlin.uuid.Uuid
 @Composable
 private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, user: User?) {
     val navigation = LocalNavigation.current
-    val course = rememberStorage { courses[appointment.course]!! }
+    val course = rememberStorage { courses[appointment.course] }
 
     if (user == null) return ScanQrNotEnrolled(null, course, appointment)
 
@@ -75,7 +75,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
 
 @Composable
 fun ScanQrConfirmScreen(appointment: Appointment, user: User?) {
-    val course = rememberStorage { courses[appointment.course]!! }
+    val course = rememberStorage { courses[appointment.course] }
 
 
     Screen(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -88,8 +88,8 @@ fun ScanQrConfirmScreen(appointment: Appointment, user: User?) {
 
 @Composable
 fun ScanQrConfirmScreen(appointment: Appointment, userId: Uuid) {
-    val course = rememberStorage { courses[appointment.course]!! }
-    val user = rememberStorage { users[sites[course.site]!!, userId] }
+    val course = rememberStorage { courses[appointment.course] }
+    val user = rememberStorage { users[sites[course.site], userId] }
 
     ScanQrConfirmScreen(appointment, user)
 }

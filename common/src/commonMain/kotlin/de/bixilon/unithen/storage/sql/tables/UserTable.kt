@@ -34,7 +34,7 @@ class UserTable(
     storage: SqlStorage,
 ) : SqlTable<User>(storage, UserTable) {
 
-    operator fun get(id: Key) = single(UserTable.id eq id)
+    operator fun get(id: Key) = single(UserTable.id eq id) ?: throw NullPointerException("Can not find user with id=$id")
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
@@ -42,7 +42,7 @@ class UserTable(
     fun insert(site: Site, uuid: Uuid, firstname: String, lastname: String): User {
         val id = insert(UserTable, UserTable.site to site.id, UserTable.uuid to uuid, UserTable.firstname to firstname, UserTable.lastname to lastname)
 
-        return this[id]!!
+        return this[id]
     }
 
     fun add(site: Site, uuid: Uuid, firstname: String, lastname: String): User {

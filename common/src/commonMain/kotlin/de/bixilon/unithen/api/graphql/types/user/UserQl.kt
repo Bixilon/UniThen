@@ -23,5 +23,5 @@ data class UserQl(
     override val id: Uuid,
     @SerialName("first_name") val firstname: String? = null,
     @SerialName("last_name") val lastname: String? = null,
-    val courses: List<CourseQl>?=null,
+    val courses: List<CourseQl>? = null,
 ) : IdentifiedQl

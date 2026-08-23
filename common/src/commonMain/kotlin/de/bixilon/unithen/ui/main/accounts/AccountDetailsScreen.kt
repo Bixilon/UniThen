@@ -37,7 +37,7 @@ import unithen.common.generated.resources.courses_title
 
 @Composable
 fun AccountDetailsScreen(account: Account) {
-    val site = rememberStorage { sites[account.site]!! }
+    val site = rememberStorage { sites[account.site] }
     val courses = rememberStorage { courses[account].sortedBy { it.name } } // TODO: better sort
 
     Screen {

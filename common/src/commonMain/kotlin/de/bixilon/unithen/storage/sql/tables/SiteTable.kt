@@ -30,13 +30,13 @@ class SiteTable(
     storage: SqlStorage,
 ) : SqlTable<Site>(storage, SiteTable) {
 
-    operator fun get(id: Key) = single(SiteTable.id eq id)
+    operator fun get(id: Key) = single(SiteTable.id eq id) ?: throw NullPointerException("Can not find site with id=$id")
     operator fun get(host: String) = single(SiteTable.host eq host)
 
     fun insert(host: String, name: String, icon: ByteArray?): Site {
         val id = insert(SiteTable, SiteTable.host to host, SiteTable.name to name, SiteTable.icon to icon, fetched to Clock.System.now())
 
-        return this[id]!!
+        return this[id]
     }
 
     fun add(host: String, name: String, icon: ByteArray?): Site {

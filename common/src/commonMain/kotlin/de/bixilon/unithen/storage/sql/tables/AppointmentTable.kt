@@ -35,7 +35,7 @@ class AppointmentTable(
     storage: SqlStorage,
 ) : SqlTable<Appointment>(storage, AppointmentTable) {
 
-    operator fun get(id: Key) = single(AppointmentTable.id eq id)
+    operator fun get(id: Key) = single(AppointmentTable.id eq id) ?: throw NullPointerException("Can not find appointment with id=$id")
     operator fun get(course: Course, uuid: Uuid) = single(SqlFilter.and("course" to course.id, "uuid" to uuid))
 
     operator fun get(course: Course?) = all(SqlFilter.and("course" to course?.id))
@@ -61,7 +61,7 @@ class AppointmentTable(
     fun insert(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {
         val id = insert(AppointmentTable, AppointmentTable.course to course.id, AppointmentTable.uuid to uuid, AppointmentTable.start to start, AppointmentTable.end to end, AppointmentTable.canceled to canceled, AppointmentTable.location to location)
 
-        return this[id]!!
+        return this[id]
     }
 
     fun add(course: Course, uuid: Uuid, start: Instant, end: Instant, canceled: Instant?, location: String): Appointment {

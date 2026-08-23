@@ -28,7 +28,7 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
         SimpleErrorScreen("Invalid authentication flow", "Maybe the url is not correct or it expired? Please try again!")
         return
     }
-    val site = rememberStorage { sites[flow.site]!! }
+    val site = rememberStorage { sites[flow.site] }
 
     val exchange = useAsyncNetwork(true) {
         val api = UniNowApi(site.host)

@@ -29,7 +29,7 @@ class EventTable(
     storage: SqlStorage,
 ) : SqlTable<Event>(storage, EventTable) {
 
-    operator fun get(id: Key) = single(EventTable.id eq id)
+    operator fun get(id: Key) = single(EventTable.id eq id) ?: throw NullPointerException("Can not find event with id=$id")
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
 
@@ -39,7 +39,7 @@ class EventTable(
     fun insert(site: Site, uuid: Uuid, name: String, start: Instant, end: Instant): Event {
         val id = insert(EventTable, EventTable.site to site.id, EventTable.uuid to uuid, EventTable.name to name, EventTable.start to start, EventTable.end to end)
 
-        return this[id]!!
+        return this[id]
     }
 
     fun add(site: Site, uuid: Uuid, name: String, start: Instant, end: Instant): Event {

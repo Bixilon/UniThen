@@ -84,8 +84,8 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 fun CourseDetailsScreen(course: Course) {
     val storage = LocalStorage.current
     val navigator = LocalNavigation.current
-    val event = rememberStorage { events[course.event]!! }
-    val site = rememberStorage { sites[event.site]!! }
+    val event = rememberStorage { events[course.event] }
+    val site = rememberStorage { sites[event.site] }
     val accounts = rememberStorage { accounts[course].sortedBy { it.lastname } }
 
 

@@ -30,7 +30,7 @@ fun CheckInPresentScreen() {
     when (appointments?.size) {
         null -> Unit
         0 -> PresentNoAppointments()
-        1 -> PresentQrAppointmentScreen(rememberStorage { courses[appointments[0].course]!! }, appointments[0])
+        1 -> PresentQrAppointmentScreen(rememberStorage { courses[appointments[0].course] }, appointments[0])
         else -> PresentQrAppointmentSelector(appointments)
     }
 }

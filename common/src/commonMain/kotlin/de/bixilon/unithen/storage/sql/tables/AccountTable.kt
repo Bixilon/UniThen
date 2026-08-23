@@ -35,7 +35,7 @@ class AccountTable(
     storage: SqlStorage,
 ) : SqlTable<Account>(storage, AccountTable) {
 
-    operator fun get(id: Key) = single(AccountTable.id eq id)
+    operator fun get(id: Key) = single(AccountTable.id eq id) ?: throw NullPointerException("Can not find account with id=$id")
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, uuid: Uuid? = null, firstname: String? = null, lastname: String? = null, authentication: String? = null) = all(SqlFilter.and("site" to site, "uuid" to uuid, "firstname" to firstname, "lastname" to lastname, "authentication" to authentication))
@@ -49,11 +49,11 @@ class AccountTable(
     fun insert(site: Site, details: UserDetails, authentication: Authentication): Account {
         val id = insert(AccountTable, AccountTable.site to site.id, uuid to details.uuid, firstname to details.firstname, lastname to details.lastname, Companion.authentication to Jackson.MAPPER.encodeToString(authentication), fetched to Instant.DISTANT_PAST)
 
-        return this[id]!! // TODO: cleanup
+        return this[id] // TODO: cleanup
     }
 
     fun add(site: Site, details: UserDetails, authentication: Authentication): Account {
-        this[site, details.uuid]?.let { update(it, details, authentication); return this[it.id]!! }
+        this[site, details.uuid]?.let { update(it, details, authentication); return this[it.id] }
 
         return insert(site, details, authentication)
     }
@@ -73,7 +73,7 @@ class AccountTable(
     }
 
     fun getTutorAccount(appointment: Appointment): Account? {
-        val course = storage.courses[appointment.course]!!
+        val course = storage.courses[appointment.course]
 
         return getTutorAccount(course)
     }

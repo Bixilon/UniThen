@@ -92,8 +92,8 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
     }
 
     val storage = LocalStorage.current
-    val user = rememberStorage { users[item.user]!! }
-    val appointment = rememberStorage { appointments[item.appointment]!! }
+    val user = rememberStorage { users[item.user] }
+    val appointment = rememberStorage { appointments[item.appointment] }
 
     val active = sync.isQueueActive(user, appointment)
 
@@ -178,7 +178,7 @@ private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: Use
 
 @Composable
 fun ScanAttendeeList(appointment: Appointment) {
-    val course = rememberStorage { courses[appointment.course]!! }
+    val course = rememberStorage { courses[appointment.course] }
     val scope = rememberCoroutineScope()
 
     val filter = rememberUserFilter()

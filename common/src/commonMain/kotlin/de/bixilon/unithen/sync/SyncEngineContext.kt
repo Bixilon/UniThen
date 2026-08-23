@@ -92,7 +92,7 @@ class SyncEngineContext(
         if (!force && !course.isEnrolledStale()) return
 
         execute {
-            val site = storage.sites[account.site]!!
+            val site = storage.sites[account.site]
             val api = account.api(site)
 
 
@@ -107,7 +107,7 @@ class SyncEngineContext(
         if (!force && !appointment.isAttendeesStale()) return
 
         execute {
-            val site = storage.sites[account.site]!!
+            val site = storage.sites[account.site]
             val api = account.api(site)
 
 
@@ -122,7 +122,7 @@ class SyncEngineContext(
         if (!force && !course.isDataStale()) return
 
         execute {
-            val site = storage.sites[account.site]!!
+            val site = storage.sites[account.site]
             val api = account.api(site)
 
             val detailsQl = api.getCourse(course.uuid)!!
@@ -136,7 +136,7 @@ class SyncEngineContext(
     }
 
     private suspend fun syncCourse(account: Account, id: Uuid, tutor: Boolean) {
-        val site = storage.sites[account.site]!!
+        val site = storage.sites[account.site]
         val api = account.api(site)
 
         val detailsQl = api.getCourse(id)!!
@@ -151,7 +151,7 @@ class SyncEngineContext(
     }
 
     suspend fun syncCourses(account: Account, force: Boolean = this.force) = handlErrors {
-        val site = storage.sites[account.site]!!
+        val site = storage.sites[account.site]
         val api = account.api(site)
         if (!force && !account.isStale()) return@handlErrors
 

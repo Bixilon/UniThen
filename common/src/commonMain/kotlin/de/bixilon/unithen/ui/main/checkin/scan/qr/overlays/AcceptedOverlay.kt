@@ -125,7 +125,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
             }
 
             if (showCourseName) {
-                val course = rememberStorage { courses[state.result.appointment.course]!! }
+                val course = rememberStorage { courses[state.result.appointment.course] }
                 Text(text = course.name, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
             }
 

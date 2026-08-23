@@ -155,7 +155,7 @@ private fun AccountOptions(account: Account, modifier: Modifier) {
 
 @Composable
 private fun AccountCard(account: Account, onClick: () -> Unit) {
-    val site = rememberStorage { sites[account.site]!! }
+    val site = rememberStorage { sites[account.site] }
     val now = useTime()
 
 

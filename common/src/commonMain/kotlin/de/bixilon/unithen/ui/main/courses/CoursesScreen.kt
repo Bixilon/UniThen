@@ -89,7 +89,7 @@ fun CoursesScreen() {
                         if (courses.isEmpty()) continue
 
                         item(key = "e" + event.id) {
-                            val site = rememberStorage { sites[event.site]!! } // TODO: Section?
+                            val site = rememberStorage { sites[event.site] } // TODO: Section?
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (site.icon != null) {
                                     AsyncImage(

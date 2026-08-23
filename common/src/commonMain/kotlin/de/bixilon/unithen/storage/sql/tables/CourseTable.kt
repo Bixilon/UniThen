@@ -28,7 +28,8 @@ import kotlin.uuid.Uuid
 class CourseTable(
     storage: SqlStorage,
 ) : SqlTable<Course>(storage, CourseTable) {
-    operator fun get(id: Key) = single(CourseTable.id eq id)
+
+    operator fun get(id: Key) = single(CourseTable.id eq id) ?: throw NullPointerException("Can not find course with id=$id")
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
     fun get(site: Site? = null, event: Event? = null, uuid: Uuid? = null, name: String? = null) = all(SqlFilter.and("site" to site?.id, "event" to event?.id, "uuid" to uuid, "name" to name))
@@ -39,7 +40,7 @@ class CourseTable(
     fun insert(site: Site, event: Event, uuid: Uuid, name: String, fetched: Instant): Course {
         val id = insert(CourseTable, CourseTable.site to site.id, CourseTable.event to event.id, CourseTable.uuid to uuid, CourseTable.name to name, CourseTable.fetched to fetched)
 
-        return this[id]!! // TODO: cleanup
+        return this[id] // TODO: cleanup
     }
 
     fun add(site: Site, event: Event, uuid: Uuid, name: String, fetched: Instant): Course {

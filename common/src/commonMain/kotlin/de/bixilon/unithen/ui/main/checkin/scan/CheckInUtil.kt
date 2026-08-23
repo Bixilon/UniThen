@@ -28,11 +28,11 @@ object CheckInUtil {
     val SYNC_BACKOFF_NORMAL = 5.minutes
 
     suspend fun syncQueue(storage: SqlStorage, item: CheckInQueue) {
-        val user = storage.users[item.user]!!
+        val user = storage.users[item.user]
 
-        val appointment = storage.appointments[item.appointment]!!
-        val course = storage.courses[appointment.course]!!
-        val site = storage.sites[course.site]!!
+        val appointment = storage.appointments[item.appointment]
+        val course = storage.courses[appointment.course]
+        val site = storage.sites[course.site]
         val account = storage.accounts.getTutorAccount(appointment) ?: return
 
 
@@ -72,8 +72,8 @@ object CheckInUtil {
     }
 
     suspend fun checkOut(storage: SqlStorage, appointment: Appointment, user: User) {
-        val course = storage.courses[appointment.course]!!
-        val site = storage.sites[course.site]!!
+        val course = storage.courses[appointment.course]
+        val site = storage.sites[course.site]
         val account = storage.accounts.getTutorAccount(appointment) ?: return
 
         val attempt = storage.appointments.getAttemptId(appointment, user) ?: return

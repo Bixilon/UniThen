@@ -81,7 +81,7 @@ fun PresentQrAppointmentSelector(appointments: List<Appointment>) {
             state = state,
         ) {
             items(appointments, key = Appointment::id) { item ->
-                val course = rememberStorage { courses[item.course]!! }
+                val course = rememberStorage { courses[item.course] }
                 val navigator = LocalNavigation.current
                 AppointmentCard(course, item, Modifier.clickable { navigator.navigate(PresentQrAppointmentRoute(course, item)) })
             }

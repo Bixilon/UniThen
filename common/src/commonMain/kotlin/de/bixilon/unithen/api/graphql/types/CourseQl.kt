@@ -25,4 +25,4 @@ data class CourseQl(
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val tutors: List<CourseUserQl>? = null,
     val appointments: List<AppointmentQl>? = null,
     @Serializable(with = CourseUserQl.NonNullListSerializer::class) val enrolled: List<CourseUserQl>? = null,
-): IdentifiedQl
+) : IdentifiedQl
