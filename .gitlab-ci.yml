@@ -65,7 +65,7 @@ test:
 
 
 
-package:
+apk:
   extends: .android
   stage: package
   script: ./gradlew --build-cache assembleRelease
