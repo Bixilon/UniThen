@@ -84,7 +84,7 @@ fun AccountSyncScreen(site: Site, authentication: Authentication) {
         return
     }
 
-    val synchronize = useSyncEngine { syncCourses(account!!) }
+    val synchronize = useSyncEngine { courses.sync(account!!) }
     LaunchedEffect(Unit) { synchronize.invoke(force = true) }
 
     SyncEngineCompleteEffect(synchronize) {

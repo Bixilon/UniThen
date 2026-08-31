@@ -26,7 +26,7 @@ class CoursesScreenTest : AbstractComposeUiTest() {
         setContent {
             CompositionLocalProvider(
                 LocalNavigation provides remember { Navigator(MainRoute) },
-                LocalSyncEngine provides remember { SyncEngine(storage) {} },
+                LocalSyncEngine provides remember { SyncEngine(storage) },
                 LocalStorage provides storage,
             ) {
                 CoursesScreen()

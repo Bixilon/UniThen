@@ -38,10 +38,10 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
     @OptIn(InternalComposeApi::class)
     @Composable
     private fun useTestSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
-        val engine = remember { SyncEngine(runBlocking { dummy() }) { throw it } }
+        val engine = remember { SyncEngine(runBlocking { dummy() }) }
 
         currentComposer.startProvider(LocalSyncEngine provides engine)
-        val hook = useSyncEngine(block)
+        val hook = useSyncEngine(block = block)
         currentComposer.endProvider()
 
         return hook

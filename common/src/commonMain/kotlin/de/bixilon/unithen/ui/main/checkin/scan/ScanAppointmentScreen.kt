@@ -60,7 +60,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
 
     val pending = rememberStorageAsync(appointment) { checkInQueue.getCount(appointment) } ?: 0
     val synchronize = useRepeatedSyncEngine(SYNC_BACKOFF_NORMAL + 1.minutes) {
-        syncQueue(appointment)
+        queue.sync(appointment)
     }
 
     val dialog = SyncStatusDialog(synchronize, Res.string.scan_synchronizing_attendees.i18n(), Res.string.scan_synchronizing_attendees.i18n(), manual = true)

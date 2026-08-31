@@ -29,14 +29,12 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
-import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.effects.RepeatedEffect
-import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import org.jetbrains.compose.resources.getString
@@ -70,7 +68,6 @@ fun rememberAcceptedStates(): SnapshotStateList<AcceptedState> {
 
 @Composable
 private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
-    val storage = LocalStorage.current
     val haptic = useHapticFeedback()
 
     var message by remember { mutableStateOf<String?>(null) }
@@ -80,12 +77,12 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
     val offline by rememberSetting(Settings.SCAN_ALLOW_OFFLINE)
 
 
-    val checkin = useAsyncNetwork(true) {
+    val checkin = useSyncEngine(true) {
         if (!await) {
             state.expires = TimeSource.Monotonic.markNow() + CHANGE_DELAY
         }
         try {
-            CheckInUtil.checkIn(storage, state.result.appointment, state.result.user)
+            queue.checkIn(state.result.appointment, state.result.user)
 
             success = true
             haptic.invoke(HapticFeedbackType.Confirm)

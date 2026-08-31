@@ -41,7 +41,7 @@ class MainScreenTest : AbstractComposeUiTest() {
             CompositionLocalProvider(
                 LocalStorage provides storage,
                 LocalNavigation provides remember { Navigator(MainRoute) },
-                LocalSyncEngine provides remember { SyncEngine(storage) {} },
+                LocalSyncEngine provides remember { SyncEngine(storage) },
                 LocalSettingsStore provides remember { MemorySettingsStore() },
             ) {
                 ActualMainScreen()

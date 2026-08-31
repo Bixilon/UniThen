@@ -25,7 +25,7 @@ import unithen.common.generated.resources.*
 private fun EnrolledListWarning(course: Course) {
     if (!course.isEnrolledStale()) return
 
-    val synchronize = useSyncEngine { syncEnrolled(course) }
+    val synchronize = useSyncEngine { enrolled.sync(course) }
 
     LaunchedEffect(Unit) { synchronize.invoke() }
 

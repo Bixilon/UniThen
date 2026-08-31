@@ -59,7 +59,7 @@ fun CoursesScreen() {
 
     val toast = useToast()
 
-    val sync = useSyncEngine { syncCourses() }
+    val sync = useSyncEngine { courses.sync() }
 
     SyncEngineStartedEffect(sync) {
         toast.invoke(Res.string.courses_synchronize_started, true)

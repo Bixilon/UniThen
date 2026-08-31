@@ -16,11 +16,9 @@ import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
-import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.theme.checkInSuccess
-import de.bixilon.unithen.ui.util.useAsyncNetwork
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
@@ -29,18 +27,17 @@ import unithen.common.generated.resources.scan_error_rejected_message
 
 @Composable
 fun ColumnScope.ScanQrAwait(user: User, appointment: Appointment, setLoading: (Boolean) -> Unit, onSuccess: () -> Unit, onError: (String) -> Unit) {
-    val storage = LocalStorage.current
     val haptic = useHapticFeedback()
     val await by rememberSetting(Settings.SCAN_AWAIT_SERVER_CONFIRMATION)
     val offline by rememberSetting(Settings.SCAN_ALLOW_OFFLINE)
 
 
-    val checkin = useAsyncNetwork {
+    val checkin = useSyncEngine {
         val await = await
         if (!await) onSuccess.invoke()
         setLoading.invoke(true)
         try {
-            CheckInUtil.checkIn(storage, appointment, user)
+            queue.checkIn(appointment, user)
 
             haptic.invoke(HapticFeedbackType.Confirm)
             if (await) onSuccess.invoke()

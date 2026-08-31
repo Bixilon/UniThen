@@ -21,7 +21,7 @@ import kotlin.time.Duration
 
 @Composable
 fun useRepeatedSyncEngine(interval: Interval = Duration.INFINITE, block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
-    val hook = useSyncEngine(block)
+    val hook = useSyncEngine(block = block)
 
     RepeatedEffect(interval) {
         hook.invoke()

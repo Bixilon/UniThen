@@ -36,7 +36,6 @@ import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
-import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
@@ -44,7 +43,10 @@ import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
 import de.bixilon.unithen.ui.sync.useSyncEngine
-import de.bixilon.unithen.ui.util.*
+import de.bixilon.unithen.ui.util.i18n
+import de.bixilon.unithen.ui.util.useTime
+import de.bixilon.unithen.ui.util.useToast
+import de.bixilon.unithen.ui.util.verticalScroll
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
@@ -53,13 +55,11 @@ import kotlin.uuid.Uuid
 
 @Composable
 private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
-    val storage = LocalStorage.current
-
     val toast = useToast()
 
-    val checkout = useAsyncNetwork {
+    val checkout = useSyncEngine {
         try {
-            CheckInUtil.checkOut(storage, appointment, user)
+            queue.checkOut(appointment, user)
         } catch (error: CheckInError) {
             toast.invoke(getString(Res.string.scan_error_rejected_message, error.error._i18n()) + " (${user.fullname})")
         }
@@ -148,12 +148,10 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
 
 @Composable
 private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
-    val storage = LocalStorage.current
-
     val toast = useToast()
-    val checkin = useAsyncNetwork {
+    val checkin = useSyncEngine {
         try {
-            CheckInUtil.checkIn(storage, appointment, user)
+            queue.checkIn(appointment, user)
         } catch (error: CheckInError) {
             toast.invoke(getString(Res.string.scan_error_rejected_message, error.error._i18n()) + " (${user.fullname})")
         }
@@ -197,8 +195,8 @@ fun ScanAttendeeList(appointment: Appointment) {
     val state = rememberLazyListState()
 
     val synchronize = useSyncEngine {
-        async { syncEnrolled(course) }
-        async { syncAttendees(appointment) }
+        async { this.enrolled.sync(course) }
+        async { this.attendees.sync(appointment) }
     }
 
     SyncEngineCompleteEffect(synchronize) {

@@ -12,19 +12,23 @@
 
 package de.bixilon.unithen.ui.sync
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.unithen.api.errors.NetworkException
+import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.sync.SyncEngineContext
 import de.bixilon.unithen.sync.SyncEngineProgress
+import de.bixilon.unithen.ui.main.AuthenticateRoute
+import de.bixilon.unithen.ui.main.CrashRoute
+import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.*
 
 
 @Composable
-fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
+fun useSyncEngine(auto: Boolean = false, block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
     val engine = LocalSyncEngine.current
+    val navigator = catchAll { LocalNavigation.current }
     var active by rememberStateOf { false }
     var progress by rememberStateOf { SyncEngineProgress.EMPTY }
 
@@ -34,10 +38,17 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
             CoroutineScope(Dispatchers.IO).launch {
                 try {
                     coroutineScope {
-                        val context = SyncEngineContext(engine, force, this) { progress = it }
+                        val context = SyncEngineContext(engine, force = force, scope = this) { progress = it }
 
                         block.invoke(context)
                     }
+                } catch (error: NetworkException) {
+                    error.printStackTrace()
+                } catch (error: AuthenticationException) {
+                    navigator?.navigate(AuthenticateRoute(error.host)) ?: throw error
+                } catch (error: Exception) {
+                    error.printStackTrace()
+                    navigator?.navigate(CrashRoute(error)) ?: throw error
                 } finally {
                     active = false
                 }
@@ -45,6 +56,9 @@ fun useSyncEngine(block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
         }
 
         return@remember invokeable
+    }
+    if (auto) {
+        LaunchedEffect(Unit) { sync.invoke(false) }
     }
 
 

@@ -171,7 +171,7 @@ fun CommonMainActivity() {
     Loader {
         val storage = LocalStorage.current
         val navigator = remember { Navigator(MainRoute) }
-        val engine = rememberSyncEngine(storage, navigator)
+        val engine = rememberSyncEngine(storage)
 
         CompositionLocalProvider(
             LocalSyncEngine provides engine

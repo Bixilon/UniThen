@@ -28,7 +28,7 @@ class ScanAttendeeListTest : AbstractComposeUiTest() {
         setContent {
             CompositionLocalProvider(
                 LocalStorage provides storage,
-                LocalSyncEngine provides remember { SyncEngine(storage) {} },
+                LocalSyncEngine provides remember { SyncEngine(storage) },
                 LocalNavigation provides remember { Navigator(MainRoute) },
                 LocalSettingsStore provides remember { MemorySettingsStore() },
             ) {

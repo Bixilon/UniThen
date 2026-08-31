@@ -117,7 +117,7 @@ private fun Remove(account: Account): (() -> Unit)? {
 private fun AccountOptions(account: Account, modifier: Modifier) {
     var expanded by remember { mutableStateOf(false) }
 
-    val synchronize = useSyncEngine { syncCourses(account) }
+    val synchronize = useSyncEngine { courses.sync(account) }
     SyncStatusDialog(synchronize, Res.string.accounts_sync_title.i18n(), Res.string.accounts_sync_description.i18n())
 
     val remove = Remove(account)

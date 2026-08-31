@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun QrUpdateIndicator(modifier: Modifier, appointments: List<Appointment>) {
-    val status = useRepeatedSyncEngine(1.minutes) { syncAttendees(appointments) }
+    val status = useRepeatedSyncEngine(1.minutes) { attendees.sync(appointments) }
 
     SyncStatusIndicator(status, modifier, text = true, hide = false)
 }

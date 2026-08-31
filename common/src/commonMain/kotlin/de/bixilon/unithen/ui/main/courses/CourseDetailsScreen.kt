@@ -90,7 +90,7 @@ fun CourseDetailsScreen(course: Course) {
 
 
     val toast = useToast()
-    val synchronize = useSyncEngine { syncCourse(course) }
+    val synchronize = useSyncEngine { courses.sync(course) }
 
     SyncEngineCompleteEffect(synchronize) {
         toast.invoke(Res.string.course_synchronize_done)

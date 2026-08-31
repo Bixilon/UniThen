@@ -31,7 +31,7 @@ class SyncEngineTest {
     }
 
     private fun use(block: suspend SyncEngineContext.() -> Unit): SyncEngineProgress? {
-        val engine = SyncEngine(runBlocking { dummy() }) { throw it }
+        val engine = SyncEngine(runBlocking { dummy() })
         var progress: SyncEngineProgress? = null
         runBlocking {
             coroutineScope {

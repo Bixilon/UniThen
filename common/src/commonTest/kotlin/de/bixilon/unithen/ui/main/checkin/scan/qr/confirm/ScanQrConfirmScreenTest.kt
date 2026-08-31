@@ -28,7 +28,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
     @Composable
     private fun MockedScreen(storage: SqlStorage, appointment: Appointment = storage.appointments[901], userId: String) {
-        val sync = remember { SyncEngine(storage) {} }
+        val sync = remember { SyncEngine(storage) }
         val navigator = remember { Navigator(MainRoute) }
         val store = remember { MemorySettingsStore() }
 

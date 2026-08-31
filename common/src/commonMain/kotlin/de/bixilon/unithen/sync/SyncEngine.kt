@@ -22,7 +22,6 @@ import kotlinx.coroutines.withContext
 
 class SyncEngine(
     val storage: SqlStorage,
-    val onError: (Throwable) -> Unit,
 ) {
     private val active = mutableStateSetOf<SyncEngineRequest>()
 
