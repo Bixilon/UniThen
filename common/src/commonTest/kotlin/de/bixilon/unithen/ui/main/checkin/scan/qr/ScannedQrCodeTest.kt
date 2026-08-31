@@ -25,7 +25,7 @@ class ScannedQrCodeTest {
 
     @Test
     fun `write v1 without name`() {
-        val expected = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"5f14e88d-affd-4f42-9e22-f4c5279b17b7"}"""
+        val expected = """{"appointment_id":"2efdc1bd-5963-43cf-b3b5-df5aa092cff2","user_id":"5f14e88d-affd-4f42-9e22-f4c5279b17b7","userName":{"last":"1","first":"2"}}"""
 
         assertEquals(expected, expectedV1.encode())
     }

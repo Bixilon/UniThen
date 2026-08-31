@@ -12,9 +12,12 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr.types
 
+import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.util.Jackson
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlin.uuid.Uuid
 
 @Serializable
@@ -23,9 +26,14 @@ data class ScannedQrCodeV1(
     @SerialName("user_id") val userId: Uuid,
 ) : ScannedQrCode {
 
-    override fun encode() = Jackson.MAPPER.encodeToString(this)
+    override fun encode() = Jackson.MAPPER.encodeToJsonElement(serializer(), this).cast<JsonObject>().toMutableMap().apply { this["userName"] = EMPTY_NAME }.let { JsonObject(it) }.toString()
 
     companion object {
+        val EMPTY_NAME = JsonObject(mapOf(
+            "last" to JsonPrimitive("1"),
+            "first" to JsonPrimitive("2"),
+        ))
+
 
         fun decode(data: String): ScannedQrCodeV1? {
             val text = data.trim()
