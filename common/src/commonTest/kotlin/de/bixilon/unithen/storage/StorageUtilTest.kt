@@ -22,6 +22,7 @@ import de.bixilon.unithen.api.graphql.types.user.CourseUserQl
 import de.bixilon.unithen.storage.StorageTestUtil.appointment
 import de.bixilon.unithen.storage.StorageTestUtil.course
 import de.bixilon.unithen.storage.StorageTestUtil.site
+import de.bixilon.unithen.storage.StorageTestUtil.user
 import de.bixilon.unithen.storage.StorageUtil.storeAttendees
 import de.bixilon.unithen.storage.StorageUtil.storeCourse
 import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
@@ -34,6 +35,7 @@ import kotlinx.coroutines.test.setMain
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StorageUtilTest {
@@ -142,5 +144,38 @@ class StorageUtilTest {
         val attendees = storage.users.getAttendees(appointment)
 
         assertEquals(attendees.map { it.uuid }, listOf(A, B))
+    }
+
+    @Test
+    fun `penging queue removed`() = runBlocking {
+        val storage = empty()
+
+        val course = storage.course()
+        val site = storage.sites[course.site]
+        val appointment = storage.appointment(course)
+
+        val a = storage.user(site, A)
+        val b = storage.user(site, B)
+
+        storage.checkInQueue.addPending(appointment, a, Clock.System.now())
+        storage.checkInQueue.addCheckout(appointment, b, Uuid.random(), Clock.System.now())
+
+        storage.storeAttendees(
+            site, appointment,
+            listOf(
+                CourseUserQl(A, "a", "b"),
+                CourseUserQl(B, "b", "c"),
+            ),
+            listOf(
+                CheckInAttemptQl(E, CheckInAttemptQl.Status.SUCCESS, null, CourseUserQl(A)),
+                CheckInAttemptQl(F, CheckInAttemptQl.Status.SUCCESS, null, CourseUserQl(B)),
+            ),
+        )
+
+        val attendees = storage.users.getAttendees(appointment)
+
+        assertEquals(listOf(A), attendees.map { it.uuid })
+        assertEquals(listOf(b.id), storage.checkInQueue[appointment].filter { it.attempt != null }.map { it.user })
+        assertEquals(listOf(), storage.checkInQueue[appointment].filter { it.attempt == null })
     }
 }

@@ -47,4 +47,8 @@ object StorageTestUtil {
     fun SqlStorage.appointment(course: Course = course(), uuid: Uuid = Uuid.random(), start: Instant = Clock.System.now(), end: Instant = Clock.System.now(), canceled: Instant? = null): Appointment {
         return appointments.add(course, uuid, start, end, canceled, "")
     }
+
+    fun SqlStorage.user(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "first", lastname: String = "last"): User {
+        return users.add(site, uuid, firstname, lastname)
+    }
 }

@@ -77,6 +77,11 @@ object StorageUtil {
 
             val attempt = attempts.find { it.status == CheckInAttemptQl.Status.SUCCESS && it.user?.id == userQl.id } ?: continue
 
+            if (checkInQueue[appointment, user]?.attempt != null) {
+                // check out pending
+                continue
+            }
+
             appointments.addAttendee(user, appointment, attempt.id)
         }
         appointments.update(appointment.id, fetchedAttendees = Clock.System.now())
