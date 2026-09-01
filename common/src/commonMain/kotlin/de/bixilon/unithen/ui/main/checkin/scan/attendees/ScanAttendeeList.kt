@@ -15,7 +15,7 @@ package de.bixilon.unithen.ui.main.checkin.scan.attendees
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
@@ -54,7 +55,7 @@ import kotlin.uuid.Uuid
 
 
 @Composable
-private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
+private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean, alternative: Boolean) {
     val toast = useToast()
 
     val checkout = useSyncEngine {
@@ -66,7 +67,7 @@ private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: Use
     }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer.letIf(alternative) { copy(alpha = 0.8f) }),
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -83,7 +84,7 @@ private fun AttendeeCard(modifier: Modifier, appointment: Appointment, user: Use
 }
 
 @Composable
-private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean) {
+private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean, alternative: Boolean) {
     val sync = LocalSyncEngine.current
     val color = when {
         item.attempt != null -> MaterialTheme.colorScheme.surfaceContainer
@@ -98,7 +99,7 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
     val active = sync.isQueueActive(user, appointment)
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = color),
+        colors = CardDefaults.cardColors(containerColor = color.letIf(alternative) { copy(alpha = 0.8f) }),
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -147,7 +148,7 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean)
 }
 
 @Composable
-private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean) {
+private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: User, readonly: Boolean, alternative: Boolean) {
     val toast = useToast()
     val checkin = useSyncEngine {
         try {
@@ -158,7 +159,7 @@ private fun EnrolledCard(modifier: Modifier, appointment: Appointment, user: Use
     }
 
     Card(
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.letIf(alternative) { copy(alpha = 0.8f) }),
         modifier = modifier,
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
@@ -234,9 +235,9 @@ fun ScanAttendeeList(appointment: Appointment) {
                 contentPadding = PaddingValues(bottom = 150.dp),
             ) {
                 item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
-                items(items = attendees, key = { it.id }) { AttendeeCard(modifier(), appointment, it, readonly) }
-                items(items = queue, key = { it.user }) { QueueCard(modifier(), it, readonly) }
-                items(items = not, key = { it.id }) { EnrolledCard(modifier(), appointment, it, readonly) }
+                itemsIndexed(items = attendees, key = { _, it -> it.id }) { index, it -> AttendeeCard(modifier(), appointment, it, readonly, index % 2 != 0) }
+                itemsIndexed(items = queue, key = { _, it -> it.user }) { index, it -> QueueCard(modifier(), it, readonly, index % 2 != 0) }
+                itemsIndexed(items = not, key = { _, it -> it.id }) { index, it -> EnrolledCard(modifier(), appointment, it, readonly, index % 2 != 0) }
             }
         }
     }
