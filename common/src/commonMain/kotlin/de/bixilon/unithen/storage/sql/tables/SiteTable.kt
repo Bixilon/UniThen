@@ -16,14 +16,18 @@ import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.unit.Bytes.Companion.bytes
 import de.bixilon.kutil.unit.Bytes.Companion.megabytes
 import de.bixilon.unithen.api.user.SiteDetails
+import de.bixilon.unithen.storage.DefaultSites
 import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
+import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Site
+import kotlinx.coroutines.runBlocking
+import unithen.common.generated.resources.Res
 import kotlin.time.Clock
 
 class SiteTable(
@@ -39,9 +43,11 @@ class SiteTable(
         return this[id]
     }
 
+    fun update(id: Key, name: String? = null, icon: ByteArray? = null) = update(id, SqlFilter.comma("name" to name, "icon" to icon))
+
     fun add(host: String, name: String, icon: ByteArray?): Site {
         require(!host.startsWith("https://"))
-        this[host]?.let { return it } // TODO: update
+        this[host]?.let { update(it.id, name, icon); return this[it.id] }
 
         return insert(host, name, icon)
     }
@@ -55,9 +61,15 @@ class SiteTable(
         return add(fixed, details.name, icon)
     }
 
-    fun sync() {
-        storage.helper.update().use { it.executeBatch("sites") }
-        storage.notifyState()
+    fun sync() = storage.transaction {
+        val version = catchAll { storage.query("PRAGMA sites_version;") { if (it.moveToNext()) it.getInt(0) else 0 } } ?: 0
+        if (version >= DefaultSites.VERSION) return@transaction
+
+        for (site in DefaultSites.SITES) {
+            add(site.host, site.name, runBlocking { Res.readBytes("files/logo/${site.icon}") })
+        }
+
+        storage.update("PRAGMA sites_version = ${DefaultSites.VERSION};")
     }
 
     companion object : SelectableSqlTableSchema<Site> {

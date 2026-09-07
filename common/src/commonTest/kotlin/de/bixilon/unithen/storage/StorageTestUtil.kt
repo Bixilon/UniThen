@@ -24,8 +24,8 @@ import kotlin.uuid.Uuid
 object StorageTestUtil {
 
 
-    fun SqlStorage.site(name: String = "Test site", host: String = "site.test"): Site {
-        return sites.add(name, host, null)
+    fun SqlStorage.site(host: String = "site.test", name: String = "Test site"): Site {
+        return sites.add(host, name, null)
     }
 
     fun SqlStorage.account(site: Site = site(), uuid: Uuid = Uuid.random(), firstname: String = "Firstname", lastname: String = "Lastname", authentication: String = "a"): Account {

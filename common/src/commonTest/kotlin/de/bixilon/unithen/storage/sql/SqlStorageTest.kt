@@ -520,7 +520,22 @@ class SqlStorageTest {
 
         storage.sites.sync()
 
-        assertEquals("ZHS München", storage.sites["kurse.zhs-muenchen.de"]?.name)
+        val site = storage.sites["kurse.zhs-muenchen.de"]
+        assertEquals("ZHS München", site?.name)
+        assertTrue { site!!.icon!!.decodeToString().startsWith("<svg") }
+    }
+
+    @Test
+    fun `add zhs and sync sites but keep same id`() {
+        val storage = empty()
+
+        val original = storage.site("kurse.zhs-muenchen.de", "ABC")
+        storage.sites.sync()
+
+        val modified = storage.sites["kurse.zhs-muenchen.de"]!!
+
+        assertEquals(original.id, modified.id)
+        assertEquals("ZHS München", modified.name)
     }
 
     @Test
