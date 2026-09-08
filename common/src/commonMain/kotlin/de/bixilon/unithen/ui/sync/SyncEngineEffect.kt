@@ -46,7 +46,7 @@ fun useSyncEngine(auto: Boolean = false, block: suspend SyncEngineContext.() -> 
                     error.printStackTrace()
                 } catch (error: AuthenticationException) {
                     navigator?.navigate(AuthenticateRoute(error.host)) ?: throw error
-                } catch (error: Exception) {
+                } catch (error: Throwable) {
                     error.printStackTrace()
                     navigator?.navigate(CrashRoute(error)) ?: throw error
                 } finally {

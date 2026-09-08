@@ -42,6 +42,7 @@ class SyncEngineContext(
     val courses = Courses()
     val queue = Queue()
 
+    @Deprecated("Not added to total")
     private suspend fun withErrorProgress(block: suspend () -> Unit) {
         try {
             block.invoke()
@@ -49,7 +50,7 @@ class SyncEngineContext(
         } catch (error: NetworkException) {
             progress.addWarning()
             throw error
-        } catch (error: Exception) {
+        } catch (error: Throwable) {
             progress.addError()
             throw error
         }
