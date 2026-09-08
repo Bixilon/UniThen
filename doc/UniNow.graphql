@@ -9,12 +9,29 @@ scalar UUID
 "A 36 digit UUID; can be blank in special cases"
 scalar ID
 
-"e.g. courses.course.fb6004ca-803d-4121-8451-ea809e3f23ef"
+"e.g. courses.course.fb6004ca-803d-4121-8451-ea809e3f23ef or courses.appointment.uuid"
 scalar ResourceName
+
+scalar Cursor
 
 enum CheckInAttemptStatus {
     Success,
     Failure,
+}
+
+type CursorPageInfo {
+    end_cursor: Cursor
+    has_next_page: Boolean
+}
+type PostingEntry {
+    cursor: Cursor
+    posting: Posting
+}
+
+type PaginatedPostings {
+    total_count:  Int
+    page_info: CursorPageInfo
+    postings: PostingEntry
 }
 
 type User {
@@ -26,7 +43,7 @@ type User {
     email: String
 
     postings(filters: [Filter!]): [Posting!]
-    paginatedPostings(filters: [Filter!], sorters: [SortBy!], pagination: CursorPagination): Unknown
+    paginatedPostings(filters: [Filter!], sorters: [SortBy!], pagination: CursorPagination): PaginatedPostings
 
     messages(filters: [Filter], sorters: [Sorter], pagination: MessagePagination, search: String): Unknown
     documents: Unknown
@@ -37,7 +54,7 @@ type User {
     courses(isTutor: Boolean, isEnrolled: Boolean): [Course!]
 }
 
-# There is a special "unknown" user with all fields set to null and id is a blank string
+# There is a special "unknown" user with all fields set to null and id is a blank string or a zero uuid
 type CourseUser {
     id: ID!
 
@@ -147,7 +164,7 @@ type Course {
 
     bookingConfiguration: Unknown # capacity
 
-    responsibleUsers: [Unknown] # Course User?
+    responsibleUsers: [CourseUser]
 
     tags: [Unknown] # Type: Tag (id, ?)
 
@@ -218,7 +235,7 @@ type Appointment {
 
     course: Course
 
-    onlineSettings: Unknown # platformUrl, roomId, password
+    onlineSettings: OnlineSettings
 
     checkInAttempts: [CheckInAttempt!]
     attendees: [CourseUser!]
@@ -270,6 +287,7 @@ type Building {
 
 type CourseGroup {
     id: ID!
+    title: Unknown
     slug: Unknown
     semester_calendar: Calendar
 
@@ -287,6 +305,8 @@ input Filter {
     field: String!
     in: [String!]
     eq: String
+    greater: String
+    isNull: Boolean
 }
 
 input SortBy {
@@ -368,14 +388,44 @@ type PostingForTutor {
     product_prerequisites: [SectionItem]
     public_user: PublicUser
     additional_fields: [SectionItem]
+    payment_completed: Boolean # TODO
 }
 
+input AppointmentPagination {
+    page_size: Int!
+}
+
+type AppointmentsPageEntry {
+    cusor: Cursor
+    resource: Appointment
+}
+
+type AppointmentsPageInfo {
+    has_next_page: Boolean
+}
+
+type PaginatedAppointments {
+    total_count: Int
+    page_entries:AppointmentsPageEntry
+    page_info: AppointmentsPageInfo
+}
+
+input DeleteFreePostingInput {
+    posting_id: UUID!
+}
+
+type OnlineSettings {
+    platformUrl: String
+    roomId: String
+    password: String
+}
 
 type Query {
     user_pk(userID: ID!): User
     offers_pk(id: ID!): Offer
 
     get_unread_messages: Int!
+    get_unread_threads: Int!
     booking_in_progress: Boolean!
 
     Product_infos(filters: Filter): ProductInfo # TODO: Filter array
@@ -386,10 +436,11 @@ type Query {
     list_transactions: Unknown
 
     appointments_pk(id: ID!): Appointment
-    appointments: [Appointment!]
+    appointments(filters: [Filter]): [Appointment!]
+    appointments_for_tutor(orders: [SortBy], pagination: AppointmentPagination, filters: [Filter]): PaginatedAppointments
     course_groups: [CourseGroup!] # TODO
 
-    courses: [Course!] # Timeout; not used
+    courses: [Course!] # not used, mostly times out
 
     courses_pk(id: ID!): Course
 
@@ -397,10 +448,12 @@ type Query {
     public_product_form_data(resource_name: ResourceName!): Unknown # (additional_fields, product_id, product_prerequisites)
 
     postings_for_tutor(resource_name: ResourceName!): [PostingForTutor!]
-    certificate_pk(id: UUID!): Unknown # Ceriticate
+    certificate_pk(id: UUID!): Unknown # Certificate
 }
 
 type Mutation {
     appointment_checkin(actualAppointmentID: ID!, userID: ID!, expectedAppointmentID: ID!): CheckInAttempt
     delete_checkin_attempt(checkinAttemptID: ID!): CheckInAttempt
+    delete_free_posting(input: DeleteFreePostingInput): Boolean
+    cancel_and_refund_posting(id: UUID!): Boolean
 }
