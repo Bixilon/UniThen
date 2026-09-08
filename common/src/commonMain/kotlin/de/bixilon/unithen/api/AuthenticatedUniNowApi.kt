@@ -13,6 +13,8 @@
 package de.bixilon.unithen.api
 
 import de.bixilon.unithen.api.authentication.Authentication
+import de.bixilon.unithen.api.authentication.OryLogout
+import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.api.graphql.queries.Mutations
 import de.bixilon.unithen.api.graphql.queries.Queries
 import de.bixilon.unithen.api.graphql.types.AppointmentQl
@@ -24,6 +26,8 @@ import de.bixilon.unithen.api.user.UserDetails
 import de.bixilon.unithen.ui.error.SerializationExceptionData
 import de.bixilon.unithen.util.Jackson
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonPrimitive
 import kotlin.uuid.Uuid
@@ -74,5 +78,19 @@ open class AuthenticatedUniNowApi(
         }
 
         return UserDetails(whoami.identity.id, whoami.identity.traits.name.first, whoami.identity.traits.name.last)
+    }
+
+    suspend fun logout() {
+        if (authentication !is OryTokenAuthentication) throw IllegalStateException("Can only revoke ory tokens!")
+
+        val request = buildRequest("/services/identity/self-service/logout/api").apply {
+            method = HttpMethod.Delete
+            contentType(ContentType.Application.Json)
+            setBody(Jackson.MAPPER.encodeToString(OryLogout(authentication.token)))
+        }
+
+        val response = request(request)
+
+        if (response.status != HttpStatusCode.NoContent) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
     }
 }

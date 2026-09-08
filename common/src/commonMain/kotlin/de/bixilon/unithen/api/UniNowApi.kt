@@ -36,10 +36,15 @@ open class UniNowApi(
 
     protected open suspend fun buildRequest(endpoint: String) = HttpUtil.create(host, endpoint)
 
+    protected suspend fun request(request: HttpRequestBuilder): HttpResponse {
+        return ApiLock.withPermit(this.host) { CLIENT.request(request) }
+    }
+
     suspend inline fun <reified I> postJson(endpoint: String, payload: I): String {
         val payload = Jackson.MAPPER.encodeToString(payload)
         return postJson(endpoint, payload)
     }
+
 
     suspend fun get(endpoint: String, data: Map<String, String>? = null): String {
         val request = buildRequest(endpoint).apply {
@@ -48,7 +53,7 @@ open class UniNowApi(
             data?.forEach { (key, value) -> parameter(key, value) }
             accept(ContentType.Application.Json)
         }
-        val response = ApiLock.withPermit(this.host) { CLIENT.get(request) }
+        val response = request(request)
 
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 
@@ -73,7 +78,7 @@ open class UniNowApi(
         }
 
 
-        val response = ApiLock.withPermit(this.host) { CLIENT.post(request) }
+        val response = request(request)
 
         if (response.status != HttpStatusCode.OK) throw IllegalStateException("Request is not OK: ${response.status}: ${response.bodyAsText()}")
 

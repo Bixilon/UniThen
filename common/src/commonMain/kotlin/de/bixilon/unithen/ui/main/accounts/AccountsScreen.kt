@@ -30,6 +30,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Account
@@ -84,10 +86,13 @@ private fun Remove(account: Account): (() -> Unit)? {
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             try {
-                // TODO: Revoke token
+                val api = catchAll { account.api(storage.sites[account.site]) }
+
                 storage.accounts.remove(account)
                 storage.cleanup()
                 toast.invoke(Res.string.accounts_remove_success)
+
+                ignoreAll { api?.logout() }
             } finally {
                 show = false
                 deleting = false
