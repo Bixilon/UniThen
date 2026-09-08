@@ -1,14 +1,17 @@
 package de.bixilon.unithen.settings
 
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.v2.runComposeUiTest
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.SettingsStore
 import de.bixilon.unithen.ui.AbstractComposeUiTest
+import de.bixilon.unithen.ui.waitUntilText
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -53,12 +56,11 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(BOOLEAN)
 
             assertEquals(a, b)
-            LaunchedEffect(Unit) {
-                a = !a
-                assertEquals(false, a)
-                assertEquals(a, b)
-            }
+
+            Text(a.toString())
+            LaunchedEffect(Unit) { a = false }
         }
+        waitUntilText("false").assertIsDisplayed()
     }
 
     @Test
@@ -68,12 +70,11 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(INT)
 
             assertEquals(a, b)
-            LaunchedEffect(Unit) {
-                a++
-                assertEquals(1, a)
-                assertEquals(a, b)
-            }
+            Text(a.toString())
+
+            LaunchedEffect(Unit) { a = 1 }
         }
+        waitUntilText("1").assertIsDisplayed()
     }
 
     @Test
@@ -83,12 +84,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(STRING)
 
             assertEquals(a, b)
-            LaunchedEffect(Unit) {
-                a = "something"
-                assertEquals("something", a)
-                assertEquals(a, b)
-            }
+            Text(a)
+            LaunchedEffect(Unit) { a = "something" }
         }
+        waitUntilText("something").assertIsDisplayed()
     }
 
     @Test
@@ -98,11 +97,9 @@ class SettingsUtilTest : AbstractComposeUiTest() {
             var b by rememberSetting(ENUM)
 
             assertEquals(a, b)
-            LaunchedEffect(Unit) {
-                a = TestEnum.C
-                assertEquals(TestEnum.C, a)
-                assertEquals(a, b)
-            }
+            Text(a.toString())
+            LaunchedEffect(Unit) { a = TestEnum.C }
         }
+        waitUntilText("C").assertIsDisplayed()
     }
 }

@@ -23,7 +23,8 @@ import kotlin.jvm.JvmName
 @JvmName("rememberBooleanSetting")
 fun rememberSetting(setting: Setting<Boolean>): MutableState<Boolean> {
     val supported = remember { isSettingSupported(setting) }
-    if (!supported) return remember {
+
+    if (!supported) return remember(supported) {
         object : MutableState<Boolean> {
             override var value
                 get() = false

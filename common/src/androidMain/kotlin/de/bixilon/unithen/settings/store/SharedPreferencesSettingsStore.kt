@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -22,7 +23,7 @@ class SharedPreferencesSettingsStore(context: Context) : SettingsStore {
     }
 
     operator fun <T> get(key: Preferences.Key<T>): T? {
-        return runBlocking { state.map { it[key] }.first() }
+        return runBlocking { state.map { it[key] }.firstOrNull() }
     }
 
     suspend fun <T> set(key: Preferences.Key<T>, value: T) {
@@ -33,13 +34,13 @@ class SharedPreferencesSettingsStore(context: Context) : SettingsStore {
     private fun <T> create(key: Preferences.Key<T>, default: T): MutableState<T> {
         val scope = rememberCoroutineScope()
 
-        val current = remember { state.map { it[key] } }.collectAsState(null)
-        val initial = remember { this[key] }
+        val initial = remember(key) { this[key] ?: default }
+        val current = remember(key) { state.map { it[key] } }.collectAsState(initial)
 
-        return remember {
+        return remember(current.value) {
             object : MutableState<T> {
                 override var value
-                    get() = current.value ?: initial ?: default
+                    get() = current.value ?: initial
                     set(next) {
                         scope.launch { set(key, next) }
                     }
