@@ -20,6 +20,7 @@ import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.waitUntilText
 import de.bixilon.unithen.ui.waitUntilTextGone
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 
 @OptIn(ExperimentalTestApi::class)
 class ScanAttendeeListTest : AbstractComposeUiTest() {
@@ -63,5 +64,33 @@ class ScanAttendeeListTest : AbstractComposeUiTest() {
         waitUntilTextGone("Leonie Kurz")
         waitUntilTextGone("Gustaf Maier")
         waitUntilTextGone("Peter Wurst")
+    }
+
+    @Test
+    fun `tick off enrolled user and add to checkin queue`() = runComposeUiTest {
+        val storage = dummy()
+        val appointment = storage.appointments[901]
+        val user = storage.users[903]
+        withAttendeeList(storage, appointment)
+
+
+        waitUntilText("Emilia Gans").onParent().onChildAt(1).performClick()
+        waitForIdle()
+
+        assertNotNull(storage.checkInQueue[appointment, user])
+    }
+
+    @Test
+    fun `tick off attendee and add to checkout queue`() = runComposeUiTest {
+        val storage = dummy()
+        val appointment = storage.appointments[901]
+        val user = storage.users[906]
+        withAttendeeList(storage, appointment)
+
+
+        waitUntilText("Leonie Kurz").onParent().onChildAt(1).performClick()
+        waitForIdle()
+
+        assertNotNull(storage.checkInQueue[appointment, user]?.attempt)
     }
 }
