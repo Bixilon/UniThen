@@ -14,12 +14,11 @@ package de.bixilon.unithen.storage.sql
 
 import android.content.Context
 import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
-import android.database.sqlite.SQLiteStatement
+import android.database.sqlite.*
 import androidx.core.database.getBlobOrNull
 import androidx.core.database.getStringOrNull
 import androidx.core.database.sqlite.transaction
+import de.bixilon.kutil.cast.CastUtil.unsafeNull
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.storage.sql.errors.SqlMigrationException
 import kotlinx.coroutines.runBlocking
@@ -32,20 +31,7 @@ private fun SQLiteDatabase.executeBatch(path: String) {
     statements.forEach { execSQL(it) }
 }
 
-private fun Any?.db(): String? = when (this) {
-    null -> null
-    is Int -> this.toString()
-    is Long -> this.toString()
-    is String -> this
-    is Uuid -> this.toString()
-    is Instant -> epochSeconds.toString()
-    is Enum<*> -> name
-    is Boolean -> if (this) "1" else "0"
-    else -> throw IllegalArgumentException("Unknown parameter type: $this")
-}
-
-
-private fun SQLiteStatement.bind(vararg parameters: Any?) {
+private fun SQLiteProgram.bind(vararg parameters: Any?) {
     for ((index, parameter) in parameters.withIndex()) {
         val actual = index + 1
         when (parameter) {
@@ -103,8 +89,14 @@ class AndroidSqlHelper(context: Context, name: String?) : SQLiteOpenHelper(conte
     private open inner class AndroidQueryConnection(val database: SQLiteDatabase) : SQLiteHelper.QueryConnection {
 
         override fun query(sql: String, vararg parameters: Any?): SQLiteHelper.Cursor {
-            // TODO: That sucks, we must convert all parameters to a string...
-            return AndroidCursor(database.rawQuery(sql, parameters.map { it.db() }.toTypedArray()))
+            val cursor = database.rawQueryWithFactory({ _, driver, editTable, query ->
+                query.clearBindings()
+                query.bind(*parameters)
+
+                SQLiteCursor(driver, editTable, query)
+            }, sql, null, unsafeNull(), null)
+
+            return AndroidCursor(cursor)
         }
 
         override fun close() {
