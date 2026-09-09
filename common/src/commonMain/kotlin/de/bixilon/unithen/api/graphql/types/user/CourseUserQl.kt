@@ -53,7 +53,11 @@ data class CourseUserQl(
             val id = element["id"]?.jsonPrimitive?.contentOrNull
             if (id.isNullOrEmpty()) return null
 
-            return decoder.json.decodeFromJsonElement(defaultSerializer, element)
+            val decoded = decoder.json.decodeFromJsonElement(defaultSerializer, element)
+
+            if (decoded.id == Uuid.NIL) return null
+
+            return decoded
         }
     }
 
