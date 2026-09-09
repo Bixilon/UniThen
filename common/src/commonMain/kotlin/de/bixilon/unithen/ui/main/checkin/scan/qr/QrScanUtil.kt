@@ -13,11 +13,6 @@ import org.jetbrains.compose.resources.StringResource
 import unithen.common.generated.resources.*
 import kotlin.uuid.Uuid
 
-data class Ignore(
-    val appointment: Uuid,
-    val user: Uuid,
-)
-
 sealed interface QrScanResult {
 
     data class Accepted(val appointment: Appointment, val user: User) : QrScanResult
@@ -94,10 +89,8 @@ object QrScanUtil {
         return scan(storage, appointment, userId)
     }
 
-    fun scan(storage: SqlStorage, appointments: List<Appointment>, code: ScannedQrCode): QrScanResult {
-        return when (code) {
-            is ScannedQrCodeV1 -> scan(storage, appointments, code.userId, code.appointmentId)
-            is ScannedQrCodeV2 -> scan(storage, appointments, code.userId, code.appointmentId)
-        }
+    fun scan(storage: SqlStorage, appointments: List<Appointment>, code: ScannedQrCode) = when (code) {
+        is ScannedQrCodeV1 -> scan(storage, appointments, code.userId, code.appointmentId)
+        is ScannedQrCodeV2 -> scan(storage, appointments, code.userId, code.appointmentId)
     }
 }

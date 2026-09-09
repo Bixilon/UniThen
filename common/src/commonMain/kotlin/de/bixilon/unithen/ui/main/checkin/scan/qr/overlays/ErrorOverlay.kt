@@ -51,16 +51,17 @@ fun rememberErrorStates(): SnapshotStateSet<ErrorState> {
 
 @Composable
 private fun Error(state: ErrorState) {
-    val details = when (state.result) {
-        is QrScanResult.AlreadyCheckedIn -> state.result.user.fullname
-        is QrScanResult.CheckInPending -> state.result.user.fullname
-        is QrScanResult.CheckOutPending -> state.result.user.fullname
-        is QrScanResult.NotEnrolled -> state.result.user.fullname
-        is QrScanResult.Rejected -> state.result.error.i18n()
-        is QrScanResult.WrongAppointment -> TimeFormatUtil.formatTimespam(state.result.appointment.start, state.result.appointment.end)
-        is QrScanResult.WrongCourse -> state.result.course.name
+    val details = when (val result = state.result) {
+        is QrScanResult.AlreadyCheckedIn -> result.user.fullname
+        is QrScanResult.CheckInPending -> result.user.fullname
+        is QrScanResult.CheckOutPending -> result.user.fullname
+        is QrScanResult.NotEnrolled -> result.user.fullname
+        is QrScanResult.Rejected -> result.error.i18n()
+        is QrScanResult.WrongAppointment -> TimeFormatUtil.formatTimespam(result.appointment.start, result.appointment.end)
+        is QrScanResult.WrongCourse -> result.course.name
         else -> null
     }
+
     ErrorBox(state.result.label.i18n(), details)
     // TODO: Show expiring timer
 }
