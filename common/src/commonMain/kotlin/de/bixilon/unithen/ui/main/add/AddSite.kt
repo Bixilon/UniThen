@@ -79,7 +79,7 @@ fun AddSiteDialog(cancel: (() -> Unit)?, callback: (Site) -> Unit) {
     var url: String? by remember { mutableStateOf(null) }
 
     url?.let {
-        AddSiteProgressDialog(it, { url = null }, callback)
+        AddSiteProgressDialog(it, { url = null; cancel?.invoke() }, callback)
         return
     }
 

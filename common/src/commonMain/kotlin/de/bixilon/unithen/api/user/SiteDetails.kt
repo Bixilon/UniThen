@@ -29,7 +29,6 @@ data class SiteDetails(
     val icon: String?,
 ) {
 
-
     companion object {
 
         fun fix(url: String) = url
