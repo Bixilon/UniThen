@@ -27,7 +27,6 @@ import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.about.AboutScreen
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
 import de.bixilon.unithen.ui.main.accounts.AccountsScreen
-import de.bixilon.unithen.ui.main.add.AddAccountScreen
 import de.bixilon.unithen.ui.main.checkin.present.PresentQrAppointmentScreen
 import de.bixilon.unithen.ui.main.checkin.present.PresentQrScreen
 import de.bixilon.unithen.ui.main.checkin.scan.ScanAppointmentScreen
@@ -38,6 +37,7 @@ import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
+import de.bixilon.unithen.ui.main.site.AddAccountScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage

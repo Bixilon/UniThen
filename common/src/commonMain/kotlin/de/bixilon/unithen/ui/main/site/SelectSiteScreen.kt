@@ -10,7 +10,7 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-package de.bixilon.unithen.ui.main.add
+package de.bixilon.unithen.ui.main.site
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -100,7 +100,7 @@ private fun SiteList(modifier: Modifier, callback: (Site) -> Unit) {
 }
 
 @Composable
-fun SelectSiteSetupScreen(callback: (Site) -> Unit) {
+fun SelectSiteScreen(callback: (Site) -> Unit) {
     val storage = LocalStorage.current
 
     LaunchedEffect(Unit) {
@@ -127,5 +127,5 @@ fun AddAccountScreen() {
 
     site?.let { return OryAuthenticationScreen(it.host) }
 
-    SelectSiteSetupScreen { site = it }
+    SelectSiteScreen { site = it }
 }
