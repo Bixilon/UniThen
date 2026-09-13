@@ -101,8 +101,6 @@ fun SetupScreen() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(accepted, { accepted = it })
 
-                Spacer(Modifier.width(4.dp))
-
                 Text(
                     text = buildAnnotatedString { append(Res.string.setup_accept.i18n()); withStyle(SpanStyle(Color.Red)) { append(" *") } },
                     style = MaterialTheme.typography.bodyLarge,
