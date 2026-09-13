@@ -17,6 +17,7 @@ import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.*
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.auth_oidc_complete
 import unithen.common.generated.resources.auth_oidc_loading
@@ -43,13 +44,18 @@ private fun Fallback() {
 fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     val handler = LocalUriHandler.current
     var url by remember { mutableStateOf<String?>(null) }
+    var dismissed by rememberStateOf { false }
 
     val fetch = useAsyncNetwork(true) {
         val response = ory.loginOidc(provider)
 
-        handler.openUri(response.redirectBrowserTo)
         url = response.redirectBrowserTo
+
+        if (dismissed) return@useAsyncNetwork
+        handler.openUri(response.redirectBrowserTo)
     }
+
+    DisposableEffect(Unit) { onDispose { dismissed = true } }
 
     if (fetch.active) {
         LoadingContainer(Res.string.auth_oidc_loading.i18n())
