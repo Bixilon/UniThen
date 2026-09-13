@@ -54,9 +54,6 @@ fun SetupScreen() {
             .fillMaxSize()
             .background(if (isSystemInDarkTheme()) appGradientDark else appGradientLight),
     ) {
-        IconButton(onClick = { navigator.navigate(SettingsRoute) }, modifier = Modifier.align(Alignment.TopEnd)) {
-            Icon(Icons.Filled.Settings, "settings")
-        }
         Screen(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -129,6 +126,10 @@ fun SetupScreen() {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        IconButton(onClick = { navigator.navigate(SettingsRoute) }, modifier = Modifier.align(Alignment.TopEnd)) {
+            Icon(Icons.Filled.Settings, "settings")
         }
     }
 }
