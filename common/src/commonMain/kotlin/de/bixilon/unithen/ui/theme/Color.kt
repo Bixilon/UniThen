@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.ui.theme
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 
@@ -90,3 +91,19 @@ val surfaceContainerHighestDark = Color(0xFF32353A)
 
 
 val checkInSuccess = Color(0xFF00A000)
+
+
+val appGradientLight = Brush.verticalGradient(listOf(
+    Color(0xFF3270B7),
+    Color(0xFF4B8DCE),
+    Color(0xFF7BB2E3),
+    Color(0xFFC9E2F7),
+))
+
+
+val appGradientDark = Brush.verticalGradient(listOf(
+    Color(0xFF5798C4),
+    Color(0xFF397AA8),
+    Color(0xFF245B87),
+    Color(0xFF163B5F),
+))

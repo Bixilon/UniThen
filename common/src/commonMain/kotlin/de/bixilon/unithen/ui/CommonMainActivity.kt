@@ -37,6 +37,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.qr.confirm.ScanQrConfirmScreen
 import de.bixilon.unithen.ui.main.courses.CourseDetailsScreen
 import de.bixilon.unithen.ui.main.courses.CoursesScreen
 import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen
+import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -72,6 +73,8 @@ fun Navigator.MainNavigator() {
     Routes {
         composable<MainRoute> { MainScreen() }
         composable<AboutRoute> { AboutScreen() }
+
+        composable<SettingsRoute> { SettingsScreen() }
 
 
         composable<AccountsRoute> { AccountsScreen() }

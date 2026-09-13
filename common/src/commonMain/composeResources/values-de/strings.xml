@@ -11,9 +11,10 @@
   -->
 
 <resources>
-    <string name="setup_1">Diese App ist NICHT offiziell und hat keine Verbindung zu UniNow GmbH. Bitte melde dich bei Problemen direkt an mich unter</string>
-    <string name="setup_title">Einrichtung</string>
-    <string name="set_accept">Ich akzeptiere diese Bedingungen</string>
+    <string name="setup_welcome">Willkommen!</string>
+    <string name="setup_disclaimer">Diese App wurde von Moritz Zwerger under der General Public License v3 or later entwickelt und ist nicht in Kooperation mit UniNow GmbH. Diese App kommt mit keiner Garantie und der Entwickler kann nicht für jegliche Schäden haftbar gemacht werden.</string>
+    <string name="setup_accept">Ich akzeptiere diese Bedingungen</string>
+    <string name="setup_imprint">Buchungssysteme werden von UniNow GmbH betrieben, bitte besuche deren Webseite für die Datenschutzerklärung.</string>
     <string name="setup_login">Weiter zur Anmeldung</string>
     <string name="add_account_title">Wähle dein Buchungssystem</string>
     <string name="add_account_help">Ich finde meine Seite nicht.</string>
@@ -71,9 +72,6 @@
     <string name="scan_confirm_contributor">Sag Danke🎉 (Bestätigen)</string>
     <string name="network_error">Netzwerkfehler</string>
     <string name="scan_qr_instruction">QR-Code scannen</string>
-    <string name="setup_2">Diese App wurde von Moritz Zwerger entwickelt und ist unter der GPLv3 Lizenz verfügbar. Der App Entwickler ist nicht verantwortlich für jeglichen Schaden (z.B. an deinem Konto). Diese App kommt mit absolut KEINER Garantie!</string>
-    <string name="setup_3">Der Zugangstoken wird sicher auf diesem Gerät gespeichert.</string>
-    <string name="setup_4">Die Server des Buchungssystems werden von UniNow GmbH betrieben, bitte prüfe deren Webseite für deren Impressum/Datenschutzerklärung.</string>
     <string name="course_enrolled_title">Teilnehmer (%1$d)</string>
     <string name="appointment_attendees_title">Teilnehmer (%1$d/%2$d)</string>
     <string name="scan_queue_pending_checkout">Synchronisierung ausstehend (Check Out)...</string>
