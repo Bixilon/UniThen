@@ -26,12 +26,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .fillMaxSize()
-        .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
+    Box(
+        modifier = modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(modifier = Modifier.size(300.dp))
-            Spacer(Modifier.height(30.dp))
+            CircularProgressIndicator(modifier = Modifier.size(60.dp))
+            Spacer(Modifier.height(16.dp))
             Text(text, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
