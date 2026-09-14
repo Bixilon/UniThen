@@ -38,7 +38,6 @@ androidComponents {
         it.packaging.resources.apply {
             excludes += "DebugProbesKt.bin"
             excludes += "junit/**"
-            excludes += "assets/composeResources/unithen.debug.generated.resources/**"
             excludes += "LICENSE-junit.txt"
         }
     }
@@ -119,7 +118,7 @@ dependencies {
 
     baselineProfile(project(":baselineprofile"))
     implementation(project(":common"))
-    api(project(":debug"))
+    compileOnly(project(":debug"))
     debugImplementation(project(":debug"))
 
 
