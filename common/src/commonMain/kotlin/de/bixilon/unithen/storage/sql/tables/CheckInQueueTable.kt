@@ -22,6 +22,7 @@ import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.lt
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.types.Appointment
@@ -113,7 +114,7 @@ class CheckInQueueTable(
 
         return storage.transaction {
             // TODO: Only sync if appointment end is still ahead of us
-            val entry = first(select().where((sync lt last) and _appointment).limit(1)) ?: return@transaction null
+            val entry = first(select().where((sync lt last) and _appointment and message.isNull()).limit(1)) ?: return@transaction null
 
             update("UPDATE $table SET sync=? WHERE appointment=? AND user=?", time, entry.appointment, entry.user)
 
