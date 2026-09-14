@@ -5,6 +5,7 @@ import de.bixilon.unithen.ui.main.settings.types.Labeled
 import de.bixilon.unithen.ui.util.i18n
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.scan_error_already_checked_in
 import unithen.common.generated.resources.scan_error_not_approved
 
 
@@ -25,8 +26,9 @@ sealed interface CheckInErrors {
         override val label get() = Res.string.scan_error_not_approved
     }
 
-    object AlreadyCheckedIn : CheckInErrors {
+    object AlreadyCheckedIn : CheckInErrors, Labeled {
         override val message = "already_checked_in"
+        override val label get() = Res.string.scan_error_already_checked_in
     }
 
     object Unknown : CheckInErrors {
