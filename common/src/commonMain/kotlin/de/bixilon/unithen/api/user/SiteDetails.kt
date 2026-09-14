@@ -38,7 +38,7 @@ data class SiteDetails(
             .split(":").first()
             .split("/").first()
 
-        fun fetchIcon(url: String) = runBlocking { CLIENT.get(url).bodyAsBytes() }
+        fun fetchIcon(url: String) = runBlocking { CLIENT.get(HttpUtil.create(url)).bodyAsBytes() }
 
         suspend fun fetch(host: String): SiteDetails {
             val request = HttpUtil.create(host, "/")
