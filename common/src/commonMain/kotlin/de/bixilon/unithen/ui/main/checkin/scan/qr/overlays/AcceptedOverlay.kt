@@ -78,6 +78,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
 
 
     val checkin = useSyncEngine(true) {
+        val await = await
         if (!await) {
             state.expires = TimeSource.Monotonic.markNow() + CHANGE_DELAY
         }

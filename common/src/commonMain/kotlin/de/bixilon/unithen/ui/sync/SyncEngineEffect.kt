@@ -29,7 +29,7 @@ import kotlinx.coroutines.*
 fun useSyncEngine(auto: Boolean = false, block: suspend SyncEngineContext.() -> Unit): SyncEngineHook {
     val engine = LocalSyncEngine.current
     val navigator = catchAll { LocalNavigation.current }
-    var active by rememberStateOf { false }
+    var active by rememberStateOf { auto }
     var progress by rememberStateOf { SyncEngineProgress.EMPTY }
 
     val sync = remember {
