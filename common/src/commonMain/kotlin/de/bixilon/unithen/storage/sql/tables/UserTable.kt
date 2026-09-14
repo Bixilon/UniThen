@@ -22,6 +22,7 @@ import de.bixilon.unithen.storage.sql.util.SqlBuilder
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
+import de.bixilon.unithen.storage.sql.util.UserComparator.Companion.sort
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Site
@@ -37,10 +38,10 @@ class UserTable(
     operator fun get(id: Key) = single(UserTable.id eq id) ?: throw NullPointerException("Can not find user with id=$id")
     operator fun get(site: Site, uuid: Uuid) = single(SqlFilter.and("site" to site.id, "uuid" to uuid))
 
-    fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname, "lastname" to lastname))
+    fun update(id: Key, firstname: String? = null, lastname: String? = null) = update(id, SqlFilter.comma("firstname" to firstname?.trim(), "lastname" to lastname?.trim()))
 
     fun insert(site: Site, uuid: Uuid, firstname: String, lastname: String): User {
-        val id = insert(UserTable, UserTable.site to site.id, UserTable.uuid to uuid, UserTable.firstname to firstname, UserTable.lastname to lastname)
+        val id = insert(UserTable, UserTable.site to site.id, UserTable.uuid to uuid, UserTable.firstname to firstname.trim(), UserTable.lastname to lastname.trim())
 
         return this[id]
     }
@@ -76,11 +77,11 @@ class UserTable(
             .and(SqlFilter("NOT EXISTS (SELECT 1 FROM checkin_queue WHERE checkin_queue.appointment = ? AND checkin_queue.user = $table.id)", appointment.id))
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
-                "LOWER(${sort.field})" to order.sql,
+                sort.field to order.sql,
                 AttendeeSort.next(sort).field to order.sql,
             )
 
-        return storage.query(query) { it.collectAll() }
+        return storage.query(query) { it.collectAll() }.sort(sort, order)
     }
 
     fun getEnrolledNotCheckedIn(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<User> {
@@ -92,11 +93,11 @@ class UserTable(
             .and(SqlFilter("NOT EXISTS (SELECT 1 FROM appointment_attendees WHERE appointment_attendees.appointment = ? AND appointment_attendees.user = $table.id)", appointment.id))
             .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
             .order(
-                "LOWER(${sort.field})" to order.sql,
+                sort.field to order.sql,
                 AttendeeSort.next(sort).field to order.sql,
             )
 
-        return storage.query(query) { it.collectAll() }
+        return storage.query(query) { it.collectAll() }.sort(sort, order)
     }
 
     fun getEnrolledCount(course: Course): Int {

@@ -90,7 +90,7 @@ class CheckInQueueTable(
             .order(
                 "checkin_queue.message IS NULL" to SqlBuilder.Order.Order.ASC,
                 "checkin_queue.attempt IS NULL" to SqlBuilder.Order.Order.DESC,
-                sort.field to order.sql,
+                "LOWER(${sort.field})" to order.sql, // TODO: That is not 100% correct, does not account of accents
                 AttendeeSort.next(sort).field to order.sql,
             )
 

@@ -15,7 +15,7 @@ package de.bixilon.unithen.ui.main.checkin.scan
 import de.bixilon.unithen.storage.types.User
 
 object Contributors {
-    val MAJOR_CONTRIBUTORS = mutableMapOf(
+    val MAJOR_CONTRIBUTORS = mapOf(
         0x54550CBADB5BC304 to "moritz",
     )
 
