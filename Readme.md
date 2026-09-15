@@ -33,11 +33,11 @@ Android 8+ is offically supported.
 ### iOS
 [<img src="doc/altstore.png" alt="Get it on Altstore" height="80">](https://api.altstore.io/source/dl.bixilon.de/altstore/classic.json?app=de.bixilon.UniThen)
 
-The app is available on [AltStore (Classic)](https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows), (and add source `https://dl.bixilon.de/altstore/classic.json`). As I don't have a paid Apple developer account, I am not able to notarize any version. Then AltStore PAL would be possible, which is a lot more convenient.
+The app is available on [AltStore (Classic)](https://faq.altstore.io/altstore-classic/how-to-install-altstore-windows), (and add source `https://dl.bixilon.de/altstore/classic.json`). As I don't have a paid Apple developer account, I am unable to notarize any version. Then AltStore PAL would be possible, which is a lot more convenient.
 The app is **NOT** published in the AppStore, as it _probably_ violates their policy.
 Every modern iOS version is supported (15.6+).
 
-NOTE: iOS is tested, but might not be stable for every day usage. See [Issue #3](https://lipstick.bixilon.de/bixilon/unithen/-/issues/3) for known bugs. There is no stable release yet.
+Note: iOS is tested, but there are still [several bugs](https://lipstick.bixilon.de/bixilon/unithen/-/issues/3), but support is stable. Feedback is welcome.
 
 ### Desktop
 This app is ported to the jvm with compose multiplatform and runs on desktop, however this is a show off and not an offical supported platform. Please build it yourself.
