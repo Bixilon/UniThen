@@ -12,12 +12,12 @@
 
 package de.bixilon.unithen.ui.sync.status
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProgressIndicatorDefaults
-import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,16 +54,13 @@ private fun CicleIndicator(status: SyncStatus, hide: Boolean) {
         delay(duration)
         dismissed = true
     }
-    val color = when (status) {
-        SyncStatus.SUCCESS -> Color.Green
-        SyncStatus.WARNING -> Color.Yellow
-        SyncStatus.ERROR -> MaterialTheme.colorScheme.error
-    }
 
     if (hide && dismissed) return
 
-    Canvas(modifier = Modifier.size(12.dp)) {
-        drawCircle(color = color)
+    when (status) {
+        SyncStatus.SUCCESS -> Icon(Icons.Default.CheckCircle, "", tint = Color.Green)
+        SyncStatus.WARNING -> Icon(Icons.Default.Warning, "", tint = Color.Yellow)
+        SyncStatus.ERROR -> Icon(Icons.Default.Error, "", tint = MaterialTheme.colorScheme.error)
     }
 }
 
