@@ -13,6 +13,8 @@ set(ZXING_ENABLE_AZTEC OFF)
 set(ZXING_ENABLE_DATAMATRIX OFF)
 set(ZXING_ENABLE_MAXICODE OFF)
 set(ZXING_ENABLE_PDF417 OFF)
+
+add_link_options("LINKER:--build-id=none")
 ```
 
-All architectures (except arm64) were removed from the aar. In order to be reproducible with F-Droid, you must build it inside the fdroidbuildserver, see [this comment](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/49149#note_3850390886) for more details.
+All architectures (except arm64) were removed from the aar.
