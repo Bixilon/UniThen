@@ -14,6 +14,7 @@ package de.bixilon.unithen.ui.components.qr
 
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import de.bixilon.unithen.IOSUtil.ns
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
@@ -22,15 +23,17 @@ import platform.CoreImage.CIContext
 import platform.CoreImage.CIFilter
 import platform.CoreImage.QRCodeGenerator
 import platform.CoreImage.createCGImage
-import platform.Foundation.*
+import platform.Foundation.NSData
+import platform.Foundation.NSUTF8StringEncoding
+import platform.Foundation.dataUsingEncoding
+import platform.Foundation.setValue
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePNGRepresentation
 import platform.posix.memcpy
 
 
-@Suppress("CAST_NEVER_SUCCEEDS")
 fun String.nsdata(): NSData? {
-    return (this as NSString).dataUsingEncoding(NSUTF8StringEncoding)
+    return this.ns().dataUsingEncoding(NSUTF8StringEncoding)
 }
 
 @OptIn(ExperimentalForeignApi::class)
