@@ -1,10 +1,11 @@
 ## zxingcpp
 
-Build from 7e51e7b16ce14e8cd9399e84fd2d854172e9d933 with the following cmake options (just add those lines to `wrappers/android/zxingcpp/src/main/cpp/CMakeLists.txt` **directly below** the other `set`s):
+Built from 78c62b2573a72b07760f0ef334ef9ae0193b3f68 with the following cmake options (just add those lines to `wrappers/android/zxingcpp/src/main/cpp/CMakeLists.txt` **directly below** the other `set`s):
 
 ```cmake
 set(ZXING_C_API OFF)
 set(ZXING_EXAMPLES OFF)
+set(ZXING_ENABLE_UNICODE OFF)
 
 
 set(ZXING_ENABLE_1D OFF)
@@ -14,6 +15,4 @@ set(ZXING_ENABLE_MAXICODE OFF)
 set(ZXING_ENABLE_PDF417 OFF)
 ```
 
-And you must replace all `#if 0` with `#if 1` inside `core/src/TextEncoder.cpp` and `core/src/TextDecoder.cpp`. This will be another cmake option in the future, see [Discussion 1155](https://github.com/zxing-cpp/zxing-cpp/discussions/1155).
-
-All architectures (except arm64) were removed from the aar.
+All architectures (except arm64) were removed from the aar. In order to be reproducible with F-Droid, you must build it inside the fdroidbuildserver, see [this comment](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/49149#note_3850390886) for more details.
