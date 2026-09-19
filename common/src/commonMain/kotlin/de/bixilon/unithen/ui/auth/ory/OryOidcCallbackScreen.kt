@@ -5,7 +5,6 @@ import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.UniNowApi
 import de.bixilon.unithen.api.authentication.OryTokenAuthentication
 import de.bixilon.unithen.ui.containers.LoadingContainer
-import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
 import de.bixilon.unithen.ui.main.AuthenticationRoute
@@ -46,5 +45,5 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
         return
     }
 
-    ErrorBox("Something went wrong!")
+    SimpleErrorScreen("Something went wrong!")
 }

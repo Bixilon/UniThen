@@ -12,9 +12,7 @@
 
 package de.bixilon.unithen.ui.error
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +23,7 @@ fun SimpleErrorScreen(message: String, details: String? = null) {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(24.dp)
             .padding(top = 50.dp),
         contentAlignment = Alignment.TopCenter,

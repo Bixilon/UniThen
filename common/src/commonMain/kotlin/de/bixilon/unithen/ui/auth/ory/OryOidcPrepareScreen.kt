@@ -1,6 +1,5 @@
 package de.bixilon.unithen.ui.auth.ory
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -15,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
 import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.*
 import de.bixilon.unithen.ui.util.state.rememberStateOf
@@ -63,7 +63,7 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     }
     if (url == null) return
 
-    Column {
+    Screen {
         Text(Res.string.auth_oidc_complete.i18n(), textAlign = TextAlign.Center)
 
         Text(buildAnnotatedString {

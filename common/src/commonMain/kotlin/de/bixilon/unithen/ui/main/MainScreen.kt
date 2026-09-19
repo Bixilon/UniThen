@@ -80,7 +80,7 @@ private fun MainNavigationBar(navigator: Navigator) {
         visible = !open,
         enter = expandVertically(),
     ) {
-        NavigationBar(windowInsets = WindowInsets()) {
+        NavigationBar {
             for (destination in MainScreens.entries) {
                 val selected = navigator.current().route == destination.route
                 val enabled = when (destination) {

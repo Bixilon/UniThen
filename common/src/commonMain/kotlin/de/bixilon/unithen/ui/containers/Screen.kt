@@ -22,12 +22,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, verticalArrangement: Arrangement.Vertical = Arrangement.Top, content: @Composable ColumnScope.() -> Unit) {
-    Column(modifier = modifier
-        .fillMaxSize()
-        .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
-        horizontalAlignment = horizontalAlignment,
-        verticalArrangement = verticalArrangement,
-        content = content)
+    Box(modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing)) {
+        Column(modifier = modifier
+            .fillMaxSize()
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
+            horizontalAlignment = horizontalAlignment,
+            verticalArrangement = verticalArrangement,
+            content = content)
+    }
 }
 
 @Composable
