@@ -14,9 +14,10 @@ package de.bixilon.unithen.ui.containers
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun SafeBox(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
-    Box(modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize(), content = content)
+fun SafeBox(modifier: Modifier = Modifier, contentAlignment: Alignment = Alignment.TopStart, content: @Composable BoxScope.() -> Unit) {
+    Box(modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize(), contentAlignment = contentAlignment, content = content)
 }

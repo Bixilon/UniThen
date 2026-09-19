@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.components.qr
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,10 +21,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.SafeBox
 
 @Composable
 fun CameraMessage(modifier: Modifier, message: String) {
-    Box(
+    SafeBox(
         modifier = modifier
             .padding(24.dp),
         contentAlignment = Alignment.Center,

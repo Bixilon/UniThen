@@ -78,7 +78,7 @@
     <string name="scan_queue_failed">Fehler: %1$s</string>
     <string name="scan_queue_pending">Synchronisierung ausstehend (Check In)...</string>
     <string name="scan_starting_camera">Kamera wird gestartet...</string>
-    <string name="scan_camera_permission">Kameraberechtigung wird benötigt um QR-Codes zu scannen</string>
+    <string name="scan_camera_permission">Kameraberechtigung wird benötigt, um QR-Codes zu scannen</string>
     <string name="authentication_fetching_user_details">Lade Benutzerdetails...</string>
     <string name="authentication_fetching">Synchronisiere Kurse...</string>
     <string name="error_reauthenticate">Bitte melde dich erneut an!</string>

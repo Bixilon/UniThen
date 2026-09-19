@@ -18,7 +18,7 @@ import androidx.compose.ui.viewinterop.UIKitView
 import de.bixilon.kutil.cast.CastUtil.nullCast
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import de.bixilon.unithen.ui.error.ErrorBox
+import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.util.camera.useCameraPermission
 import de.bixilon.unithen.ui.util.i18n
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -93,7 +93,7 @@ private class QrUiView(
     }
 
     private fun setup() {
-        val device = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo).first { it.nullCast<AVCaptureDevice>()?.position == AVCaptureDevicePositionBack }?.nullCast<AVCaptureDevice>() ?: throw IllegalStateException("No video devices!")
+        val device = AVCaptureDevice.devicesWithMediaType(AVMediaTypeVideo).firstOrNull { it.nullCast<AVCaptureDevice>()?.position == AVCaptureDevicePositionBack }?.nullCast<AVCaptureDevice>() ?: throw IllegalStateException("No video devices!")
         val input = AVCaptureDeviceInput.deviceInputWithDevice(device, error = null) ?: throw IllegalStateException("No capture input devices!")
         if (!session.canAddInput(input)) throw IllegalStateException("Can not add input device!")
 
@@ -144,7 +144,7 @@ actual fun QrCameraPreview(modifier: Modifier, onResult: (Set<QrCodeResult>) -> 
     var error by remember { mutableStateOf<String?>(null) }
 
     if (error != null) {
-        ErrorBox("Camera error: $error")
+        SimpleErrorScreen("Camera error: $error")
         return
     }
 
