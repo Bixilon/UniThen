@@ -1,6 +1,6 @@
 ## zxingcpp
 
-Built from 78c62b2573a72b07760f0ef334ef9ae0193b3f68 with the following cmake options (just add those lines to `wrappers/android/zxingcpp/src/main/cpp/CMakeLists.txt` **directly below** the other `set`s):
+Built from 816a455c70091d160cef6129c7dd1f7dbbb311dc with the following cmake options (just add those lines to `wrappers/android/zxingcpp/src/main/cpp/CMakeLists.txt` **directly below** the other `set`s):
 
 ```cmake
 set(ZXING_C_API OFF)
