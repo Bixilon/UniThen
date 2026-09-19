@@ -185,8 +185,6 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
                 Text(
                     text = account.fullname,
                     style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
                 if (RuntimeInfo.debug) {
                     Spacer(Modifier.height(8.dp))
@@ -202,7 +200,8 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
             Row(
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
+                    .align(Alignment.BottomEnd),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (site.icon != null) {
                     AsyncImage(
