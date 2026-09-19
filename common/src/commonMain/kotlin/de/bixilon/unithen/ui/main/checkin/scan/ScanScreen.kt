@@ -14,7 +14,6 @@ package de.bixilon.unithen.ui.main.checkin.scan
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -33,6 +32,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.containers.FloatingActionButtons
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
@@ -58,24 +58,24 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 
 
         val state = rememberLazyListState()
-        Box {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().verticalScroll(state),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                state = state,
-            ) {
-                items(appointments) {
-                    val course = storage.courses[it.course]
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().verticalScroll(state),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            state = state,
+        ) {
+            items(appointments) {
+                val course = storage.courses[it.course]
 
-                    AppointmentCard(course, it, Modifier.clickable { navigation.navigate(ScanAppointmentRoute(it)) })
-                }
+                AppointmentCard(course, it, Modifier.clickable { navigation.navigate(ScanAppointmentRoute(it)) })
             }
+        }
+    }
 
-            FloatingActionButtons {
-                if (isSettingSupported(SCAN_QR_AUTO_SCAN)) {
-                    FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
-                        Icon(Icons.Filled.QrCodeScanner, "scan")
-                    }
+    SafeBox {
+        FloatingActionButtons {
+            if (isSettingSupported(SCAN_QR_AUTO_SCAN)) {
+                FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
+                    Icon(Icons.Filled.QrCodeScanner, "scan")
                 }
             }
         }

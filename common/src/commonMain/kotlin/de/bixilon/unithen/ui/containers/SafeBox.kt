@@ -14,18 +14,9 @@ package de.bixilon.unithen.ui.containers
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-
 
 @Composable
-fun BoxScope.FloatingActionButtons(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    Column(
-        modifier = modifier
-            .align(Alignment.BottomEnd)
-            .padding(end = 8.dp, bottom = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        content = content,
-    )
+fun SafeBox(modifier: Modifier = Modifier, content: @Composable BoxScope.() -> Unit) {
+    Box(modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize(), content = content)
 }

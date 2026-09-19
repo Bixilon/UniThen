@@ -12,7 +12,9 @@
 
 package de.bixilon.unithen.ui.main.courses
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.QrCodeScanner
@@ -35,12 +37,12 @@ import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.containers.FloatingActionButtons
 import de.bixilon.unithen.ui.containers.InfoContainer
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.courses.appointments.CourseAppointments
 import de.bixilon.unithen.ui.navigation.LocalNavigation
-import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
@@ -82,7 +84,6 @@ private fun Header(site: Site, event: Event, course: Course, accounts: List<Acco
 
 @Composable
 fun CourseDetailsScreen(course: Course) {
-    val storage = LocalStorage.current
     val navigator = LocalNavigation.current
     val event = rememberStorage { events[course.event] }
     val site = rememberStorage { sites[event.site] }
@@ -96,22 +97,22 @@ fun CourseDetailsScreen(course: Course) {
         toast.invoke(Res.string.course_synchronize_done)
     }
 
-    Box {
-        Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Header(site, event, course, accounts)
+    Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Header(site, event, course, accounts)
 
-            // TODO: This is bad, this is not scrollable
-            PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke() }) {
-                Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    CourseAppointments(course)
-                    CourseEnrolled(course)
-                }
+        // TODO: This is bad, this is not scrollable
+        PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke() }) {
+            Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                CourseAppointments(course)
+                CourseEnrolled(course)
             }
         }
+    }
 
+    SafeBox {
         SyncStatusIndicator(synchronize, modifier = Modifier.align(Alignment.TopEnd), text = false)
 
-        FloatingActionButtons(Modifier.offset(x = -8.dp)) {
+        FloatingActionButtons {
             val time = useTime()
 
             val present = rememberStorageAsync(course, time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = false).find { it.course == course.id } }

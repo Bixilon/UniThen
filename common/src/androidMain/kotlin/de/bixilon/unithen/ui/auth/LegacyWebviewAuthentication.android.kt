@@ -17,8 +17,7 @@ import android.graphics.Bitmap
 import android.webkit.CookieManager
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +32,7 @@ import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.kutil.uri.URIUtil.toURI
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.CookieAuthentication
+import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 
 
@@ -50,7 +50,7 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
         return
     }
 
-    Column {
+    Screen {
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -62,7 +62,7 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
             textAlign = TextAlign.Center,
         )
 
-        AndroidView(modifier = Modifier.fillMaxHeight(), factory = { context ->
+        AndroidView(modifier = Modifier.fillMaxSize(), factory = { context ->
             WebView(context).apply {
                 view = this
 

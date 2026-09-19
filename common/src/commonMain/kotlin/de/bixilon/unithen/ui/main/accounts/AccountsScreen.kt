@@ -36,6 +36,7 @@ import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.ui.containers.FloatingActionButtons
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
@@ -230,28 +231,28 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 @Composable
 fun AccountsScreen() {
+    val navigator = LocalNavigation.current
     val accounts = rememberStorageAsync { accounts.all() } ?: return
 
     Screen {
         ScreenTitle(Res.string.accounts_title.i18n(accounts.size))
 
-        Box {
-            val navigator = LocalNavigation.current
-            val state = rememberLazyListState()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state),
-                state = state,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
-            }
+        val state = rememberLazyListState()
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(state),
+            state = state,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
+        }
+    }
 
-            FloatingActionButtons {
-                FloatingActionButton({ navigator.navigate(AddAccountRoute) }) {
-                    Icon(Icons.Filled.Add, "add")
-                }
+    SafeBox {
+        FloatingActionButtons {
+            FloatingActionButton({ navigator.navigate(AddAccountRoute) }) {
+                Icon(Icons.Filled.Add, "add")
             }
         }
     }

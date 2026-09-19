@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan.qr
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -28,6 +27,7 @@ import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.ui.components.qr.QrCameraPreview
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.qr.overlays.*
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
@@ -59,58 +59,58 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     val confirm by rememberSetting(Settings.SCAN_CONFIRMATION_SCREEN)
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        QrCameraPreview(modifier = Modifier.fillMaxSize()) { codes ->
-            if (codes.isNotEmpty()) {
-                errors.clear()
-            }
-            for (code in codes) {
-                val scanned = ScannedQrCode.decode(code.text)
-                if (scanned == null) {
-                    errors += ErrorState(QrScanResult.InvalidFormat)
-                    continue
-                }
-
-                if (accepted.canIgnore(scanned)) continue
-
-                val result = QrScanUtil.scan(storage, appointments, scanned)
-
-
-                if (result is QrScanResult.Accepted) {
-                    delayed = null
-                    haptic.invoke(HapticFeedbackType.Confirm)
-                    if (confirm) {
-                        if (!auto) {
-                            navigation.pop()
-                        }
-                        navigation.navigate(ScanQrConfirmRoute(result.appointment, result.user.uuid))
-                        break
-                    } else {
-                        accepted += AcceptedState(result)
-                        continue
-                    }
-                }
-                if (result !is QrScanResult.Error) continue // crash?
-
-                errors += ErrorState(result)
-
-                if (result !is QrScanResult.SoftError) {
-                    delayed = null
-                    continue
-                }
-
-                delayed = result
-            }
+    QrCameraPreview(modifier = Modifier.fillMaxSize()) { codes ->
+        if (codes.isNotEmpty()) {
+            errors.clear()
         }
+        for (code in codes) {
+            val scanned = ScannedQrCode.decode(code.text)
+            if (scanned == null) {
+                errors += ErrorState(QrScanResult.InvalidFormat)
+                continue
+            }
+
+            if (accepted.canIgnore(scanned)) continue
+
+            val result = QrScanUtil.scan(storage, appointments, scanned)
+
+
+            if (result is QrScanResult.Accepted) {
+                delayed = null
+                haptic.invoke(HapticFeedbackType.Confirm)
+                if (confirm) {
+                    if (!auto) {
+                        navigation.pop()
+                    }
+                    navigation.navigate(ScanQrConfirmRoute(result.appointment, result.user.uuid))
+                    break
+                } else {
+                    accepted += AcceptedState(result)
+                    continue
+                }
+            }
+            if (result !is QrScanResult.Error) continue // crash?
+
+            errors += ErrorState(result)
+
+            if (result !is QrScanResult.SoftError) {
+                delayed = null
+                continue
+            }
+
+            delayed = result
+        }
+    }
+
+    SafeBox {
+        val courses = rememberStorage { appointments.map { storage.courses[it.course] }.toSet() }
+        ScanInstructions(courses)
+
+        ErrorOverlay(errors)
+        AcceptedOverlay(accepted, courses.size > 1)
 
         QrUpdateIndicator(Modifier.align(Alignment.TopEnd).padding(4.dp), appointments)
     }
-
-    val courses = rememberStorage { appointments.map { storage.courses[it.course] }.toSet() }
-    ScanInstructions(courses)
-
-    ErrorOverlay(errors)
-    AcceptedOverlay(accepted, courses.size > 1)
 }
 
 @Composable

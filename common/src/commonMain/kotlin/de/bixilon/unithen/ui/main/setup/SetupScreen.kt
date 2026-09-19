@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.main.AddAccountRoute
@@ -128,8 +129,10 @@ fun SetupScreen() {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        IconButton(onClick = { navigator.navigate(SettingsRoute) }, modifier = Modifier.align(Alignment.TopEnd)) {
-            Icon(Icons.Filled.Settings, "settings")
+        SafeBox {
+            IconButton(onClick = { navigator.navigate(SettingsRoute) }, modifier = Modifier.align(Alignment.TopEnd)) {
+                Icon(Icons.Filled.Settings, "settings")
+            }
         }
     }
 }

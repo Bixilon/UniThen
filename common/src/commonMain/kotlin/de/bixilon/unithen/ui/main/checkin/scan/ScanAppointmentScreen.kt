@@ -12,7 +12,6 @@
 
 package de.bixilon.unithen.ui.main.checkin.scan
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Sync
@@ -76,21 +75,21 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
             }
         }
 
-        Box {
-            ScanAttendeeList(appointment)
+        ScanAttendeeList(appointment)
+    }
 
-            FloatingActionButtons {
-                if (canSync) {
-                    if (pending > 0) {
-                        DelayedContent(1.seconds) {
-                            SyncFloatingButton(synchronize, Icons.Filled.Sync) { dialog.show() }
-                        }
+    SafeBox {
+        FloatingActionButtons {
+            if (canSync) {
+                if (pending > 0) {
+                    DelayedContent(1.seconds) {
+                        SyncFloatingButton(synchronize, Icons.Filled.Sync) { dialog.show() }
                     }
                 }
-                if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {
-                    FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(course, appointment)) }) {
-                        Icon(Icons.Filled.QrCodeScanner, "scan")
-                    }
+            }
+            if (appointment.canPerformCheckIn() && isSettingSupported(SCAN_QR_AUTO_SCAN)) {
+                FloatingActionButton({ navigation.navigate(ScanQrAppointmentRoute(course, appointment)) }) {
+                    Icon(Icons.Filled.QrCodeScanner, "scan")
                 }
             }
         }

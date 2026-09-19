@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
@@ -42,6 +43,7 @@ fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun LoadingContainer(text: String, icon: ImageVector, modifier: Modifier = Modifier) {
     Box(modifier = modifier
+        .windowInsetsPadding(WindowInsets.safeDrawing)
         .fillMaxSize()
         .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

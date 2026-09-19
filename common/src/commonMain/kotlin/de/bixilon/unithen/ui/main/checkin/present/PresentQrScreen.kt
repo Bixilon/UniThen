@@ -57,7 +57,9 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
     var active by rememberStateOf { false }
 
     Column(
+        // not a screen to reduce padding when showing qr code
         modifier = Modifier
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .fillMaxSize()
             .pointerInput(Unit) {
                 awaitEachGesture {
