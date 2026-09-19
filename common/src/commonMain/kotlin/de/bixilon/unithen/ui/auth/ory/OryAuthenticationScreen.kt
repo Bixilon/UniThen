@@ -58,18 +58,24 @@ fun OryAuthenticationScreen(host: String) {
 
 @Composable
 private fun FlowError(host: String) {
-    val navigation = LocalNavigation.current
-
     Screen {
         Spacer(Modifier.height(100.dp))
         ErrorBox(Res.string.auth_error_flow_title.i18n(), Res.string.auth_error_flow_description.i18n())
         Spacer(Modifier.height(20.dp))
 
-        Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
-            Icon(Icons.Filled.Warning, "")
-            Spacer(Modifier.width(4.dp))
-            Text(Res.string.auth_try_legacy.i18n())
-        }
+        LegacyLoginButton(host)
+    }
+}
+
+@Deprecated("legacy login")
+@Composable
+private fun LegacyLoginButton(host: String) {
+    val navigation = LocalNavigation.current
+
+    Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
+        Icon(Icons.Filled.Warning, "")
+        Spacer(Modifier.width(4.dp))
+        Text(Res.string.auth_try_legacy.i18n())
     }
 }
 
@@ -122,11 +128,7 @@ private fun WithFlow(host: String, config: OryConfig) {
                 Spacer(Modifier.width(4.dp))
                 Text(Res.string.auth_use_email.i18n())
             }
-            Button({ navigation.navigate(LegacyAuthenticationRoute(host)) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
-                Icon(Icons.Filled.Warning, "")
-                Spacer(Modifier.width(4.dp))
-                Text(Res.string.auth_try_legacy.i18n())
-            }
+            LegacyLoginButton(host)
         }
     }
 }

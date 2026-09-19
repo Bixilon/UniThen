@@ -23,10 +23,12 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 const val WEB_SESSION_COOKIE_NAME = "ory-session"
 
 @Composable
+@Deprecated("legacy login")
 expect fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentication) -> Unit)
 
 
 @Composable
+@Deprecated("legacy login")
 fun LegacyWebviewAuthenticationScreen(host: String) {
     val navigation = LocalNavigation.current
     val storage = LocalStorage.current

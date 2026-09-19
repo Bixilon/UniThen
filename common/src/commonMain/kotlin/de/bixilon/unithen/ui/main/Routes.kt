@@ -58,6 +58,7 @@ interface AuthenticationRoute : NavigationRoute
 object AddAccountRoute : AuthenticationRoute
 data class AuthenticateRoute(val host: String) : AuthenticationRoute
 
+@Deprecated("legacy login")
 data class LegacyAuthenticationRoute(val host: String) : AuthenticationRoute
 data class EmailAuthenticationRoute(val site: Site, val ory: OryConfig) : AuthenticationRoute
 data class OidcAuthenticationRoute(val ory: OryConfig, val provider: OryConfig.OryOidc) : AuthenticationRoute
