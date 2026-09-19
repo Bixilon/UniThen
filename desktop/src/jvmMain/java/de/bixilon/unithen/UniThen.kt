@@ -12,18 +12,10 @@
 
 package de.bixilon.unithen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.*
 import de.bixilon.kutil.os.OSTypes
 import de.bixilon.kutil.os.PlatformInfo
@@ -34,6 +26,7 @@ import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.JvmSqlHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.ui.CommonMainActivity
+import de.bixilon.unithen.ui.MainScaffold
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.theme.UniThenTheme
 import java.nio.file.Path
@@ -64,25 +57,12 @@ fun ApplicationScope.UniThenApplication() {
     ) {
 
         UniThenTheme {
-            Surface(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Scaffold(
-                    modifier = Modifier.imePadding(),
-                    containerColor = MaterialTheme.colorScheme.background
-                ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        CompositionLocalProvider(
-                            LocalStorage provides STORAGE,
-                            LocalSettingsStore provides remember { MemorySettingsStore() },
-                        ) {
-                            if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
-                        }
-                    }
+            MainScaffold {
+                CompositionLocalProvider(
+                    LocalStorage provides STORAGE,
+                    LocalSettingsStore provides remember { MemorySettingsStore() },
+                ) {
+                    if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
                 }
             }
         }

@@ -18,15 +18,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import de.bixilon.unithen.BuildConfig
 import de.bixilon.unithen.UniThen
@@ -53,22 +46,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             BackHandler { activity?.finish() }
             UniThenTheme {
-                Scaffold(
-                    modifier = Modifier.imePadding(),
-                    containerColor = MaterialTheme.colorScheme.background
-                ) { innerPadding ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
+                MainScaffold {
+                    CompositionLocalProvider(
+                        LocalStorage provides UniThen.STORAGE,
+                        LocalSettingsStore provides UniThen.SETTINGS,
+                        LocalUrlIntent provides url.value,
                     ) {
-                        CompositionLocalProvider(
-                            LocalStorage provides UniThen.STORAGE,
-                            LocalSettingsStore provides UniThen.SETTINGS,
-                            LocalUrlIntent provides url.value,
-                        ) {
-                            if (BuildConfig.DEBUG) DebugMainActivity() else CommonMainActivity()
-                        }
+                        if (BuildConfig.DEBUG) DebugMainActivity() else CommonMainActivity()
                     }
                 }
             }

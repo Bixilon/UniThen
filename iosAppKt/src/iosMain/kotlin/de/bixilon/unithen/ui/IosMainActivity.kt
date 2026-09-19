@@ -12,16 +12,9 @@
 
 package de.bixilon.unithen.ui
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeUIViewController
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.UniThen.STORAGE
@@ -40,22 +33,13 @@ var URL: MutableState<String?> = mutableStateOf(null)
 @Suppress("UNUSED")
 fun IosMainActivity(): UIViewController = ComposeUIViewController {
     UniThenTheme {
-        Scaffold(
-            modifier = Modifier.imePadding(),
-            containerColor = MaterialTheme.colorScheme.background
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
+        MainScaffold {
+            CompositionLocalProvider(
+                LocalStorage provides STORAGE,
+                LocalSettingsStore provides NSUserDefaultsSettingsStore,
+                LocalUrlIntent provides URL.value,
             ) {
-                CompositionLocalProvider(
-                    LocalStorage provides STORAGE,
-                    LocalSettingsStore provides NSUserDefaultsSettingsStore,
-                    LocalUrlIntent provides URL.value,
-                ) {
-                    if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
-                }
+                if (RuntimeInfo.debug) DebugMainActivity() else CommonMainActivity()
             }
         }
     }
