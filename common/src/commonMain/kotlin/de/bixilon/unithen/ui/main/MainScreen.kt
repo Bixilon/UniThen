@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import de.bixilon.kutil.enums.ValuesEnum
 import de.bixilon.kutil.enums.ValuesEnum.Companion.names
+import de.bixilon.kutil.functions.FunctionUtil.letIf
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.main.checkin.present.CheckInPresentScreen
@@ -73,11 +74,9 @@ fun isKeyboardOpen() = WindowInsets.ime.getBottom(LocalDensity.current) > 0
 
 
 @Composable
-private fun MainNavigationBar(navigator: Navigator) {
-    val open = isKeyboardOpen()
-
+private fun MainNavigationBar(navigator: Navigator, visible: Boolean) {
     AnimatedVisibility(
-        visible = !open,
+        visible = visible,
         enter = expandVertically(),
     ) {
         NavigationBar {
@@ -114,10 +113,18 @@ fun ActualMainScreen() {
         composable<CheckInScanRoute> { CheckInScanScreen() }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.weight(1.0f)) { navigator.Host() }
+    val ime = isKeyboardOpen()
 
-        MainNavigationBar(navigator)
+    val insets = WindowInsets.safeDrawing
+        .only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+        .letIf(ime) { union(WindowInsets.ime) }
+
+    Column(Modifier.fillMaxSize()) {
+        Box(Modifier.weight(1f).windowInsetsPadding(insets).consumeWindowInsets(WindowInsets.safeDrawing)) {
+            navigator.Host()
+        }
+
+        MainNavigationBar(navigator, !ime)
     }
 }
 
