@@ -79,6 +79,6 @@ allprojects {
     git?.takeIf { !it.clean }?.let { version += "-dirty" }
 
     project.extra.set("version", version)
-    project.extra.set("versionCode", 6)
+    project.extra.set("versionCode", 7)
     project.extra.set("commit", git?.commit ?: "unknown")
 }
