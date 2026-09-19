@@ -11,7 +11,7 @@
   -->
 
 <resources>
-    <string name="setup_welcome">Willkommen!</string>
+    <string name="setup_welcome">Hallo!</string>
     <string name="setup_disclaimer">Diese App wurde von Moritz Zwerger under der General Public License v3 or later entwickelt und ist nicht in Kooperation mit UniNow GmbH. Diese App kommt mit keiner Garantie und der Entwickler kann nicht für jegliche Schäden haftbar gemacht werden.</string>
     <string name="setup_accept">Ich akzeptiere diese Bedingungen</string>
     <string name="setup_imprint">Buchungssysteme werden von UniNow GmbH betrieben, bitte besuche deren Webseite für die Datenschutzerklärung.</string>
