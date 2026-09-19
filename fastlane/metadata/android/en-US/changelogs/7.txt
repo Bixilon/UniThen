@@ -1,0 +1,3 @@
+This release contains various improvements:
+ - Proper edge to edge screens
+ - Some iOS improvements
