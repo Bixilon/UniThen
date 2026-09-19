@@ -12,12 +12,11 @@
 
 package de.bixilon.unithen.ui.auth
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ import androidx.compose.ui.viewinterop.UIKitView
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.HttpUtil
 import de.bixilon.unithen.api.authentication.CookieAuthentication
-import de.bixilon.unithen.ui.containers.Screen
 import platform.Foundation.NSHTTPCookie
 import platform.Foundation.NSURL
 import platform.Foundation.NSURLRequest
@@ -39,7 +37,7 @@ actual fun LegacyWebviewAuthentication(host: String, callback: (CookieAuthentica
     var _delegate by remember { mutableStateOf<WebViewUrlDelegate?>(null) }
     var _host by remember { mutableStateOf("") }
 
-    Screen {
+    Column(modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             modifier = Modifier
                 .fillMaxWidth()

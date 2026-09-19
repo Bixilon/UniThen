@@ -27,6 +27,7 @@ import de.bixilon.unithen.settings.EnumSetting
 import de.bixilon.unithen.settings.Setting
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.components.qr.QrCode
+import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.settings.types.BooleanSetting
 import de.bixilon.unithen.ui.main.settings.types.EnumSetting
@@ -90,7 +91,7 @@ private fun QrTest() {
 
 @Composable
 fun UiTestScreen() {
-    Column(modifier = Modifier.verticalScrollWithBar()) {
+    Screen(modifier = Modifier.verticalScrollWithBar()) {
         SettingsTest()
         QrTest()
     }
