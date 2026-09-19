@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.bixilon.kutil.string.WhitespaceUtil.removeMultipleWhitespaces
+import de.bixilon.kutil.string.WhitespaceUtil.removeTrailingWhitespaces
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
@@ -49,12 +50,16 @@ fun formatDetails(error: Throwable): String? = when (error) {
 }
 
 fun String.formatDisplay() = this
-    .removeMultipleWhitespaces()
+    .lines().map { it.removeMultipleWhitespaces().removeTrailingWhitespaces() }.filter { it.isNotBlank() }.joinToString("\n")
     .replace("de.bixilon.unithen", "d.b.u")
     .replace("kotlinx.coroutines", "k.c")
+    .replace("kotlin.", "k.")
     .replace("androidx.compose", "a.x")
     .replace("android.view", "a.v")
     .replace("java.lang", "j.l")
+    .replace(" unithenios ", " ")
+    .replace(" kfun:", " ")
+    .replace(" 0x[0-9a-f]{8,12} ".toRegex(), " ")
 
 @Composable
 fun CrashScreen(message: String?, exception: Throwable) {
@@ -76,9 +81,7 @@ fun CrashScreen(message: String?, exception: Throwable) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .background(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                    )
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
                     .padding(8.dp)
             ) {
                 SelectionContainer {
