@@ -23,6 +23,7 @@ IntelliJ breaks reproducible builds, build with:
 2. Create archive: `xcodebuild archive -scheme UniThen -archivePath /tmp/UniThen.xcarchive -destination "generic/platform=iOS" -allowProvisioningUpdates -configuration Release`
 3. Build ipa: `xcodebuild -exportArchive -archivePath /tmp/UniThen.xcarchive -exportPath /tmp/UniThen -exportOptionsPlist ExportOptions.plist -allowProvisioningUpdates`
 4. Upload `/tmp/UniThen/UniThen.ipa` file to lipstick (name: `ipa`, version: `1.XX`, file name: `app-release-unsigned.ipa`)
+5. Upload ipa to dl.bixilon.de and update `classic.json` altstore manifest
 
 For distribution: TBA
 
