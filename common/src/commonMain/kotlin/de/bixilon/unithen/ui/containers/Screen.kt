@@ -19,24 +19,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
+import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.util.BackButton
 
 @Composable
-fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, verticalArrangement: Arrangement.Vertical = Arrangement.Top, content: @Composable ColumnScope.() -> Unit) {
+fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizontal = Alignment.Start, verticalArrangement: Arrangement.Vertical = Arrangement.Top, backButton: Boolean = false, content: @Composable ColumnScope.() -> Unit) {
     SafeBox {
-        Column(modifier = modifier
-            .fillMaxSize()
-            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 4.dp),
             horizontalAlignment = horizontalAlignment,
             verticalArrangement = verticalArrangement,
-            content = content)
+            content = content,
+        )
+
+        if (backButton) {
+            BackButton()
+        }
     }
 }
 
 @Composable
 fun ScreenTitle(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "$text:",
-        style = MaterialTheme.typography.headlineLarge,
+    val show = catchAll { LocalNavigation.current }?.takeIf { it.size > 1 }
+
+    var modifier = modifier
+
+    if (show == null) {
         modifier = modifier.padding(bottom = 8.dp)
-    )
+    }
+
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+        if (show != null) {
+            BackButton()
+        }
+
+        Text(text = if (show == null) "$text:" else text, style = MaterialTheme.typography.headlineLarge)
+    }
 }

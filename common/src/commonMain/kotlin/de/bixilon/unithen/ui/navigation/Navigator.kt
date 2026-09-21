@@ -31,6 +31,8 @@ class Navigator(
     private val routes = HashMap<KClass<out NavigationRoute>, @Composable (NavigationRoute) -> Unit>()
 
 
+    val size get() = stack.size
+
     inner class Builder {
         val routes get() = this@Navigator.routes
 

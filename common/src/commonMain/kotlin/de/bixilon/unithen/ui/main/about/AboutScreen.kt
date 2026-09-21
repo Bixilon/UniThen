@@ -47,7 +47,7 @@ import unithen.common.generated.resources.app_name
 @Composable
 fun AboutScreen() {
     val navigator = LocalNavigation.current
-    Screen(modifier = Modifier.verticalScrollWithBar(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Screen(modifier = Modifier.verticalScrollWithBar(), horizontalAlignment = Alignment.CenterHorizontally, backButton = true) {
 
         Spacer(modifier = Modifier.height(16.dp))
 

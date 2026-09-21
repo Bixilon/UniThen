@@ -36,6 +36,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
+import de.bixilon.unithen.ui.util.BackButton
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
 
@@ -103,6 +104,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
     }
 
     SafeBox {
+        BackButton()
         val courses = rememberStorage { appointments.map { storage.courses[it.course] }.toSet() }
         ScanInstructions(courses)
 

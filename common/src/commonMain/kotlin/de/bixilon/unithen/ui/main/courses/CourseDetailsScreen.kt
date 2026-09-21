@@ -35,10 +35,7 @@ import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURAT
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.Event
 import de.bixilon.unithen.storage.types.Site
-import de.bixilon.unithen.ui.containers.FloatingActionButtons
-import de.bixilon.unithen.ui.containers.InfoContainer
-import de.bixilon.unithen.ui.containers.SafeBox
-import de.bixilon.unithen.ui.containers.Screen
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.PresentQrAppointmentRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.courses.appointments.CourseAppointments
@@ -55,14 +52,8 @@ import unithen.common.generated.resources.course_synchronize_done
 
 
 @Composable
-private fun Header(site: Site, event: Event, course: Course, accounts: List<Account>) {
-
+private fun Header(site: Site, event: Event, accounts: List<Account>) {
     InfoContainer {
-        Text(
-            text = course.name,
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
         Text(
             text = "${site.name} (${site.host})",
             style = MaterialTheme.typography.bodyMedium,
@@ -97,8 +88,9 @@ fun CourseDetailsScreen(course: Course) {
         toast.invoke(Res.string.course_synchronize_done)
     }
 
-    Screen(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Header(site, event, course, accounts)
+    Screen {
+        ScreenTitle(course.name)
+        Header(site, event, accounts)
 
         // TODO: This is bad, this is not scrollable
         PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke() }) {

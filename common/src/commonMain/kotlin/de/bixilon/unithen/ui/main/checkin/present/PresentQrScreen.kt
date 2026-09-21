@@ -38,8 +38,10 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.components.qr.QrCode
 import de.bixilon.unithen.ui.containers.InfoContainer
 import de.bixilon.unithen.ui.containers.InfoPair
+import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.main.checkin.present.QrEncoder.encodeQr
 import de.bixilon.unithen.ui.navigation.LocalVisibility
+import de.bixilon.unithen.ui.util.BackButton
 import de.bixilon.unithen.ui.util.ScreenBrightnessOverride
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
@@ -56,11 +58,9 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
     }
     var active by rememberStateOf { false }
 
-    Column(
-        // not a screen to reduce padding when showing qr code
+    // not a screen to reduce padding when showing qr code
+    SafeBox(
         modifier = Modifier
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .fillMaxSize()
             .pointerInput(Unit) {
                 awaitEachGesture {
                     awaitFirstDown()
@@ -69,54 +69,57 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
                     waitForUpOrCancellation()
                     active = false
                 }
-            },
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = course.name,
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(16.dp)
-        )
-
-        InfoContainer(modifier = Modifier
-            .padding(horizontal = 16.dp)) {
-            InfoPair(Res.string.course_name.i18n(), account.fullname)
-            InfoPair(Res.string.appointment_start.i18n(), appointment.start.format())
-            InfoPair(Res.string.appointment_end.i18n(), appointment.end.format())
-            InfoPair(Res.string.appointment_location.i18n(), appointment.location)
-            if (RuntimeInfo.debug) {
-                InfoPair("ID", appointment.uuid.toString())
             }
-        }
+    ) {
+        BackButton()
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = course.name,
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp)
+            )
+
+            InfoContainer(modifier = Modifier
+                .padding(horizontal = 16.dp)) {
+                InfoPair(Res.string.course_name.i18n(), account.fullname)
+                InfoPair(Res.string.appointment_start.i18n(), appointment.start.format())
+                InfoPair(Res.string.appointment_end.i18n(), appointment.end.format())
+                InfoPair(Res.string.appointment_location.i18n(), appointment.location)
+                if (RuntimeInfo.debug) {
+                    InfoPair("ID", appointment.uuid.toString())
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
 
-        BoxWithConstraints(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
-            val qr = minOf(maxWidth, maxHeight - 4.dp - 45.dp)
-            Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            BoxWithConstraints(Modifier.weight(1.0f).padding(4.dp).widthIn(min = 100.dp).heightIn(min = 100.dp)) {
+                val qr = minOf(maxWidth, maxHeight - 4.dp - 45.dp)
+                Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
-                val version by rememberSetting(FeatureFlags.QR_VERSION)
-                val encoded = remember(account, appointment, active) { encodeQr(if (active) QrVersion.V1 else version, account.uuid, appointment.uuid, account.firstname, account.lastname) }
+                    val version by rememberSetting(FeatureFlags.QR_VERSION)
+                    val encoded = remember(account, appointment, active) { encodeQr(if (active) QrVersion.V1 else version, account.uuid, appointment.uuid, account.firstname, account.lastname) }
 
-                QrCode(data = encoded, modifier = Modifier.size(qr))
-                if (!active && version != QrVersion.V1) {
+                    QrCode(data = encoded, modifier = Modifier.size(qr))
+                    if (!active && version != QrVersion.V1) {
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "This QR code is experimental: $version",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "This QR code is experimental: $version",
+                        text = Res.string.present_show_entrance.i18n(),
                         style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
-
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = Res.string.present_show_entrance.i18n(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
             }
         }
     }
