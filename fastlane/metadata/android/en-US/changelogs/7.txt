@@ -1,3 +1,5 @@
 This release contains various improvements:
  - Proper edge to edge screens
  - Some iOS improvements
+ - Attendee list: Keyboard now closes when tapping somewhere else
+ - Back button everywhere (mainly for iOS users)
