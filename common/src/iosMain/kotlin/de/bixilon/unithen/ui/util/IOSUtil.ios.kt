@@ -6,11 +6,21 @@ import androidx.compose.ui.input.pointer.pointerInput
 
 actual fun Modifier.iosCloseKeyboardOnSwipe() = this
     .pointerInput(Unit) {
-        detectDragGestures { change, dragAmount ->
-            change.consume()
+        var total = 0f
 
-            if (dragAmount.y > 10) {
-                forceCloseKeyboard()
+        detectDragGestures(
+            onDragStart = { total = 0f },
+            onDragCancel = { total = 0f },
+            onDragEnd = { total = 0f },
+            onDrag = { change, dragAmount ->
+                change.consume()
+
+                total += dragAmount.y
+
+                if (total >= 50.0f) {
+                    forceCloseKeyboard()
+                    total = 0f
+                }
             }
-        }
+        )
     }
