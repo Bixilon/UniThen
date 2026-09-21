@@ -44,10 +44,7 @@ import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.SyncEngineCompleteEffect
 import de.bixilon.unithen.ui.sync.useSyncEngine
-import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.useTime
-import de.bixilon.unithen.ui.util.useToast
-import de.bixilon.unithen.ui.util.verticalScroll
+import de.bixilon.unithen.ui.util.*
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.*
@@ -213,7 +210,7 @@ fun ScanAttendeeList(appointment: Appointment) {
     }
 
 
-    Section {
+    Section(Modifier.iosCloseKeyboardOnSwipe()) {
         val count = remember(attendees, queue) { attendees.size + queue.filter { it.message == null && it.attempt == null }.size }
         SectionTitle(Res.string.appointment_attendees_title.i18n(count, enrolled))
 

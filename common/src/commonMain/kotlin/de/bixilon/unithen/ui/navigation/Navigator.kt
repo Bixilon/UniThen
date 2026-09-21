@@ -21,6 +21,8 @@ import de.bixilon.unithen.ui.util.BackHandler
 import kotlin.reflect.KClass
 
 
+expect fun handleNativeNavigation()
+
 class Navigator(
     private val start: NavigationRoute,
     val policy: NavigationStackPolicy = NavigationStackPolicy.IGNORE_SAME,
@@ -66,6 +68,8 @@ class Navigator(
                 }
             }
         }
+
+        LaunchedEffect(last) { handleNativeNavigation() }
     }
 
     fun navigate(route: NavigationRoute, policy: NavigationStackPolicy = this.policy) {
