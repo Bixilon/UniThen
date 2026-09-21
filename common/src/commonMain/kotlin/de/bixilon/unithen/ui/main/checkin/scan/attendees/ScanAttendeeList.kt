@@ -210,7 +210,7 @@ fun ScanAttendeeList(appointment: Appointment) {
     }
 
 
-    Section(Modifier.iosCloseKeyboardOnSwipe()) {
+    Section(Modifier.iosCloseKeyboardOnSwipe().focusLoseOnTab()) {
         val count = remember(attendees, queue) { attendees.size + queue.filter { it.message == null && it.attempt == null }.size }
         SectionTitle(Res.string.appointment_attendees_title.i18n(count, enrolled))
 

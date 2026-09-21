@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -27,6 +28,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.string.WhitespaceUtil.trimWhitespaces
 import de.bixilon.unithen.settings.Settings
@@ -63,6 +66,7 @@ fun UserFilterX(filter: UserFilter) {
         TextField(
             search,
             lineLimits = TextFieldLineLimits.SingleLine,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.PersonName, imeAction = ImeAction.Search),
             modifier = Modifier.weight(1.0f, true),
             placeholder = { Text(Res.string.search_placeholder.i18n()) },
             leadingIcon = { Icon(Filled.Search, "") },
