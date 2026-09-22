@@ -71,7 +71,7 @@ class SqlStorageTest {
 
         val host = storage.query("SELECT host FROM sites WHERE id=901") { it.moveToNext(); it.getString(0) }
 
-        assertEquals("test.local", host)
+        assertEquals("127.0.0.1", host)
     }
 
     @Test
@@ -116,7 +116,7 @@ class SqlStorageTest {
     fun `get site by id dummy database`() {
         val site = dummy().sites[901]
 
-        assertEquals("test.local", site.host)
+        assertEquals("127.0.0.1", site.host)
     }
 
     @Test

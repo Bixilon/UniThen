@@ -41,6 +41,6 @@ class SelectSiteScreenTest : AbstractComposeUiTest() {
     fun `test local present`() = runComposeUiTest {
         withSelectSiteScreen()
 
-        waitUntilText("test.local").assertIsDisplayed()
+        waitUntilText("127.0.0.1").assertIsDisplayed()
     }
 }

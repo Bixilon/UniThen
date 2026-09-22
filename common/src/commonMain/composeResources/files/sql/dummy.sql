@@ -1,5 +1,7 @@
-INSERT INTO sites(id, host, name, fetched) VALUES (901, "test.local", "First dummy site", 0);
-INSERT INTO sites(id, host, name, fetched) VALUES (902, "test2.local", "Second dummy site", 0);
+INSERT INTO sites(id, host, name, fetched)
+VALUES (901, "127.0.0.1", "First dummy site", 0);
+INSERT INTO sites(id, host, name, fetched)
+VALUES (902, "127.0.0.2", "Second dummy site", 0);
 
 
 INSERT INTO events(id, site, uuid, name, start, end) VALUES(901, 901, "00000000-0000-0000-0000-000000000001", "Test Event (a)", 1767312123, 1893542523);
