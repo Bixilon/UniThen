@@ -101,6 +101,7 @@ fun SetupScreen() {
 
                 Text(
                     text = buildAnnotatedString { append(Res.string.setup_accept.i18n()); withStyle(SpanStyle(Color.Red)) { append(" *") } },
+                    modifier = Modifier.clickable { accepted = !accepted },
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground,
                 )

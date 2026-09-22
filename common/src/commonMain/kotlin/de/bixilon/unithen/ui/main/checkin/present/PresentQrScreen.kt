@@ -74,12 +74,12 @@ fun PresentQrScreen(account: Account, course: Course, appointment: Appointment) 
         BackButton()
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
+            Text( // TODO: might overlap with the back button
                 text = course.name,
                 style = MaterialTheme.typography.headlineLarge,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             )
 
             InfoContainer(modifier = Modifier
