@@ -10,8 +10,6 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package de.bixilon.unithen.ui.sync.status
 
 import androidx.compose.foundation.layout.Column
@@ -64,9 +62,9 @@ fun SyncStatusDialog(hook: SyncEngineHook, title: String, description: String, m
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
                 if (progress.isDeterminate) {
-                    LoadingIndicator(progress = { progress.synchonized.toFloat() / progress.total })
+                    CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total })
                 } else {
-                    LoadingIndicator()
+                    CircularProgressIndicator()
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

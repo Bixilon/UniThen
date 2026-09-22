@@ -10,8 +10,6 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package de.bixilon.unithen.ui.sync.status
 
 import androidx.compose.foundation.layout.*
@@ -78,9 +76,9 @@ private fun RunningIndicator(status: SyncStatus?, progress: SyncEngineProgress?)
 
 
     if (progress != null && progress.isDeterminate) {
-        LoadingIndicator(progress = { progress.synchonized.toFloat() / progress.total }, modifier = modifier, color = color)
+        CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total }, modifier = modifier, color = color)
     } else {
-        LoadingIndicator(modifier = modifier, color = color)
+        CircularProgressIndicator(modifier = modifier, color = color)
     }
 }
 

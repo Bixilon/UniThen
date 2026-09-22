@@ -13,7 +13,7 @@
 package de.bixilon.unithen.ui.theme
 
 import android.os.Build
-import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -32,7 +32,7 @@ actual fun UniThenTheme(darkTheme: Boolean, dynamicColor: Boolean, content: @Com
         else -> LIGHT_COLOR_SCHEME
     }
 
-    MaterialExpressiveTheme(
+    MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
         content = content

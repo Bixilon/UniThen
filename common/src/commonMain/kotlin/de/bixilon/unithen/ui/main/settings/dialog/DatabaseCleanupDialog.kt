@@ -10,8 +10,6 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package de.bixilon.unithen.ui.main.settings.dialog
 
 import androidx.compose.foundation.layout.Column
@@ -20,7 +18,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CleaningServices
-import androidx.compose.material3.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -61,7 +62,7 @@ fun DatabaseCleanupDialog(dismiss: () -> Unit) {
         title = { Text(Res.string.database_cleanup_title.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                LoadingIndicator()
+                CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(Res.string.settings_entrypoint_description.i18n())
             }

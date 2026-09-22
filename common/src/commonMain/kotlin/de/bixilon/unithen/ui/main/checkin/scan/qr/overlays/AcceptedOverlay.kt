@@ -10,8 +10,6 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
-@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
-
 package de.bixilon.unithen.ui.main.checkin.scan.qr.overlays
 
 import androidx.compose.foundation.layout.*
@@ -114,7 +112,7 @@ private fun AcceptedBox(state: AcceptedState, showCourseName: Boolean) {
         Column(modifier = Modifier.padding(6.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 when {
-                    checkin.active -> LoadingIndicator()
+                    checkin.active -> CircularProgressIndicator()
                     message != null && success -> Icon(Icons.Filled.Warning, "")
                     message != null -> Icon(Icons.Filled.Close, "")
                     success -> Icon(Icons.Filled.Check, "")
