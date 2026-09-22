@@ -19,5 +19,5 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SafeBox(modifier: Modifier = Modifier, contentAlignment: Alignment = Alignment.TopStart, content: @Composable BoxScope.() -> Unit) {
-    Box(modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize(), contentAlignment = contentAlignment, content = content)
+    Box(modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing).fillMaxSize().then(modifier), contentAlignment = contentAlignment, content = content)
 }

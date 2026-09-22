@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 
 
@@ -20,7 +21,8 @@ fun BoxScope.BackButton() {
 
 @Composable
 fun BackButton(modifier: Modifier = Modifier) {
-    val navigation = LocalNavigation.current
+    val navigation = catchAll { LocalNavigation.current } ?: return
+    if (navigation.size <= 1) return
 
     IconButton({ navigation.pop() }, modifier) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")

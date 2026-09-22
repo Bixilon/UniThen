@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.api.UniNowApi
-import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.ErrorBox
@@ -49,7 +49,7 @@ fun OryAuthenticationScreen(host: String) {
     }
 
     if (flowFetch.active) {
-        LoadingContainer(Res.string.auth_loading_methods.i18n())
+        LoadingScreen(Res.string.auth_loading_methods.i18n())
         return
     }
 

@@ -23,15 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.ui.util.BackButton
 
 @Composable
-fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .windowInsetsPadding(WindowInsets.safeDrawing)
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
+fun LoadingScreen(text: String, modifier: Modifier = Modifier) {
+    SafeBox(modifier, contentAlignment = Alignment.Center) {
+        BackButton()
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             CircularProgressIndicator(modifier = Modifier.size(60.dp))
             Spacer(Modifier.height(16.dp))
@@ -41,18 +39,19 @@ fun LoadingContainer(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LoadingContainer(text: String, icon: ImageVector, modifier: Modifier = Modifier) {
-    Box(modifier = modifier
-        .windowInsetsPadding(WindowInsets.safeDrawing)
-        .fillMaxSize()
-        .padding(top = 100.dp), contentAlignment = Alignment.TopCenter) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+fun LoadingScreen(text: String, icon: ImageVector, modifier: Modifier = Modifier) {
+    SafeBox(modifier = modifier, contentAlignment = Alignment.TopCenter) {
+        BackButton()
+
+        Column(Modifier.padding(top = 100.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Image(icon, contentDescription = "", modifier = Modifier.size(300.dp))
+
+            Spacer(Modifier.height(16.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 CircularProgressIndicator()
 
-                Spacer(Modifier.width(15.dp))
+                Spacer(Modifier.width(16.dp))
 
                 Text(text, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }

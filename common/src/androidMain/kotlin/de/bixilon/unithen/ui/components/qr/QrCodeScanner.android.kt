@@ -29,7 +29,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
-import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.navigation.LocalVisibility
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.rememberAsync
@@ -50,7 +50,7 @@ private val READER by lazy { BarcodeReader(BarcodeReader.Options(formats = setOf
 
 @Composable
 private fun Loading(modifier: Modifier = Modifier) {
-    LoadingContainer(Res.string.scan_starting_camera.i18n(), modifier = modifier)
+    LoadingScreen(Res.string.scan_starting_camera.i18n(), modifier = modifier)
 }
 
 @Composable

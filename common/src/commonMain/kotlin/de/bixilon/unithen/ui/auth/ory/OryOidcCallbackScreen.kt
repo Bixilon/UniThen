@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.api.UniNowApi
 import de.bixilon.unithen.api.authentication.OryTokenAuthentication
-import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
 import de.bixilon.unithen.ui.main.AuthenticationRoute
@@ -41,7 +41,7 @@ fun OryOidcCallbackScreen(flowId: Int, code: String) {
     }
 
     if (exchange.active) {
-        LoadingContainer(Res.string.auth_exchanging.i18n())
+        LoadingScreen(Res.string.auth_exchanging.i18n())
         return
     }
 

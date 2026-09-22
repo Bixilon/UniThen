@@ -12,7 +12,10 @@
 
 package de.bixilon.unithen.ui
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.auth.AccountSyncScreen
 import de.bixilon.unithen.ui.auth.LegacyWebviewAuthenticationScreen
@@ -20,9 +23,8 @@ import de.bixilon.unithen.ui.auth.ory.EmailAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
 import de.bixilon.unithen.ui.auth.ory.OryOidcCallbackScreen
 import de.bixilon.unithen.ui.auth.ory.OryOidcPrepareScreen
-import de.bixilon.unithen.ui.containers.LoadingContainer
 import de.bixilon.unithen.ui.error.CrashScreen
-import de.bixilon.unithen.ui.icons.Logo
+import de.bixilon.unithen.ui.loader.DatabaseLoadingScreen
 import de.bixilon.unithen.ui.main.*
 import de.bixilon.unithen.ui.main.about.AboutScreen
 import de.bixilon.unithen.ui.main.accounts.AccountDetailsScreen
@@ -43,16 +45,8 @@ import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.rememberSyncEngine
-import de.bixilon.unithen.ui.util.DelayedContent
 import de.bixilon.unithen.ui.util.LocalUrlHandler
-import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useTime
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
-import unithen.common.generated.resources.Res
-import unithen.common.generated.resources.loading_database
-import kotlin.time.Duration.Companion.milliseconds
 
 
 @Composable
@@ -138,40 +132,8 @@ fun Navigator.MainNavigator() {
 }
 
 @Composable
-fun Loader(content: @Composable () -> Unit) {
-    val storage = LocalStorage.current
-
-    var error by remember { mutableStateOf<Throwable?>(null) }
-    var active by remember { mutableStateOf(true) }
-
-    LaunchedEffect(Unit) {
-        try {
-            withContext(Dispatchers.IO) {
-                storage.helper.load()
-            }
-        } catch (thrown: Throwable) {
-            thrown.printStackTrace()
-            error = thrown
-        } finally {
-            active = false
-        }
-    }
-
-    if (active) {
-        DelayedContent(100.milliseconds) {
-            LoadingContainer(Res.string.loading_database.i18n(), Logo)
-        }
-        return
-    }
-
-    error?.let { CrashScreen("Error during database loading", it); return }
-
-    content.invoke()
-}
-
-@Composable
 fun CommonMainActivity() {
-    Loader {
+    DatabaseLoadingScreen {
         val storage = LocalStorage.current
         val navigator = remember { Navigator(MainRoute) }
         val engine = rememberSyncEngine(storage)

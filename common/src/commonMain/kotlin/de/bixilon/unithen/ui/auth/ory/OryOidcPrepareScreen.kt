@@ -13,7 +13,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import de.bixilon.kutil.string.WhitespaceUtil.removeWhitespaces
-import de.bixilon.unithen.ui.containers.LoadingContainer
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.*
@@ -58,7 +58,7 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     DisposableEffect(Unit) { onDispose { dismissed = true } }
 
     if (fetch.active) {
-        LoadingContainer(Res.string.auth_oidc_loading.i18n())
+        LoadingScreen(Res.string.auth_oidc_loading.i18n())
         return
     }
     if (url == null) return

@@ -21,6 +21,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.v2.runComposeUiTest
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.TestSqlHelper
+import de.bixilon.unithen.ui.loader.DatabaseLoadingScreen
 import de.bixilon.unithen.ui.storage.LocalStorage
 import kotlinx.coroutines.delay
 import kotlin.test.Test
@@ -38,7 +39,7 @@ class LoaderTest : AbstractComposeUiTest() {
         CompositionLocalProvider(
             LocalStorage provides storage,
         ) {
-            Loader { Text("Content") }
+            DatabaseLoadingScreen { Text("Content") }
         }
     }
 
