@@ -16,12 +16,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalFocusManager
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.ui.util.BackHandler
 import kotlin.reflect.KClass
 
-
-expect fun handleNativeNavigation()
 
 class Navigator(
     private val start: NavigationRoute,
@@ -52,6 +51,7 @@ class Navigator(
 
     @Composable
     fun Host() {
+        val focus = LocalFocusManager.current
         val visible = LocalVisibility.current
         val last = stack.last()
 
@@ -71,7 +71,7 @@ class Navigator(
             }
         }
 
-        LaunchedEffect(last) { handleNativeNavigation() }
+        LaunchedEffect(last) { focus.clearFocus(true) }
     }
 
     fun navigate(route: NavigationRoute, policy: NavigationStackPolicy = this.policy) {
