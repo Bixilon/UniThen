@@ -12,13 +12,9 @@ import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.SettingsStore
 import de.bixilon.unithen.ui.AbstractComposeUiTest
 import de.bixilon.unithen.ui.waitUntilText
+import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
-
-val BOOLEAN = Setting("boolean", true)
-val INT = Setting("int", 0)
-val STRING = Setting("string", "abc")
-val ENUM = EnumSetting("enum", TestEnum.A, TestEnum)
 
 enum class TestEnum {
     A,
@@ -33,6 +29,8 @@ enum class TestEnum {
 }
 
 expect fun createSettingsStore(): SettingsStore
+
+fun key() = "test${Random.nextLong()}"
 
 @OptIn(ExperimentalTestApi::class)
 class SettingsUtilTest : AbstractComposeUiTest() {
@@ -51,9 +49,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
 
     @Test
     fun `boolean settings are in sync`() = runComposeUiTest {
+        val setting = Setting(key(), true)
         withStore {
-            var a by rememberSetting(BOOLEAN)
-            var b by rememberSetting(BOOLEAN)
+            var a by rememberSetting(setting)
+            var b by rememberSetting(setting)
 
             assertEquals(a, b)
 
@@ -65,9 +64,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
 
     @Test
     fun `int settings are in sync`() = runComposeUiTest {
+        val setting = Setting(key(), 0)
         withStore {
-            var a by rememberSetting(INT)
-            var b by rememberSetting(INT)
+            var a by rememberSetting(setting)
+            var b by rememberSetting(setting)
 
             assertEquals(a, b)
             Text(a.toString())
@@ -79,9 +79,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
 
     @Test
     fun `string settings are in sync`() = runComposeUiTest {
+        val setting = Setting(key(), "abc")
         withStore {
-            var a by rememberSetting(STRING)
-            var b by rememberSetting(STRING)
+            var a by rememberSetting(setting)
+            var b by rememberSetting(setting)
 
             assertEquals(a, b)
             Text(a)
@@ -92,9 +93,10 @@ class SettingsUtilTest : AbstractComposeUiTest() {
 
     @Test
     fun `enum settings are in sync`() = runComposeUiTest {
+        val setting = EnumSetting(key(), TestEnum.A, TestEnum)
         withStore {
-            var a by rememberSetting(ENUM)
-            var b by rememberSetting(ENUM)
+            var a by rememberSetting(setting)
+            var b by rememberSetting(setting)
 
             assertEquals(a, b)
             Text(a.toString())

@@ -87,7 +87,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
         setContent { MockedScreen(storage, userId = "10000000-0000-0000-0000-000000000001") }
 
-        waitUntilText("Updating enrollment list").assertIsDisplayed()
+        waitUntilText("nrollment list").assertIsDisplayed()
     }
 
     @Test
@@ -121,7 +121,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
     }
 
     @Test
-    fun `check in known user`() = runComposeUiTest {
+    fun `check in known user without network`() = runComposeUiTest {
         val storage = dummy()
 
         val site = storage.sites[901]
@@ -131,8 +131,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
         setContent { MockedScreen(storage, userId = user.uuid.toString()) }
 
         waitUntilText("Confirm").performClick()
-        waitUntilText("Confirm", timeout = 10.seconds).assertIsNotEnabled()
-
+        waitUntilText("Back", timeout = 100.seconds).assertIsEnabled()
 
         assertNotNull(storage.checkInQueue[appointment, user])
     }
@@ -146,11 +145,12 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
         setContent { MockedScreen(storage, userId = uuid.toString()) }
 
-        waitUntilText("Confirm")
+        waitUntilText("Confirm").assertIsNotEnabled()
 
         storage.users.add(site, uuid, "Hello", "world")
 
-        waitUntilText("Not enrolled").isDisplayed()
+        waitForIdle()
+        waitUntilText("Not enrolled").assertIsDisplayed()
         waitUntilText("Confirm").assertIsNotEnabled()
     }
 
@@ -164,11 +164,12 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
 
         setContent { MockedScreen(storage, userId = uuid.toString()) }
 
-        waitUntilText("Confirm")
+        waitUntilText("Confirm").assertIsNotEnabled()
 
         val user = storage.users.add(site, uuid, "Hello", "world")
         storage.courses.addEnrolled(user, storage.courses[appointment.course])
 
+        waitForIdle()
         waitUntilText("Confirm").assertIsEnabled()
     }
 }

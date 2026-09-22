@@ -27,17 +27,12 @@ import de.bixilon.unithen.storage.StorageUtil.storeAttendees
 import de.bixilon.unithen.storage.StorageUtil.storeCourse
 import de.bixilon.unithen.storage.StorageUtil.storeEnrolled
 import de.bixilon.unithen.storage.sql.empty
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class StorageUtilTest {
     private val A = "00000000-0000-0000-0000-000000000000".toUuid()
     private val B = "10000000-0000-0000-0000-000000000000".toUuid()
@@ -49,12 +44,8 @@ class StorageUtilTest {
     private val H = "70000000-0000-0000-0000-000000000000".toUuid()
 
 
-    init {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
-    }
-
     @Test
-    fun `store new course without tutor data`() = runBlocking {
+    fun `store new course without tutor data`() = runTest {
         val storage = empty()
         val site = storage.site()
 
@@ -83,7 +74,7 @@ class StorageUtilTest {
     }
 
     @Test
-    fun `store enrolled`() = runBlocking {
+    fun `store enrolled`() = runTest {
         val storage = empty()
 
         val course = storage.course()
@@ -101,7 +92,7 @@ class StorageUtilTest {
     }
 
     @Test
-    fun `remove unenrolled users`() = runBlocking {
+    fun `remove unenrolled users`() = runTest {
         val storage = empty()
 
         val course = storage.course()
@@ -122,7 +113,7 @@ class StorageUtilTest {
     }
 
     @Test
-    fun `store attendees`() = runBlocking {
+    fun `store attendees`() = runTest {
         val storage = empty()
 
         val course = storage.course()
@@ -147,7 +138,7 @@ class StorageUtilTest {
     }
 
     @Test
-    fun `penging queue removed`() = runBlocking {
+    fun `penging queue removed`() = runTest {
         val storage = empty()
 
         val course = storage.course()

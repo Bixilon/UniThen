@@ -26,11 +26,7 @@ import de.bixilon.unithen.storage.sql.DummyStorage.initializeDummy
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
 import de.bixilon.unithen.util.TestUtil.assertMatch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.setMain
 import unithen.common.generated.resources.Res
 import kotlin.math.absoluteValue
 import kotlin.random.Random
@@ -48,12 +44,7 @@ fun dummy() = runBlocking { empty().apply { this.initializeDummy() } }
 expect fun ByteArray.copyTo(path: String)
 expect fun delete(path: String)
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SqlStorageTest {
-
-    init {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
-    }
 
     @Test
     fun `create and initialize tables`() {

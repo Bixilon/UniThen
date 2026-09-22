@@ -42,4 +42,8 @@ class MemorySettingsStore : SettingsStore {
     override fun <T : Enum<T>> createEnum(setting: EnumSetting<T>): MutableState<T> {
         return settings.getOrPut(setting) { mutableStateOf(setting.default) }.cast()
     }
+
+    operator fun <T> set(setting: Setting<T>, value: T) {
+        settings.getOrPut(setting) { mutableStateOf(setting.default) }.cast<MutableState<T>>().value = value
+    }
 }

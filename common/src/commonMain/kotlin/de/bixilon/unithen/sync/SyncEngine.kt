@@ -16,27 +16,29 @@ import androidx.compose.runtime.mutableStateSetOf
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 
 class SyncEngine(
     val storage: SqlStorage,
 ) {
+    private val lock = Mutex()
     private val active = mutableStateSetOf<SyncEngineRequest>()
 
 
-    operator fun contains(request: SyncEngineRequest) = request in active
+    operator fun contains(request: SyncEngineRequest) = runBlocking { lock.withLock { request in active } }
     fun isQueueActive(user: User, appointment: Appointment) = CheckInQueueRequest(user.id, appointment.id) in this
 
     suspend fun with(request: SyncEngineRequest, block: suspend () -> Unit) {
         if (request in active) return
         try {
-            withContext(Dispatchers.Main) { active += request }
+            lock.withLock { active += request }
 
             block.invoke()
         } finally {
-            withContext(Dispatchers.Main) { active -= request }
+            lock.withLock { active -= request }
         }
     }
 }

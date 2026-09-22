@@ -14,9 +14,9 @@ package de.bixilon.unithen.sync
 
 import de.bixilon.unithen.storage.sql.dummy
 import de.bixilon.unithen.test.UniThenTestOnly
-import kotlinx.coroutines.*
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -24,11 +24,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(UniThenTestOnly::class)
 class SyncEngineTest {
-
-    init {
-        @OptIn(ExperimentalCoroutinesApi::class)
-        Dispatchers.setMain(UnconfinedTestDispatcher())
-    }
 
     private fun use(block: suspend SyncEngineContext.() -> Unit): SyncEngineProgress? {
         val engine = SyncEngine(runBlocking { dummy() })

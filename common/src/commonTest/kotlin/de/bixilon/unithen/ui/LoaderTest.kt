@@ -13,9 +13,7 @@
 package de.bixilon.unithen.ui
 
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.v2.runComposeUiTest
@@ -23,6 +21,7 @@ import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.TestSqlHelper
 import de.bixilon.unithen.ui.loader.DatabaseLoadingScreen
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.time.Duration.Companion.milliseconds
@@ -83,5 +82,22 @@ class LoaderTest : AbstractComposeUiTest() {
         }
 
         waitUntilText("Content").assertIsDisplayed()
+    }
+
+    // @Test
+    fun `failing timeout`() = runComposeUiTest {
+        setContent {
+            var text by rememberStateOf("a")
+
+            Text(text)
+
+            LaunchedEffect(Unit) {
+                delay(5.seconds)
+                text = "b"
+            }
+        }
+
+        waitUntilText("a").assertIsDisplayed()
+        waitUntilText("b", timeout = 10.seconds).assertIsDisplayed()
     }
 }

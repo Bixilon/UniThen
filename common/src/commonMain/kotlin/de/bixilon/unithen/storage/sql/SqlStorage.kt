@@ -15,15 +15,11 @@ package de.bixilon.unithen.storage.sql
 import androidx.compose.runtime.mutableIntStateOf
 import de.bixilon.unithen.storage.sql.tables.*
 import de.bixilon.unithen.storage.sql.util.SqlBuilder
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 expect var transaction: SQLiteHelper.UpdateConnection?
 
 class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
-    val scope = CoroutineScope(Dispatchers.Main)
-    val notify = mutableIntStateOf(0) // TODO: Kind of a hack
+    val notify = mutableIntStateOf(0)
 
     val sites = SiteTable(this)
     val events = EventTable(this)
@@ -37,8 +33,7 @@ class SqlStorage(val helper: SQLiteHelper) : AutoCloseable {
 
     fun notifyState() {
         if (transaction != null) return
-
-        scope.launch { notify.intValue++ }
+        notify.intValue++
     }
 
 

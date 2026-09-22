@@ -10,14 +10,13 @@ import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.RuntimeInfo.RuntimeInfo0
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.resetMain
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalTestApi::class)
 abstract class AbstractComposeUiTest {
 
     init {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.resetMain()
         RuntimeInfo0.actual = object : RuntimeInfo {
             override val debug get() = false
         }

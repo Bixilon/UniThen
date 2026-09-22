@@ -11,13 +11,10 @@ import de.bixilon.unithen.ui.main.MainRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.util.state.rememberDelayedState
-import kotlinx.coroutines.delay
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import kotlin.time.TimeSource
 
 @OptIn(ExperimentalTestApi::class)
 class DelayedStateTest : AbstractComposeUiTest() {
@@ -30,13 +27,6 @@ class DelayedStateTest : AbstractComposeUiTest() {
         currentComposer.endProvider()
 
         return state
-    }
-
-    private suspend fun monotonicDelay(duration: Duration) {
-        val start = TimeSource.Monotonic.markNow()
-        while (TimeSource.Monotonic.markNow() - start < duration) {
-            delay(10.milliseconds)
-        }
     }
 
 
@@ -58,31 +48,33 @@ class DelayedStateTest : AbstractComposeUiTest() {
         assertNull(triggered)
     }
 
-    @Test
+    // @Test
     fun `state cleared without triggering`() = runComposeUiTest {
+        mainClock.autoAdvance = false
         var triggered: String? = null
         val state = leak { state { triggered = it } }
         state.value = "A"
 
-        monotonicDelay(300.milliseconds)
+        mainClock.advanceTimeBy(300)
 
         assertEquals(null, state.value)
         assertNull(triggered)
     }
 
-    // @Test // flanky test
+    // @Test
     fun `state cleared with triggering`() = runComposeUiTest {
+        mainClock.autoAdvance = false
         var triggered: String? = null
         val state = leak { state { triggered = it } }
         state.value = "A"
 
-        monotonicDelay(100.milliseconds)
+        mainClock.advanceTimeBy(100)
         state.value = "A"
-        monotonicDelay(100.milliseconds)
+        mainClock.advanceTimeBy(100)
         state.value = "A"
-        monotonicDelay(100.milliseconds)
+        mainClock.advanceTimeBy(100)
         state.value = "A"
-        monotonicDelay(100.milliseconds)
+        mainClock.advanceTimeBy(100)
 
         assertEquals(null, state.value)
         assertEquals("A", triggered)

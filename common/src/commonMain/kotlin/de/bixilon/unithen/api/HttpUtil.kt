@@ -14,6 +14,7 @@ package de.bixilon.unithen.api
 
 import de.bixilon.unithen.BuildInfo
 import de.bixilon.unithen.RuntimeInfo
+import de.bixilon.unithen.api.errors.NetworkException
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.coroutines.delay
@@ -23,6 +24,7 @@ object HttpUtil {
     val USER_AGENT = "UniThen (version=${BuildInfo.VERSION})"
 
     suspend fun create(host: String, endpoint: String): HttpRequestBuilder {
+        if (host.startsWith("127.")) throw NetworkException("localhost")
         if (RuntimeInfo.debug) {
             delay(3.seconds)
         }

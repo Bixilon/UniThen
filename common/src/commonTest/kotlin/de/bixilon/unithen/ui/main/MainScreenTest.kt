@@ -16,6 +16,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.v2.runComposeUiTest
+import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.SqlStorage
@@ -42,7 +43,7 @@ class MainScreenTest : AbstractComposeUiTest() {
                 LocalStorage provides storage,
                 LocalNavigation provides remember { Navigator(MainRoute) },
                 LocalSyncEngine provides remember { SyncEngine(storage) },
-                LocalSettingsStore provides remember { MemorySettingsStore() },
+                LocalSettingsStore provides remember { MemorySettingsStore().apply { this[Settings.SCAN_QR_AUTO_SCAN] = false } },
             ) {
                 ActualMainScreen()
             }
