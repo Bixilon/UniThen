@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 
 
 @Composable
-fun Modifier.focusLoseOnTab(): Modifier {
+fun Modifier.unfocusOnTap(): Modifier {
     val focus = LocalFocusManager.current
 
     return this.pointerInput(Unit) {
