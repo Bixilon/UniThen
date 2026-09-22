@@ -10,12 +10,11 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.sync.buttons
 
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import de.bixilon.unithen.ui.sync.SyncEngineHook
@@ -35,9 +34,9 @@ fun SyncFloatingButton(hook: SyncEngineHook, icon: ImageVector, onClick: () -> U
             val progress = hook.progress
 
             if (progress.isDeterminate) {
-                CircularProgressIndicator(progress = { progress.synchonized.toFloat() / progress.total })
+                LoadingIndicator(progress = { progress.synchonized.toFloat() / progress.total })
             } else {
-                CircularProgressIndicator()
+                LoadingIndicator()
             }
         }
         Icon(icon, "sync")

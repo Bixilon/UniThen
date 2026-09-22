@@ -1,11 +1,14 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.main.checkin.scan.qr.confirm
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,7 +34,7 @@ private fun EnrolledListWarning(course: Course) {
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         if (synchronize.active) {
-            CircularProgressIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(Res.string.scan_updating_enrolled.i18n())
+            LoadingIndicator(modifier = Modifier.padding(horizontal = 16.dp)); Text(Res.string.scan_updating_enrolled.i18n())
         } else {
             Icon(Icons.Default.Warning, "", tint = Color.Yellow); Spacer(Modifier.width(16.dp)); Text(Res.string.scan_enrolled_outdated.i18n(course.fetched.formatNow()))
         }

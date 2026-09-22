@@ -10,6 +10,8 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.main.site
 
 import androidx.compose.foundation.clickable
@@ -64,7 +66,7 @@ fun AddSiteProgressDialog(url: String, cancel: () -> Unit, callback: (Site) -> U
         title = { Text(Res.string.sites_fetching_title.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator()
+                LoadingIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(Res.string.sites_fetching_description.i18n())
             }

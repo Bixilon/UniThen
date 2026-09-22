@@ -10,16 +10,15 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.auth
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +59,7 @@ fun FetchUserDetails(site: Site, authentication: Authentication, callback: (Acco
         title = { Text(Res.string.authentication_loading.i18n()) },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator()
+                LoadingIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(Res.string.authentication_fetching_user_details.i18n())
                 Text(Res.string.authentication_take_a_while.i18n(), color = MaterialTheme.colorScheme.onSurfaceVariant)

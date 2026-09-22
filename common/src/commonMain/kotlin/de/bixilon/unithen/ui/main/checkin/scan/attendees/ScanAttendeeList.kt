@@ -10,6 +10,8 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
 import androidx.compose.foundation.layout.*
@@ -130,7 +132,7 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean,
                 }
                 Box(contentAlignment = Alignment.Center) {
                     if (active) {
-                        CircularProgressIndicator()
+                        LoadingIndicator()
                     }
 
                     //  if (item.message == null) { // TODO: Remove that, there is no use for it.

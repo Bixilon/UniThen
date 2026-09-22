@@ -10,11 +10,14 @@
  * This software is not affiliated with UniNow GmbH, the provider/developer of the booking system.
  */
 
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.containers
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +34,7 @@ fun LoadingScreen(text: String, modifier: Modifier = Modifier) {
         BackButton()
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator(modifier = Modifier.size(60.dp))
+            LoadingIndicator(modifier = Modifier.size(60.dp))
             Spacer(Modifier.height(16.dp))
             Text(text, textAlign = TextAlign.Center, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -49,7 +52,7 @@ fun LoadingScreen(text: String, icon: ImageVector, modifier: Modifier = Modifier
             Spacer(Modifier.height(16.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                CircularProgressIndicator()
+                LoadingIndicator()
 
                 Spacer(Modifier.width(16.dp))
 

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3ExpressiveApi::class)
+
 package de.bixilon.unithen.ui.auth.ory
 
 import androidx.compose.foundation.layout.Spacer
@@ -83,7 +85,7 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
         val disabled = password.isBlank() || '@' !in email || auth.active
 
         Button({ auth.invoke() }, enabled = !disabled, modifier = Modifier.fillMaxWidth()) {
-            if (auth.active) CircularProgressIndicator() else Text(Res.string.auth_email_login.i18n())
+            if (auth.active) LoadingIndicator() else Text(Res.string.auth_email_login.i18n())
         }
     }
 }
