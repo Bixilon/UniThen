@@ -41,7 +41,7 @@ private enum class SyncStatus {
 }
 
 @Composable
-private fun CicleIndicator(status: SyncStatus, hide: Boolean) {
+private fun IconIndicator(status: SyncStatus, hide: Boolean) {
     var dismissed by rememberStateOf { true }
 
     LaunchedEffect(status, hide) {
@@ -113,7 +113,7 @@ fun SyncStatusIndicator(hook: SyncEngineHook, modifier: Modifier = Modifier, tex
                 RunningIndicator(status, progress)
             }
         } else {
-            CicleIndicator(status, hide)
+            IconIndicator(status, hide)
         }
     }
 }
