@@ -32,6 +32,7 @@ import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanUtil
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import kotlin.uuid.Uuid
@@ -39,6 +40,7 @@ import kotlin.uuid.Uuid
 @Composable
 private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, user: User?) {
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
     val course = rememberStorage { courses[appointment.course] }
 
     if (user == null) return ScanQrNotEnrolled(null, course, appointment)
@@ -56,7 +58,7 @@ private fun ColumnScope.ScanQrConfirmScreenContent(appointment: Appointment, use
     var error by rememberStateOf<String?>(null)
 
     if (!await && (success || error != null)) {
-        LaunchedEffect(Unit) { navigation.pop() }
+        LaunchedEffect(Unit) { navigation.pop(route) }
         return
     }
 

@@ -41,6 +41,7 @@ import de.bixilon.unithen.ui.main.courses.appointments.AppointmentDetailsScreen
 import de.bixilon.unithen.ui.main.settings.SettingsScreen
 import de.bixilon.unithen.ui.main.site.AddAccountScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
@@ -52,12 +53,13 @@ import de.bixilon.unithen.ui.util.useTime
 @Composable
 fun AppointmentPopper(appointment: Appointment) {
     val navigator = LocalNavigation.current
+    val route = LocalRoute.current
     val time = useTime()
 
     LaunchedEffect(time) {
         if (appointment.canPerformCheckIn(time)) return@LaunchedEffect
 
-        navigator.pop()
+        navigator.pop(route)
     }
 }
 

@@ -17,6 +17,7 @@ import de.bixilon.unithen.ui.containers.InfoPair
 import de.bixilon.unithen.ui.error.ErrorBox
 import de.bixilon.unithen.ui.main.checkin.scan.Contributors.isMajorContributor
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.util.TimeFormatUtil.format
 import de.bixilon.unithen.ui.util.i18n
 import unithen.common.generated.resources.*
@@ -35,9 +36,10 @@ fun ConfirmScreenWarning(icon: ImageVector, color: Color, message: String?) {
 @Composable
 fun ConfirmScreenActions(user: User?, cancel: Boolean = true, confirm: (() -> Unit)? = null) {
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
 
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Button({ navigation.pop() }, modifier = Modifier.fillMaxWidth(), enabled = cancel, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
+        Button({ navigation.pop(route) }, modifier = Modifier.fillMaxWidth(), enabled = cancel, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
             Icon(Icons.Filled.Close, "cancel")
             Text(Res.string.cancel.i18n())
         }

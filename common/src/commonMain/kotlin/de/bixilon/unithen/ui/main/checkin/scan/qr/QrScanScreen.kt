@@ -34,6 +34,7 @@ import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCode
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV1
 import de.bixilon.unithen.ui.main.checkin.scan.qr.types.ScannedQrCodeV2
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.BackButton
@@ -49,6 +50,7 @@ private fun List<AcceptedState>.canIgnore(scanned: ScannedQrCode) = when (scanne
 @Composable
 private fun QrScanScreen(appointments: List<Appointment>) {
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
 
     val haptic = useHapticFeedback()
     val storage = LocalStorage.current
@@ -81,7 +83,7 @@ private fun QrScanScreen(appointments: List<Appointment>) {
                 haptic.invoke(HapticFeedbackType.Confirm)
                 if (confirm) {
                     if (!auto) {
-                        navigation.pop()
+                        navigation.pop(route)
                     }
                     navigation.navigate(ScanQrConfirmRoute(result.appointment, result.user.uuid))
                     break
@@ -123,11 +125,13 @@ fun ScanQrAppointmentScreen(appointment: Appointment) {
 @Composable
 fun QrScanAnyScreen() {
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
+
     val time = useTime()
     val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
 
     if (appointments.isEmpty()) {
-        return navigation.pop()
+        return navigation.pop(route)
     }
 
     QrScanScreen(appointments)

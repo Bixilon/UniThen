@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.theme.checkInSuccess
 import de.bixilon.unithen.ui.util.i18n
@@ -24,8 +25,10 @@ import unithen.common.generated.resources.scan_confirm_ok_network
 
 @Composable
 fun ColumnScope.ScanQrConfirmed(user: User, appointment: Appointment) {
-    val queue = rememberStorage { checkInQueue[appointment, user] }
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
+
+    val queue = rememberStorage { checkInQueue[appointment, user] }
     ConfirmScreenWarning(Icons.Filled.CheckCircle, checkInSuccess, null)
 
     Text(Res.string.scan_confirm_ok.i18n(), textAlign = TextAlign.Center)
@@ -43,7 +46,7 @@ fun ColumnScope.ScanQrConfirmed(user: User, appointment: Appointment) {
         .defaultMinSize(minHeight = 16.dp))
 
 
-    Button({ navigation.pop() }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
+    Button({ navigation.pop(route) }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onSecondaryContainer)) {
         Icon(Icons.AutoMirrored.Filled.ArrowLeft, "back")
         Text(Res.string.back.i18n())
     }

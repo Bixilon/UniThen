@@ -19,6 +19,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalFocusManager
 import de.bixilon.kutil.cast.CastUtil.cast
 import de.bixilon.unithen.ui.util.BackHandler
+import kotlin.jvm.JvmName
 import kotlin.reflect.KClass
 
 
@@ -63,6 +64,7 @@ class Navigator(
 
                 CompositionLocalProvider(
                     LocalVisibility provides visible,
+                    LocalRoute provides frame.route,
                 ) {
                     Box(modifier = if (!visible) invisible else Modifier) {
                         frame.composable.invoke(frame.route)
@@ -93,10 +95,15 @@ class Navigator(
         stack += Frame(route, composable)
     }
 
+    @Deprecated("don't pop random routes, only the LocalRoute")
     fun pop() {
         require(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)
     }
+
+    fun pop(route: NavigationRoute) = popIf { it == route }
+
+    @JvmName("popType")
     inline fun <reified T : NavigationRoute> pop() = popIf { it is T }
 
     fun popIf(predicate: (NavigationRoute) -> Boolean) {

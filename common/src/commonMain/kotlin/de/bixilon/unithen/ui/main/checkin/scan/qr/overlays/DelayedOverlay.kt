@@ -8,6 +8,7 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.ui.main.ScanQrConfirmRoute
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.util.state.rememberDelayedState
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -17,10 +18,11 @@ import kotlin.time.Duration.Companion.seconds
 fun rememberDelayedOverlay(): MutableState<QrScanResult.SoftError?> {
     val auto by rememberSetting(Settings.SCAN_QR_AUTO_SCAN)
     val navigation = LocalNavigation.current
+    val route = LocalRoute.current
 
 
     return rememberDelayedState(1.seconds, 300.milliseconds) {
-        if (!auto) navigation.pop()
+        if (!auto) navigation.pop(route)
         navigation.navigate(ScanQrConfirmRoute(it.appointment, it.userId))
     }
 }
