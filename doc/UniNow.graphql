@@ -134,7 +134,7 @@ type Fee {
     id: ID!
     name: String!
     description: String
-    poster: Unknown
+    poster: String
 
     name_translatable: NameTranslatable
 }
@@ -179,6 +179,8 @@ type Course {
     enrolled: [EnrolledUser!]
 
     dependencies: [Unknown] # type, resource
+
+    poster: String
 }
 
 type BookingSlotResource {
@@ -396,11 +398,12 @@ input AppointmentPagination {
 }
 
 type AppointmentsPageEntry {
-    cusor: Cursor
+    cursor: Cursor
     resource: Appointment
 }
 
 type AppointmentsPageInfo {
+    end_cursor: Cursor
     has_next_page: Boolean
 }
 
