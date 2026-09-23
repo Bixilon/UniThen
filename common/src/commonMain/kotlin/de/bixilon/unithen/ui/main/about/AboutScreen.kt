@@ -37,7 +37,6 @@ import de.bixilon.unithen.ui.icons.Logo
 import de.bixilon.unithen.ui.main.FeatureFlagRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.i18n
-import de.bixilon.unithen.ui.util.rememberIsFdroid
 import de.bixilon.unithen.ui.util.verticalScrollWithBar
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.about_license
@@ -89,10 +88,6 @@ fun AboutScreen() {
                     Text("This is a DEBUG build!", color = Color.Red)
                 }
 
-
-                if (rememberIsFdroid()) {
-                    Text("Installed from F-Droid\uD83C\uDF89", color = MaterialTheme.colorScheme.onPrimaryContainer)
-                }
 
                 Text(buildAnnotatedString {
                     append("Commit: ")
