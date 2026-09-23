@@ -41,6 +41,27 @@ private fun Fallback() {
 }
 
 @Composable
+fun Instructions(url: String) {
+    Screen {
+        Text(Res.string.auth_oidc_complete.i18n(), textAlign = TextAlign.Center)
+
+        DelayedContent(1.seconds) {
+            Text(buildAnnotatedString {
+                withLink(LinkAnnotation.Url(url)) { append(url) }
+            }, textAlign = TextAlign.Center)
+        }
+
+        val foreground = rememberForeground()
+
+        if (foreground) {
+            DelayedContent(5.seconds) {
+                Fallback()
+            }
+        }
+    }
+}
+
+@Composable
 fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     val handler = LocalUriHandler.current
     var url by remember { mutableStateOf<String?>(null) }
@@ -63,19 +84,5 @@ fun OryOidcPrepareScreen(ory: OryConfig, provider: OryConfig.OryOidc) {
     }
     if (url == null) return
 
-    Screen {
-        Text(Res.string.auth_oidc_complete.i18n(), textAlign = TextAlign.Center)
-
-        Text(buildAnnotatedString {
-            withLink(LinkAnnotation.Url(url!!)) { append(url!!) }
-        }, textAlign = TextAlign.Center)
-
-        val foreground = rememberForeground()
-
-        if (foreground) {
-            DelayedContent(5.seconds) {
-                Fallback()
-            }
-        }
-    }
+    Instructions(url!!)
 }
