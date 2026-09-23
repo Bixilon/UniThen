@@ -15,6 +15,7 @@ import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.ui.AbstractComposeUiTest
 import de.bixilon.unithen.ui.main.MainRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
@@ -37,6 +38,7 @@ class ScanQrConfirmScreenTest : AbstractComposeUiTest() {
             LocalStorage provides storage,
             LocalSyncEngine provides sync,
             LocalSettingsStore provides store,
+            LocalRoute provides MainRoute,
         ) {
             ScanQrConfirmScreen(appointment, remember { userId.toUuid() })
         }
