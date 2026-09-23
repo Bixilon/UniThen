@@ -36,7 +36,7 @@ fun InfoContainer(modifier: Modifier = Modifier, horizontalAlignment: Alignment.
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(12.dp)
                 .fillMaxWidth(),
             horizontalAlignment = horizontalAlignment,
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -46,10 +46,10 @@ fun InfoContainer(modifier: Modifier = Modifier, horizontalAlignment: Alignment.
 }
 
 @Composable
-fun InfoPair(name: String, value: String) = Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+fun InfoPair(name: String, value: String) = Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
     Text(
         text = "${name}: ",
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
     )
     Text(

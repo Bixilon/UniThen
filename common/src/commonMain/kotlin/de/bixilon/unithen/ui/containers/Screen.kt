@@ -43,19 +43,19 @@ fun Screen(modifier: Modifier = Modifier, horizontalAlignment: Alignment.Horizon
 
 @Composable
 fun ScreenTitle(text: String, modifier: Modifier = Modifier) {
-    val show = catchAll { LocalNavigation.current }?.takeIf { it.size > 1 }
+    val show = catchAll { LocalNavigation.current }?.takeIf { it.size > 1 } != null
 
     var modifier = modifier
 
-    if (show == null) {
+    if (!show) {
         modifier = modifier.padding(bottom = 8.dp)
     }
 
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        if (show != null) {
+        if (show) {
             BackButton()
         }
 
-        Text(text = if (show == null) "$text:" else text, style = MaterialTheme.typography.headlineLarge)
+        Text(text = if (!show) "$text:" else text, style = MaterialTheme.typography.headlineLarge)
     }
 }

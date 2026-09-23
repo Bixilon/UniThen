@@ -15,19 +15,23 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr.confirm
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanResult
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrScanUtil
@@ -80,8 +84,14 @@ fun ScanQrConfirmScreen(appointment: Appointment, user: User?) {
     val course = rememberStorage { courses[appointment.course] }
 
 
-    Screen(horizontalAlignment = Alignment.CenterHorizontally) {
-        ScreenTitle(course.name)
+    Screen(horizontalAlignment = Alignment.CenterHorizontally, backButton = true) {
+        Text(
+            text = course.name,
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 48.dp), // dirty hack to not make it overlap with the back button
+        )
         Spacer(Modifier.height(8.dp))
 
         ScanQrConfirmScreenContent(appointment, user)
