@@ -97,6 +97,7 @@ class Navigator(
         require(stack.size > 1) { "Can not pop start element!" }
         stack.removeAt(stack.size - 1)
     }
+    inline fun <reified T : NavigationRoute> pop() = popIf { it is T }
 
     fun popIf(predicate: (NavigationRoute) -> Boolean) {
         val iterator = stack.iterator()

@@ -30,6 +30,7 @@ import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Account
 import de.bixilon.unithen.storage.types.Site
+import de.bixilon.unithen.ui.main.AuthenticationCallbackRoute
 import de.bixilon.unithen.ui.main.AuthenticationRoute
 import de.bixilon.unithen.ui.main.MainScreens
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -95,7 +96,7 @@ fun AccountSyncScreen(site: Site, authentication: Authentication) {
         }
     }
 
-    SyncEngineCompleteEffect(synchronize) { navigation.popIf { it is AuthenticationRoute }; navigation.pop() }
+    SyncEngineCompleteEffect(synchronize) { navigation.pop<AuthenticationRoute>(); navigation.pop<AuthenticationCallbackRoute>() }
 
 
     SyncStatusDialog(synchronize, Res.string.authentication_loading.i18n(), Res.string.authentication_fetching.i18n(), dismissable = false)
