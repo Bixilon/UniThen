@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import de.bixilon.kutil.exception.ExceptionUtil.catchAll
 import de.bixilon.unithen.ui.navigation.LocalNavigation
+import de.bixilon.unithen.ui.navigation.LocalRoute
 
 
 @Composable
@@ -24,7 +25,9 @@ fun BackButton(modifier: Modifier = Modifier) {
     val navigation = catchAll { LocalNavigation.current } ?: return
     if (navigation.size <= 1) return
 
-    IconButton({ navigation.pop() }, modifier) {
+    val route = LocalRoute.current
+
+    IconButton({ navigation.pop(route) }, modifier) {
         Icon(Icons.AutoMirrored.Filled.ArrowBack, "back")
     }
 }
