@@ -5,7 +5,7 @@
 1. Update version code in `app/build.gradle.kts` and in `iosApp/UniThen.xcodeproj/project.pbxproj`
 2. Create fastlane changelog
 3. Update fdroid.txt with version information (then fdroid will build and deploy it automatically)
-4. `git tag v1.XX -a` (provide changelog)
+4. `git tag v1.XX -as` (provide changelog)
 5. `git push v1.XX` and create release with all artifacts
 
 ## Building (Android)
