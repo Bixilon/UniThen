@@ -24,10 +24,10 @@ object HttpUtil {
     val USER_AGENT = "UniThen (version=${BuildInfo.VERSION})"
 
     suspend fun create(host: String, endpoint: String): HttpRequestBuilder {
-        if (host.startsWith("127.")) throw NetworkException("localhost")
         if (RuntimeInfo.debug) {
             delay(3.seconds)
         }
+        if (host.startsWith("127.")) throw NetworkException("localhost")
         val request = HttpRequestBuilder()
         request.apply {
             url {
