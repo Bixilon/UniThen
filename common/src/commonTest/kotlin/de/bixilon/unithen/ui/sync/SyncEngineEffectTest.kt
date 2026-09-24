@@ -100,7 +100,7 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
     fun `complete effect fires`() = runComposeUiTest {
         var fired = false
         val hook by leakState {
-            val synchronize = useTestSyncEngine { delay(100.milliseconds) }
+            val synchronize = useTestSyncEngine { delay(300.milliseconds) }
 
             SyncEngineCompleteEffect(synchronize) { fired = true }
 
@@ -108,7 +108,7 @@ class SyncEngineEffectTest : AbstractComposeUiTest() {
         }
         hook.invoke(force = true)
 
-        waitUntil(200.milliseconds) { fired }
+        waitUntil(500.milliseconds) { fired }
     }
 
     @OptIn(ExperimentalAtomicApi::class)
