@@ -22,18 +22,16 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.ui.containers.InfoContainer
-import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.verticalScrollWithBar
-import unithen.common.generated.resources.Res
-import unithen.common.generated.resources.scan_qr_instruction
 
 @Composable
 fun ScanInstructions(courses: Collection<Course>) {
+    val courses = courses + courses + courses + courses + courses + courses + courses + courses + courses + courses
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp)
-            .padding(top = 50.dp),
+            .padding(top = 45.dp),
         contentAlignment = Alignment.TopCenter,
     ) {
         InfoContainer(Modifier.alpha(0.7f), horizontalAlignment = Alignment.CenterHorizontally, color = MaterialTheme.colorScheme.secondaryContainer) {
@@ -47,19 +45,17 @@ fun ScanInstructions(courses: Collection<Course>) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier
-                        .heightIn(max = 300.dp)
-                        .verticalScrollWithBar(),
+                    modifier = Modifier.fillMaxWidth().heightIn(max = 150.dp)
+                        .verticalScrollWithBar()
                 ) {
                     for (course in courses) {
                         Text(
                             text = course.name,
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = if (courses.size > 5) MaterialTheme.typography.bodyMedium else MaterialTheme.typography.bodyLarge,
                         )
                     }
                 }
             }
-            Text(Res.string.scan_qr_instruction.i18n())
         }
     }
 }

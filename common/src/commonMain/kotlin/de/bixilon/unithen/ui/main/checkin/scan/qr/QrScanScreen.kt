@@ -14,12 +14,16 @@ package de.bixilon.unithen.ui.main.checkin.scan.qr
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.rememberSetting
@@ -38,8 +42,11 @@ import de.bixilon.unithen.ui.navigation.LocalRoute
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.util.BackButton
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.useHapticFeedback
 import de.bixilon.unithen.ui.util.useTime
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.scan_qr_instruction
 
 
 private fun List<AcceptedState>.canIgnore(scanned: ScannedQrCode) = when (scanned) {
@@ -107,6 +114,14 @@ private fun QrScanScreen(appointments: List<Appointment>) {
 
     SafeBox {
         BackButton()
+        Text(
+            text = Res.string.scan_qr_instruction.i18n(),
+            style = MaterialTheme.typography.headlineLarge,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 48.dp).align(Alignment.TopCenter), // dirty hack to not make it overlap with the back button
+        )
+
         val courses = rememberStorage { appointments.map { storage.courses[it.course] }.toSet() }
         ScanInstructions(courses)
 
