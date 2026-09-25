@@ -26,7 +26,6 @@ import de.bixilon.unithen.ui.util.verticalScrollWithBar
 
 @Composable
 fun ScanInstructions(courses: Collection<Course>) {
-    val courses = courses + courses + courses + courses + courses + courses + courses + courses + courses + courses
     Box(
         modifier = Modifier
             .fillMaxSize()
