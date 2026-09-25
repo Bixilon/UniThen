@@ -65,11 +65,13 @@ private fun Header(site: Site, event: Event, accounts: List<Account>) {
             color = MaterialTheme.colorScheme.onPrimaryContainer
         )
 
-        Text(
-            text = accounts.joinToString(", ") { it.fullname },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
-        )
+        if (accounts.isNotEmpty()) {
+            Text(
+                text = accounts.joinToString(", ") { it.fullname },
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
     }
 }
 
@@ -78,7 +80,7 @@ fun CourseDetailsScreen(course: Course) {
     val navigator = LocalNavigation.current
     val event = rememberStorage { events[course.event] }
     val site = rememberStorage { sites[event.site] }
-    val accounts = rememberStorage { accounts[course].sortedBy { it.lastname } }
+    val accounts = rememberStorage { if (accounts.count > 1) accounts[course].sortedBy { it.lastname } else emptyList() } // clear who's course it is
 
 
     val toast = useToast()
