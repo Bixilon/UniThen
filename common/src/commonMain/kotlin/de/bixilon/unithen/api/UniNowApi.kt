@@ -12,6 +12,7 @@
 
 package de.bixilon.unithen.api
 
+import de.bixilon.unithen.api.errors.NetworkException
 import de.bixilon.unithen.api.graphql.http.AuthenticationException
 import de.bixilon.unithen.api.graphql.http.GraphQlException
 import de.bixilon.unithen.api.graphql.http.GraphQlRequest
@@ -100,6 +101,12 @@ open class UniNowApi(
         if (graphql.errors != null && graphql.errors.isNotEmpty()) {
             if (graphql.errors.size == 1 && graphql.errors.first().message == "unauthenticated") {
                 throw AuthenticationException("GraphQl: Not authenticated!", host)
+            }
+            if (graphql.errors.any {
+                    val message = it.message.lowercase()
+                    return@any "http fetch failed" in message || "subgraph response does not contain" in message || "bad gateway" in message
+                }) {
+                throw NetworkException(cause = GraphQlException(graphql.errors))
             }
 
             throw GraphQlException(graphql.errors)
