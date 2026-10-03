@@ -66,6 +66,7 @@ data class SiteDetails(
                 .getElementsByTag("title")
                 .first()?.text() ?: throw IllegalStateException("Can not extract title!")
 
+            if ("uninow queue" in name.lowercase()) throw IllegalStateException("UniNow Queue for currently is active!")
 
 
             parsed.body().getElementsMatchingText("in Magdeburg by").firstOrNull() ?: throw IllegalStateException("Not a uni now page (not in Magdeburg)!")
