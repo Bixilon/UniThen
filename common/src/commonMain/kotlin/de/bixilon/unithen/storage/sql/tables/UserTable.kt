@@ -88,7 +88,7 @@ class UserTable(
 
         val filter = time and canceled and tutor
 
-        val query = select(UserTable)
+        val query = select(distinct = true, UserTable)
             .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
             .letIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
             .where(SqlFilter().exists(select("1").from(AppointmentTable).where("course_enrolled.course = appointments.course").and(filter)))

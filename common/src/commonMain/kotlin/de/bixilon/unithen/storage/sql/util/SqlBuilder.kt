@@ -33,9 +33,9 @@ object SqlBuilder {
         }
     }
 
-    class Select internal constructor(val fields: List<String>) {
+    class Select internal constructor(val distinct: Boolean = false, val fields: List<String>) {
 
-        infix fun from(table: String) = From(fields, listOf(table))
+        infix fun from(table: String) = From(distinct, fields, listOf(table))
         infix fun from(table: SqlTableSchema<*>) = from(table.table)
     }
 
@@ -50,11 +50,12 @@ object SqlBuilder {
     }
 
     class From internal constructor(
+        private val distinct: Boolean,
         private val fields: List<String>,
         private val from: List<String>,
     ) : Whereable, Executable, Joinable, Orderable, Limitable {
 
-        override fun toSql() = SqlStatement("SELECT ${fields.joinToString(",")} FROM ${from.joinToString(",")}", listOf()) // TODO: SQL injection possible?
+        override fun toSql() = SqlStatement("SELECT ${if (distinct) "DISTINCT " else ""}${fields.joinToString(",")} FROM ${from.joinToString(",")}", listOf()) // TODO: SQL injection possible?
     }
 
     class InnerJoin internal constructor(
@@ -147,5 +148,6 @@ object SqlBuilder {
 
     fun insert(table: SqlTableSchema<*>, vararg data: DataPair<*>) = Insert(table.table, data.map { it.first.name }, listOf(data.map { it.second }.toList()))
 
-    fun select(schema: SelectableSqlTableSchema<*>) = Select(schema.columns.map { it.quantifier }) from schema.table
+    fun select(schema: SelectableSqlTableSchema<*>) = Select(false, schema.columns.map { it.quantifier }) from schema.table
+    fun select(distinct: Boolean, schema: SelectableSqlTableSchema<*>) = Select(distinct, schema.columns.map { it.quantifier }) from schema.table
 }

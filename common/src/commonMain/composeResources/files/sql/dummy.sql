@@ -31,6 +31,7 @@ INSERT INTO accounts(id, site, uuid, firstname, lastname, fetched, authenticatio
 INSERT INTO courses(id, site, event, uuid, name) VALUES(901, 901, 901, "00000000-0000-0000-0000-000000000001", "First course");
 INSERT INTO courses(id, site, event, uuid, name) VALUES(902, 901, 901, "00000000-0000-0000-0000-000000000002", "Second course");
 INSERT INTO courses(id, site, event, uuid, name) VALUES(903, 902, 902, "00000000-0000-0000-0000-000000000001", "First course B");
+INSERT INTO courses(id, site, event, uuid, name) VALUES (905, 901, 901, "00000000-0000-0000-0000-000000000003", "Third course");
 
 INSERT INTO courses(id, site, event, uuid, name) VALUES(904, 902, 902, "00000000-0000-0000-0000-000000000005", "Unreferenced course");
 
@@ -40,9 +41,11 @@ INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(901, 901
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(902, 902, "00000000-0000-0000-0000-000000000002", 1769446900, 1769446940, "Somewhere");
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(903, 902, "00000000-0000-0000-0000-000000000003", 1769446950, 1769446980, "Somewhere");
 INSERT INTO appointments(id, course, uuid, start, end, location) VALUES(904, 901, "00000000-0000-0000-0000-000000000004", 10, 60, "Somewhere");
+INSERT INTO appointments(id, course, uuid, start, end, location) VALUES (905, 905, "00000000-0000-0000-0000-000000000005", 1767312123, 1893542523, "Somewhere");
 
 
 INSERT INTO account_courses(account, course, tutor) VALUES(901, 901, 1);
+INSERT INTO account_courses(account, course, tutor) VALUES (901, 905, 1);
 INSERT INTO account_courses(account, course, tutor) VALUES(901, 902, 0);
 INSERT INTO account_courses(account, course, tutor) VALUES(902, 903, 0);
 INSERT INTO account_courses(account, course, tutor) VALUES(903, 901, 0);
@@ -64,8 +67,14 @@ INSERT INTO course_enrolled(user, course) VALUES (911, 901);
 
 INSERT INTO course_enrolled(user, course) VALUES(901, 902);
 
+INSERT INTO course_enrolled(user, course) VALUES (902, 905);
+INSERT INTO course_enrolled(user, course) VALUES (903, 905);
+INSERT INTO course_enrolled(user, course) VALUES (904, 905);
+
 
 INSERT INTO checkin_queue(user, appointment, time, message, sync) VALUES(904, 901, 0, "not_approved", 0);
 INSERT INTO checkin_queue(user, appointment, time, sync) VALUES (911, 901, 0, 0);
 INSERT INTO appointment_attendees(user, appointment, attempt) VALUES(906, 901,  "b6b766b2-de38-4305-8f09-b23efc6aebd9");
 INSERT INTO checkin_queue(user, appointment, time, attempt, sync) VALUES(907, 901, 0, "b6b766b2-de38-4305-8f09-b23efc6aebda", 0);
+
+INSERT INTO appointment_attendees(user, appointment, attempt) VALUES (902, 905, "b6b766b2-de38-4305-8f09-b23efc6aebd9");

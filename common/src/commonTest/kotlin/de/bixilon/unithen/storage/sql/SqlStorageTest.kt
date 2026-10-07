@@ -358,6 +358,18 @@ class SqlStorageTest {
     }
 
     @Test
+    fun `get enrolled user search with search`() {
+        val storage = dummy()
+        val appointment = storage.appointments[901]
+
+        var users = storage.users.getAppointmenUsers(appointment.start, appointment.end, false, true, "leon", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(906), users.map { it.id })
+
+        users = storage.users.getAppointmenUsers(appointment.start, appointment.end, false, true, "kur", AttendeeSort.LASTNAME, Order.ASC)
+        assertEquals(listOf(906), users.map { it.id })
+    }
+
+    @Test
     fun `get check in queue without search`() {
         val storage = dummy()
         val appointment = storage.appointments[901]

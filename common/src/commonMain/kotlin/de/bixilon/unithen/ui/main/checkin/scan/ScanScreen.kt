@@ -40,7 +40,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.AppointmentCard
-import de.bixilon.unithen.ui.main.checkin.scan.qr.search.UserSearchScreen
+import de.bixilon.unithen.ui.main.checkin.scan.attendees.UserSearchScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync

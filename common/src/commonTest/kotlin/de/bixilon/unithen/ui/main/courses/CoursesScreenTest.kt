@@ -34,7 +34,7 @@ class CoursesScreenTest : AbstractComposeUiTest() {
         }
 
 
-        waitUntilText("Test Event (a) (2)").assertIsDisplayed()
+        waitUntilText("Test Event (a) (3)").assertIsDisplayed()
         waitUntilText("First course", substring = false).assertIsDisplayed()
         waitUntilText("Unreferenced course", substring = false).assertIsDisplayed()
     }

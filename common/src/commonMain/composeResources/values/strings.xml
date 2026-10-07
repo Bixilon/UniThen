@@ -64,6 +64,7 @@
     <string name="scan_error_check_out_pending">Already checked in (checkout pending...)</string>
     <string name="scan_error_rejected">Rejected by server!</string>
     <string name="scan_error_rejected_message">Rejected: %1$s</string>
+    <string name="scan_users_title">Search for users</string>
 
     <string name="scan_confirm_ok">User successfully checked in!</string>
     <string name="scan_confirm_ok_network">Well, internet is broken, but should be good to go!</string>

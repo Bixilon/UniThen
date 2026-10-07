@@ -106,6 +106,28 @@ class SyncEngineContext(
 
     inner class Enrolled {
 
+        suspend fun sync(courses: List<Course>, force: Boolean = this@SyncEngineContext.force) = coroutineScope {
+            if (courses.isEmpty()) return@coroutineScope
+
+            val now = Clock.System.now()
+
+            progress.addTotal(courses.size)
+
+            for (course in courses) {
+                if (!force && !course.isEnrolledStale(now)) {
+                    progress.addSkipped()
+                    continue
+                }
+                val account = storage.accounts.getTutorAccount(course)
+                if (account == null) {
+                    progress.addSkipped()
+                    continue
+                }
+
+                async { sync(course, force) }
+            }
+        }
+
         suspend fun sync(course: Course, force: Boolean = this@SyncEngineContext.force) {
             val account = storage.accounts.getTutorAccount(course) ?: return
             if (!force && !course.isEnrolledStale()) return

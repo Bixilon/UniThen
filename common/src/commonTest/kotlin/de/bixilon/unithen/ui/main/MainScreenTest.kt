@@ -79,7 +79,7 @@ class MainScreenTest : AbstractComposeUiTest() {
         withMockedScreen()
 
         waitUntilText("Scan", substring = false).performClick()
-        waitUntilText("Attendees (").assertIsDisplayed()
+        waitUntilText("First course").assertIsDisplayed()
     }
 
     @Test

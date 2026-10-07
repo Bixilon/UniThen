@@ -1,4 +1,4 @@
-package de.bixilon.unithen.ui.main.checkin.scan.qr.search
+package de.bixilon.unithen.ui.main.checkin.scan.attendees
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,7 +10,9 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,15 +32,15 @@ import de.bixilon.unithen.ui.containers.SafeBox
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.UserFilterX
-import de.bixilon.unithen.ui.main.checkin.scan.attendees.rememberUserFilter
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
+import de.bixilon.unithen.ui.main.checkin.scan.qr.QrUpdateIndicator
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
 import de.bixilon.unithen.ui.sync.useSyncEngine
+import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.unfocusOnTap
 import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.util.useToast
@@ -46,6 +48,7 @@ import de.bixilon.unithen.ui.util.verticalScroll
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.scan_error_rejected_message
+import unithen.common.generated.resources.scan_users_title
 
 @Composable
 private fun UserCourseEntry(user: User, appointment: Appointment) {
@@ -67,7 +70,7 @@ private fun UserCourseEntry(user: User, appointment: Appointment) {
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        Box {
+        Box(contentAlignment = Alignment.Center) {
             when {
                 attendee -> {
                     val toast = useToast()
@@ -142,29 +145,44 @@ fun UserSearchScreen() {
 
     val time = useTime()
     val appointments = rememberStorageAsync(time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) } ?: return
+    val courses = rememberStorageAsync { appointments.map { courses[it.course] } } ?: return
 
     val users = rememberStorageAsync(appointments, filter.search, filter.sort, filter.order) { users.getAppointmenUsers(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true, filter.search, filter.sort, filter.order) }
 
 
-    // TODO: Update enrolled/attendees
+    val synchronize = useSyncEngine {
+        async { this.enrolled.sync(courses) }
+        async { this.attendees.sync(appointments) }
+    }
+
+
+    LaunchedEffect(Unit) {
+        if (appointments.any { it.isAttendeesStale() } || courses.any { it.isEnrolledStale() }) {
+            synchronize.invoke()
+        }
+    }
 
     Screen(Modifier.unfocusOnTap()) {
-        ScreenTitle("Search for users")
+        ScreenTitle(Res.string.scan_users_title.i18n())
 
         UserFilterX(filter)
 
-        val state = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().verticalScroll(state),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            state = state,
-        ) {
-            item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
-            users?.let { users -> itemsIndexed(items = users, key = { _, it -> it.id }) { index, it -> UserCard(modifier(), it, appointments, index % 2 != 0) } }
+        PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke(force = true) }) {
+            val state = rememberLazyListState()
+            LazyColumn(
+                modifier = Modifier.fillMaxSize().verticalScroll(state),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                state = state,
+            ) {
+                item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
+                users?.let { users -> itemsIndexed(items = users, key = { _, it -> it.id }) { index, it -> UserCard(modifier(), it, appointments, index % 2 != 0) } }
+            }
         }
     }
 
     SafeBox {
+        QrUpdateIndicator(Modifier.align(Alignment.TopEnd).padding(4.dp), appointments)
+
         FloatingActionButtons {
             var search by rememberSetting(Settings.SCAN_USER_SEARCH)
 
