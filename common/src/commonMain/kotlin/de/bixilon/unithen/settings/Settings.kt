@@ -23,6 +23,8 @@ object Settings {
     val SCAN_CONFIRMATION_SCREEN = Setting("scan_confirmation_screen", false)
     val SCAN_ALLOW_OFFLINE = Setting("scan_allow_offline", true)
 
+    val SCAN_USER_SEARCH = Setting("scan_user_search", false)
+
     val ENTRYPOINT = EnumSetting("entrypoint", MainScreens.COURSES, MainScreens)
 
     val ATTENDEE_ORDER = EnumSetting("attendee_order", Order.ASC, Order)

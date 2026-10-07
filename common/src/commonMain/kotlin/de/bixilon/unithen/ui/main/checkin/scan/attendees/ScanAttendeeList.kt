@@ -133,11 +133,9 @@ private fun QueueCard(modifier: Modifier, item: CheckInQueue, readonly: Boolean,
                         CircularProgressIndicator()
                     }
 
-                    //  if (item.message == null) { // TODO: Remove that, there is no use for it.
-                    IconButton({
-                        storage.checkInQueue.delete(appointment, user)
-                    }, enabled = !readonly) { Icon(Icons.Filled.Clear, "remove") }
-                    //     }
+                    IconButton({ storage.checkInQueue.delete(appointment, user) }, enabled = !readonly) {
+                        Icon(Icons.Filled.Clear, "remove")
+                    }
                 }
             }
         }

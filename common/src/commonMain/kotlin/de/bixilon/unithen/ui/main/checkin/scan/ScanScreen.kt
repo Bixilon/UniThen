@@ -20,11 +20,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import de.bixilon.unithen.settings.Settings
 import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.settings.rememberSetting
@@ -38,6 +40,7 @@ import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.AppointmentCard
+import de.bixilon.unithen.ui.main.checkin.scan.qr.search.UserSearchScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
@@ -49,7 +52,7 @@ import unithen.common.generated.resources.scan_choose_appointment_title
 
 
 @Composable
-private fun ChooseAppointment(appointments: List<Appointment>) {
+private fun ChooseAppointmentScreen(appointments: List<Appointment>) {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 
@@ -73,6 +76,12 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 
     SafeBox {
         FloatingActionButtons {
+            var search by rememberSetting(Settings.SCAN_USER_SEARCH)
+            FloatingActionButton({ search = true }) {
+                Icon(Icons.Filled.Search, "search")
+            }
+
+
             if (isSettingSupported(SCAN_QR_AUTO_SCAN)) {
                 FloatingActionButton({ navigation.navigate(ScanAnyRoute) }) {
                     Icon(Icons.Filled.QrCodeScanner, "scan")
@@ -85,6 +94,8 @@ private fun ChooseAppointment(appointments: List<Appointment>) {
 @Composable
 fun CheckInScanScreen() {
     var scanned by remember { mutableStateOf(false) }
+    var search by rememberSetting(Settings.SCAN_USER_SEARCH)
+
     val navigation = LocalNavigation.current
 
     val autoScan by rememberSetting(SCAN_QR_AUTO_SCAN)
@@ -98,11 +109,13 @@ fun CheckInScanScreen() {
 
     val appointments = rememberStorageAsync(time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
 
+    //  return UserSearchScreen() // TODO
 
     when (appointments?.size) {
         null -> Unit // TODO: Loader
         0 -> ScanNoAppointments()
         1 -> ScanAppointmentScreen(appointments.first())
-        else -> ChooseAppointment(appointments)
+        else if !search -> ChooseAppointmentScreen(appointments)
+        else if search -> UserSearchScreen()
     }
 }

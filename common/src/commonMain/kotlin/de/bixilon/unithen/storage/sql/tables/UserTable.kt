@@ -17,10 +17,17 @@ import de.bixilon.unithen.storage.Key
 import de.bixilon.unithen.storage.sql.SQLiteHelper
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.SqlTable
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable.Companion.course
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable.Companion.end
+import de.bixilon.unithen.storage.sql.tables.AppointmentTable.Companion.start
 import de.bixilon.unithen.storage.sql.util.SelectableSqlTableSchema
-import de.bixilon.unithen.storage.sql.util.SqlBuilder
+import de.bixilon.unithen.storage.sql.util.SqlBuilder.select
 import de.bixilon.unithen.storage.sql.util.SqlFilter
 import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.eq
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.gt
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNotNull
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.isNull
+import de.bixilon.unithen.storage.sql.util.SqlFilter.Companion.lt
 import de.bixilon.unithen.storage.sql.util.SqlTableSchema.Companion.column
 import de.bixilon.unithen.storage.sql.util.UserComparator.Companion.sort
 import de.bixilon.unithen.storage.types.Appointment
@@ -29,6 +36,7 @@ import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.AttendeeSort
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.Order
+import kotlin.time.Instant
 import kotlin.uuid.Uuid
 
 class UserTable(
@@ -69,8 +77,32 @@ class UserTable(
         return storage.query("SELECT ${columns.joinToString(",")} FROM $table INNER JOIN appointment_attendees ON appointment_attendees.user = $table.id WHERE appointment = ?", appointment.id) { it.collectAll() }
     }
 
+    fun getAppointmenUsers(from: Instant, to: Instant, canceled: Boolean? = null, tutor: Boolean? = null, search: String, sort: AttendeeSort, order: Order): List<User> {
+        val canceled = canceled?.let { if (it) AppointmentTable.canceled.isNotNull() else AppointmentTable.canceled.isNull() }
+        val tutor = tutor?.let {
+            SqlFilter.exists(select("1").from(AccountCourses)
+                .where((AccountCourses.tutor eq it) and (course eq AccountCourses.course)))
+        }
+
+        val time = ((end lt from) or (start gt to)).not()
+
+        val filter = time and canceled and tutor
+
+        val query = select(UserTable)
+            .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
+            .letIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
+            .where(SqlFilter().exists(select("1").from(AppointmentTable).where("course_enrolled.course = appointments.course").and(filter)))
+            .letIf(search.isNotBlank()) { and(SqlFilter("users_fts.fullname MATCH ?", "*${ftsEscape(search)}*")) }
+            .order(
+                sort.field to order.sql,
+                AttendeeSort.next(sort).field to order.sql,
+            )
+
+        return storage.query(query) { it.collectAll() }.sort(sort, order)
+    }
+
     fun getAttendees(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<User> {
-        val query = SqlBuilder.select(UserTable)
+        val query = select(UserTable)
             .innerJoin("appointment_attendees", "appointment_attendees.user = $table.id")
             .letIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
             .where(SqlFilter("appointment = ?", appointment.id))
@@ -85,7 +117,7 @@ class UserTable(
     }
 
     fun getEnrolledNotCheckedIn(appointment: Appointment, search: String, sort: AttendeeSort, order: Order): List<User> {
-        val query = SqlBuilder.select(UserTable)
+        val query = select(UserTable)
             .innerJoin("course_enrolled", "course_enrolled.user = $table.id")
             .letIf(search.isNotBlank()) { innerJoin("users_fts", "$table.id = users_fts.docid") }
             .where(SqlFilter("course = ?", appointment.course))
