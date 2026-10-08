@@ -8,6 +8,8 @@ import de.bixilon.unithen.settings.store.LocalSettingsStore
 import de.bixilon.unithen.settings.store.MemorySettingsStore
 import de.bixilon.unithen.storage.sql.SqlStorage
 import de.bixilon.unithen.storage.sql.dummy
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
+import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
 import de.bixilon.unithen.sync.SyncEngine
 import de.bixilon.unithen.ui.AbstractComposeUiTest
 import de.bixilon.unithen.ui.main.MainRoute
@@ -15,7 +17,9 @@ import de.bixilon.unithen.ui.main.checkin.scan.attendees.UserSearchScreen
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.navigation.Navigator
 import de.bixilon.unithen.ui.storage.LocalStorage
+import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
+import de.bixilon.unithen.ui.util.useTime
 import de.bixilon.unithen.ui.waitUntilText
 import de.bixilon.unithen.ui.waitUntilTextGone
 import kotlin.test.Test
@@ -32,7 +36,11 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
                 LocalNavigation provides remember { Navigator(MainRoute) },
                 LocalSettingsStore provides remember { MemorySettingsStore() },
             ) {
-                UserSearchScreen()
+                val time = useTime()
+                val appointments = rememberStorage { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
+
+
+                UserSearchScreen(appointments)
             }
         }
     }

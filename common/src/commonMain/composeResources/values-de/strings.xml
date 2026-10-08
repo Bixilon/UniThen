@@ -145,4 +145,6 @@
     <string name="auth_exchanging">Token wird ausgetauscht...</string>
     <string name="auth_oidc_loading">Browser wird für oidc geöffnet...</string>
     <string name="auth_oidc_complete">Bitte fahre in deinem Browser mit oidc fort!</string>
+
+    <string name="loading">Laden...</string>
 </resources>

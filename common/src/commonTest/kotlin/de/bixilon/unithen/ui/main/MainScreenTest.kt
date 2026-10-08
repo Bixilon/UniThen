@@ -71,7 +71,7 @@ class MainScreenTest : AbstractComposeUiTest() {
         withMockedScreen()
 
         waitUntilText("Ticket", substring = false).performClick()
-        waitUntilText("Choose an account").assertIsDisplayed()
+        waitUntilText("Choose account").assertIsDisplayed()
     }
 
     @Test

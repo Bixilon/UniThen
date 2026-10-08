@@ -24,9 +24,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import de.bixilon.unithen.ui.util.BackButton
+import de.bixilon.unithen.ui.util.i18n
+import unithen.common.generated.resources.Res
+import unithen.common.generated.resources.loading
 
 @Composable
-fun LoadingScreen(text: String, modifier: Modifier = Modifier) {
+fun LoadingScreen(text: String = Res.string.loading.i18n(), modifier: Modifier = Modifier) {
     SafeBox(modifier, contentAlignment = Alignment.Center) {
         BackButton()
 

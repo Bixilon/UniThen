@@ -33,10 +33,7 @@ import de.bixilon.unithen.settings.rememberSetting
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_EARLY_DURATION
 import de.bixilon.unithen.storage.types.Appointment.Companion.CHECKIN_LATE_DURATION
-import de.bixilon.unithen.ui.containers.FloatingActionButtons
-import de.bixilon.unithen.ui.containers.SafeBox
-import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.ScanAnyRoute
 import de.bixilon.unithen.ui.main.ScanAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.present.AppointmentCard
@@ -109,13 +106,11 @@ fun CheckInScanScreen() {
 
     val appointments = rememberStorageAsync(time) { appointments.getInRange(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true) }
 
-    //  return UserSearchScreen() // TODO
-
     when (appointments?.size) {
-        null -> Unit // TODO: Loader
+        null -> LoadingScreen()
         0 -> ScanNoAppointments()
         1 -> ScanAppointmentScreen(appointments.first())
         else if !search -> ChooseAppointmentScreen(appointments)
-        else if search -> UserSearchScreen()
+        else if search -> UserSearchScreen(appointments)
     }
 }

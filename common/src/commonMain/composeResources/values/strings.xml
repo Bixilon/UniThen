@@ -43,9 +43,9 @@
     <string name="appointment_end">End</string>
     <string name="appointment_location">Location</string>
     <string name="present_show_entrance">Show this QR code at the entrance</string>
-    <string name="present_choose_account_title">Choose an account</string>
-    <string name="present_choose_appointment_title">Choose an appointment</string>
-    <string name="scan_choose_appointment_title">Choose an appointment</string>
+    <string name="present_choose_account_title">Choose account</string>
+    <string name="present_choose_appointment_title">Choose appointment</string>
+    <string name="scan_choose_appointment_title">Choose appointment</string>
     <string name="scan_no_account_message">No account</string>
     <string name="scan_no_account_title">No account available for check in?</string>
     <string name="scan_synchronizing_attendees">Synchronizing...</string>
@@ -64,7 +64,7 @@
     <string name="scan_error_check_out_pending">Already checked in (checkout pending...)</string>
     <string name="scan_error_rejected">Rejected by server!</string>
     <string name="scan_error_rejected_message">Rejected: %1$s</string>
-    <string name="scan_users_title">Search for users</string>
+    <string name="scan_users_title">Search users</string>
 
     <string name="scan_confirm_ok">User successfully checked in!</string>
     <string name="scan_confirm_ok_network">Well, internet is broken, but should be good to go!</string>
@@ -164,4 +164,6 @@
     <string name="auth_exchanging">Exchaning token...</string>
     <string name="auth_oidc_loading">Opening browser for oidc...</string>
     <string name="auth_oidc_complete">Please complete oidc in your browser!</string>
+
+    <string name="loading">Loading...</string>
 </resources>
