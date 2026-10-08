@@ -151,9 +151,12 @@ private fun Content(appointments: List<Appointment>, courses: List<Course>, user
     PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke(force = true) }) {
         val state = rememberLazyListState()
         LazyColumn(
-            modifier = Modifier.fillMaxSize().verticalScroll(state),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(state),
             state = state,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = PaddingValues(bottom = 150.dp),
         ) {
             item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
             itemsIndexed(items = users, key = { _, it -> it.id }) { index, it -> UserCard(modifier(), it, appointments, courses, index % 2 != 0) }
