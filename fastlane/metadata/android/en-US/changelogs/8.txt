@@ -1,0 +1,3 @@
+This release contains various improvements:
+  - Search for users (across multiple courses)
+  - Minor visual improvements
