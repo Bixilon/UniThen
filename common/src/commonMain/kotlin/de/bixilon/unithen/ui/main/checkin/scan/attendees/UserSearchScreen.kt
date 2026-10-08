@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.QrCodeScanner
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import de.bixilon.unithen.storage.types.Course
 import de.bixilon.unithen.storage.types.User
 import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.ScanAnyRoute
+import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
 import de.bixilon.unithen.ui.main.checkin.scan.qr.QrUpdateIndicator
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -38,12 +40,18 @@ import de.bixilon.unithen.ui.storage.LocalStorage
 import de.bixilon.unithen.ui.storage.rememberStorage
 import de.bixilon.unithen.ui.storage.rememberStorageAsync
 import de.bixilon.unithen.ui.sync.LocalSyncEngine
+import de.bixilon.unithen.ui.sync.buttons.SyncFloatingButton
+import de.bixilon.unithen.ui.sync.status.SyncStatusDialog
+import de.bixilon.unithen.ui.sync.useRepeatedSyncEngine
 import de.bixilon.unithen.ui.sync.useSyncEngine
 import de.bixilon.unithen.ui.util.*
 import org.jetbrains.compose.resources.getString
 import unithen.common.generated.resources.Res
 import unithen.common.generated.resources.scan_error_rejected_message
+import unithen.common.generated.resources.scan_synchronizing_attendees
 import unithen.common.generated.resources.scan_users_title
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 private fun UserCourseEntry(user: User, appointment: Appointment) {
@@ -176,6 +184,13 @@ fun UserSearchScreen(appointments: List<Appointment>) {
     val users = rememberStorageAsync(appointments, filter.search, filter.sort, filter.order) { users.getAppointmenUsers(time - CHECKIN_LATE_DURATION, time + CHECKIN_EARLY_DURATION, canceled = false, tutor = true, filter.search, filter.sort, filter.order) }
 
 
+    val pending = rememberStorageAsync(appointments) { checkInQueue.getCount(appointments) } ?: 0
+    val synchronize = useRepeatedSyncEngine(SYNC_BACKOFF_NORMAL + 1.minutes) {
+        queue.sync(appointments)
+    }
+
+    val dialog = SyncStatusDialog(synchronize, Res.string.scan_synchronizing_attendees.i18n(), Res.string.scan_synchronizing_attendees.i18n(), manual = true)
+
 
     Screen(Modifier.unfocusOnTap()) {
         ScreenTitle(Res.string.scan_users_title.i18n())
@@ -193,6 +208,12 @@ fun UserSearchScreen(appointments: List<Appointment>) {
         QrUpdateIndicator(Modifier.align(Alignment.TopEnd).padding(4.dp), appointments)
 
         FloatingActionButtons {
+            if (pending > 0) {
+                DelayedContent(1.seconds) {
+                    SyncFloatingButton(synchronize, Icons.Filled.Sync) { dialog.show() }
+                }
+            }
+
             var search by rememberSetting(Settings.SCAN_USER_SEARCH)
 
             FloatingActionButton({ search = false }) {

@@ -47,7 +47,6 @@
     <string name="present_choose_appointment_title">Choose appointment</string>
     <string name="scan_choose_appointment_title">Choose appointment</string>
     <string name="scan_no_account_message">No account</string>
-    <string name="scan_no_account_title">No account available for check in?</string>
     <string name="scan_synchronizing_attendees">Synchronizing...</string>
     <string name="search_placeholder">Search...</string>
     <string name="sort_firstname">Firstname</string>

@@ -104,6 +104,9 @@ class CheckInQueueTable(
             SqlBuilder.select(SqlBuilder.Aggregations.Count) from CheckInQueueTable where (CheckInQueueTable.appointment eq appointment.id))
         { it.collectIntAggregation() }
     }
+    fun getCount(appointments: List<Appointment>): Int {
+        return appointments.sumOf { getCount(it) } // TODO: Optimize
+    }
 
 
     fun take(appointment: Appointment? = null, force: Boolean = false): CheckInQueue? {

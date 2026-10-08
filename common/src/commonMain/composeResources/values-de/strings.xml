@@ -42,7 +42,6 @@
     <string name="present_choose_appointment_title">Wähle einen Termin</string>
     <string name="scan_choose_appointment_title">Wähle einen Termin</string>
     <string name="scan_no_account_message">Kein Konto!</string>
-    <string name="scan_no_account_title">Kein Konto für den Check In?</string>
     <string name="scan_synchronizing_attendees">Synchronisiere...</string>
     <string name="search_placeholder">Suchen...</string>
     <string name="sort_firstname">Vorname</string>

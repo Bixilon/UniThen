@@ -22,7 +22,6 @@ import de.bixilon.unithen.settings.Settings.SCAN_QR_AUTO_SCAN
 import de.bixilon.unithen.settings.isSettingSupported
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.ui.containers.*
-import de.bixilon.unithen.ui.error.SimpleErrorScreen
 import de.bixilon.unithen.ui.main.ScanQrAppointmentRoute
 import de.bixilon.unithen.ui.main.checkin.scan.CheckInUtil.SYNC_BACKOFF_NORMAL
 import de.bixilon.unithen.ui.main.checkin.scan.attendees.ScanAttendeeList
@@ -46,13 +45,7 @@ fun ScanAppointmentScreen(appointment: Appointment, info: Boolean = false) {
     val storage = LocalStorage.current
 
     val course = storage.courses[appointment.course]
-    val account = storage.accounts.getTutorAccount(appointment)
 
-
-    if (account == null) {
-        SimpleErrorScreen(Res.string.scan_no_account_message.i18n(), Res.string.scan_no_account_title.i18n())
-        return
-    }
 
     val time = useTime()
     val canSync = appointment.canSyncCheckIn(time)

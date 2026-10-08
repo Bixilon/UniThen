@@ -223,6 +223,10 @@ class SyncEngineContext(
 
     inner class Queue {
 
+        suspend fun sync(appointments: List<Appointment>, force: Boolean = this@SyncEngineContext.force) {
+            appointments.forEach { sync(it, force) }
+        }
+
         suspend fun sync(appointment: Appointment, force: Boolean = this@SyncEngineContext.force) = coroutineScope {
             var started = 0
             while (true) {
