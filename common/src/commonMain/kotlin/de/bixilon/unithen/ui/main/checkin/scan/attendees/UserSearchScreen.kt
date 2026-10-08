@@ -54,8 +54,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
-private fun UserCourseEntry(user: User, appointment: Appointment) {
-    val course = rememberStorage { courses[appointment.course] }
+private fun UserCourseEntry(user: User, appointment: Appointment, course: Course) {
     if (!rememberStorage { users.isEnrolled(course, user) }) return
 
 
@@ -68,6 +67,7 @@ private fun UserCourseEntry(user: User, appointment: Appointment) {
 
     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
         Text(
+            modifier = Modifier.weight(1.0f),
             text = course.name,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurface,
@@ -128,15 +128,16 @@ fun UserCard(modifier: Modifier, user: User, appointments: List<Appointment>, co
     ) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
             Text(
-                modifier = Modifier.padding(12.dp).weight(1.0f),
+                modifier = Modifier.padding(12.dp).weight(1.0f), // TODO: That forces the course name to only be half width long
                 text = user.fullname,
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Center) {
-                for (appointment in appointments) {
-                    UserCourseEntry(user, appointment)
+            Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.Center, modifier = Modifier.weight(1.0f)) {
+                for ((index, appointment) in appointments.withIndex()) {
+                    val course = courses[index]
+                    UserCourseEntry(user, appointment, course)
                 }
             }
         }

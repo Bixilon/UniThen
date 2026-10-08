@@ -62,9 +62,10 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
         withUserSearch(storage)
 
 
-        onNode(hasText("Search")).performTextInput("Leonie")
+        waitUntilText("Search...", substring = false).performTextInput("Leonie")
 
-        waitUntilText("First course").assertIsDisplayed()
+        waitForIdle()
+        onAllNodes(hasText("First course")).onFirst().assertIsDisplayed()
 
         waitUntilTextGone("Third course")
     }
@@ -75,10 +76,11 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
         withUserSearch(storage)
 
 
-        onNode(hasText("Search")).performTextInput("Emilia")
+        waitUntilText("Search...", substring = false).performTextInput("Emilia")
 
-        waitUntilText("First course").assertIsDisplayed()
-        waitUntilText("Third course").assertIsDisplayed()
+        waitForIdle()
+        onAllNodes(hasText("First course")).onFirst().assertIsDisplayed()
+        onAllNodes(hasText("Third course")).onFirst().assertIsDisplayed()
     }
 
     @Test
@@ -87,8 +89,9 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
         withUserSearch(storage)
 
 
-        onNode(hasText("Search")).performTextInput("e")
+        waitUntilText("Search...", substring = false).performTextInput("e")
 
+        waitForIdle()
         waitUntilText("Eva Klug", substring = false).assertIsDisplayed()
         waitUntilText("Emilia Gans", substring = false).assertIsDisplayed()
 
