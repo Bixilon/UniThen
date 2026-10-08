@@ -108,7 +108,7 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
         withUserSearch(storage)
 
 
-        waitUntilText("Emilia Gans", substring = false).onParent().onChildAt(1).onChildAt(0).onChildAt(0).performClick()
+        waitUntilText("Emilia Gans", substring = false).onParent().onChildAt(2).performClick()
         waitForIdle()
 
         assertNotNull(storage.checkInQueue[appointment, user])
@@ -118,11 +118,11 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
     fun `tick off enrolled user second course and add to checkin queue`() = runComposeUiTest {
         val storage = dummy()
         val appointment = storage.appointments[905]
-        val user = storage.users[905]
+        val user = storage.users[903]
         withUserSearch(storage)
 
 
-        waitUntilText("Emilia Gans", substring = false).onParent().onChildAt(1).onChildAt(1).onChildAt(1).onChildAt(0).performClick()
+        waitUntilText("Emilia Gans", substring = false).onParent().onChildAt(4).performClick()
         waitForIdle()
 
         assertNotNull(storage.checkInQueue[appointment, user])
@@ -136,7 +136,7 @@ class SearchUserScreenTest : AbstractComposeUiTest() {
         withUserSearch(storage)
 
 
-        waitUntilText("Emilia Gans", substring = false).onParent().onChildAt(1).onChildAt(0).onChildAt(1).onChildAt(0).performClick()
+        waitUntilText("Leonie Kurz", substring = false).onParent().onChildAt(2).performClick()
         waitForIdle()
 
         assertNotNull(storage.checkInQueue[appointment, user]?.attempt)
