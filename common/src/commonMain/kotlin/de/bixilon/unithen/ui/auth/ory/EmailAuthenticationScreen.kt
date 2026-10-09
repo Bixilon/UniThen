@@ -9,6 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.platform.LocalAutofillManager
+import androidx.compose.ui.semantics.contentType
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -23,11 +27,15 @@ import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.util.i18n
 import de.bixilon.unithen.ui.util.state.rememberStateOf
 import de.bixilon.unithen.ui.util.useAsyncNetwork
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import unithen.common.generated.resources.*
 
 
 @Composable
 fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
+    val autofill = LocalAutofillManager.current
+
     val navigation = LocalNavigation.current
     var password by rememberStateOf { "" }
     var email by rememberStateOf { "" }
@@ -37,6 +45,7 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
     val auth = useAsyncNetwork {
         try {
             val token = config.loginEmail(email, password)
+            withContext(Dispatchers.Main) { autofill?.commit() }
             navigation.popIf { it is AuthenticationRoute }
             navigation.navigate(AuthenticationCallbackRoute(site, OryTokenAuthentication(token.sessionToken)))
             // TODO: delete login flow
@@ -58,7 +67,7 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
             singleLine = true,
             placeholder = { Text(Res.string.auth_email_email.i18n()) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.EmailAddress },
         )
 
         Spacer(Modifier.height(8.dp))
@@ -71,7 +80,7 @@ fun EmailAuthenticationScreen(site: Site, config: OryConfig) {
             placeholder = { Text(Res.string.auth_email_password.i18n()) },
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().semantics { contentType = ContentType.Password },
         )
 
         Spacer(Modifier.height(8.dp))
