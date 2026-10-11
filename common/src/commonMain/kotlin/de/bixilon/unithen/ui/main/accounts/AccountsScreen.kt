@@ -35,10 +35,7 @@ import de.bixilon.kutil.exception.ExceptionUtil.ignoreAll
 import de.bixilon.kutil.time.weeks
 import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Account
-import de.bixilon.unithen.ui.containers.FloatingActionButtons
-import de.bixilon.unithen.ui.containers.SafeBox
-import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.containers.ScreenTitle
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.AccountDetailsRoute
 import de.bixilon.unithen.ui.main.AddAccountRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
@@ -230,22 +227,32 @@ private fun AccountCard(account: Account, onClick: () -> Unit) {
 
 
 @Composable
+private fun Content(accounts: List<Account>) {
+    val navigator = LocalNavigation.current
+    val state = rememberLazyListState()
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(state),
+        state = state,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
+    }
+}
+
+@Composable
 fun AccountsScreen() {
     val navigator = LocalNavigation.current
-    val accounts = rememberStorageAsync { accounts.all() } ?: return
+    val accounts = rememberStorageAsync { accounts.all() }
 
     Screen {
-        ScreenTitle(Res.string.accounts_title.i18n(accounts.size))
+        ScreenTitle(Res.string.accounts_title.i18n(accounts?.size ?: 0))
 
-        val state = rememberLazyListState()
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(state),
-            state = state,
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            items(items = accounts, key = Account::id) { account -> AccountCard(account) { navigator.navigate(AccountDetailsRoute(account)) } }
+        if (accounts == null) {
+            LoadingScreen()
+        } else {
+            Content(accounts)
         }
     }
 

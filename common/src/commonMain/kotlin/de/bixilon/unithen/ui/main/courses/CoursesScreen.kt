@@ -29,10 +29,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import de.bixilon.unithen.storage.types.Course
-import de.bixilon.unithen.ui.containers.SafeBox
-import de.bixilon.unithen.ui.containers.Screen
-import de.bixilon.unithen.ui.containers.ScreenTitle
-import de.bixilon.unithen.ui.containers.TextCard
+import de.bixilon.unithen.storage.types.Event
+import de.bixilon.unithen.ui.containers.*
 import de.bixilon.unithen.ui.main.CourseDetailsRoute
 import de.bixilon.unithen.ui.navigation.LocalNavigation
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -50,14 +48,57 @@ import unithen.common.generated.resources.courses_synchronize_done
 import unithen.common.generated.resources.courses_synchronize_started
 import unithen.common.generated.resources.courses_title
 
-
 @Composable
-fun CoursesScreen() {
+private fun Content(events: List<Event>) {
     val storage = LocalStorage.current
     val navigation = LocalNavigation.current
 
+
+    val state = rememberLazyListState()
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(state),
+        state = state,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        storage.notify.intValue // listens for changes
+        for (event in events) {
+            val courses = storage.courses.get(event = event).sortedBy { it.name }
+            if (courses.isEmpty()) continue
+
+            item(key = "e" + event.id) {
+                val site = rememberStorage { sites[event.site] } // TODO: Section?
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val icon = remember { site.icon } // prevents flickering of icon during recomposition (async image)
+                    if (icon != null) {
+                        AsyncImage(
+                            icon,
+                            contentDescription = "Site icon",
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                        )
+
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+
+                    Text(event.name + " (${courses.size}):")
+                }
+            }
+            items(items = courses, key = Course::id) { course ->
+                val tutor = rememberStorage { accounts.isTutor(course) }
+                val color = if (tutor) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
+                TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
+            }
+        }
+    }
+}
+
+@Composable
+fun CoursesScreen() {
     val courseCount = rememberStorage { courses.count }
-    val events = rememberStorageAsync { events.all().sortedByDescending { it.start } } ?: emptyList() // TODO: sort in database
+    val events = rememberStorageAsync { events.all().sortedByDescending { it.start } } // TODO: sort in database
 
     val toast = useToast()
 
@@ -72,48 +113,16 @@ fun CoursesScreen() {
         }
     }
 
+
     Screen {
         ScreenTitle(Res.string.courses_title.i18n(courseCount))
 
-        PullToRefreshBox(sync.active, modifier = Modifier.weight(1.0f), onRefresh = { sync.invoke() }) {
-            val state = rememberLazyListState()
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state),
-                state = state,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                storage.notify.intValue // listens for changes
-                for (event in events) {
-                    val courses = storage.courses.get(event = event).sortedBy { it.name }
-                    if (courses.isEmpty()) continue
 
-                    item(key = "e" + event.id) {
-                        val site = rememberStorage { sites[event.site] } // TODO: Section?
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            val icon = remember { site.icon } // prevents flickering of icon during recomposition (async image)
-                            if (icon != null) {
-                                AsyncImage(
-                                    icon,
-                                    contentDescription = "Site icon",
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                )
-
-                                Spacer(modifier = Modifier.width(8.dp))
-                            }
-
-                            Text(event.name + " (${courses.size}):")
-                        }
-                    }
-                    items(items = courses, key = Course::id) { course ->
-                        val tutor = rememberStorage { accounts.isTutor(course) }
-                        val color = if (tutor) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.secondaryContainer
-                        TextCard(course.name, color = color, modifier = Modifier.clickable { navigation.navigate(CourseDetailsRoute(course)) })
-                    }
-                }
+        if (events == null) {
+            LoadingScreen()
+        } else {
+            PullToRefreshBox(sync.active, modifier = Modifier.weight(1.0f), onRefresh = { sync.invoke() }) {
+                Content(events)
             }
         }
     }

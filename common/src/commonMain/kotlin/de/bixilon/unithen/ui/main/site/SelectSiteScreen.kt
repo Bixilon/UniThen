@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import de.bixilon.unithen.storage.types.Site
 import de.bixilon.unithen.ui.auth.ory.OryAuthenticationScreen
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.containers.Screen
 import de.bixilon.unithen.ui.containers.ScreenTitle
 import de.bixilon.unithen.ui.storage.LocalStorage
@@ -92,7 +93,12 @@ private fun SiteCard(site: Site, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SiteList(modifier: Modifier, callback: (Site) -> Unit) {
-    val sites = rememberStorageAsync { sites.all() } ?: return
+    val sites = rememberStorageAsync { sites.all() }
+
+    if (sites == null) {
+        LoadingScreen()
+        return
+    }
 
     LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         items(items = sites, key = Site::id) { site -> SiteCard(site, Modifier.clickable { callback.invoke(site) }) }

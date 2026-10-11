@@ -35,6 +35,7 @@ import de.bixilon.unithen.RuntimeInfo
 import de.bixilon.unithen.storage.types.Appointment
 import de.bixilon.unithen.storage.types.CheckInQueue
 import de.bixilon.unithen.storage.types.User
+import de.bixilon.unithen.ui.containers.LoadingScreen
 import de.bixilon.unithen.ui.containers.Section
 import de.bixilon.unithen.ui.containers.SectionTitle
 import de.bixilon.unithen.ui.main.checkin.scan.errors.CheckInError
@@ -185,7 +186,7 @@ fun ScanAttendeeList(appointment: Appointment) {
         val not = users.getEnrolledNotCheckedIn(appointment, filter.search, filter.sort, filter.order)
 
         return@rememberStorageAsync Triple(attendees, queue, not)
-    } ?: Triple(emptyList(), emptyList(), emptyList())
+    } ?: Triple(null, null, null)
 
 
     val state = rememberLazyListState()
@@ -209,7 +210,7 @@ fun ScanAttendeeList(appointment: Appointment) {
 
 
     Section(Modifier.unfocusOnTap()) {
-        val count = remember(attendees, queue) { attendees.size + queue.filter { it.message == null && it.attempt == null }.size }
+        val count = remember(attendees, queue) { (attendees?.size ?: 0) + (queue?.filter { it.message == null && it.attempt == null }?.size ?: 0) }
         SectionTitle(Res.string.appointment_attendees_title.i18n(count, enrolled))
 
 
@@ -220,19 +221,23 @@ fun ScanAttendeeList(appointment: Appointment) {
         val time = useTime()
         val readonly = !appointment.canPerformCheckIn(time)
 
-        PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke(force = true) }) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(state),
-                state = state,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                contentPadding = PaddingValues(bottom = 150.dp),
-            ) {
-                item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
-                itemsIndexed(items = attendees, key = { _, it -> it.id }) { index, it -> AttendeeCard(modifier(), appointment, it, readonly, index % 2 != 0) }
-                itemsIndexed(items = queue, key = { _, it -> it.user }) { index, it -> QueueCard(modifier(), it, readonly, index % 2 != 0) }
-                itemsIndexed(items = not, key = { _, it -> it.id }) { index, it -> EnrolledCard(modifier(), appointment, it, readonly, index % 2 != 0) }
+        if (attendees == null || queue == null || not == null) {
+            LoadingScreen()
+        } else {
+            PullToRefreshBox(synchronize.active, modifier = Modifier.fillMaxHeight(), onRefresh = { synchronize.invoke(force = true) }) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(state),
+                    state = state,
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    contentPadding = PaddingValues(bottom = 150.dp),
+                ) {
+                    item("_") { Spacer(Modifier.height(1.dp)) } // https://stackoverflow.com/questions/74320761/compose-lazycolumn-key-messes-up-scrolling-when-sorting-the-items
+                    itemsIndexed(items = attendees, key = { _, it -> it.id }) { index, it -> AttendeeCard(modifier(), appointment, it, readonly, index % 2 != 0) }
+                    itemsIndexed(items = queue, key = { _, it -> it.user }) { index, it -> QueueCard(modifier(), it, readonly, index % 2 != 0) }
+                    itemsIndexed(items = not, key = { _, it -> it.id }) { index, it -> EnrolledCard(modifier(), appointment, it, readonly, index % 2 != 0) }
+                }
             }
         }
     }
